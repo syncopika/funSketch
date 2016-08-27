@@ -11,7 +11,7 @@
 var brushes = {"radialGrad": false};
 var brushFlag = false;
 
-//function to retrieve brush type when onclick from dropdown list
+//function to know which brush type to use when onclick from dropdown list
 function selectBrush(id){
 	resetMouse();
 	//console.log(id);

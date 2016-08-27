@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>funSketch</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="libraries/brushes.js"></script>
+<script src="libraries/filters.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script>
+
+</script>
+</head>
+
+<style>
+
+#header{
+text-align: center;
+}
+
+#bar{
+transform: translateX(-300%); 
+transition: .4s;
+position: absolute;
+top: 0%;
+text-align: center;
+}
+
+#toolbar{
+padding: 2px;
+text-align: center;
+}
+
+#toolbar button{
+margin-bottom: 5px;
+padding-left: 2px;
+padding-right: 2px;
+}
+
+#canvas0{
+border: 1px black solid;
+}
+
+li{
+display: inline-block;
+}
+
+#picture{
+width: 750px;
+margin:0 auto;
+text-align:center;
+}
+
+#playPanel{
+margin: 0 auto;
+margin-bottom: 30px;
+text-align:center;
+}
+
+#footer{
+height: 90px;
+}
+
+#colorWheel{
+border: black solid 1px;
+margin: 0 auto;
+display: block;
+}
+
+#filters, #brushes{
+width: 50%;
+margin: 0 auto;
+margin-bottom: 5%;
+}
+
+.dropdown{
+width: 50%;
+}
+
+.dropdown-menu{
+left: 0;
+right: 0;
+}
+
+.dropdown-toggle{
+width: 100%;
+}
+
+.dropdown-menu>li{
+display:block;
+text-align:center;
+}
+
+.dropdown-menu>li:hover{
+background-color: #dddeee;
+}
+
+</style>
+
+<body>
+<div class='container-fluid'>
+
+<div class='row' id='header'>
+	
+	<ul>
+		<h1>sketch, animate, and edit pictures</h1>
+		<p>link to <a href='https://github.com/syncopika/javascriptProjects/tree/master/html_drawing_app' target='_blank'> source code </a></p>
+		<button id='toggleToolbar' class='btn' onclick='toggleToolbar()'> toggle toolbar </button>
+	</ul>
+	
+	<ul>
+		<li id='down'><h2><=</h2></li>
+		<li><h2 id='count'></h2></li>
+		<li id='up'><h2>=></h2></li>
+	</ul>
+
+</div>
+
+<div class='row'>		
+	
+	<!-- TOOLBAR -->
+	<div id='bar' class='col-sm-3 col-md-3 col-lg-3' style='border: black solid 1px'>
+
+		<h2>toolbar</h2>
+		<p>tips:</p>
+		<p>-use spacebar to add a new layer!</p>
+		<p>-use the arrow keys to go forward or backward!</p>
+ 
+		<div id='toolbar'>
+			<p class="text-info"> general tools </p>
+
+			<button id = 'import' class='btn' onclick='fileHandler()'>import pic</button>
+			<input id="fileInput" style="display:none;" type="file">
+			<button id='clear' class='btn'>clear</button>
+			<button id='reset' class='btn'>reset brush</button>
+			<button id='#ffffff' class ='color btn'>eraser</button>
+			<button id='addPage' class='btn'>add another layer</button>
+			<button id ='clone' class='btn'> clone current layer</button>
+			<button class='btn' onclick='undo()'> undo </button>
+			<p class="text-info">change brush size</p>
+			<input class='brushSize' type='range' min='.5' max='15' step='.5' value='5'>
+			<span id='brushSizeValue'> 5.0 </span>
+					
+			<!-- for adjusting contrast -->
+			<br>
+			<p class="text-info">contrast</p>
+				<p>
+				<span><button class='btn' id='incContrast' onclick='filterCanvas(inContrast)'>increase</button></span>
+				<span>&nbsp;</span>
+				<span><button class='btn' id='decContrast' onclick='filterCanvas(deContrast)'>decrease</button></span>
+				</p>
+					
+			<!-- for adjusting brightness -->
+			<p class="text-info">brightness</p>
+				<p>
+				<span><button class='btn' id='incBrightness' onclick='filterCanvas(incBright)'>increase</button></span>
+				<span>&nbsp;</span>
+				<span><button class='btn' id='decBrightness' onclick='filterCanvas(decBright)'>decrease</button></span>
+				</p>
+		</div>
+			
+		<div id='filters' class="dropdown">
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			filters <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu">
+				<li onclick='filterCanvas(grayscale)'>grayscale</li>
+				<li onclick='filterCanvas(sepia)'>sepia </li>
+				<li onclick='filterCanvas(saturate)'>saturate</li>
+				<li onclick='filterCanvas(swap)'>swap</li>
+				<li onclick='filterCanvas(banded)'>banded</li>
+				<li onclick='filterCanvas(scary)'>scary</li>
+				<li onclick='filterCanvas(purpleChrome)'>purpleChrome</li>
+				<li onclick='filterCanvas(purplizer)'>purplizer</li>
+				<li onclick='filterCanvas(heatwave)'>heatwave</li>
+				<li onclick='filterCanvas(randomize)'>random shift</li>
+				<li onclick='filterCanvas(invert)'>invert</li>
+				<li onclick='filterCanvas(blurry)'>blur</li>
+				<li onclick='defaultFisheye()'>fisheye</li>
+				<li onclick='reset()'>reset</button>
+			</ul>
+		</div>
+		
+		<div id='brushes' class="dropdown">
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			brushes <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu">
+				<li id='radialGrad' onclick='selectBrush(this.id)'>radial gradient</li>
+				<li id='defaultBrush' onclick='selectBrush(this.id)'>default</li>
+			</ul>
+		</div>
+			
+		<!-- color wheel -->
+		<canvas id='colorWheel' height='200' width='200'></canvas>
+			<p id='pickedColor'>color picked goes here</p> 
+		
+		<div id='playPanel'>
+			<p class='text-info'>play panel</p>
+			<button id='forward' class='btn' onclick = 'playForward()'> => </button>
+			<button id='stop' class='btn' onclick = 'stop()'> stop </button>
+			<button id='backward' class='btn' onclick='playBackward()'> <= </button>
+		</div>	
+	</div> <!--end toolbar (right col) -->
+	
+	<div class='col-md-6 col-lg-6 col-lg-offset-3 col-md-offset-3 col-sm-6 col-sm-offset-3'>
+		<div id='picture'>
+			<canvas id="canvas0" width='700' height='700' class='canvas'></canvas> 
+		</div>
+	</div>
+ 
+</div> <!-- end row-->
+
+<div id='footer' class='row'>
+</div>
+
+</div> <!--close container -->
+
+<script> 
+var layerArray = ['canvas0'];
+var curPage = 0;
+var curCanvas = layerArray[curPage];
+
+var theCanvas = document.getElementById(curCanvas); 
+var context = theCanvas.getContext("2d");
+var width = theCanvas.width;
+var height = theCanvas.height;
+
+var curSize = 5;
+var curColor = '#000'; 
+
+//set initial canvas bg color to white!
+context.fillStyle = "#FFF";
+context.fillRect(0, 0, width, height);
+
+//temp arrays store pixel data for current canvas. if you switch frames, these arrays clear.  
+var clickX = [];
+var clickY = [];
+var clickDrag = [];
+var clickColor = [];
+var clickSize = [];
+
+//new arrays for the click arrays
+function clearClick(){
+	clickX = [];
+	clickY = [];
+	clickDrag = [];
+	clickColor = [];
+	clickSize = [];
+}
+
+//collect info where each pixel is to be drawn on canvas
+function addClick(x, y, dragging){
+	clickX.push(x);
+	clickY.push(y);
+	clickDrag.push(dragging);
+	clickColor.push(curColor);
+	clickSize.push(curSize);
+}
+
+//undoCounter provides a limit of 10 undos 
+//the limit is set arbitrarily by storePixelData();
+var undoCounter = undefined;
+
+//undo function
+//should work well now.
+function undo(){
+	if(undoCounter === undefined){
+		//subtract 2, because .length - 1 returns what you just drew (the presumed mistake).
+		//assuming you want the second-to-last thing you drew. 
+		context.clearRect(0, 0, width, height);
+		if(canvasData[curCanvas].length >= 2){
+		undoCounter = canvasData[curCanvas].length - 2;
+		context.putImageData(canvasData[curCanvas][undoCounter], 0, 0);
+		}
+	}else if(undoCounter > 0){
+		context.clearRect(0, 0, width, height);
+		context.putImageData(canvasData[curCanvas][--undoCounter], 0, 0);
+	}else{
+		//start again from latest image data
+		undoCounter = canvasData[curCanvas].length-1;
+		context.clearRect(0, 0, width, height);
+		context.putImageData(canvasData[curCanvas][undoCounter], 0, 0);
+	}
+}
+
+//for colorWheel
+var colorWheel = document.getElementById('colorWheel');
+var colorWheelContext = colorWheel.getContext('2d');
+
+var x = colorWheel.width / 2;
+var y = colorWheel.height / 2;
+var radius = 90;
+
+for(var angle = 0; angle <= 5600; angle++){
+	var startAngle = (angle-2)*Math.PI / 180; //convert angles to radians
+	var endAngle = (angle)*Math.PI / 180;
+	
+	colorWheelContext.beginPath();
+	colorWheelContext.moveTo(x, y);
+	//.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+	colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
+	colorWheelContext.closePath();
+	
+	//use .createRadialGradient to get a different color for each angle
+	//createRadialGradient(x0, y0, r0, x1, y1, r1)
+	var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
+	gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
+	gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
+	
+	colorWheelContext.fillStyle = gradient;
+	colorWheelContext.fill();
+}
+
+//pick a color from color wheel
+var colorPicked;
+$('#colorWheel').mousedown(function(e){ 
+	var x = e.offsetX;
+	var y = e.offsetY;
+	colorPicked = colorWheelContext.getImageData(x, y, 1, 1).data;
+	var colorPickedText = document.getElementById('pickedColor');
+	//correct the font color if the color is really dark
+	if(colorPicked[0] > 10 && colorPicked[1] > 200){
+		$('#pickedColor').css("color", "#000");
+	}else{
+		$('#pickedColor').css("color", "#FFF");
+	}
+	colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
+	$('#pickedColor').css({'background-color': colorPickedText.textContent});
+	curColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
+})
+
+//brush size changer
+var brushSize = document.querySelector('.brushSize');
+brushSize.oninput = function(){
+	curSize = brushSize.value;
+	$('#brushSizeValue').html(brushSize.value);
+}
+
+//prevent dropdown from closing after one click
+$('.dropdown-menu > li').click(function(e){
+	e.stopPropagation();
+})
+
+//stuff for the page-count thing at the top
+var page = 0;
+$('#count').html(curPage);//make sure 0 shows up when page loads
+
+//toggle toolbar
+var showToolbar = false;
+function toggleToolbar(){
+	if(!showToolbar){
+		$('#bar').css('transform', 'translateX(0)');
+		showToolbar = true;
+	}else{
+		$('#bar').css('transform', 'translateX(-300%)');
+		showToolbar = false;
+	}
+}
+
+//#picture is the container of the canvas, so I used #picture to get the top and left coordinates
+var offsetTop = $('#picture').position()["top"];  
+var offsetLeft = $('#picture').position()["left"];
+
+//define draw 
+function draw(){
+	defaultBrush();
+	radialGradBrush();
+}//end draw function
+
+//clear canvas
+$('#clear').click(function(){
+	clearClick();
+	context = document.getElementById(curCanvas).getContext("2d");
+	context.clearRect(0, 0, width, height);
+	context.fillStyle = "#FFFFFF";
+	context.fillRect(0, 0, width, height);
+});
+
+//for eraser
+$(".color").click(function(){
+	curColor = this.id;
+});
+
+//reset brush
+$("#reset").click(function(){
+	curSize = 5;
+	curColor = '#000000'; 
+});
+
+
+//setting up for adding layers....
+var top = $('#canvas0').position()["top"];  
+var left = $('#canvas0').position()["left"];
+//add a new canvas
+function addPage(){
+	
+	page = page + 1;
+	
+	var canvasClone = $('#canvas0').clone();
+	var newId = 'canvas' + page;
+	
+	layerArray.push(newId);
+	
+	canvasClone.addClass('canvas');
+	canvasClone.attr('id', newId);
+	canvasClone.css({"position": "absolute", "top": top+"px", "left": left+"px", "z-index":0, "border": "1px black solid", "opacity":0});
+	canvasClone.appendTo('#picture');
+
+	//set canvas bg color to white!
+	$('#' + newId)[0].getContext('2d').fillStyle = "#FFFFFF";
+	$('#' + newId)[0].getContext('2d').fillRect(0, 0, width, height);
+}
+$("#addPage").click(addPage);
+
+//clone the previous canvas
+function clonePage(){
+	
+	page = page + 1;
+	
+	var canvasClone = $('#' + curCanvas).clone();//cloning the previous canvas only copies the canvas, not what's in it...
+	var newId = 'canvas' + page;
+	
+	layerArray.push(newId);
+	canvasClone.addClass('canvas');
+	canvasClone.attr('id', newId);
+	canvasClone.css({"position": "absolute", "top": top+"px", "left": left+"px", "z-index":0, "border": "1px black solid", "opacity":.4});
+	canvasClone.appendTo('#picture');
+
+	//set canvas bg color to white!
+	$('#' + newId)[0].getContext('2d').fillStyle = "#FFFFFF";
+	$('#' + newId)[0].getContext('2d').fillRect(0, 0, width, height);
+
+	//get image data for frame you want to clone
+	var canvasToClone = context.getImageData(0, 0, width, height);
+
+	//assign context to new canvas
+	context = document.getElementById(newId).getContext("2d");
+
+	//draw image data of most recent version of current canvas
+	context.putImageData(canvasToClone, 0, 0);
+	
+	//also update canvasData, so that undo will work for clone!
+	canvasData[newId] = [canvasToClone];
+}
+$("#clone").click(clonePage);
+
+//this will hold each canvas' image data (important for cloning and undoing!!)
+var canvasData = {};
+//function for storing/modifying pixel data for each canvas
+function storePixelData(){
+
+	if(canvasData[curCanvas] === undefined){
+		canvasData[curCanvas] = [context.getImageData(0, 0, width, height)];
+	}
+	//if user returns to a previous canvas, add any new pixel data to the  existing array
+	else if(canvasData[curCanvas] !== 'undefined' && canvasData[curCanvas].length < 10){
+		canvasData[curCanvas].push(context.getImageData(0, 0, width, height));
+	}
+	else if(canvasData[curCanvas] !== 'undefined' && canvasData[curCanvas].length === 10){
+		//remove the first entry of the array and put in the latest drawing
+		canvasData[curCanvas].shift();
+		canvasData[curCanvas].push(context.getImageData(0, 0, width, height));
+	}
+}
+
+//UP
+function up(){
+	
+	//reset undo counter
+	undoCounter = undefined;
+	
+	if(curPage < page){
+		curPage = curPage + 1;
+		$('#count').html(curPage);
+		curCanvas = layerArray[curPage];
+	
+		//if canvas wasn't white, you could set opacity to 1.
+		//but if you keep a white background, curCanvas needs to be somewhat opaque
+		//in order to see the canvas behind it (for animation aiding purposes)
+		$('#' + curCanvas).css({"z-index":10, "opacity": .9}); 
+		
+		//update to correct context
+		context = document.getElementById(curCanvas).getContext("2d");
+
+		for(i=0;i<layerArray.length;i++){
+			if(layerArray[i] !== curCanvas){
+				$('#' + layerArray[i]).css({"z-index":0,"opacity":0});
+			}
+		};
+		//set only the second-to-last canvas a lower opacity
+		$('#' + layerArray[curPage-1]).css({"z-index":0,"opacity":.6});
+	}
+
+	//reset
+	//when you leave a frame, reset everything!
+	clearClick();
+	draw();
+}
+$("#up").click(up);
+
+//DOWN
+function down(){
+	
+	//reset undo counter
+	undoCounter = undefined;
+	
+	if(curPage > 0){
+		curPage = curPage - 1;
+		$('#count').html(curPage);
+		curCanvas = layerArray[curPage];
+		$('#' + curCanvas).css({"z-index":10, "opacity": .9});
+	}
+
+	context = document.getElementById(curCanvas).getContext("2d");
+
+	for(i=0;i<layerArray.length;i++){
+		if(layerArray[i] !== curCanvas){
+			$('#' + layerArray[i]).css({"z-index":0,"opacity":0});
+		}
+	};
+
+	$('#' + layerArray[curPage-1]).css({"z-index":0,"opacity":.6});
+
+	//when you leave a frame, reset everything!
+	clearClick();
+	draw();
+}
+$("#down").click(down);
+
+//keymapping
+$(document).keydown(function(e){
+	switch(e.which){
+		case 37: //left arrow key
+		down();
+		break;
+		case 39: //right arrow key
+		up();
+		break;
+		case 32: //space bar
+		addPage();
+		break;
+		default:
+		return;
+	}
+	e.preventDefault();
+});
+
+//functions for animation playback
+var play;
+function playForward(){
+	play = null;
+	play = setInterval(up,1000);
+}
+
+function playBackward(){
+	play = null;
+	//autofocus on last frame
+	$('#' + layerArray[layerArray.length-1]).css({"z-index":10, "opacity": .8});
+	curCanvas = layerArray[page];
+	curPage = page;
+	play = setInterval(down,1000);
+}
+
+function stop(){
+	clearInterval(play);
+}
+
+$(document).ready(function(){
+	$('.dropdown-toggle').dropdown();
+	draw();
+});
+//end
+
+</script>
+
+</body>
+
+
+</html>

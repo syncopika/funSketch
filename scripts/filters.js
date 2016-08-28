@@ -13,40 +13,29 @@ function fileHandler(){
 }
 
 function getFile(e){
-
 	var reader = new FileReader();
-
 	var file = e.target.files[0];
-
 	if (!file.type.match(/image.*/)){
 		console.log("not a valid image");
 		return;
 	}
-
 	//when the image loads, put it on the canvas.
 	img.onload = function(){
-	
 		context.drawImage(img, 0, 0, 700, 700); //figure out how to get canvas.height here to work..?
-		
 		//log pixels of picture (this is for my drawing/animating app)
 		storePixelData();
-
 		//reset the value for the HTML input file thing so that you can use the same pic for consecutive frames!  
 		document.querySelector("#fileInput").value = null;
-		
 		//reset contrast value every time a new pic is imported
 		contrastVal = 0;
 	}
-
 	//after reader has loaded file, put the data in the image object.
 	reader.onloadend = function(){
 		img.src = reader.result;
 	}
-
 	//read teh file as a URL
 	reader.readAsDataURL(file);
 };
-
 
 /**BEGIN FILTERS**/
 //general filtering function. pass any kind of filter through this function.

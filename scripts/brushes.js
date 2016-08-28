@@ -44,9 +44,7 @@ function resetMouse(){
 * DEFAULT BRUSH
 */
 function redraw(){
-	
 	context.lineJoin = 'round';
-
 	for(var i = 0; i < clickX.length; i++){
 		context.beginPath();
 		//this helps generate a solid line, rather than a line of dots. 
@@ -84,7 +82,6 @@ function defaultBrush(){
 		}
 	});
 	//stop drawing
-	//this should be universal for all brushes
 	$('#' + curCanvas).mouseup(function(e) {
 		clearClick();
 		//log new pixel data every time a canvas is drawn on!
@@ -95,7 +92,6 @@ function defaultBrush(){
 		paint = false;
 	});
 	//stop drawing when mouse leaves
-	//this should be universal for all brushes
 	$('#' + curCanvas).mouseleave(function(e){
 		paint = false;
 	});
@@ -105,42 +101,40 @@ function defaultBrush(){
 /**
 * RADIAL GRADIENT BRUSH
 */
-//each brush will have its own mousemove/mousedown events!!
 function radialGrad(x,y){
-		//adding those trig utility functions
-		//to connect the newest and last points to 
-		//create a nice solid line seems like a pretty good idea
-		var radGrad = context.createRadialGradient(x,y,curSize,x,y,curSize*1.5);
-		radGrad.addColorStop(0, curColor);
-		if(colorPicked !== undefined){
-			radGrad.addColorStop(.5, 'rgba(' +  colorPicked[0] + ',' +  colorPicked[1] + ',' +  colorPicked[2] + ',.5)');
-			radGrad.addColorStop(1, 'rgba(' +  colorPicked[0] + ',' +  colorPicked[1] + ',' +  colorPicked[2] + ',0)');
-		}else{
-			radGrad.addColorStop(.5, 'rgba(0,0,0,.5)');
-			radGrad.addColorStop(1, 'rgba(0,0,0,0)');
-		}
-		context.fillStyle = radGrad;
-		context.fillRect(x-20, y-20, 40, 40);
+	//adding those trig utility functions
+	//to connect the newest and last points to 
+	//create a nice solid line seems like a pretty good idea
+	var radGrad = context.createRadialGradient(x,y,curSize,x,y,curSize*1.5);
+	radGrad.addColorStop(0, curColor);
+	if(colorPicked !== undefined){
+		radGrad.addColorStop(.5, 'rgba(' +  colorPicked[0] + ',' +  colorPicked[1] + ',' +  colorPicked[2] + ',.5)');
+		radGrad.addColorStop(1, 'rgba(' +  colorPicked[0] + ',' +  colorPicked[1] + ',' +  colorPicked[2] + ',0)');
+	}else{
+		radGrad.addColorStop(.5, 'rgba(0,0,0,.5)');
+		radGrad.addColorStop(1, 'rgba(0,0,0,0)');
+	}
+	context.fillStyle = radGrad;
+	context.fillRect(x-20, y-20, 40, 40);
 }
 
 //activate radial gradient brush
 function radialGradBrush(){
-if(brushes["radialGrad"] === true && brushFlag === true){
-	var paint;
-	context.lineJoin = context.lineCap = 'round';
-	$('#' + curCanvas).mousedown(function(e){
-		paint = true;
-		radialGrad(e.offsetX,e.offsetY);
-	});
-	$('#' + curCanvas).mousemove(function(e){
-		if(paint){
-		radialGrad(e.offsetX,e.offsetY);
-		}
-	});
-	$('#' + curCanvas).mouseup(function(e){
-		storePixelData();
-		//console.log(canvasData);
-		paint = false;
-	});
-}
+	if(brushes["radialGrad"] === true && brushFlag === true){
+		var paint;
+		context.lineJoin = context.lineCap = 'round';
+		$('#' + curCanvas).mousedown(function(e){
+			paint = true;
+			radialGrad(e.offsetX,e.offsetY);
+		});
+		$('#' + curCanvas).mousemove(function(e){
+			if(paint){
+				radialGrad(e.offsetX,e.offsetY);
+			}
+		});
+		$('#' + curCanvas).mouseup(function(e){
+			storePixelData();
+			paint = false;
+		});
+	}
 }

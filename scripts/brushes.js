@@ -8,7 +8,7 @@
 
 //an object to keep track of which brush is active. if all are false,
 //the default brush is active.
-var brushes = {"radialGrad": false};
+var brushes = {"radialGrad": false, "fisheyeBrush" : false};
 var brushFlag = false;
 
 //function to know which brush type to use when onclick from dropdown list
@@ -143,4 +143,25 @@ if(brushes["radialGrad"] === true && brushFlag === true){
 		paint = false;
 	});
 }
+}
+
+/**
+* FISHEYE BRUSH (i.e. targeted fisheye distortion)
+*/
+function fisheyeBrush(){
+	
+	if(brushes["fisheyeBrush"] === true && brushFlag === true){
+	//TODO: make radius adjustable
+	var rad = 70;
+	
+	$('#' + curCanvas).mousedown(function(e){
+		var xPos = e.offsetX;
+		var yPos = e.offsetY;
+		mobileFisheye(rad,xPos,yPos);
+	});
+	
+	$('#' + curCanvas).mouseup(function(e){
+		storePixelData();
+	});
+	}
 }

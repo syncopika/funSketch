@@ -187,8 +187,9 @@ background-color: #dddeee;
 			brushes <span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu">
-				<li id='radialGrad' onclick='selectBrush(this.id)'>radial gradient</li>
 				<li id='defaultBrush' onclick='selectBrush(this.id)'>default</li>
+				<li id='radialGrad' onclick='selectBrush(this.id)'>radial gradient</li>
+				<li id='fisheyeBrush' onclick='selectBrush(this.id)'>fisheye brush</li>
 			</ul>
 		</div>
 			
@@ -367,6 +368,7 @@ var offsetLeft = $('#picture').position()["left"];
 function draw(){
 	defaultBrush();
 	radialGradBrush();
+	fisheyeBrush();
 }//end draw function
 
 //clear canvas

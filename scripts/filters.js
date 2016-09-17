@@ -468,20 +468,101 @@ function mobileFisheye(radius, xPos, yPos){
 	
 	fisheye(data, xPos, yPos, radius);
 }
+/**** END FISHEYE *****/
 
-/*example implementation:
-$('#canvas0').mousedown(function(e){
 
-	//specified radius of effect = 50;
-	var rad = 100;
-	var xPos = e.offsetX;
-	var yPos = e.offsetY;
-
-	mobileFisheye(rad, xPos, yPos);
-})
+/**
+*   AREA COLOR
+//the idea is to find an area of pixels that are similarly colored, 
+//and then making that area one solid color
+//it also tends to remove dark outlines so that there aren't any 
+//distinct boundaries
+//still not perfect right now, but it's definitely in the right direction
 */
 
-/**** END FISHEYE *****/
+//helper function
+function withinRange(r, g, b, or, og, ob, rangeVal){
+	
+	var red = Math.abs(r-or) <= rangeVal;
+	var green = Math.abs(g-og) <= rangeVal;
+	var blue = Math.abs(b-ob) <= rangeVal;
+	
+	if(red && green && blue){
+		return true;
+	}
+	
+	return false;
+}
+
+function areaColor(pixels){
+	
+	var d = pixels.data;
+	//var copy = new Uint8ClampedArray(d);
+	
+		for(var i = 0; i < d.length; i+=4){
+		
+		//current pixel
+		var r = d[i];
+		var g = d[i+1];
+		var b = d[i+2];
+		
+		//left neighbor's color
+		var lnr = d[i-4];
+		var lng = d[i-3];
+		var lnb = d[i-2];
+		
+		//right neighbor's color
+		var rnr = d[i+4];
+		var rng = d[i+5];
+		var rnb = d[i+6];
+		
+		//top neighbor's color
+		var tnr = d[i-2800];
+		var tng = d[i-2799];
+		var tnb = d[i-2798];
+		
+		//bottom neighbor's color
+		var bnr = d[i+2800];
+		var bng = d[i+2801];
+		var bnb = d[i+2802];
+		
+		//right pixel
+		var cond1 = (d[i+4] === undefined);
+		//left pixel
+		var cond2 = (d[i-4] === undefined);
+		//pixel below
+		var cond3 = (d[i+2800] === undefined);
+		//pixel above
+		var cond4 = (d[i-2800] === undefined);
+		
+		if(!cond1 && !cond2 && !cond3 && !cond4){
+			//check neighbors' colors
+			if(withinRange(r, g, b, lnr, lng, lnb, 50) &&
+			   withinRange(r, g, b, rnr, rng, rnb, 50) &&
+			   withinRange(r, g, b, tnr, tng, tnb, 50) &&
+			   withinRange(r, g, b, bnr, bng, bnb, 50)){
+			   //make all the neighbors the same color
+				   d[i+4] = r;
+				   d[i+5] = g;
+				   d[i+6] = b;
+				   
+				   d[i-4] = r;
+				   d[i-3] = g;
+				   d[i-2] = b;
+				   
+				   d[i-2800] = r;
+				   d[i-2799] = g;
+				   d[i-2798] = b;
+				   
+				   d[i+2800] = r;
+				   d[i+2801] = g;
+				   d[i+2802] = b;
+			   }
+		}
+	}
+	
+	return pixels;
+}
 
 /**
 *	control brightness - increase

@@ -472,11 +472,12 @@ function mobileFisheye(radius, xPos, yPos){
 
 
 /**
-*   AREA COLOR
+*   AREA COLOR (more like 'painter?')
 //the idea is to find an area of pixels that are similarly colored, 
 //and then making that area one solid color
 //it also tends to remove dark outlines so that there aren't any 
 //distinct boundaries
+//it is supposed to give a sort of 'painted' look to it. 
 //still not perfect right now, but it's definitely in the right direction
 */
 
@@ -490,42 +491,54 @@ function withinRange(r, g, b, or, og, ob, rangeVal){
 	if(red && green && blue){
 		return true;
 	}
-	
 	return false;
 }
 
+//the idea is to find an area of pixels that are similarly colored, 
+//and then making that area one solid color
 function areaColor(pixels){
 	
 	var d = pixels.data;
-	//var copy = new Uint8ClampedArray(d);
-	
-		for(var i = 0; i < d.length; i+=4){
-		
+	var copy = new Uint8ClampedArray(d);
+
+	for(var i = 0; i < d.length; i+=4){
 		//current pixel
 		var r = d[i];
 		var g = d[i+1];
 		var b = d[i+2];
-		
 		//left neighbor's color
-		var lnr = d[i-4];
-		var lng = d[i-3];
-		var lnb = d[i-2];
-		
+		var lnr = copy[i-4];
+		var lng = copy[i-3];
+		var lnb = copy[i-2];
 		//right neighbor's color
-		var rnr = d[i+4];
-		var rng = d[i+5];
-		var rnb = d[i+6];
-		
+		var rnr = copy[i+4];
+		var rng = copy[i+5];
+		var rnb = copy[i+6];
 		//top neighbor's color
-		var tnr = d[i-2800];
-		var tng = d[i-2799];
-		var tnb = d[i-2798];
-		
+		var tnr = copy[i-2800];
+		var tng = copy[i-2799];
+		var tnb = copy[i-2798];
 		//bottom neighbor's color
-		var bnr = d[i+2800];
-		var bng = d[i+2801];
-		var bnb = d[i+2802];
-		
+		var bnr = copy[i+2800];
+		var bng = copy[i+2801];
+		var bnb = copy[i+2802];
+		//top right
+		var trr = copy[i-2796];
+		var trg = copy[i-2795];
+		var trb = copy[i-2794];
+		//top left
+		var tlr = copy[i-2804];
+		var tlg = copy[i-2803];
+		var tlb = copy[i-2802];
+		//below left
+		var blr = copy[i+2796];
+		var blg = copy[i+2797];
+		var blb = copy[i+2798];
+		//below right
+		var brr = copy[i+2804];
+		var brg = copy[i+2805];
+		var brb = copy[i+2806];
+
 		//right pixel
 		var cond1 = (d[i+4] === undefined);
 		//left pixel
@@ -534,33 +547,87 @@ function areaColor(pixels){
 		var cond3 = (d[i+2800] === undefined);
 		//pixel above
 		var cond4 = (d[i-2800] === undefined);
+		//top left
+		var cond5 = (d[i-2804] === undefined);
+		//top right
+		var cond6 = (d[i-2796] === undefined);
+		//below right
+		var cond7 = (d[i+2804] === undefined);
+		//below left
+		var cond8 = (d[i+2796] === undefined);
+			
 		
-		if(!cond1 && !cond2 && !cond3 && !cond4){
+		if(!cond1 && !cond2 && !cond3 && !cond4 && !cond5 && !cond6 && !cond7 && !cond8){		
+			//if next neighbor over is a completely different color, stop and move on
+			var nnr = copy[i+8];
+			var nng = copy[i+9];
+			var nnb = copy[i+10];		
+			//next neighbor over (top right)
+			//using the current data, instead of the copy which holds the original color data,
+			//seems to provide closer to my desired effect
+			var trrr = d[i-2792];
+			var trrg = d[i-2791];
+			var trrb = d[i-2790];
+			/*
+			//next neighbor over (bottom right)
+			var brrr = d[i+2808];
+			var brrg = d[i+2809];
+			var brrb = d[i+2810];
+			*/		
+			if(!withinRange(r, g, b, nnr, nng, nnb, 18)||
+			 !withinRange(r, g, b, trrr, trrg, trrb, 16)||
+			//!withinRange(r, g, b, brrr, brrg, brrb, 15)||
+			    (rnr >= 210 && rng >= 210 && rnb >= 200)
+			){	
+				continue;
+			}		
+			var range = 50;
 			//check neighbors' colors
-			if(withinRange(r, g, b, lnr, lng, lnb, 50) &&
-			   withinRange(r, g, b, rnr, rng, rnb, 50) &&
-			   withinRange(r, g, b, tnr, tng, tnb, 50) &&
-			   withinRange(r, g, b, bnr, bng, bnb, 50)){
+			if(withinRange(r, g, b, lnr, lng, lnb, range) &&
+			   withinRange(r, g, b, rnr, rng, rnb, range) &&
+			   withinRange(r, g, b, tnr, tng, tnb, range) &&
+			   withinRange(r, g, b, bnr, bng, bnb, range) &&
+			   withinRange(r, g, b, trr, trg, trb, range) &&
+			   withinRange(r, g, b, tlr, tlg, tlb, range) &&
+			   withinRange(r, g, b, blr, blg, blb, range) &&
+			   withinRange(r, g, b, brr, brg, brb, range)
+			   ){
 			   //make all the neighbors the same color
+				   //right
 				   d[i+4] = r;
 				   d[i+5] = g;
-				   d[i+6] = b;
-				   
+				   d[i+6] = b; 
+				   //left
 				   d[i-4] = r;
 				   d[i-3] = g;
 				   d[i-2] = b;
-				   
+				   //above
 				   d[i-2800] = r;
 				   d[i-2799] = g;
 				   d[i-2798] = b;
-				   
+				   //below
 				   d[i+2800] = r;
 				   d[i+2801] = g;
-				   d[i+2802] = b;
+				   d[i+2802] = b;	   
+				   //above left
+				   d[i-2796] = r;
+				   d[i-2795] = g;
+				   d[i-2794] = b;	  
+				  //above right
+				   d[i-2804] = r;
+				   d[i-2803] = g;
+				   d[i-2802] = b;	  
+				   //below right
+				   d[i+2804] = r;
+				   d[i+2805] = g;
+				   d[i+2806] = b;
+				   //below left
+				   d[i+2796] = r;
+				   d[i+2797] = g;
+				   d[i+2798] = b;
 			   }
 		}
 	}
-	
 	return pixels;
 }
 

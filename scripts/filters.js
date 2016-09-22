@@ -46,6 +46,9 @@ function filterCanvas(filter){
 	context.putImageData(imgData, 0, 0);
 }
 
+/**
+* GRAYSCALE FILTER
+*/
 //grayscale filter using an arithmetic average of the color components
 //the 'pixels' parameter will be the imgData variable. 
 function grayscale(pixels){
@@ -74,8 +77,11 @@ function sepia(pixels){
 	return pixels;
 };
 
-//source: http://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
-//saturation filter yay
+
+/**
+* SATURATION FILTER
+* source: http://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
+*/
 function saturate(pixels){
 	var saturationValue = 2.5;
 	var d = pixels.data;
@@ -106,6 +112,7 @@ function saturate(pixels){
 }
 
 /**
+* COLOR SWAP FILTER
 * this function swaps colors
 */
 function swap(pixels){
@@ -139,6 +146,7 @@ function banded(pixels){
 }
 
 /**
+* PURPLE CHROME FILTER
 * this function creates a light purplish 'chrome' effect
 */
 function purpleChrome(pixels){
@@ -171,18 +179,13 @@ function purplizer(pixels){
 			d[i+2] = d[i+2]*2;
 			d[i+1] = d[i+2]/2;
 		}
-		/*
-		for(j=0;j<5;j++){
-				d[i] = d[((j*(pixels.width*4)) + (j*4)) + 2];
-				d[i+1] = d[((j+2)*(pixels.width*4)) + ((j+1)*4)];
-		}
-		*/
 	}
 		
 	return pixels;
 }
 
 /**
+* SCARY(?) FILTER
 * this filter turns everything dark 
 */
 function scary(pixels){
@@ -217,6 +220,7 @@ function scary(pixels){
 }
 
 /**
+* 'HEATWAVE' FILTER
 * this filter saturates and darkens some colors and produces an interesting palette
 */
 function heatwave(pixels){
@@ -236,6 +240,7 @@ function heatwave(pixels){
 }
 
 /**
+* NOISE FILTER
 * I think this function should have been called 'noise'. it pretty much just shifts all the pixels around.
 */
 function randomize(pixels){
@@ -299,6 +304,7 @@ function randomize(pixels){
 }
 
 /**
+* COLOR INVERTER
 * this function inverts colors
 */
 function invert(pixels){
@@ -320,13 +326,14 @@ function invert(pixels){
 }
 
 /**
+* BLUR FILTER
 * this function causes a blurring effect. It takes the pixel itself and 
 * its left, right, above and below neighbors (if it has them)
 * and calculates the average of their total R, G, B, and A channels respectively.
 */
 function blurry(pixels){
 
-var d = pixels.data;
+	var d = pixels.data;
 
 	for(i = 0; i < d.length; i+=4){
 		//if these conditions are not undefined, then that pixel must exist.
@@ -357,10 +364,69 @@ return pixels;
 }
 
 /**
-* this function creates fisheye distortion! 
+* OUTLINE FILTER
+* gets the 'outline' of the main parts of the picture
+* it finds the pixels whose above neighbor is a different color/
+* then a line is drawn from the location of that pixel to the above pixel,
+* forming a small, slightly angled line. all these lines then make up an outline.
 */
-//source: http://popscan.blogspot.com/2012/04/fisheye-lens-equation-simple-fisheye.html
-//http://paulbourke.net/dome/fisheye/
+function outline(){
+	var imgData = context.getImageData(0, 0, 700, 700);
+	var d = imgData.data;
+	var colCounter = 0;
+	var rowCounter = 0;
+	var count = 0;
+	
+	context.clearRect(0, 0, width, height);
+	
+	for(var i = 0; i < d.length; i+=4){
+	
+		var r = d[i];
+		var g = d[i+1];
+		var b = d[i+2];
+		
+		context.lineJoin = 'round';
+		context.lineWidth = 2;
+			
+		var tnr = d[i-2800];
+		var tng = d[i-2799];
+		var tnb = d[i-2798];
+		
+		//withinRange function is defined with the FISHEYE function
+		if(d[i-2800] !== undefined && !withinRange(r, g, b, tnr, tng, tnb, 5)){
+			if(count < 100){
+				console.log('colCounter: ' + colCounter + ", rowCounter: " + rowCounter);
+				count++;
+			}
+			makePath(colCounter, rowCounter);
+		}
+		if(i%2800 == 0){
+			rowCounter++;
+		}
+		if(colCounter >= 700){
+			colCounter = 0;
+		}
+		colCounter++;
+	}
+}
+
+function makePath(col, row){
+			context.lineJoin = 'round';
+			context.lineWidth = 1;
+			context.beginPath();
+			context.moveTo(col, row);
+			context.lineTo(col+2, row+1);
+			context.closePath();
+			context.strokeStyle = '#000';
+			context.stroke();
+}			
+
+/**
+* FISHEYE DISTORTION FILTER
+* this function creates fisheye distortion! 
+* source: http://popscan.blogspot.com/2012/04/fisheye-lens-equation-simple-fisheye.html
+* http://paulbourke.net/dome/fisheye/
+*/
 function fisheye(imgData, xPos, yPos, rad){
 	
 	//this is the array you edit with the translated pixels
@@ -441,7 +507,6 @@ function fisheye(imgData, xPos, yPos, rad){
 			pixelCounter++;
 		}//end inner for loop
 	}//end outer for loop
-	
 	//yPos and xPos are the coordinates of the center of the area of interest
 	context.putImageData(imgData, xPos-rad, yPos-rad);
 }
@@ -480,8 +545,8 @@ function mobileFisheye(radius, xPos, yPos){
 //it is supposed to give a sort of 'painted' look to it. 
 //still not perfect right now, but it's definitely in the right direction
 */
-
 //helper function
+//this function is also used for the OUTLINE filter
 function withinRange(r, g, b, or, og, ob, rangeVal){
 	
 	var red = Math.abs(r-or) <= rangeVal;
@@ -718,8 +783,8 @@ function deContrast(pixels){
 
 //RESET PICTURE
 function reset(){
-	context.clearRect(0, 0, theCanvas.width, theCanvas.height);
-	context.drawImage(img, 0, 0, 700, 700);
+	context.clearRect(0, 0, width, height);
+	context.drawImage(img, 0, 0, width, height);
 }
 
 

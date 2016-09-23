@@ -70,10 +70,10 @@ function sepia(pixels){
 		var r = d[i];
 		var g = d[i+1];
 		var b = d[i+2];
-	d[i] = (r*.5) + (g*.2) + (b*.3); //red
-	d[i+1] = (r*.2) + (g*.3) + (b*.5); //green
-	d[i+2] = (r*.6) + (g*.3) + (b*.4); //blue	
-}
+		d[i] = (r*.5) + (g*.2) + (b*.3); //red
+		d[i+1] = (r*.2) + (g*.3) + (b*.5); //green
+		d[i+2] = (r*.6) + (g*.3) + (b*.4); //blue
+	}
 	return pixels;
 };
 
@@ -180,7 +180,6 @@ function purplizer(pixels){
 			d[i+1] = d[i+2]/2;
 		}
 	}
-		
 	return pixels;
 }
 
@@ -321,7 +320,6 @@ function invert(pixels){
 		d[i+1] = 255 - g;
 		d[i+2] = 255 - b;	
 	}
-
 	return pixels;
 }
 
@@ -378,6 +376,8 @@ function outline(){
 	var count = 0;
 	
 	context.clearRect(0, 0, width, height);
+	context.fillStyle = "#FFF";
+	context.fillRect(0, 0, width, height);
 	
 	for(var i = 0; i < d.length; i+=4){
 	
@@ -411,14 +411,14 @@ function outline(){
 }
 
 function makePath(col, row){
-			context.lineJoin = 'round';
-			context.lineWidth = 1;
-			context.beginPath();
-			context.moveTo(col, row);
-			context.lineTo(col+2, row+1);
-			context.closePath();
-			context.strokeStyle = '#000';
-			context.stroke();
+	context.lineJoin = 'round';
+	context.lineWidth = 1;
+	context.beginPath();
+	context.moveTo(col, row);
+	context.lineTo(col+2, row+1);
+	context.closePath();
+	context.strokeStyle = '#000';
+	context.stroke();
 }			
 
 /**
@@ -621,7 +621,6 @@ function areaColor(pixels){
 		//below left
 		var cond8 = (d[i+2796] === undefined);
 			
-		
 		if(!cond1 && !cond2 && !cond3 && !cond4 && !cond5 && !cond6 && !cond7 && !cond8){		
 			//if next neighbor over is a completely different color, stop and move on
 			var nnr = copy[i+8];
@@ -710,9 +709,7 @@ function incBright(pixels){
 			d[i+2] += 5;
 			//d[i+3] += 5;
 	}
-	
 	return pixels;
-	
 }
 
 //control brightness - decrease
@@ -727,7 +724,6 @@ function decBright(pixels){
 			d[i+2] -= 5;
 			//d[i+3] -= 5;
 	}
-	
 	return pixels;
 }
 

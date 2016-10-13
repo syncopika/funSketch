@@ -8,13 +8,13 @@
 
 //an object to keep track of which brush is active. if all are false,
 //the default brush is active.
-var brushes = {"radialGrad": false, "fisheyeBrush" : false};
+var brushes = {"radialGrad": false, "fisheyeBrush" : false, "eraser": false};
 var brushFlag = false;
 
 //function to know which brush type to use when onclick from dropdown list
 function selectBrush(id){
 	resetMouse();
-	//console.log(id);
+	
 	if(id === 'defaultBrush'){
 		for(brush in brushes){
 			brushes[brush] = false;
@@ -124,8 +124,10 @@ function radialGradBrush(){
 		var paint;
 		context.lineJoin = context.lineCap = 'round';
 		$('#' + curCanvas).mousedown(function(e){
-			paint = true;
-			radialGrad(e.offsetX,e.offsetY);
+			if(e.which === 1){
+				paint = true;
+				radialGrad(e.offsetX,e.offsetY);
+			}
 		});
 		$('#' + curCanvas).mousemove(function(e){
 			if(paint){
@@ -136,6 +138,10 @@ function radialGradBrush(){
 			storePixelData();
 			paint = false;
 		});
+			//stop drawing when mouse leaves
+	$('#' + curCanvas).mouseleave(function(e){
+		paint = false;
+	});
 	}
 }
 

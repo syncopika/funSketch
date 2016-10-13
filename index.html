@@ -134,7 +134,7 @@ background-color: #dddeee;
 			<input id="fileInput" style="display:none;" type="file">
 			<button id='clear' class='btn'>clear</button>
 			<button id='reset' class='btn'>reset brush</button>
-			<button id='#ffffff' class ='color btn'>eraser</button>
+			<button id='#fff' class ='color btn'>eraser</button>
 			<button id='addPage' class='btn'>add another layer</button>
 			<button id ='clone' class='btn'> clone current layer</button>
 			<button class='btn' onclick='undo()'> undo </button>
@@ -234,7 +234,7 @@ var curSize = 5;
 var curColor = '#000'; 
 
 //set initial canvas bg color to white!
-context.fillStyle = "#FFF";
+context.fillStyle = "#fff";
 context.fillRect(0, 0, width, height);
 
 //temp arrays store pixel data for current canvas. if you switch frames, these arrays clear.  
@@ -384,13 +384,14 @@ $('#clear').click(function(){
 
 //for eraser
 $(".color").click(function(){
+	selectBrush("defaultBrush");
 	curColor = this.id;
 });
 
 //reset brush
 $("#reset").click(function(){
 	curSize = 5;
-	curColor = '#000000'; 
+	curColor = '#000'; 
 });
 
 

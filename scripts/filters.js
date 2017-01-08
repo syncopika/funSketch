@@ -395,7 +395,7 @@ function outline(){
 		//withinRange function is defined with the FISHEYE function
 		if(d[i-2800] !== undefined && !withinRange(r, g, b, tnr, tng, tnb, 5)){
 			if(count < 100){
-				console.log('colCounter: ' + colCounter + ", rowCounter: " + rowCounter);
+				//console.log('colCounter: ' + colCounter + ", rowCounter: " + rowCounter);
 				count++;
 			}
 			makePath(colCounter, rowCounter);

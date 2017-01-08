@@ -138,6 +138,7 @@ background-color: #dddeee;
 			<button id='addPage' class='btn'>add another layer</button>
 			<button id ='clone' class='btn'> clone current layer</button>
 			<button class='btn' onclick='undo()'> undo </button>
+			<button id='rotate' class='btn'> rotate </button>
 			<p class="text-info">change brush size</p>
 			<input class='brushSize' type='range' min='.5' max='15' step='.5' value='5'>
 			<span id='brushSizeValue'> 5.0 </span>
@@ -230,6 +231,7 @@ var context = theCanvas.getContext("2d");
 var width = theCanvas.width;
 var height = theCanvas.height;
 
+//default conditions for brush
 var curSize = 5;
 var curColor = '#000'; 
 
@@ -395,6 +397,23 @@ $("#reset").click(function(){
 });
 
 
+//rotate image
+$('#rotate').click(function(){
+	//using a promise to convert the initial image to a bitmap
+	//canvasData[curCanvas][0] is used every time, which is the original picture
+	Promise.all([
+		createImageBitmap(canvasData[curCanvas][0], 0, 0, width, height)
+		]).then(function(bitmap){
+			context.clearRect(0, 0, width, height);	
+			context.translate(width/2, height/2);
+			context.rotate((Math.PI) / 180);
+			context.translate(-width/2, -height/2);
+			//the returned bitmap is an array
+			context.drawImage(bitmap[0], 0, 0);	
+		});
+});
+
+
 //setting up for adding layers....
 var top = $('#canvas0').position()["top"];  
 var left = $('#canvas0').position()["left"];
@@ -472,7 +491,6 @@ function storePixelData(){
 
 //UP
 function up(){
-	
 	//reset undo counter
 	undoCounter = undefined;
 	
@@ -507,7 +525,6 @@ $("#up").click(up);
 
 //DOWN
 function down(){
-	
 	//reset undo counter
 	undoCounter = undefined;
 	

@@ -10,4 +10,4 @@ stores more 'snapshots' than the number of strokes (possibly glitchy mouse?), th
       
 -don't rely on arrays to store coordinate information and just rely on the last clicked point to connect lines.    
     
--touch screen support?
+-touch screen/mobile support?

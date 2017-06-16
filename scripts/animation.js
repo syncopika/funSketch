@@ -1,3 +1,8 @@
+/***
+
+	functions relevant to animating 
+
+****/
 
 //add a new canvas
 function addPage(){
@@ -18,7 +23,6 @@ function addPage(){
 	$('#' + newId)[0].getContext('2d').fillStyle = "#FFFFFF";
 	$('#' + newId)[0].getContext('2d').fillRect(0, 0, width, height);
 }
-$("#addPage").click(addPage);
 
 //clone the previous canvas
 function clonePage(){
@@ -50,7 +54,6 @@ function clonePage(){
 	//also update canvasData, so that undo will work for clone!
 	canvasData[newId] = [canvasToClone];
 }
-$("#clone").click(clonePage);
 
 //this will hold each canvas' image data (important for cloning and undoing!!)
 var canvasData = {};

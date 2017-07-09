@@ -8,6 +8,7 @@
 	<script src="scripts/brushes.js"></script>
 	<script src="scripts/filters.js"></script>
 	<script src="scripts/animation.js"></script>
+	<script src="scripts/toolbar.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
 
@@ -127,12 +128,11 @@ background-color: #dddeee;
  
 		<div id='toolbar'>
 			<p class="text-info"> general tools </p>
-
+			
 			<button id='import' class='btn' onclick='fileHandler()'>import pic</button>
 			<button id='download' class='btn' onclick='download()'> download pic </button>
 			<input id="fileInput" style="display:none;" type="file">
 			<button id='clear' class='btn'>clear</button>
-			<button id='reset' class='btn'>reset brush</button>
 			<button id='#fff' class ='color btn'>eraser</button>
 			<button id='addPage' onclick="addPage()" class='btn'>add another layer</button>
 			<button id ='clone' onclick="clonePage()" class='btn'> clone current layer</button>
@@ -230,6 +230,10 @@ var context = theCanvas.getContext("2d");
 var width = theCanvas.width;
 var height = theCanvas.height;
 
+//undoCounter provides a limit of 10 undos 
+//the limit is set arbitrarily by storePixelData();
+var undoCounter = undefined;
+
 //setting up for adding layers....
 var top = $('#canvas0').position()["top"];  
 var left = $('#canvas0').position()["left"];
@@ -241,6 +245,14 @@ var curColor = '#000';
 //set initial canvas bg color to white!
 context.fillStyle = "#fff";
 context.fillRect(0, 0, width, height);
+
+//#picture is the container of the canvas, so I used #picture to get the top and left coordinates
+var offsetTop = $('#picture').position()["top"];  
+var offsetLeft = $('#picture').position()["left"];
+
+//stuff for the page-count thing at the top
+var page = 0;
+$('#count').html(curPage);//make sure 0 shows up when page loads
 
 //temp arrays store pixel data for current canvas. if you switch frames, these arrays clear.  
 var clickX = [];
@@ -267,77 +279,16 @@ function addClick(x, y, dragging){
 	clickSize.push(curSize);
 }
 
-//undoCounter provides a limit of 10 undos 
-//the limit is set arbitrarily by storePixelData();
-var undoCounter = undefined;
-
-//undo function
-//should work well now.
-function undo(){
-	if(undoCounter === undefined){
-		//subtract 2, because .length - 1 returns what you just drew (the presumed mistake).
-		//assuming you want the second-to-last thing you drew. 
-		context.clearRect(0, 0, width, height);
-		if(canvasData[curCanvas].length >= 2){
-		undoCounter = canvasData[curCanvas].length - 2;
-		context.putImageData(canvasData[curCanvas][undoCounter], 0, 0);
-		}
-	}else if(undoCounter > 0){
-		context.clearRect(0, 0, width, height);
-		context.putImageData(canvasData[curCanvas][--undoCounter], 0, 0);
-	}else{
-		//start again from latest image data
-		undoCounter = canvasData[curCanvas].length-1;
-		context.clearRect(0, 0, width, height);
-		context.putImageData(canvasData[curCanvas][undoCounter], 0, 0);
-	}
-}
-
-//for colorWheel
-var colorWheel = document.getElementById('colorWheel');
-var colorWheelContext = colorWheel.getContext('2d');
-
-var x = colorWheel.width / 2;
-var y = colorWheel.height / 2;
-var radius = 90;
-
-for(var angle = 0; angle <= 5600; angle++){
-	var startAngle = (angle-2)*Math.PI / 180; //convert angles to radians
-	var endAngle = (angle)*Math.PI / 180;
-	
-	colorWheelContext.beginPath();
-	colorWheelContext.moveTo(x, y);
-	//.arc(x, y, radius, startAngle, endAngle, anticlockwise)
-	colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
-	colorWheelContext.closePath();
-	
-	//use .createRadialGradient to get a different color for each angle
-	//createRadialGradient(x0, y0, r0, x1, y1, r1)
-	var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
-	gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
-	gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
-	
-	colorWheelContext.fillStyle = gradient;
-	colorWheelContext.fill();
-}
+//make the colorWheel
+var colorPicked; // special variable that is an Uint4 clamped array 
+makeColorWheel('colorWheel', 90);
 
 //pick a color from color wheel
-var colorPicked;
-$('#colorWheel').mousedown(function(e){ 
-	var x = e.offsetX;
-	var y = e.offsetY;
-	colorPicked = colorWheelContext.getImageData(x, y, 1, 1).data;
-	var colorPickedText = document.getElementById('pickedColor');
-	//correct the font color if the color is really dark
-	if(colorPicked[0] > 10 && colorPicked[1] > 200){
-		$('#pickedColor').css("color", "#000");
-	}else{
-		$('#pickedColor').css("color", "#FFF");
-	}
-	colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
-	$('#pickedColor').css({'background-color': colorPickedText.textContent});
-	curColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
-})
+displayColorEnabled('pickedColor', 'colorWheel');
+
+// enable rotation
+addRotate('rotate');
+
 
 //brush size changer
 var brushSize = document.querySelector('.brushSize');
@@ -351,10 +302,6 @@ $('.dropdown-menu > li').click(function(e){
 	e.stopPropagation();
 })
 
-//stuff for the page-count thing at the top
-var page = 0;
-$('#count').html(curPage);//make sure 0 shows up when page loads
-
 //toggle toolbar
 var showToolbar = false;
 function toggleToolbar(){
@@ -367,10 +314,6 @@ function toggleToolbar(){
 	}
 }
 
-//#picture is the container of the canvas, so I used #picture to get the top and left coordinates
-var offsetTop = $('#picture').position()["top"];  
-var offsetLeft = $('#picture').position()["left"];
-
 //define draw 
 function draw(){
 	defaultBrush();
@@ -378,64 +321,12 @@ function draw(){
 	fisheyeBrush();
 }//end draw function
 
-//clear canvas
-$('#clear').click(function(){
-	clearClick();
-	context = document.getElementById(curCanvas).getContext("2d");
-	context.clearRect(0, 0, width, height);
-	context.fillStyle = "#FFFFFF";
-	context.fillRect(0, 0, width, height);
-});
 
 //for eraser
 $(".color").click(function(){
 	selectBrush("defaultBrush");
 	curColor = this.id;
 });
-
-//reset brush
-$("#reset").click(function(){
-	curSize = 5;
-	curColor = '#000'; 
-});
-
-
-//rotate image
-$('#rotate').click(function(){
-	//using a promise to convert the initial image to a bitmap
-	//canvasData[curCanvas][0] is used every time, which is the original picture
-	Promise.all([
-		createImageBitmap(canvasData[curCanvas][0], 0, 0, width, height)
-		]).then(function(bitmap){
-			context.clearRect(0, 0, width, height);	
-			context.translate(width/2, height/2);
-			context.rotate((Math.PI) / 180);
-			context.translate(-width/2, -height/2);
-			//the returned bitmap is an array
-			context.drawImage(bitmap[0], 0, 0);	
-		});
-});
-
-// download image from canvas
-// todo: make a gif from multiple layers?? is that possible?
-function download(){
-
-	// get image data from current canvas as blob
-	var data = document.getElementById(curCanvas).toBlob(function(blob){
-	
-		var url = URL.createObjectURL(blob);
-	
-		var link = document.createElement('a');
-		link.href = url;
-		
-		var name = prompt("please enter a name for the file");
-		link.download = name;
-	
-		//simulate a click on the blob's url to download it 
-		link.click();
-	
-	});
-}
 
 
 $(document).ready(function(){

@@ -3,6 +3,8 @@
 	functions relevant to animating 
 
 ****/
+//this will hold each canvas' image data (important for cloning and undoing!!)
+var canvasData = {};
 
 //add a new canvas
 function addPage(){
@@ -55,8 +57,7 @@ function clonePage(){
 	canvasData[newId] = [canvasToClone];
 }
 
-//this will hold each canvas' image data (important for cloning and undoing!!)
-var canvasData = {};
+
 //function for storing/modifying pixel data for each canvas
 function storePixelData(){
 

@@ -10,4 +10,4 @@ has many image filters.
 has functions that are relevant to animating.
         
 ***experiments.js***    
-just some new functions I'm playing with. right now I'd like to rotate the image by an arbitrary angle, which is way harder than I thought it would be. also, I just found out recently that the canvas API has its own rotate function, but I'd like to give it a try myself.
+trying to come up with some new functions.    

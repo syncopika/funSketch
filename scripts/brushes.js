@@ -1,5 +1,6 @@
 //brush kit for my drawing/animating app
 //resources: http://perfectionkills.com/exploring-canvas-drawing-techniques/
+// http://www.tricedesigns.com/2012/01/04/sketching-with-html5-canvas-and-brush-images/
 
 //var brushImg = new Image();
 //brushImg.src = 'http://www.tricedesigns.com/wp-content/uploads/2012/01/brush2.png';

@@ -14,85 +14,110 @@
 
 <style>
 
+body{
+	background-color: rgb(41,46,55);
+	color: #adafba;
+}
+
 #header{
-text-align: center;
+	text-align: center;
 }
 
 #bar{
-transform: translateX(-300%); 
-transition: .4s;
-position: absolute;
-top: 0%;
-text-align: center;
+	/* transform: translateX(-300%);  */
+	top: 0%;
+	transition: .4s;
+	position: absolute;
+	text-align: center;
+    border: #000 solid 1px; 
 }
 
 #toolbar{
-padding: 2px;
-text-align: center;
+	padding: 2px;
+	text-align: center;
+	color: #9699a6;
 }
 
 #toolbar button{
-margin-bottom: 5px;
-padding-left: 2px;
-padding-right: 2px;
+	margin-bottom: 5px;
+	padding-left: 2px;
+	padding-right: 2px;
 }
 
 #canvas0{
-border: 1px black solid;
+	border: 1px black solid;
 }
 
 li{
-display: inline-block;
+	display: inline-block;
 }
 
 #picture{
-width: 750px;
-margin:0 auto;
-text-align:center;
+	width: 750px;
+	margin:0 auto;
+	text-align:center;
 }
 
 #playPanel{
-margin: 0 auto;
-margin-bottom: 30px;
-text-align:center;
+	margin: 0 auto;
+	margin-bottom: 30px;
+	text-align:center;
 }
 
 #footer{
-height: 90px;
+	height: 90px;
 }
 
 #colorWheel{
-border: black solid 1px;
-margin: 0 auto;
-display: block;
+	/* border: #000 solid 1px; */
+	margin: 0 auto;
+	display: block;
 }
 
 #filters, #brushes{
-width: 50%;
-margin: 0 auto;
-margin-bottom: 5%;
+	width: 50%;
+	margin: 0 auto;
+	margin-bottom: 5%;
 }
 
-.dropdown{
-width: 50%;
-}
 
 .dropdown-menu{
-left: 0;
-right: 0;
+	left: 0;
+	right: 0;
 }
 
 .dropdown-toggle{
-width: 100%;
+	width: 100%;
 }
 
 .dropdown-menu>li{
-display:block;
-text-align:center;
+	display: block;
+	text-align: center;
 }
 
 .dropdown-menu>li:hover{
-background-color: #dddeee;
+	background-color: #dddeee;
+}
+
+.adjCont button{
+	height: 22px;
+	padding: 3px 3px 3px 3px;
+	font-size: 12px;
+}
+
+button{
+	color: #000;
+}
+
+#bar{
+	margin-top: 172px;
+	margin-left: 2%;
+}
+#theCanvas{
+	margin-left: 30%;
+}
+#pageArrows{
+	text-align: center;
 }
 
 </style>
@@ -100,123 +125,144 @@ background-color: #dddeee;
 <body>
 <div class='container-fluid'>
 
-<div class='row' id='header'>
-	
-	<ul>
-		<h1>sketch, animate, and edit pictures</h1>
-		<p>link to <a href='https://github.com/syncopika/funSketch'> source code </a></p>
-		<button id='toggleToolbar' class='btn' onclick='toggleToolbar()'> toggle toolbar </button>
-	</ul>
-	
-	<ul>
-		<li id='down'><h2><=</h2></li>
-		<li><h2 id='count'></h2></li>
-		<li id='up'><h2>=></h2></li>
-	</ul>
-
-</div>
-
-<div class='row'>		
-	
-	<!-- TOOLBAR -->
-	<div id='bar' class='col-sm-3 col-md-3 col-lg-3' style='border: black solid 1px'>
-
-		<h2>toolbar</h2>
-		<p>tips:</p>
-		<p>-use spacebar to add a new layer!</p>
-		<p>-use the arrow keys to go forward or backward!</p>
- 
-		<div id='toolbar'>
-			<p class="text-info"> general tools </p>
-			
-			<button id='import' class='btn' onclick='fileHandler()'>import pic</button>
-			<button id='download' class='btn' onclick='download()'> download pic </button>
-			<input id="fileInput" style="display:none;" type="file">
-			<button id='clear' class='btn'>clear</button>
-			<button id='#fff' class ='color btn'>eraser</button>
-			<button id='addPage' onclick="addPage()" class='btn'>add another layer</button>
-			<button id ='clone' onclick="clonePage()" class='btn'> clone current layer</button>
-			<button class='btn' onclick='undo()'> undo </button>
-			<button id='rotate' class='btn'> rotate </button>
-			<p class="text-info">change brush size</p>
-			<input class='brushSize' type='range' min='.5' max='15' step='.5' value='5'>
-			<span id='brushSizeValue'> 5.0 </span>
-					
-			<!-- for adjusting contrast -->
-			<br>
-			<p class="text-info">contrast</p>
-				<p>
-				<span><button class='btn' id='incContrast' onclick='filterCanvas(inContrast)'>increase</button></span>
-				<span>&nbsp;</span>
-				<span><button class='btn' id='decContrast' onclick='filterCanvas(deContrast)'>decrease</button></span>
-				</p>
-					
-			<!-- for adjusting brightness -->
-			<p class="text-info">brightness</p>
-				<p>
-				<span><button class='btn' id='incBrightness' onclick='filterCanvas(incBright)'>increase</button></span>
-				<span>&nbsp;</span>
-				<span><button class='btn' id='decBrightness' onclick='filterCanvas(decBright)'>decrease</button></span>
-				</p>
-		</div>
-			
-		<div id='filters' class="dropdown">
-			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			filters <span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu">
-				<li onclick='filterCanvas(grayscale)'>grayscale</li>
-				<!--<li onclick='filterCanvas(sepia)'>sepia </li>-->
-				<li onclick='filterCanvas(saturate)'>saturate</li>
-				<li onclick='filterCanvas(swap)'>swap</li>
-				<!--<li onclick='filterCanvas(banded)'>banded</li>-->
-				<li onclick='filterCanvas(scary)'>scary</li>
-				<li onclick='filterCanvas(purpleChrome)'>purpleChrome</li>
-				<!--<li onclick='filterCanvas(purplizer)'>purplizer</li>-->
-				<li onclick='filterCanvas(heatwave)'>heatwave</li>
-				<li onclick='filterCanvas(areaColor)'>'painted'</li>
-				<!--<li onclick='filterCanvas(randomize)'>random shift</li>-->
-				<li onclick='filterCanvas(invert)'>invert</li>
-				<li onclick='filterCanvas(blurry)'>blur</li>
-				<li onclick='outline()'>outline</li>
-				<li onclick='defaultFisheye()'>fisheye</li>
-				<li onclick='reset()'>reset</button>
-			</ul>
-		</div>
-		
-		<div id='brushes' class="dropdown">
-			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			brushes <span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu">
-				<li id='defaultBrush' onclick='selectBrush(this.id)'>default</li>
-				<li id='radialGrad' onclick='selectBrush(this.id)'>radial gradient</li>
-				<li id='fisheyeBrush' onclick='selectBrush(this.id)'>fisheye brush</li>
-			</ul>
-		</div>
-			
-		<!-- color wheel -->
-		<canvas id='colorWheel' height='200' width='200'></canvas>
-			<p id='pickedColor'>color picked goes here</p> 
-		
-		<div id='playPanel'>
-			<p class='text-info'>play panel</p>
-			<button id='forward' class='btn' onclick = 'playForward()'> => </button>
-			<button id='stop' class='btn' onclick = 'stop()'> stop </button>
-			<button id='backward' class='btn' onclick='playBackward()'> <= </button>
-		</div>	
-	</div> <!--end toolbar ('#bar') -->
-	
-	<div class='col-md-6 col-lg-6 col-lg-offset-3 col-md-offset-3 col-sm-6 col-sm-offset-3'>
-		<div id='picture'>
-			<canvas id="canvas0" width='700' height='700' class='canvas'></canvas> 
-		</div>
+	<div class='row' id='header'>	
+		<ul>
+			<h1>sketch, animate, and edit pictures</h1>
+			<p>link to <a href='https://github.com/syncopika/funSketch'> source code </a></p>
+			<!-- <button id='toggleToolbar' class='btn' onclick='toggleToolbar()'> toggle toolbar </button> -->
+		</ul>
 	</div>
- 
-</div> <!-- end row-->
+	
+	<hr>
 
-<div id='footer' class='row'>
-</div>
+	<div class='row main'>		
+		
+		<!-- TOOLBAR -->
+		<div id='bar' class='col-lg-3 col-md-3'>
+
+			<h2>toolbar</h2>
+			<p>tips:</p>
+			<p>-use spacebar to add a new layer!</p>
+			<p>-use the arrow keys to go forward or backward!</p>
+	 
+			<div id='toolbar'>
+				<p class="text-info"> general tools </p>
+				
+				<div class='row'>
+					<button id='import' class='btn' onclick='fileHandler()'>import pic</button>
+					<button id='download' class='btn' onclick='download()'> download pic </button>
+					<input id="fileInput" style="display:none;" type="file">
+					<button id='clear' class='btn'>clear</button>
+					<button id='#fff' class ='color btn'>eraser</button>
+					<button id='addPage' onclick="addPage()" class='btn'>add another layer</button>
+					<button id ='clone' onclick="clonePage()" class='btn'> clone current layer</button>
+					<button class='btn' onclick='undo()'> undo </button>
+					<button id='rotate' class='btn'> rotate </button>
+				</div>
+				
+				<div class='row'>
+					<p class="text-info">change brush size</p>
+					<input class='brushSize' type='range' min='.5' max='15' step='.5' value='5'>
+					<span id='brushSizeValue'> 5.0 </span>
+				</div>
+			</div>
+			
+			<div class='row'>		
+				<div class='col-lg-6 col-md-6'>
+					<div id='filters' class="dropdown">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						filters <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li onclick='filterCanvas(grayscale)'>grayscale</li>
+							<!--<li onclick='filterCanvas(sepia)'>sepia </li>-->
+							<li onclick='filterCanvas(saturate)'>saturate</li>
+							<li onclick='filterCanvas(swap)'>swap</li>
+							<!--<li onclick='filterCanvas(banded)'>banded</li>-->
+							<li onclick='filterCanvas(scary)'>scary</li>
+							<li onclick='filterCanvas(purpleChrome)'>purpleChrome</li>
+							<!--<li onclick='filterCanvas(purplizer)'>purplizer</li>-->
+							<li onclick='filterCanvas(heatwave)'>heatwave</li>
+							<li onclick='filterCanvas(areaColor)'>'painted'</li>
+							<li onclick='filterCanvas(randomize)'>noise</li>
+							<li onclick='filterCanvas(invert)'>invert</li>
+							<li onclick='filterCanvas(blurry)'>blur</li>
+							<li onclick='outline()'>outline</li>
+							<li onclick='defaultFisheye()'>fisheye</li>
+							<li onclick='reset()'>reset</button>
+						</ul>
+					</div>
+				</div>
+					
+				<div class='col-lg-6 col-md-6'>
+					<div id='brushes' class="dropdown">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						brushes <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li id='defaultBrush' onclick='selectBrush(this.id)'>default</li>
+							<li id='radialGrad' onclick='selectBrush(this.id)'>radial gradient</li>
+							<li id='fisheyeBrush' onclick='selectBrush(this.id)'>fisheye brush</li>
+						</ul>
+					</div>
+				</div>				
+			</div>
+			
+			<div class='row adjCont'>					
+				<div class='col-lg-6 col-md-6'>
+					<!-- for adjusting contrast -->
+					<p class="text-info">contrast</p>
+						<p>
+						<span><button class='btn' id='incContrast' onclick='filterCanvas(inContrast)'>increase</button></span>
+						<span>&nbsp;</span>
+						<span><button class='btn' id='decContrast' onclick='filterCanvas(deContrast)'>decrease</button></span>
+						</p>
+				</div>
+				
+				<div class='col-lg-6 col-md-6'>
+					<!-- for adjusting brightness -->
+					<p class="text-info">brightness</p>
+						<p>
+						<span><button class='btn' id='incBrightness' onclick='filterCanvas(incBright)'>increase</button></span>
+						<span>&nbsp;</span>
+						<span><button class='btn' id='decBrightness' onclick='filterCanvas(decBright)'>decrease</button></span>
+						</p>
+				</div>
+			</div>
+			
+			<!-- color wheel -->
+			<canvas id='colorWheel' height='200' width='200'></canvas>
+				<p id='pickedColor'>color picked goes here</p> 
+			
+			<div id='playPanel'>
+				<p class='text-info'>play panel</p>
+				<button id='forward' class='btn' onclick = 'playForward()'> => </button>
+				<button id='stop' class='btn' onclick = 'stop()'> stop </button>
+				<button id='backward' class='btn' onclick='playBackward()'> <= </button>
+			</div>	
+		</div> <!--end toolbar ('#bar') -->
+		
+		
+		<!-- the canvas --> 
+		<div id='theCanvas' class='col-lg-9 col-md-9'>
+			
+			<div id='pageArrows'>
+			<ul>
+				<li id='down'><h2><=</h2></li>
+				<li><h2 id='count'></h2></li>
+				<li id='up'><h2>=></h2></li>
+			</ul>
+			</div>
+		
+			<div id='picture'>
+				<canvas id="canvas0" width='800' height='800' class='canvas'></canvas> 
+			</div>
+		</div>
+	 
+	</div> <!-- end row-->
+
+	<div id='footer' class='row'>
+	</div>
 
 </div> <!--close container -->
 
@@ -233,14 +279,6 @@ var height = theCanvas.height;
 //undoCounter provides a limit of 10 undos 
 //the limit is set arbitrarily by storePixelData();
 var undoCounter = undefined;
-
-//setting up for adding layers....
-var top = $('#canvas0').position()["top"];  
-var left = $('#canvas0').position()["left"];
-
-//default conditions for brush
-var curSize = 5;
-var curColor = '#000'; 
 
 //set initial canvas bg color to white!
 context.fillStyle = "#fff";

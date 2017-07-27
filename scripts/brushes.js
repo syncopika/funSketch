@@ -7,6 +7,10 @@
 //brushImg.crossOrigin = "Anonymous";
 //var brushOn = true;
 
+//default conditions for brush
+var curSize = 5;
+var curColor = '#000'; 
+
 //an object to keep track of which brush is active. if all are false,
 //the default brush is active.
 var brushes = {"radialGrad": false, "fisheyeBrush" : false, "eraser": false};
@@ -41,9 +45,6 @@ function resetMouse(){
 
 /********* BEGIN BRUSHES **************/
 
-/**
-* DEFAULT BRUSH
-*/
 function redraw(){
 	context.lineJoin = 'round';
 	for(var i = 0; i < clickX.length; i++){
@@ -65,6 +66,9 @@ function redraw(){
 	}
 }
 
+/**
+* DEFAULT BRUSH
+*/
 function defaultBrush(){
 	if(brushFlag === false){
 	var paint;

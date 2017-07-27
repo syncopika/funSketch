@@ -18,6 +18,10 @@ function addPage(){
 	
 	canvasClone.addClass('canvas');
 	canvasClone.attr('id', newId);
+
+	var top = $('#' + curCanvas).position().top;
+	var left = $('#canvas0').position().left;
+	
 	canvasClone.css({"position": "absolute", "top": top+"px", "left": left+"px", "z-index":0, "border": "1px black solid", "opacity":0});
 	canvasClone.appendTo('#picture');
 
@@ -33,6 +37,8 @@ function clonePage(){
 	
 	var canvasClone = $('#' + curCanvas).clone();//cloning the previous canvas only copies the canvas, not what's in it...
 	var newId = 'canvas' + page;
+	var top = $('#canvas0').position().top;
+	var left = $('#canvas0').position().left;
 	
 	layerArray.push(newId);
 	canvasClone.addClass('canvas');

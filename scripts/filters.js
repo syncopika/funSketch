@@ -21,7 +21,7 @@ function getFile(e){
 	}
 	//when the image loads, put it on the canvas.
 	img.onload = function(){
-		context.drawImage(img, 0, 0, 700, 700); //figure out how to get canvas.height here to work..?
+		context.drawImage(img, 0, 0, width, height);
 		//log pixels of picture (this is for my drawing/animating app)
 		storePixelData();
 		//reset the value for the HTML input file thing so that you can use the same pic for consecutive frames!  
@@ -41,7 +41,7 @@ function getFile(e){
 //general filtering function. pass any kind of filter through this function.
 //bind to onclick in html! 
 function filterCanvas(filter){
-	var imgData = context.getImageData(0, 0, 700, 700);
+	var imgData = context.getImageData(0, 0, width, height);
 	filter(imgData);
 	context.putImageData(imgData, 0, 0);
 }
@@ -332,6 +332,7 @@ function invert(pixels){
 function blurry(pixels){
 
 	var d = pixels.data;
+	var maximum = 4*width;
 
 	for(i = 0; i < d.length; i+=4){
 		//if these conditions are not undefined, then that pixel must exist.
@@ -341,16 +342,16 @@ function blurry(pixels){
 		//left pixel
 		var cond2 = (d[i-4] == undefined);
 		//pixel below
-		var cond3 = (d[i+2800] == undefined);
+		var cond3 = (d[i+(maximum)] == undefined);
 		//pixel above
-		var cond4 = (d[i-2800] == undefined);
+		var cond4 = (d[i-(maximum)] == undefined);
 		
 		if(!cond1 && !cond2 && !cond3 && !cond4){
 		
-			var newR = (d[i+4]*.2 + d[i-4]*.2 + d[i+2800]*.2 + d[i-2800]*.2 + d[i]*.2);
-			var newG = (d[i+5]*.2 + d[i-3]*.2 + d[i+2801]*.2 + d[i-2799]*.2 + d[i+1]*.2);
-			var newB = (d[i+6]*.2 + d[i-2]*.2 + d[i+2802]*.2 + d[i-2798]*.2 + d[i+2]*.2);
-			var newA = (d[i+7]*.2 + d[i-1]*.2 + d[i+2803]*.2 + d[i-2797]*.2 + d[i+3]*.2);
+			var newR = (d[i+4]*.2 + d[i-4]*.2 + d[i+(maximum)]*.2 + d[i-(maximum)]*.2 + d[i]*.2);
+			var newG = (d[i+5]*.2 + d[i-3]*.2 + d[i+(maximum+1)]*.2 + d[i-(maximum-1)]*.2 + d[i+1]*.2);
+			var newB = (d[i+6]*.2 + d[i-2]*.2 + d[i+(maximum+2)]*.2 + d[i-(maximum-2)]*.2 + d[i+2]*.2);
+			var newA = (d[i+7]*.2 + d[i-1]*.2 + d[i+(maximum+3)]*.2 + d[i-(maximum-3)]*.2 + d[i+3]*.2);
 		
 			d[i] = newR;
 			d[i+1] = newG;
@@ -369,11 +370,12 @@ return pixels;
 * forming a small, slightly angled line. all these lines then make up an outline.
 */
 function outline(){
-	var imgData = context.getImageData(0, 0, 700, 700);
+	var imgData = context.getImageData(0, 0, width, height);
 	var d = imgData.data;
 	var colCounter = 0;
 	var rowCounter = 0;
 	var count = 0;
+	var maximum = 4*width;
 	
 	context.clearRect(0, 0, width, height);
 	context.fillStyle = "#FFF";
@@ -388,22 +390,22 @@ function outline(){
 		context.lineJoin = 'round';
 		context.lineWidth = 2;
 			
-		var tnr = d[i-2800];
-		var tng = d[i-2799];
-		var tnb = d[i-2798];
+		var tnr = d[i-(maximum)];
+		var tng = d[i-(maximum - 1)];
+		var tnb = d[i-(maximum - 2)];
 		
 		//withinRange function is defined with the FISHEYE function
-		if(d[i-2800] !== undefined && !withinRange(r, g, b, tnr, tng, tnb, 5)){
+		if(d[i-(maximum)] !== undefined && !withinRange(r, g, b, tnr, tng, tnb, 5)){
 			if(count < 100){
 				//console.log('colCounter: ' + colCounter + ", rowCounter: " + rowCounter);
 				count++;
 			}
 			makePath(colCounter, rowCounter);
 		}
-		if(i%2800 == 0){
+		if(i%(maximum) == 0){
 			rowCounter++;
 		}
-		if(colCounter >= 700){
+		if(colCounter >= width){
 			colCounter = 0;
 		}
 		colCounter++;
@@ -536,15 +538,18 @@ function mobileFisheye(radius, xPos, yPos){
 /**** END FISHEYE *****/
 
 
-/**
-*   AREA COLOR (more like 'painter?')
-//the idea is to find an area of pixels that are similarly colored, 
-//and then making that area one solid color
-//it also tends to remove dark outlines so that there aren't any 
-//distinct boundaries
-//it is supposed to give a sort of 'painted' look to it. 
-//still not perfect right now, but it's definitely in the right direction
-*/
+/******
+
+AREA COLOR (more like 'painter?')
+
+the idea is to find an area of pixels that are similarly colored, 
+and then making that area one solid color
+it also tends to remove dark outlines so that there aren't any 
+distinct boundaries
+it is supposed to give a sort of 'painted' look to it. 
+still not perfect right now, but it's definitely in the right direction
+
+*****/
 //helper function
 //this function is also used for the OUTLINE filter
 function withinRange(r, g, b, or, og, ob, rangeVal){
@@ -565,6 +570,7 @@ function areaColor(pixels){
 	
 	var d = pixels.data;
 	var copy = new Uint8ClampedArray(d);
+	var maximum = 4*width;
 
 	for(var i = 0; i < d.length; i+=4){
 		//current pixel
@@ -580,46 +586,46 @@ function areaColor(pixels){
 		var rng = copy[i+5];
 		var rnb = copy[i+6];
 		//top neighbor's color
-		var tnr = copy[i-2800];
-		var tng = copy[i-2799];
-		var tnb = copy[i-2798];
+		var tnr = copy[i-(maximum)];
+		var tng = copy[i-(maximum-1)];
+		var tnb = copy[i-(maximum-2)];
 		//bottom neighbor's color
-		var bnr = copy[i+2800];
-		var bng = copy[i+2801];
-		var bnb = copy[i+2802];
+		var bnr = copy[i+(maximum)];
+		var bng = copy[i+(maximum+1)];
+		var bnb = copy[i+(maximum+2)];
 		//top right
-		var trr = copy[i-2796];
-		var trg = copy[i-2795];
-		var trb = copy[i-2794];
+		var trr = copy[i-(maximum-4)];
+		var trg = copy[i-(maximum-5)];
+		var trb = copy[i-(maximum-6)];
 		//top left
-		var tlr = copy[i-2804];
-		var tlg = copy[i-2803];
-		var tlb = copy[i-2802];
+		var tlr = copy[i-(maximum+4)];
+		var tlg = copy[i-(maximum+3)];
+		var tlb = copy[i-(maximum+2)];
 		//below left
-		var blr = copy[i+2796];
-		var blg = copy[i+2797];
-		var blb = copy[i+2798];
+		var blr = copy[i+(maximum-4)];
+		var blg = copy[i+(maximum-3)];
+		var blb = copy[i+(maximum-2)];
 		//below right
-		var brr = copy[i+2804];
-		var brg = copy[i+2805];
-		var brb = copy[i+2806];
+		var brr = copy[i+(maximum+4)];
+		var brg = copy[i+(maximum+5)];
+		var brb = copy[i+(maximum+6)];
 
 		//right pixel
 		var cond1 = (d[i+4] === undefined);
 		//left pixel
 		var cond2 = (d[i-4] === undefined);
 		//pixel below
-		var cond3 = (d[i+2800] === undefined);
+		var cond3 = (d[i+(maximum)] === undefined);
 		//pixel above
-		var cond4 = (d[i-2800] === undefined);
+		var cond4 = (d[i-(maximum)] === undefined);
 		//top left
-		var cond5 = (d[i-2804] === undefined);
+		var cond5 = (d[i-(maximum+4)] === undefined);
 		//top right
-		var cond6 = (d[i-2796] === undefined);
+		var cond6 = (d[i-(maximum-4)] === undefined);
 		//below right
-		var cond7 = (d[i+2804] === undefined);
+		var cond7 = (d[i+(maximum+4)] === undefined);
 		//below left
-		var cond8 = (d[i+2796] === undefined);
+		var cond8 = (d[i+(maximum-4)] === undefined);
 			
 		if(!cond1 && !cond2 && !cond3 && !cond4 && !cond5 && !cond6 && !cond7 && !cond8){		
 			//if next neighbor over is a completely different color, stop and move on
@@ -629,9 +635,9 @@ function areaColor(pixels){
 			//next neighbor over (top right)
 			//using the current data, instead of the copy which holds the original color data,
 			//seems to provide closer to my desired effect
-			var trrr = d[i-2792];
-			var trrg = d[i-2791];
-			var trrb = d[i-2790];
+			var trrr = d[i-(maximum-8)];
+			var trrg = d[i-(maximum-9)];
+			var trrb = d[i-(maximum-10)];
 			/*
 			//next neighbor over (bottom right)
 			var brrr = d[i+2808];
@@ -666,29 +672,29 @@ function areaColor(pixels){
 				   d[i-3] = g;
 				   d[i-2] = b;
 				   //above
-				   d[i-2800] = r;
-				   d[i-2799] = g;
-				   d[i-2798] = b;
+				   d[i-(maximum)] = r;
+				   d[i-(maximum-1)] = g;
+				   d[i-(maximum-2)] = b;
 				   //below
-				   d[i+2800] = r;
-				   d[i+2801] = g;
-				   d[i+2802] = b;	   
+				   d[i+(maximum)] = r;
+				   d[i+(maximum+1)] = g;
+				   d[i+(maximum+2)] = b;	   
 				   //above left
-				   d[i-2796] = r;
-				   d[i-2795] = g;
-				   d[i-2794] = b;	  
+				   d[i-(maximum-4)] = r;
+				   d[i-(maximum-5)] = g;
+				   d[i-(maximum-6)] = b;	  
 				  //above right
-				   d[i-2804] = r;
-				   d[i-2803] = g;
-				   d[i-2802] = b;	  
+				   d[i-(maximum+4)] = r;
+				   d[i-(maximum+3)] = g;
+				   d[i-(maximum+2)] = b;	  
 				   //below right
-				   d[i+2804] = r;
-				   d[i+2805] = g;
-				   d[i+2806] = b;
+				   d[i+(maximum+4)] = r;
+				   d[i+(maximum+5)] = g;
+				   d[i+(maximum+6)] = b;
 				   //below left
-				   d[i+2796] = r;
-				   d[i+2797] = g;
-				   d[i+2798] = b;
+				   d[i+(maximum-4)] = r;
+				   d[i+(maximum-3)] = g;
+				   d[i+(maximum-2)] = b;
 			   }
 		}
 	}

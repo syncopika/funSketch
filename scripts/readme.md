@@ -6,7 +6,7 @@ has a default, radial gradient, and fisheye brush.
 ***filters.js***    
 has many image filters.    
         
-***animation.js***
+***animation.js***    
 has functions that are relevant to animating.
         
 ***experiments.js***    

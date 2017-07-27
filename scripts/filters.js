@@ -148,6 +148,9 @@ function banded(pixels){
 /**
 * PURPLE CHROME FILTER
 * this function creates a light purplish 'chrome' effect
+
+  hmm, seemed to stop working after adjusting canvas to 800x800 from 700x700
+
 */
 function purpleChrome(pixels){
 	var d = pixels.data;

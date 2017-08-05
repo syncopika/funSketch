@@ -8,6 +8,3 @@ has many image filters.
         
 ***animation.js***    
 has functions that are relevant to animating.
-        
-***experiments.js***    
-trying to come up with some new functions.    

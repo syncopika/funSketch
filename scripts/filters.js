@@ -21,6 +21,28 @@ function getFile(e){
 	}
 	//when the image loads, put it on the canvas.
 	img.onload = function(){
+		
+		// change current canvas' width and height according to imported picture
+		// to keep proportion 
+		// i.e. if width is at least 100px more than height, scale the current canvas'
+		// height back by multiplying .9 to 800. 
+		// console.log(img.width);
+		// console.log(img.height);
+
+		if((img.width - img.height) >= 100){
+			var currentCanvas = document.getElementById(curCanvas);
+			currentCanvas.height = Math.floor(800 * .9);
+			currentCanvas.width = Math.floor(800 * 1.1);
+			height = currentCanvas.height;
+			width = currentCanvas.width;
+		}else{
+			var currentCanvas = document.getElementById(curCanvas);
+			height = 800; // default
+			width = 800;  // default
+			currentCanvas.height = height;
+			currentCanvas.width = width;
+		}
+		
 		context.drawImage(img, 0, 0, width, height);
 		//log pixels of picture (this is for my drawing/animating app)
 		storePixelData();

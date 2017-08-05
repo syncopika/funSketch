@@ -23,11 +23,12 @@ function addPage(){
 	var left = $('#canvas0').position().left;
 	
 	canvasClone.css({"position": "absolute", "top": top+"px", "left": left+"px", "z-index":0, "border": "1px black solid", "opacity":0});
+	canvasClone.attr({"width": 800, "height": 800}); // let 800 x 800 be default size 
 	canvasClone.appendTo('#picture');
 
 	//set canvas bg color to white!
 	$('#' + newId)[0].getContext('2d').fillStyle = "#FFFFFF";
-	$('#' + newId)[0].getContext('2d').fillRect(0, 0, width, height);
+	$('#' + newId)[0].getContext('2d').fillRect(0, 0, 800, 800);
 }
 
 //clone the previous canvas
@@ -48,10 +49,10 @@ function clonePage(){
 
 	//set canvas bg color to white!
 	$('#' + newId)[0].getContext('2d').fillStyle = "#FFFFFF";
-	$('#' + newId)[0].getContext('2d').fillRect(0, 0, width, height);
+	$('#' + newId)[0].getContext('2d').fillRect(0, 0, context.canvas.width, context.canvas.height);
 
 	//get image data for frame you want to clone
-	var canvasToClone = context.getImageData(0, 0, width, height);
+	var canvasToClone = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
 
 	//assign context to new canvas
 	context = document.getElementById(newId).getContext("2d");

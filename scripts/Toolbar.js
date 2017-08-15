@@ -4,6 +4,10 @@
 // pass in a super canvas and brush object
 function Toolbar(canvas, brush){
 
+	// keep this variable for storing the most recent imported image
+	// can be useful for resetting image
+	var recentImage;
+	
 	this.up = function(){
 		if(canvas.currentIndex + 1 < canvas.canvasList.length){
 			// move to next canvas
@@ -272,8 +276,15 @@ function Toolbar(canvas, brush){
 					var width;
 					
 					if((img.width - img.height) >= 100){
+						// if image is wider than it is tall
 						currentCanvas.setAttribute('height', Math.floor(800 * .9));
 						currentCanvas.setAttribute('width', Math.floor(800 * 1.1));
+						height = currentCanvas.height;
+						width = currentCanvas.width;
+					}else if((img.height - img.width) >= 200){
+						// if image is taller than it is wide
+						currentCanvas.setAttribute('width', Math.floor(800 * .9));
+						currentCanvas.setAttribute('height', Math.floor(800 * 1.1));
 						height = currentCanvas.height;
 						width = currentCanvas.width;
 					}else{
@@ -284,6 +295,9 @@ function Toolbar(canvas, brush){
 						currentCanvas.setAttribute('width', width);
 					}
 					context.drawImage(img, 0, 0, width, height);
+					
+					// assign recentImage variable the image 
+					recentImage = img;
 					
 					// add the current image to snapshots 
 					brush.currentCanvasSnapshots.push(context.getImageData(0, 0, width, height));
@@ -299,6 +313,18 @@ function Toolbar(canvas, brush){
 				reader.readAsDataURL(file);
 			}			
 		});
+	}
+	
+	/***
+		reset the canvas to most recent imported image 
+	***/
+	this.resetImage = function(){
+		if(recentImage){
+			var context = canvas.currentCanvas.getContext("2d");
+			var height = canvas.currentCanvas.getAttribute("height");
+			var width = canvas.currentCanvas.getAttribute("width");
+			context.drawImage(recentImage, 0, 0, width, height);
+		}
 	}
 	
 	/***

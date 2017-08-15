@@ -53,13 +53,6 @@
 		width: 20%;
 		float: left;
 	}
-	li{
-		list-style-type: none;
-	}
-	ul{
-		display: none;
-		padding: 0;
-	}
 	#filters, #brushes{
 		width: 200px;
 		height: auto;
@@ -70,6 +63,16 @@
 	#colorPicker{
 		margin-top: 15%;
 		margin-bottom: 15%;
+	}
+	li{
+		list-style-type: none;
+	}
+	ul{
+		display: none;
+		padding: 0;
+	}
+	a{
+		text-decoration: none;
 	}
 </style>
 
@@ -115,6 +118,7 @@
 			<li onclick='newFilters.outline()'> outline </li>
 			<li onclick='newFilters.defaultFisheye()'> fisheye </li>
 			<li onclick='newFilters.filterCanvas(newFilters.areaColor)'> painted </li>
+			<li style="color: #ff3232" onclick='newToolbar.resetImage()'> reset </li>
 		</ul>
 	</div>
 	
@@ -143,7 +147,7 @@
 
 <div id='footer'>
 	<hr>
-	<p> n.c.h works 2017 | source </p>
+	<p> n.c.h works 2017 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
 </div>
 	
 </body>

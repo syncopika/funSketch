@@ -1,385 +1,202 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html>
 
 <head>
-	<title>funSketch</title>
+	<title> funSketch! </title>
+	<link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-	<script src="scripts/brushes.js"></script>
-	<script src="scripts/filters.js"></script>
-	<script src="scripts/animation.js"></script>
-	<script src="scripts/toolbar.js"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script src="scripts/SuperCanvas.js"></script>
+	<script src="scripts/Brush.js"></script>
+	<script src="scripts/Toolbar.js"></script>
+	<script src="scripts/Filters.js"></script>
 </head>
 
 <style>
-
-body{
-	background-color: rgb(41,46,55);
-	color: #adafba;
-}
-
-#header{
-	text-align: center;
-}
-
-#bar{
-	/* transform: translateX(-300%);  this was for toggling the toolbar */
-	top: 3%;
-	transition: .4s;
-	position: absolute;
-	text-align: center;
-    border: #000 solid 1px; 
-}
-
-#toolbar{
-	padding: 2px;
-	text-align: center;
-	color: #9699a6;
-}
-
-#toolbar button{
-	margin-bottom: 5px;
-	padding-left: 2px;
-	padding-right: 2px;
-}
-
-#canvas0{
-	border: 1px black solid;
-}
-
-li{
-	display: inline-block;
-}
-
-#picture{
-	width: 750px;
-	margin:0 auto;
-	text-align:center;
-}
-
-#playPanel{
-	margin: 0 auto;
-	margin-bottom: 30px;
-	text-align:center;
-}
-
-#footer{
-	height: 90px;
-}
-
-#colorWheel{
-	margin: 0 auto;
-	display: block;
-}
-
-#filters, #brushes{
-	width: 50%;
-	margin: 0 auto;
-	margin-bottom: 5%;
-}
-
-
-.dropdown-menu{
-	left: 0;
-	right: 0;
-}
-
-.dropdown-toggle{
-	width: 100%;
-}
-
-.dropdown-menu>li{
-	display: block;
-	text-align: center;
-	color: #000;
-}
-
-.dropdown-menu>li:hover{
-	background-color: #dddeee;
-}
-
-.adjCont button{
-	height: 22px;
-	padding: 3px 3px 3px 3px;
-	font-size: 12px;
-}
-
-button{
-	color: #000;
-}
-
-#bar{
-	margin-top: 175px;
-	margin-left: 2%;
-}
-#theCanvas{
-	margin-left: 24%;
-	margin-bottom: 20px;
-}
-#pageArrows{
-	text-align: center;
-}
-
+	html{
+		display: none;
+	}
+	body, button{
+		font-family: 'Merriweather', serif;
+	}
+	#buttons{
+		text-align: center;
+		border: 1px solid #000;
+	}
+	button{
+		margin: 3px;
+	}
+	#toolbarArea{
+		width: 400px;
+		text-align: center;
+		margin-left: 50px;
+	}
+	#canvasArea{
+		margin: 25px auto;
+		width: 40%;
+		padding-left: 180px;
+		height: auto;
+	}
+	#pageCount{
+		text-align: center;
+	}
+	#pageCount h3{
+		display: inline-block;
+	}
+	#count{
+		padding-left: 50px;
+		padding-right: 50px;
+	}
+	#footer{
+		clear: both;
+		margin-top: 100px;
+		width: 20%;
+		float: left;
+	}
+	li{
+		list-style-type: none;
+	}
+	ul{
+		display: none;
+		padding: 0;
+	}
+	#filters, #brushes{
+		width: 200px;
+		height: auto;
+		text-align: center;
+		border: 1px solid #000;
+		margin: 0 auto;
+	}
+	#colorPicker{
+		margin-top: 15%;
+		margin-bottom: 15%;
+	}
 </style>
 
 <body>
-<div class='container-fluid'>
 
-	<div class='row' id='header'>	
+<div id='canvasArea'>
+	<div id='pageCount'>
+			<h3> << </h3>
+			<h3 id='count'> 1 </h3>
+			<h3> >> </h3>
+	</div>
+</div>
+
+<div id='toolbarArea'>
+
+	<h3 id='title'> funSketch: draw, edit, and animate! </h3>
+
+	<p> tip! use the spacebar to create a new frame. use the left and right arrow keys to move to the previous or next frame! </p>
+
+	<div id='buttons'>
+		<button id='addCanvas' onclick='newCanvas.setupNewCanvas()'>add a new canvas</button>
+		<button id='copyCanvas' onclick='newCanvas.copyCanvas()'>copy current canvas</button>
+		<button id='clearCanvas'>clear the current canvas</button>
+		<button id='importImage'> import image </button>
+		<button id='rotateCanvasImage'>rotate image</button>
+		<button id='download'> download current frame </button>
+		<button id='undo'> undo </button>
+	</div>
+	
+	<br>
+	
+	<div id='filters'>
+		<p id='filterSelect'> filters &#9660; </p>
 		<ul>
-			<h2>sketch, animate, and edit pictures</h2>
-			<p> <a href='https://github.com/syncopika/funSketch'> source code </a></p>
-			<!-- <button id='toggleToolbar' class='btn' onclick='toggleToolbar()'> toggle toolbar </button> -->
+			<li onclick='newFilters.filterCanvas(newFilters.grayscale)'> grayscale </li>
+			<li onclick='newFilters.filterCanvas(newFilters.saturate)'> saturate </li>
+			<li onclick='newFilters.filterCanvas(newFilters.swap)'> colorswap </li>
+			<li onclick='newFilters.filterCanvas(newFilters.scary)'> scary </li>
+			<li onclick='newFilters.filterCanvas(newFilters.heatwave)'> heatwave </li>
+			<li onclick='newFilters.filterCanvas(newFilters.randomize)'> noise </li>
+			<li onclick='newFilters.filterCanvas(newFilters.invert)'> invert </li>
+			<li onclick='newFilters.filterCanvas(newFilters.blurry)'> blur </li>
+			<li onclick='newFilters.outline()'> outline </li>
+			<li onclick='newFilters.defaultFisheye()'> fisheye </li>
+			<li onclick='newFilters.filterCanvas(newFilters.areaColor)'> painted </li>
 		</ul>
 	</div>
 	
-	<hr>
-
-	<div class='row main'>		
-		
-		<!-- TOOLBAR -->
-		<div id='bar' class='col-lg-3 col-md-3'>
-
-			<h2>toolbar</h2>
-			<p>tips:</p>
-			<p>-use spacebar to add a new layer!</p>
-			<p>-use the arrow keys to go forward or backward!</p>
-	 
-			<div id='toolbar'>
-				<p class="text-info"> general tools </p>
-				
-				<div class='row'>
-					<button id='import' class='btn' onclick='fileHandler()'>import pic</button>
-					<button id='download' class='btn' onclick='download()'> download pic </button>
-					<input id="fileInput" style="display:none;" type="file">
-					<button id='clear' class='btn'>clear</button>
-					<button id='#fff' class ='color btn'>eraser</button>
-					<button id='addPage' onclick="addPage()" class='btn'>add another layer</button>
-					<button id ='clone' onclick="clonePage()" class='btn'> clone current layer</button>
-					<button class='btn' onclick='undo()'> undo </button>
-					<button id='rotate' class='btn'> rotate </button>
-				</div>
-				
-				<div class='row'>
-					<p class="text-info">change brush size</p>
-					<input class='brushSize' type='range' min='.5' max='15' step='.5' value='5'>
-					<span id='brushSizeValue'> 5.0 </span>
-				</div>
-			</div>
-			
-			<div class='row'>		
-				<div class='col-lg-6 col-md-6'>
-					<div id='filters' class="dropdown">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						filters <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu">
-							<li onclick='filterCanvas(grayscale)'>grayscale</li>
-							<!--<li onclick='filterCanvas(sepia)'>sepia </li>-->
-							<li onclick='filterCanvas(saturate)'>saturate</li>
-							<li onclick='filterCanvas(swap)'>swap</li>
-							<!--<li onclick='filterCanvas(banded)'>banded</li>-->
-							<li onclick='filterCanvas(scary)'>scary</li>
-							<!--<li onclick='filterCanvas(purpleChrome)'>purpleChrome</li>-->
-							<!--<li onclick='filterCanvas(purplizer)'>purplizer</li>-->
-							<li onclick='filterCanvas(heatwave)'>heatwave</li>
-							<li onclick='filterCanvas(areaColor)'>'painted'</li>
-							<li onclick='filterCanvas(randomize)'>noise</li>
-							<li onclick='filterCanvas(invert)'>invert</li>
-							<li onclick='filterCanvas(blurry)'>blur</li>
-							<li onclick='outline()'>outline</li>
-							<li onclick='defaultFisheye()'>fisheye</li>
-							<li onclick='reset()'>reset</button>
-						</ul>
-					</div>
-				</div>
-					
-				<div class='col-lg-6 col-md-6'>
-					<div id='brushes' class="dropdown">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						brushes <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu">
-							<li id='defaultBrush' onclick='selectBrush(this.id)'>default</li>
-							<li id='radialGrad' onclick='selectBrush(this.id)'>radial gradient</li>
-							<li id='fisheyeBrush' onclick='selectBrush(this.id)'>fisheye brush</li>
-						</ul>
-					</div>
-				</div>				
-			</div>
-			
-			<div class='row adjCont'>					
-				<div class='col-lg-6 col-md-6'>
-					<!-- for adjusting contrast -->
-					<p class="text-info">contrast</p>
-						<p>
-						<span><button class='btn' id='incContrast' onclick='filterCanvas(inContrast)'>increase</button></span>
-						<span>&nbsp;</span>
-						<span><button class='btn' id='decContrast' onclick='filterCanvas(deContrast)'>decrease</button></span>
-						</p>
-				</div>
-				
-				<div class='col-lg-6 col-md-6'>
-					<!-- for adjusting brightness -->
-					<p class="text-info">brightness</p>
-						<p>
-						<span><button class='btn' id='incBrightness' onclick='filterCanvas(incBright)'>increase</button></span>
-						<span>&nbsp;</span>
-						<span><button class='btn' id='decBrightness' onclick='filterCanvas(decBright)'>decrease</button></span>
-						</p>
-				</div>
-			</div>
-			
-			<!-- color wheel -->
-			<canvas id='colorWheel' height='200' width='200'></canvas>
-				<p id='pickedColor'>color picked goes here</p> 
-			
-			<div id='playPanel'>
-				<p class='text-info'>play panel</p>
-				<button id='forward' class='btn' onclick = 'playForward()'> => </button>
-				<button id='stop' class='btn' onclick = 'stop()'> stop </button>
-				<button id='backward' class='btn' onclick='playBackward()'> <= </button>
-			</div>	
-		</div> <!--end toolbar ('#bar') -->
-		
-		
-		<!-- the canvas --> 
-		<div id='theCanvas' class='col-lg-9 col-md-9'>
-			
-			<div id='pageArrows'>
-			<ul>
-				<li id='down'><h2><=</h2></li>
-				<li><h2 id='count'></h2></li>
-				<li id='up'><h2>=></h2></li>
-			</ul>
-			</div>
-		
-			<div id='picture'>
-				<canvas id="canvas0" width='800' height='800' class='canvas'></canvas> 
-			</div>
-		</div>
-	 
-	</div> <!-- end row-->
-
-	<div id='footer' class='row'>
+	<br>
+	
+	<div id='brushes'>
+		<p id='brushSelect'> brushes &#9660; </p>
+		<ul>
+			<li onclick='newBrush.defaultBrush()'> default brush </li>
+			<li onclick='newBrush.radialGradBrush()'> radial gradient brush </li>
+		</ul>
 	</div>
+	
+	<br>
+	
+	<div id='adjustBrushSize'>
+		<p class="text-info">change brush size</p>
+		<input id='brushSize' type='range' min='.5' max='15' step='.5' value='5' oninput='newBrush.changeBrushSize(this.value); showSize()'>
+		<span id='brushSizeValue'> 5 </span>
+	</div>
+	
+	<div id='colorPicker'>
+	</div>
+</div>
 
-</div> <!--close container -->
 
-<script> 
-var layerArray = ['canvas0'];
-var curPage = 0;
-var curCanvas = layerArray[curPage];
+<div id='footer'>
+	<hr>
+	<p> n.c.h works 2017 | source </p>
+</div>
+	
+</body>
 
-var theCanvas = document.getElementById(curCanvas); 
-var context = theCanvas.getContext("2d");
-var width = theCanvas.width;
-var height = theCanvas.height;
 
-//undoCounter provides a limit of 10 undos 
-//the limit is set arbitrarily by storePixelData();
-var undoCounter = undefined;
+<script>
 
-//set initial canvas bg color to white!
-context.fillStyle = "#fff";
-context.fillRect(0, 0, width, height);
+// set up initial canvas
+var newCanvas = new SuperCanvas('canvasArea');
+newCanvas.setupNewCanvas();
 
-//#picture is the container of the canvas, so I used #picture to get the top and left coordinates
-var offsetTop = $('#picture').position()["top"];  
-var offsetLeft = $('#picture').position()["left"];
+// set up brush
+var newBrush = new Brush(newCanvas);
+newBrush.defaultBrush();
 
-//stuff for the page-count thing at the top
-var page = 0;
-$('#count').html(curPage);//make sure 0 shows up when page loads
+// set up toolbar 
+var newToolbar = new Toolbar(newCanvas, newBrush);
+newToolbar.setKeyDown(document, 'count');	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
+newToolbar.createColorWheel('colorPicker', 200);
+newToolbar.setClearCanvas('clearCanvas');
+newToolbar.rotateImage('rotateCanvasImage');
+newToolbar.undo('undo');
+newToolbar.download('download');
+newToolbar.importImage('importImage');
 
-//temp arrays store pixel data for current canvas. if you switch frames, these arrays clear.  
-var clickX = [];
-var clickY = [];
-var clickDrag = [];
-var clickColor = [];
-var clickSize = [];
+// set up filters object
+var newFilters = new Filters(newCanvas, newBrush);
 
-//new arrays for the click arrays
-function clearClick(){
-	clickX = [];
-	clickY = [];
-	clickDrag = [];
-	clickColor = [];
-	clickSize = [];
-}
+document.getElementById('filterSelect').addEventListener('click', function(){ showOptions('filters') });
+document.getElementById('brushSelect').addEventListener('click', function(){ showOptions('brushes') });
 
-//collect info where each pixel is to be drawn on canvas
-function addClick(x, y, dragging){
-	clickX.push(x);
-	clickY.push(y);
-	clickDrag.push(dragging);
-	clickColor.push(curColor);
-	clickSize.push(curSize);
-}
-
-//make the colorWheel
-var colorPicked; // special variable that is an Uint4 clamped array 
-makeColorWheel('colorWheel', 90);
-
-//pick a color from color wheel
-displayColorEnabled('pickedColor', 'colorWheel');
-
-// enable rotation
-addRotate('rotate');
-
-// enable canvas clear
-clearCanvasEnabled('clear');
-
-//brush size changer
-var brushSize = document.querySelector('.brushSize');
-brushSize.oninput = function(){
-	curSize = brushSize.value;
-	$('#brushSizeValue').html(brushSize.value);
-}
-
-//prevent dropdown from closing after one click
-$('.dropdown-menu > li').click(function(e){
-	e.stopPropagation();
-})
-
-//toggle toolbar
-var showToolbar = false;
-function toggleToolbar(){
-	if(!showToolbar){
-		$('#bar').css('transform', 'translateX(0)');
-		showToolbar = true;
+// show options when clicking on filters or brushes 
+function showOptions(category){
+	var el = document.getElementById(category);
+	var child = el.children[1]; // skip the p element and get the ul element
+	if(child.style.display !== "block" ){
+		child.style.display = "block";
 	}else{
-		$('#bar').css('transform', 'translateX(-300%)');
-		showToolbar = false;
+		child.style.display = "none";
+		el.style.marginBottom  = 0;
 	}
 }
 
-//define draw 
-function draw(){
-	// set up brushes 
-	defaultBrush();
-	radialGradBrush();
-	fisheyeBrush();
-}//end draw function
+// update brush size display
+function showSize(){
+	document.getElementById('brushSizeValue').textContent = document.getElementById('brushSize').value;
+}
 
-
-//for eraser
-$(".color").click(function(){
-	selectBrush("defaultBrush");
-	curColor = this.id;
-});
-
-
+// prevent FOUC
 $(document).ready(function(){
-	$('.dropdown-toggle').dropdown();
-	draw();
+	$('html').css('display', 'block');
 });
-//end
-
 </script>
-
-</body>
 
 
 </html>

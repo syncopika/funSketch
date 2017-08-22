@@ -1,19 +1,21 @@
 
-// super canvas class 
-// the instance variables hold the default attributes for any canvas. 
-// it also holds important information like a list of all the canvas instances.
-// setupNewCanvas should be used to create a new canvas instance 
-// @param container = the parent element ID (i.e. of a div) to append the canvas elements to 
+/***
+	super canvas class 
+	the instance variables hold the default attributes for any canvas. 
+	it also holds important information like a list of all the canvas instances.
+	setupNewCanvas should be used to create a new canvas instance 
+	@param container = the parent element ID (i.e. of a div) to append the canvas elements to 
+***/
+	
 function SuperCanvas(container){
 
 	this.count = 0; 					// keep count of canvasses
 	this.width = 800; 					// default value
 	this.height = 800; 
 	this.currentIndex = 0;
-	this.canvasList = []; 				 // keep a list of all canvas instances
+	this.canvasList = []; 				// keep a list of all canvas instances
 	this.currentCanvas;					// the current, active canvas being looked at (reference to html element)
 	this.container = container;			// this is the html container to hold all the canvas elements
-	this.play;							// used as a counter for the animation playback features
 	
 	// set up a new canvas element
 	// makes the new canvas the current canvas 

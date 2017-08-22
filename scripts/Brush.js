@@ -1,8 +1,9 @@
-// brush class
-
-// pass in an instance of the SuperCanvas class as an argument
-// the canvas argument will have a reference to the current canvas so that
-// only the current canvas will be a target for the brush
+/***
+	brush class
+	pass in an instance of the SuperCanvas class as an argument
+	the canvas argument will have a reference to the current canvas so that
+	only the current canvas will be a target for the brush
+***/
 function Brush(canvas){
 
 	this.previousCanvas = undefined;	

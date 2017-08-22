@@ -5,11 +5,17 @@
 <head>
 	<title> funSketch! </title>
 	<link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="scripts/SuperCanvas.js"></script>
-	<script src="scripts/Brush.js"></script>
-	<script src="scripts/Toolbar.js"></script>
-	<script src="scripts/Filters.js"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script type="text/javascript" src="scripts/SuperCanvas.js"></script>
+	<script type="text/javascript" src="scripts/Brush.js"></script>
+	<script type="text/javascript" src="scripts/Toolbar.js"></script>
+	<script type="text/javascript" src="scripts/Filters.js"></script>
+	<!-- web worker file needs to be in same directory as html file it's working on!
+		 https://stackoverflow.com/questions/30336685/404-error-when-trying-to-register-serviceworker
+	-->
+	<script type="text/javascript" src="gif.worker.js"></script>
+	<script type="text/javascript" src="scripts/gif.js"></script>
+	
 </head>
 
 <style>
@@ -32,7 +38,7 @@
 		margin-left: 50px;
 	}
 	#canvasArea{
-		margin: 25px auto;
+		margin: 20px auto;
 		width: 40%;
 		padding-left: 180px;
 		height: auto;
@@ -54,25 +60,36 @@
 		float: left;
 	}
 	#filters, #brushes{
-		width: 200px;
-		height: auto;
+		width: 150px;
 		text-align: center;
 		border: 1px solid #000;
-		margin: 0 auto;
+		display: inline-block;
 	}
 	#colorPicker{
-		margin-top: 15%;
+		margin-top: 10%;
 		margin-bottom: 15%;
 	}
 	li{
 		list-style-type: none;
 	}
-	ul{
+	ul:not(#timeOptions){
 		display: none;
 		padding: 0;
 	}
 	a{
 		text-decoration: none;
+	}
+	#filterChoices li:hover{
+		color: #99b5d1;
+	}
+	#timeOptions{
+		padding: 0;
+	}
+	#timeOptions li{
+		display: inline-block;
+	}
+	#animationControl{
+		text-align: center;
 	}
 </style>
 
@@ -106,7 +123,7 @@
 	
 	<div id='filters'>
 		<p id='filterSelect'> filters &#9660; </p>
-		<ul>
+		<ul id='filterChoices'>
 			<li onclick='newFilters.filterCanvas(newFilters.grayscale)'> grayscale </li>
 			<li onclick='newFilters.filterCanvas(newFilters.saturate)'> saturate </li>
 			<li onclick='newFilters.filterCanvas(newFilters.swap)'> colorswap </li>
@@ -121,27 +138,44 @@
 			<li style="color: #ff3232" onclick='newToolbar.resetImage()'> reset </li>
 		</ul>
 	</div>
-	
-	<br>
-	
+
 	<div id='brushes'>
 		<p id='brushSelect'> brushes &#9660; </p>
 		<ul>
-			<li onclick='newBrush.defaultBrush()'> default brush </li>
-			<li onclick='newBrush.radialGradBrush()'> radial gradient brush </li>
+			<li><button onclick='newBrush.defaultBrush()'> default brush </button></li>
+			<li><button onclick='newBrush.radialGradBrush()'> radial gradient brush </button></li>
 		</ul>
 	</div>
+
 	
 	<br>
 	
 	<div id='adjustBrushSize'>
 		<p class="text-info">change brush size</p>
-		<input id='brushSize' type='range' min='.5' max='15' step='.5' value='5' oninput='newBrush.changeBrushSize(this.value); showSize()'>
-		<span id='brushSizeValue'> 5 </span>
+		<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
+		<span id='brushSizeValue'> 2 </span>
 	</div>
+	
+	<br>
 	
 	<div id='colorPicker'>
 	</div>
+	
+	<div id='animationControl'>
+		<h3> animation control </h3>
+		<ul id='timeOptions'>
+			<li onclick='newToolbar.playBackward()'> &larr; </li>
+			<li onclick='newToolbar.stop()'> stop! </li>
+			<li onclick='newToolbar.playForward()'> &rarr; </li>
+		</ul>
+		<label>time per frame:</label>
+		<select id='timePerFrame' onchange='newToolbar.timePerFrame = parseInt(value)'>
+			<option value='1000'>1000</option>
+			<option value='500'>500</option>
+		</select>
+		<button onclick='getGif()'> generate gif! </button>
+	</div>
+	
 </div>
 
 
@@ -191,6 +225,7 @@ function showOptions(category){
 	}
 }
 
+
 // update brush size display
 function showSize(){
 	document.getElementById('brushSizeValue').textContent = document.getElementById('brushSize').value;
@@ -200,6 +235,29 @@ function showSize(){
 $(document).ready(function(){
 	$('html').css('display', 'block');
 });
+
+// gif 
+function getGif(){
+		
+		var gif = new GIF({
+			workers: 2,
+			quality: 10
+		});
+		
+		// add frames
+		for(var i = 0; i < newCanvas.canvasList.length; i++){
+			gif.addFrame(newCanvas.canvasList[i], {delay: newToolbar.timePerFrame});
+		}
+		
+		gif.on('finished', function(blob){
+			var newGif = URL.createObjectURL(blob);
+			window.open( newGif );
+			// console.log(blob);
+		});
+		
+		gif.render();
+		//console.log(gif);
+	}
 </script>
 
 

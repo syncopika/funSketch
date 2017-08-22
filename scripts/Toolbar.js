@@ -8,6 +8,12 @@ function Toolbar(canvas, brush){
 	// can be useful for resetting image
 	var recentImage;
 	
+	// used as a counter for the animation playback features
+	var play;
+	
+	// used to hold user-indicated time (ms) per frame 
+	this.timePerFrame = 1000; // set to 1000 be default
+	
 	this.up = function(){
 		if(canvas.currentIndex + 1 < canvas.canvasList.length){
 			// move to next canvas
@@ -137,14 +143,18 @@ function Toolbar(canvas, brush){
 			colorWheelContext.fill();
 		}
 		
+		// make black a pickable color 
 		colorWheelContext.fillStyle = "#000";
 		colorWheelContext.fillRect(0, 0, 8, 8);
-		
+		// make white pickable too 
+		colorWheelContext.fillRect(10, 0, 8, 8); // border around the white 
+		colorWheelContext.fillStyle = "#fff";
+		colorWheelContext.fillRect(11, 0, 6, 7);
 		
 		location.appendChild(colorWheel);
 		
 		// make the color wheel interactive and show picked color 
-		var showColor = document.createElement('p'); // this eleemnt will show the color picked 
+		var showColor = document.createElement('p'); // this element will show the color picked 
 		showColor.style.textAlign = 'center';
 		showColor.id = 'colorPicked';
 		showColor.textContent = "pick a color! :)";
@@ -175,7 +185,8 @@ function Toolbar(canvas, brush){
 	/***
 		rotate image 
 		pass in an element id that will rotate the current canvas image on click 
-		buggy! after rotation, image becomes blurred. also, when attempting to draw on same canvas,
+		
+		currently buggy! after rotation, image becomes blurred. also, when attempting to draw on same canvas,
 		coordinates get altered so on mousedown the drawing gets offset 
 	***/
 	this.rotateImage = function(elementId){
@@ -354,24 +365,59 @@ function Toolbar(canvas, brush){
 	}
 	
 	
-	/******** this section controls the animation playback features *********/
-	// use canvas.play as a counter 
-	function playForward(){
-		play = null;
-		play = setInterval(up,1000);
-	}
+	/******** 
+	
+		this section controls the animation playback features 
+	
+	*********/
 
-	function playBackward(){
-		play = null;
-		//autofocus on last frame
-		$('#' + layerArray[layerArray.length-1]).css({"z-index":10, "opacity": .8});
-		curCanvas = layerArray[page];
-		curPage = page;
-		play = setInterval(down,1000);
-	}
-
-	function stop(){
+	this.playForward = function(){
 		clearInterval(play);
+		play = null;
+		play = setInterval(this.up, this.timePerFrame);
+	}
+
+	this.playBackward = function(){	
+		clearInterval(play);
+		play = null;
+	
+		canvas.currentCanvas = canvas.canvasList[canvas.canvasList.length - 1];
+		canvas.currentCanvas.style.zIndex = 1;
+		canvas.currentCanvas.style.opacity = .97;
+		
+		play = setInterval(this.down, this.timePerFrame);
+	}
+
+	this.stop = function(){
+		clearInterval(play);
+	}
+	
+	/***
+	
+		create a gif from the frames.
+		using gif.js - https://github.com/jnordberg/gif.js
+	
+	***/
+	this.getGif = function(){
+		
+		var gif = new GIF({
+			workers: 2,
+			quality: 10
+		});
+		
+		// add frames
+		for(var i = 0; i < canvas.canvasList.length; i++){
+			gif.addFrame(canvas.canvasList[i], {delay: this.timePerFrame});
+		}
+		
+		gif.on('finished', function(blob){
+			var newGif = URL.createObjectURL(blob);
+			window.open( newGif );
+			// console.log(blob);
+		});
+		
+		gif.render();
+		//console.log(gif);
 	}
 	
 }

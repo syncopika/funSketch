@@ -173,7 +173,7 @@
 			<option value='1000'>1000</option>
 			<option value='500'>500</option>
 		</select>
-		<button onclick='getGif()'> generate gif! </button>
+		<button onclick='newToolbar.getGif()'> generate gif! </button>
 	</div>
 	
 </div>
@@ -236,28 +236,6 @@ $(document).ready(function(){
 	$('html').css('display', 'block');
 });
 
-// gif 
-function getGif(){
-		
-		var gif = new GIF({
-			workers: 2,
-			quality: 10
-		});
-		
-		// add frames
-		for(var i = 0; i < newCanvas.canvasList.length; i++){
-			gif.addFrame(newCanvas.canvasList[i], {delay: newToolbar.timePerFrame});
-		}
-		
-		gif.on('finished', function(blob){
-			var newGif = URL.createObjectURL(blob);
-			window.open( newGif );
-			// console.log(blob);
-		});
-		
-		gif.render();
-		//console.log(gif);
-	}
 </script>
 
 

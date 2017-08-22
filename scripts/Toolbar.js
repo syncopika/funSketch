@@ -413,11 +413,9 @@ function Toolbar(canvas, brush){
 		gif.on('finished', function(blob){
 			var newGif = URL.createObjectURL(blob);
 			window.open( newGif );
-			// console.log(blob);
 		});
 		
 		gif.render();
-		//console.log(gif);
 	}
 	
 }

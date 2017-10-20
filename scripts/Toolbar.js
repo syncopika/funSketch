@@ -9,7 +9,7 @@ function Toolbar(canvas, brush){
 	var recentImage;
 	
 	// used as a counter for the animation playback features
-	var play;
+	var play = null;
 	
 	// used to hold user-indicated time (ms) per frame 
 	this.timePerFrame = 1000; // set to 1000 be default
@@ -81,19 +81,19 @@ function Toolbar(canvas, brush){
 		$(doc).keydown(function(e){
 			switch(e.which){
 				case 37: //left arrow key
-				if(toolbar.down() && elementId){
-					var currNum = document.getElementById(elementId).textContent;
-					document.getElementById(elementId).textContent = parseInt(currNum) - 1;
-				}
+					if(toolbar.down() && elementId){
+						var currNum = document.getElementById(elementId).textContent;
+						document.getElementById(elementId).textContent = parseInt(currNum) - 1;
+					}
 				break;
 				case 39: //right arrow key
-				if(toolbar.up() && elementId){
-					var currNum = document.getElementById(elementId).textContent;
-					document.getElementById(elementId).textContent = parseInt(currNum) + 1;
-				}
+					if(toolbar.up() && elementId){
+						var currNum = document.getElementById(elementId).textContent;
+						document.getElementById(elementId).textContent = parseInt(currNum) + 1;
+					}
 				break;
 				case 32: //space bar
-				toolbar.addPage();
+					toolbar.addPage();
 				break;
 				default:
 				return;
@@ -180,6 +180,161 @@ function Toolbar(canvas, brush){
 			brush.currColorArray = colorPicked;
 			brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
 		});	
+	}
+	
+	/***
+	
+		attach floodfill function! 
+	
+		still a bit slow. also, maybe instead of matching only exact color,
+		how about +/- 5 for r,g,b? 
+		
+		also, maybe disable drawing? what if someone has the radial brush on 
+		and they want to floodfill? it should operate normally in that case too.
+		might have to turn off the brush temporarily, then reconnect it?
+	
+	***/
+	this.floodFill = function(elementId){
+
+		$('#' + elementId).click(function(){
+			
+			var doFloodFill = function(e){
+	
+				// this is the color to change to!
+				// need to parse the currColor because right now it looks like "rgb(x,y,z)". 
+				// I want it to look like [x, y, z]
+				var currColor = brush.currColor;	
+				var currColorArray = currColor.substring(currColor.indexOf('(') + 1, currColor.length - 1).split(',');
+				currColorArray = currColorArray.map(function(a){ return parseInt(a) });
+
+				// get the coordinates of the selected pixel 
+				//var rect = document.getElementById(canvas.currentCanvas.id).getBoundingClientRect();
+				var x = e.clientX - $('#' + canvas.currentCanvas.id).offset().left;
+				var y = e.clientY - $('#' + canvas.currentCanvas.id).offset().top;
+				console.log("x: " + x + ", y: " + y);
+				
+				/* debugging cursor/click position - if you scroll, that offsets the position and ruins everything :<
+				var d = document.getElementById(canvas.currentCanvas.id).getContext("2d").getImageData(x, y, 10, 10);
+				for(var i = 0; i < d.data.length; i+=4){
+					d.data[i] = 100;
+					d.data[i + 1] = 170;
+					d.data[i + 2] = 200;
+				}
+				document.getElementById(canvas.currentCanvas.id).getContext("2d").putImageData(d, x, y);
+				*/
+				
+				var colorData = document.getElementById(canvas.currentCanvas.id).getContext("2d").getImageData(x, y, 1, 1).data;
+				var color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')';
+				
+				// create an object with the pixel data
+				var pixel = {'x': Math.floor(x), 'y': Math.floor(y), 'color': color};
+				
+				// call the floodfill function!
+				// currentCanvas is a canvas element
+				floodfill(canvas.currentCanvas, currColorArray, pixel);
+				
+				// remove event listener 
+				canvas.currentCanvas.removeEventListener('click', doFloodFill);
+			}
+			
+			canvas.currentCanvas.addEventListener('click', doFloodFill); 
+		});			
+	}
+	
+	// the actual floodfill function 
+	function floodfill(currentCanvas, newColor, pixelSelected){
+
+		// create a stack 
+		var stack = [];
+		
+		// create visited set 
+		// the format of these entries will be like: {'xCoord,yCoord': 1}
+		var visited = {};
+		
+		// the selectedPixel will have the color that needs to be targeted by floodfill 
+		var targetColor = pixelSelected.color;
+		
+		// current canvas context 
+		var ctx = document.getElementById(currentCanvas.id).getContext('2d');
+		
+		// get the image data of the entire canvas 
+		// do the floodfill, then put the edited image data back 
+		var imageData = ctx.getImageData(0, 0, currentCanvas.width, currentCanvas.height);
+		var data = imageData.data;
+	
+		stack.push(pixelSelected);
+		
+		while(stack.length !== 0){
+			
+			// get a pixel
+			var currPixel = stack.pop();
+			// add to visited set 
+			visited[currPixel.x + ',' + currPixel.y] = 1;
+			
+			// get left, right, top and bottom neighbors 
+			var leftNeighborX = currPixel.x - 1;
+			var rightNeighborX = currPixel.x + 1;
+			var topNeighborY = currPixel.y - 1;
+			var bottomNeighborY = currPixel.y + 1;
+	
+			var r,g,b;
+			
+			// top neighbor
+			if(topNeighborY >= 0 && visited[currPixel.x + ',' + topNeighborY] === undefined){
+				// index of r, g and b colors in imageData.data
+				r = (topNeighborY * currentCanvas.width)*4 + ((currPixel.x + 1) * 4);
+				g = r + 1;
+				b = g + 1;
+				if(targetColor === 'rgb(' + data[r] + ',' + data[g] + ',' + data[b] + ')'){
+					// if the neighbor's color is the same as the targetColor, add it to the stack
+					stack.push({'x': currPixel.x, 'y': topNeighborY, 'color': currPixel.color});
+				}
+			}
+			
+			// right neighbor 
+			if(rightNeighborX < currentCanvas.width && visited[rightNeighborX + ',' + currPixel.y] === undefined){
+				r = (currPixel.y * currentCanvas.width)*4 + ((rightNeighborX + 1) * 4);
+				g = r + 1;
+				b = g + 1;
+				if(targetColor === 'rgb(' + data[r] + ',' + data[g] + ',' + data[b] + ')'){
+					// if the neighbor's color is the same as the targetColor, add it to the stack
+					stack.push({'x': rightNeighborX, 'y': currPixel.y, 'color': currPixel.color});
+				}
+			}
+			
+			// bottom neighbor
+			if(bottomNeighborY < currentCanvas.height && visited[currPixel.x + ',' + bottomNeighborY] === undefined){
+				r = (bottomNeighborY * currentCanvas.width)*4 + ((currPixel.x + 1) * 4);
+				g = r + 1;
+				b = g + 1;
+				if(targetColor === 'rgb(' + data[r] + ',' + data[g] + ',' + data[b] + ')'){
+					// if the neighbor's color is the same as the targetColor, add it to the stack
+					stack.push({'x': currPixel.x, 'y': bottomNeighborY, 'color': currPixel.color});
+				}
+			}
+			
+			// left neighbor
+			if(leftNeighborX >= 0 && visited[leftNeighborX + ',' + currPixel.y] === undefined){
+				r = (currPixel.y * currentCanvas.width)*4 + ((leftNeighborX + 1) * 4);
+				g = r + 1;
+				b = g + 1;
+				if(targetColor === 'rgb(' + data[r] + ',' + data[g] + ',' + data[b] + ')'){
+					// if the neighbor's color is the same as the targetColor, add it to the stack
+					stack.push({'x': leftNeighborX, 'y': currPixel.y, 'color': currPixel.color});
+				}
+			}
+			
+			// finally, update the color of the current pixel 
+			r = (currPixel.y * currentCanvas.width)*4 + ((currPixel.x + 1) * 4);
+			g = r + 1;
+			b = g + 1;
+			data[r] = newColor[0];
+			data[g] = newColor[1];
+			data[b] = newColor[2];
+		}
+		
+		// put new edited image back on canvas 
+		ctx.putImageData(imageData, 0, 0);
 	}
 	
 	/***
@@ -368,28 +523,46 @@ function Toolbar(canvas, brush){
 	/******** 
 	
 		this section controls the animation playback features 
+		
+		note that I specifically added my page counter element to the 
+		functions so that they change with the call to up() and down()
 	
 	*********/
+	var toolbar = this;
+	var playFor = function(){
+		if(toolbar.up()){
+			var currNum = document.getElementById("count").textContent;
+			document.getElementById("count").textContent = parseInt(currNum) + 1;
+		}
+	}
+	
+	var playBack = function(){
+		if(toolbar.down()){
+			var currNum = document.getElementById("count").textContent;
+			document.getElementById("count").textContent = parseInt(currNum) - 1;
+		}
+	}
 
 	this.playForward = function(){
 		clearInterval(play);
 		play = null;
-		play = setInterval(this.up, this.timePerFrame);
+		play = setInterval(playFor, this.timePerFrame);
 	}
 
 	this.playBackward = function(){	
 		clearInterval(play);
 		play = null;
 	
-		canvas.currentCanvas = canvas.canvasList[canvas.canvasList.length - 1];
+		//canvas.currentCanvas = canvas.canvasList[canvas.canvasList.length - 1];
 		canvas.currentCanvas.style.zIndex = 1;
 		canvas.currentCanvas.style.opacity = .97;
 		
-		play = setInterval(this.down, this.timePerFrame);
+		play = setInterval(playBack, this.timePerFrame);
 	}
 
 	this.stop = function(){
 		clearInterval(play);
+		play = null;
 	}
 	
 	/***
@@ -397,8 +570,12 @@ function Toolbar(canvas, brush){
 		create a gif from the frames.
 		using gif.js - https://github.com/jnordberg/gif.js
 	
+		elementId is for the loading message
+	
 	***/
-	this.getGif = function(){
+	this.getGif = function(elementId){
+		
+		document.getElementById(elementId).textContent = "now loading...";
 		
 		var gif = new GIF({
 			workers: 2,
@@ -411,11 +588,13 @@ function Toolbar(canvas, brush){
 		}
 		
 		gif.on('finished', function(blob){
+			document.getElementById(elementId).textContent = "";
 			var newGif = URL.createObjectURL(blob);
 			window.open( newGif );
 		});
 		
 		gif.render();
+		
 	}
 	
 }

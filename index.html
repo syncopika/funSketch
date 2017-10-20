@@ -5,6 +5,7 @@
 <head>
 	<title> funSketch! </title>
 	<link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script type="text/javascript" src="scripts/SuperCanvas.js"></script>
 	<script type="text/javascript" src="scripts/Brush.js"></script>
@@ -19,9 +20,6 @@
 </head>
 
 <style>
-	html{
-		display: none;
-	}
 	body, button{
 		font-family: 'Merriweather', serif;
 	}
@@ -38,10 +36,10 @@
 		margin-left: 50px;
 	}
 	#canvasArea{
-		margin: 20px auto;
-		width: 40%;
-		padding-left: 180px;
 		height: auto;
+	}
+	canvas{
+		margin-left: 5%;
 	}
 	#pageCount{
 		text-align: center;
@@ -54,10 +52,7 @@
 		padding-right: 50px;
 	}
 	#footer{
-		clear: both;
-		margin-top: 100px;
-		width: 20%;
-		float: left;
+		margin-left: 20px;
 	}
 	#filters, #brushes{
 		width: 150px;
@@ -71,6 +66,7 @@
 	}
 	li{
 		list-style-type: none;
+		padding: 2px;
 	}
 	ul:not(#timeOptions){
 		display: none;
@@ -79,7 +75,7 @@
 	a{
 		text-decoration: none;
 	}
-	#filterChoices li:hover{
+	li:hover{
 		color: #99b5d1;
 	}
 	#timeOptions{
@@ -95,94 +91,110 @@
 
 <body>
 
-<div id='canvasArea'>
-	<div id='pageCount'>
-			<h3> << </h3>
-			<h3 id='count'> 1 </h3>
-			<h3> >> </h3>
+<div class='container-fluid'>
+
+	<div class='row'>
+
+	<div class='col-md-4 col-lg-4'>
+		<div id='toolbarArea'>
+
+			<h3 id='title'> funSketch: draw, edit, and animate! </h3>
+
+			<p> tip! use the spacebar to create a new frame. use the left and right arrow keys to move to the previous or next frame! </p>
+
+			<div id='buttons'>
+				<button id='addCanvas' onclick='newCanvas.setupNewCanvas()'>add a new canvas</button>
+				<button id='copyCanvas' onclick='newCanvas.copyCanvas()'>copy current canvas</button>
+				<button id='clearCanvas'>clear the current canvas</button>
+				<button id='importImage'> import image </button>
+				<button id='rotateCanvasImage'>rotate image</button>
+				<button id='download'> download current frame </button>
+				<button id='undo'> undo </button>
+			</div>
+			
+			<br>
+			
+			<div id='filters'>
+				<p id='filterSelect'> filters &#9660; </p>
+				<ul id='filterChoices'>
+					<li onclick='newFilters.filterCanvas(newFilters.grayscale)'> grayscale </li>
+					<li onclick='newFilters.filterCanvas(newFilters.saturate)'> saturate </li>
+					<li onclick='newFilters.filterCanvas(newFilters.swap)'> colorswap </li>
+					<li onclick='newFilters.filterCanvas(newFilters.scary)'> scary </li>
+					<li onclick='newFilters.filterCanvas(newFilters.heatwave)'> heatwave </li>
+					<li onclick='newFilters.filterCanvas(newFilters.randomize)'> noise </li>
+					<li onclick='newFilters.filterCanvas(newFilters.invert)'> invert </li>
+					<li onclick='newFilters.filterCanvas(newFilters.blurry)'> blur </li>
+					<li onclick='newFilters.outline()'> outline </li>
+					<li onclick='newFilters.defaultFisheye()'> fisheye </li>
+					<li onclick='newFilters.filterCanvas(newFilters.areaColor)'> painted </li>
+					<li style="color: #ff3232" onclick='newToolbar.resetImage()'> reset </li>
+				</ul>
+			</div>
+
+			<div id='brushes'>
+				<p id='brushSelect'> brushes &#9660; </p>
+				<ul>
+					<li onclick='newBrush.defaultBrush()'> default brush </li>
+					<li onclick='newBrush.radialGradBrush()'> radial gradient brush </li>
+				</ul>
+			</div>
+			
+			<div id='adjustBrushSize'>
+				<br>
+				<p class="text-info">change brush size</p>
+				<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
+				<span id='brushSizeValue'> 2 </span>
+			</div>
+			
+			<br>
+			
+			<button id='floodfill'>floodfill with currently selected color</button>
+			<p style='font-size: 10px'> make sure brush size is less than 3, default brush! </p>
+			<div id='colorPicker'>
+			</div>
+			
+			<div id='animationControl'>
+				<h3> animation control </h3>
+				<ul id='timeOptions'>
+					<li onclick='newToolbar.playBackward()'> &larr; </li>
+					<li onclick='newToolbar.stop()'> stop! </li>
+					<li onclick='newToolbar.playForward()'> &rarr; </li>
+				</ul>
+				<label>time per frame:</label>
+				<select id='timePerFrame' onchange='newToolbar.timePerFrame = parseInt(value)'>
+					<option value='1000'>1000</option>
+					<option value='700'> 700 </option>
+					<option value='500'>500</option>
+					<option value='200'>200</option>
+				</select>
+				<button onclick='newToolbar.getGif("loadingScreen")'> generate gif! </button>
+			</div>
+			<p id='loadingScreen'></p>
+			
+		</div>
 	</div>
-</div>
 
-<div id='toolbarArea'>
-
-	<h3 id='title'> funSketch: draw, edit, and animate! </h3>
-
-	<p> tip! use the spacebar to create a new frame. use the left and right arrow keys to move to the previous or next frame! </p>
-
-	<div id='buttons'>
-		<button id='addCanvas' onclick='newCanvas.setupNewCanvas()'>add a new canvas</button>
-		<button id='copyCanvas' onclick='newCanvas.copyCanvas()'>copy current canvas</button>
-		<button id='clearCanvas'>clear the current canvas</button>
-		<button id='importImage'> import image </button>
-		<button id='rotateCanvasImage'>rotate image</button>
-		<button id='download'> download current frame </button>
-		<button id='undo'> undo </button>
+	<div class='col-md-6 col-lg-6'>
+		<div id='canvasArea'>
+			<div id='pageCount'>
+					<h3> << </h3>
+					<h3 id='count'> 1 </h3>
+					<h3> >> </h3>
+			</div>
+		</div>
+	</div>
+		
+	</div> <!-- end row -->
+	
+	<div class='row'>
+		<div id='footer'>
+			<hr>
+			<p> n.c.h works 2017 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
+		</div>
 	</div>
 	
-	<br>
-	
-	<div id='filters'>
-		<p id='filterSelect'> filters &#9660; </p>
-		<ul id='filterChoices'>
-			<li onclick='newFilters.filterCanvas(newFilters.grayscale)'> grayscale </li>
-			<li onclick='newFilters.filterCanvas(newFilters.saturate)'> saturate </li>
-			<li onclick='newFilters.filterCanvas(newFilters.swap)'> colorswap </li>
-			<li onclick='newFilters.filterCanvas(newFilters.scary)'> scary </li>
-			<li onclick='newFilters.filterCanvas(newFilters.heatwave)'> heatwave </li>
-			<li onclick='newFilters.filterCanvas(newFilters.randomize)'> noise </li>
-			<li onclick='newFilters.filterCanvas(newFilters.invert)'> invert </li>
-			<li onclick='newFilters.filterCanvas(newFilters.blurry)'> blur </li>
-			<li onclick='newFilters.outline()'> outline </li>
-			<li onclick='newFilters.defaultFisheye()'> fisheye </li>
-			<li onclick='newFilters.filterCanvas(newFilters.areaColor)'> painted </li>
-			<li style="color: #ff3232" onclick='newToolbar.resetImage()'> reset </li>
-		</ul>
-	</div>
-
-	<div id='brushes'>
-		<p id='brushSelect'> brushes &#9660; </p>
-		<ul>
-			<li><button onclick='newBrush.defaultBrush()'> default brush </button></li>
-			<li><button onclick='newBrush.radialGradBrush()'> radial gradient brush </button></li>
-		</ul>
-	</div>
-
-	
-	<br>
-	
-	<div id='adjustBrushSize'>
-		<p class="text-info">change brush size</p>
-		<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
-		<span id='brushSizeValue'> 2 </span>
-	</div>
-	
-	<br>
-	
-	<div id='colorPicker'>
-	</div>
-	
-	<div id='animationControl'>
-		<h3> animation control </h3>
-		<ul id='timeOptions'>
-			<li onclick='newToolbar.playBackward()'> &larr; </li>
-			<li onclick='newToolbar.stop()'> stop! </li>
-			<li onclick='newToolbar.playForward()'> &rarr; </li>
-		</ul>
-		<label>time per frame:</label>
-		<select id='timePerFrame' onchange='newToolbar.timePerFrame = parseInt(value)'>
-			<option value='1000'>1000</option>
-			<option value='500'>500</option>
-		</select>
-		<button onclick='newToolbar.getGif()'> generate gif! </button>
-	</div>
-	
-</div>
-
-
-<div id='footer'>
-	<hr>
-	<p> n.c.h works 2017 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
-</div>
+</div> <!-- end container -->
 	
 </body>
 
@@ -201,8 +213,9 @@ newBrush.defaultBrush();
 var newToolbar = new Toolbar(newCanvas, newBrush);
 newToolbar.setKeyDown(document, 'count');	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
 newToolbar.createColorWheel('colorPicker', 200);
+newToolbar.floodFill('floodfill');
 newToolbar.setClearCanvas('clearCanvas');
-newToolbar.rotateImage('rotateCanvasImage');
+newToolbar.rotateImage('rotateCanvasImage');	// here I'm passing in element Id's that these functions will attach to 
 newToolbar.undo('undo');
 newToolbar.download('download');
 newToolbar.importImage('importImage');

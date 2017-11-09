@@ -114,6 +114,7 @@
 				<button id='rotateCanvasImage'>rotate image</button>
 				<button id='download'> download current frame </button>
 				<button id='undo'> undo </button>
+				<!-- <button id='saveWork'> save work </button> -->
 			</div>
 			
 			<br>
@@ -224,6 +225,7 @@ newToolbar.rotateImage('rotateCanvasImage');	// here I'm passing in element Id's
 newToolbar.undo('undo');
 newToolbar.download('download');
 newToolbar.importImage('importImage');
+newToolbar.save('saveWork');
 
 // set up filters object
 var newFilters = new Filters(newCanvas, newBrush);
@@ -242,7 +244,6 @@ function showOptions(category){
 		el.style.marginBottom  = 0;
 	}
 }
-
 
 // update brush size display
 function showSize(){

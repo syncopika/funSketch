@@ -597,6 +597,52 @@ function Toolbar(canvas, brush){
 		
 	}
 	
+	/***
+	
+		save/export & import functions
+		check this out: https://stackoverflow.com/questions/22329481/compressing-base64-data-uri-images
+	***/
+	this.save = function(elementId){
+		
+		$('#' + elementId).click(function(){
+		
+			// loop through the array of canvasses 
+			// for each canvas, save the data as base64 
+			// add to object 
+			// export JSON
+			
+			var savedData = {};
+			
+			for(var i = 0; i < canvas.canvasList.length; i++){
+				
+				var canvasInfo = {};
+				var currCanvas = document.getElementById(canvas.canvasList[i].id);
+				
+				// get image data for this canvas and add to JSON 
+				// as well as some key features like dimensions
+				var name = "canvas" + i;	// i.e. canvas0, canvas1, ...
+				var height = currCanvas.height;
+				var width = currCanvas.width;
+				
+				canvasInfo["name"] = name;
+				canvasInfo["height"] = height;
+				canvasInfo["width"] = width;
+				
+				var canvasData = currCanvas.toDataURL();
+				
+				canvasInfo["data"] = canvasData;
+				
+				// add this canvas' data to the object that will hold each canvas' data
+				savedData[name] = canvasInfo;
+			}
+			
+			var json = JSON.stringify(savedData);
+			
+			console.log(json);
+			//return json;
+		});
+	}
+	
 }
 
 

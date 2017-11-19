@@ -211,7 +211,7 @@ function Toolbar(canvas, brush){
 				//var rect = document.getElementById(canvas.currentCanvas.id).getBoundingClientRect();
 				var x = e.clientX - $('#' + canvas.currentCanvas.id).offset().left;
 				var y = e.clientY - $('#' + canvas.currentCanvas.id).offset().top;
-				console.log("x: " + x + ", y: " + y);
+				//console.log("x: " + x + ", y: " + y);
 				
 				/* debugging cursor/click position - if you scroll, that offsets the position and ruins everything :<
 				var d = document.getElementById(canvas.currentCanvas.id).getContext("2d").getImageData(x, y, 10, 10);
@@ -601,6 +601,11 @@ function Toolbar(canvas, brush){
 	
 		save/export & import functions
 		check this out: https://stackoverflow.com/questions/22329481/compressing-base64-data-uri-images
+		
+		don't think this is going to work without some sort of better compression. simply drawing a few lines on 
+		a canvas produces a very large base64 string spanning many lines. not very practical for exporting a project
+		that has several frames, especially if you take into account different colors and more detail 
+		
 	***/
 	this.save = function(elementId){
 		

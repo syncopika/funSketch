@@ -1,0 +1,109 @@
+<!doctype html>
+
+<html>
+
+	<head>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script type="text/javascript" src="worker.js"></script>
+		<script type="text/javascript" src="floodfillFunctions.js"></script>
+		<title>
+			floodfill test
+		</title>
+		
+		<style>
+			canvas{
+				border: 1px solid #000;
+			}
+			#center{
+				display: block;
+				height: auto;
+				width: 1100px;
+				margin: 20px auto;
+				text-align: center;
+			}
+			#left, #right{
+				display: inline-block;
+				text-align: center;
+			}
+			a{
+				text-decoration: none;
+			}
+		</style>
+	</head>
+	
+	<body>
+	
+	<div id='center'>
+	
+		<h1> <a href='https://en.wikipedia.org/wiki/Flood_fill'>floodfill</a> + web workers test </h1>
+		<p> see how web workers help improve performance with floodfilling a canvas! </p>
+	
+		<div id='left'>
+			<canvas id='canvas1' width='500px' height='500px'></canvas>
+			<!-- <p><button id='regularFloodfill' onclick=''>floodfill</button></p> -->
+			
+			<div id='leftRes'>
+				<h3> regular floodfill - results </h3>
+				<ol id='regFloodRes'>
+				</ol>
+			</div>
+			
+		</div>
+		
+		<div id='right'>
+			<canvas id='canvas2' width='500px' height='500px'></canvas>
+			<!-- <p><button id='fastFloodfill' onclick=''>floodfill w/ web workers</button></p> -->
+			
+			<div id='rightRes'>
+				<h3> floodfill with web workers - results </h3>
+				<ol id='fastFloodRes'>
+				</ol>
+			</div>
+		</div>
+		
+		<hr>
+		
+		<!--<label> number of trials: </label> <input type='text' id='numTrials'></input>-->
+		<button id='doExperiment' onclick='runExperiment()'> run! </button>
+
+	</div>
+	
+	</body>
+	
+	
+	<script>
+	
+		var canvas1 = document.getElementById('canvas1');
+		var canvas2 = document.getElementById('canvas2');
+	
+		//var canvas1Results = document.getElementById('regFloodRes');
+		//var canvas2Results = document.getElementById('fastFloodRes');
+
+		var ctx = canvas1.getContext('2d');
+		ctx.fillStyle = 'rgb(255,255,255)';
+		ctx.fillRect(0, 0, canvas1.width, canvas1.height);
+
+		var ctx2 = canvas2.getContext('2d');
+		ctx2.fillStyle = 'rgb(255,255,255)';
+		ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+	
+		// functions for running trials  
+		function runExperiment(){
+		
+			// TODO: clear any old results 
+			
+			//var numTrials = num;
+			//var count = 0;
+			
+			// pick a random coordinate 
+			// both canvases have same dimensions and color, so doesn't matter which one
+			var coord = getRandomCoord(canvas1.height, canvas1.width, "canvas1"); 
+			floodFill('canvas1', coord, 'regFloodRes');
+			floodfillWorkers('canvas2', coord, 'fastFloodRes');
+			
+		}		
+		
+	</script>
+
+</html>    

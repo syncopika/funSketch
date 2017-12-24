@@ -117,7 +117,8 @@
 				<button id='rotateCanvasImage'>rotate image</button>
 				<button id='download'> download current frame </button>
 				<button id='undo'> undo </button>
-				<!-- <button id='saveWork'> save work </button> -->
+				<button id='saveWork'> save work </button> 
+				<button id='importProject'> import project </button> 
 			</div>
 			
 			<br>
@@ -173,7 +174,7 @@
 				<label>time per frame:</label>
 				<select id='timePerFrame' onchange='newToolbar.timePerFrame = parseInt(value)'>
 					<option value='1000'>1000</option>
-					<option value='700'> 700 </option>
+					<option value='700'>700</option>
 					<option value='500'>500</option>
 					<option value='200'>200</option>
 				</select>
@@ -229,6 +230,7 @@ newToolbar.undo('undo');
 newToolbar.download('download');
 newToolbar.importImage('importImage');
 newToolbar.save('saveWork');
+newToolbar.importProject('importProject', 'count');
 
 // set up filters object
 var newFilters = new Filters(newCanvas, newBrush);

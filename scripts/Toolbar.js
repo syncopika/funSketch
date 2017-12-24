@@ -616,7 +616,7 @@ function Toolbar(canvas, brush){
 			// add to object 
 			// export JSON
 			
-			var savedData = {};
+			var savedData = [];
 			
 			for(var i = 0; i < canvas.canvasList.length; i++){
 				
@@ -638,14 +638,100 @@ function Toolbar(canvas, brush){
 				canvasInfo["data"] = canvasData;
 				
 				// add this canvas' data to the object that will hold each canvas' data
-				savedData[name] = canvasInfo;
+				savedData.push(JSON.stringify(canvasInfo));
 			}
 			
-			var json = JSON.stringify(savedData);
+			var json = "[\n";
+			json += savedData.join(",\n"); // put a line break between each new object, which represents a frame
+			json += "\n]";
 			
-			console.log(json);
-			//return json;
+			// make a blob so it can be downloaded 
+			var blob = new Blob([json], {type: "application/json"});
+			var url = URL.createObjectURL(blob);
+			
+			// prompt the user to name the file 
+			var name = prompt("name of file: ");
+			if(name === ""){
+				name = "funSketch_saveFile";
+			}
+			
+			var link = document.createElement('a');
+			link.href = url;
+			link.download = name + ".json";
+			link.click();
+			
 		});
+	}
+	
+	this.importProject = function(elementId, counterId){
+		
+		$('#' + elementId).click(function(){
+			
+			canvas.resetCanvas(counterId);
+			
+			fileHandler();
+			
+			//import project json file
+			function fileHandler(){
+				var input = document.createElement('input');
+				input.type = 'file';
+				input.addEventListener('change', getFile, false);
+				input.click();
+			}
+			
+			function getFile(e){
+				var reader = new FileReader();
+				var file = e.target.files[0];
+				
+				//when the file loads, put it on the canvas.
+				reader.onload = (function(theFile){
+				
+					return function(e){
+						
+						// should validate file!! 
+
+						// parse the JSON using JSON.parse 
+						var data = JSON.parse(e.target.result);
+						
+						// data is an array of objects, with each object representing a canvas 
+						// add the canvasses in order 
+						for(var i = 0; i < data.length; i++){
+							
+							// create a new canvas first 
+							// this adds a new blank canvas to canvas.canvasList 
+							if(i > 0){
+								canvas.setupNewCanvas();
+							}
+
+							// make any changes to the dimensions based on data[i]
+							var newestCanvasIndex = canvas.canvasList.length - 1;
+							canvas.canvasList[newestCanvasIndex].height = data[i].height;
+							canvas.canvasList[newestCanvasIndex].width = data[i].width;
+							
+							// then add the image
+							var newestCanvas = canvas.canvasList[newestCanvasIndex];
+							var newCtx = newestCanvas.getContext('2d');
+							
+
+								var img = new Image();
+								
+								// a great example of javascript closures!
+								(function(context, image){
+									image.onload = function(){
+											context.drawImage(image, 0, 0);
+										}
+									image.src = data[i].data;
+								})(newCtx, img);
+
+						}
+					}
+				})(file);
+				
+				reader.readAsText(file);
+			}
+			
+		});
+		
 	}
 	
 }

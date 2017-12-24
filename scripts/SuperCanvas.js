@@ -17,8 +17,10 @@ function SuperCanvas(container){
 	this.currentCanvas;					// the current, active canvas being looked at (reference to html element)
 	this.container = container;			// this is the html container to hold all the canvas elements
 	
-	// set up a new canvas element
-	// makes the new canvas the current canvas 
+	/*** 
+	    set up a new canvas element
+		makes the new canvas the current canvas 
+	***/
 	this.setupNewCanvas = function(){
 
 		// create the new canvas element 
@@ -61,7 +63,7 @@ function SuperCanvas(container){
 		newCanvas.id = 'canvas' + this.count;
 		setCanvas(newCanvas, this.width, this.height);
 	
-		this.canvasList[this.count - 1].style.opcaity = .92;
+		this.canvasList[this.count - 1].style.opacity = .92;
 		
 		// place the canvas in the container 
 		document.getElementById(this.container).appendChild(newCanvas);
@@ -76,6 +78,41 @@ function SuperCanvas(container){
 
 		this.canvasList.push(newCanvas);
 		this.count++;	
+	}
+	
+		
+	/***
+		reset the canvas object - i.e. remove all frames, reset values, etc.
+		necessary to do before importing an old project
+		
+		- can pass in an element ID that corresponds to the canvas counter, which 
+		also needs to be reset
+	***/
+	this.resetCanvas = function(counterElementId){
+		
+		// delete all canvasses except first one from the dom
+		var allCanvas = document.querySelectorAll('[id^="canvas"]');
+		
+		// because I also have an element with the id "canvasArea", the element at the 0th index 
+		// is actually canvasArea, so skip that element 
+		var parentNodeCanvas = allCanvas[1].parentNode;
+
+		for(var i = 2; i < allCanvas.length; i++){
+			parentNodeCanvas.removeChild(allCanvas[i]);
+		}
+		
+		this.count = 1;
+		this.currentIndex = 0;
+		this.canvasList = this.canvasList.splice(0,1);	// only keep the first canvas 
+		
+		// ensure the first canvas is visible if this resetCanvas function was called while looking at 
+		// some other canvas 
+		this.canvasList[0].style.opacity = 1;
+		this.canvasList[0].style.zIndex = 1;
+	
+		if(counterElementId){
+			document.getElementById(counterElementId).textContent = "1";
+		}
 	}
 
 }

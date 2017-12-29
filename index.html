@@ -32,6 +32,7 @@
 	}
 	button{
 		margin: 3px;
+		font-size: 13px;
 	}
 	#toolbarArea{
 		width: 400px;
@@ -101,98 +102,110 @@
 
 	<div class='row'>
 
-	<div class='col-md-4 col-lg-4'>
-		<div id='toolbarArea'>
+		<div class='col-md-4 col-lg-4'>
+			<div id='toolbarArea'>
 
-			<h3 id='title'> funSketch: draw, edit, and animate! </h3>
+				<h3 id='title'> funSketch: draw, edit, and animate! </h3>
 
-			<p> use the spacebar to create a new frame. use the left and right arrow keys to move to the previous or next frame! </p>
+				<p> use the spacebar to create a new frame. use the left and right arrow keys to move to the previous or next frame! </p>
 
-			<div id='buttons'>
-				<button id='addCanvas' onclick='newCanvas.setupNewCanvas()'>add a new canvas</button>
-				<button id='copyCanvas' onclick='newCanvas.copyCanvas()'>copy current canvas</button>
-				<button id='clearCanvas'>clear current canvas</button>
-				<button id='importImage'> import image </button>
-				<button id='rotateCanvasImage'>rotate image</button>
-				<button id='download'> download current frame </button>
-				<button id='undo'> undo </button>
-				<button id='saveWork'> save project </button> 
-				<button id='importProject'> import project </button> 
-			</div>
-			
-			<br>
-			
-			<div id='filters'>
-				<p id='filterSelect'> filters &#9660; </p>
-				<ul id='filterChoices'>
-					<li onclick='newFilters.filterCanvas(newFilters.grayscale)'> grayscale </li>
-					<li onclick='newFilters.filterCanvas(newFilters.saturate)'> saturate </li>
-					<li onclick='newFilters.filterCanvas(newFilters.swap)'> colorswap </li>
-					<li onclick='newFilters.filterCanvas(newFilters.scary)'> scary </li>
-					<li onclick='newFilters.filterCanvas(newFilters.heatwave)'> heatwave </li>
-					<li onclick='newFilters.filterCanvas(newFilters.randomize)'> noise </li>
-					<li onclick='newFilters.filterCanvas(newFilters.invert)'> invert </li>
-					<li onclick='newFilters.filterCanvas(newFilters.blurry)'> blur </li>
-					<li onclick='newFilters.outline()'> outline </li>
-					<li onclick='newFilters.defaultFisheye()'> fisheye </li>
-					<li onclick='newFilters.filterCanvas(newFilters.areaColor)'> painted </li>
-					<li style="color: #ff3232" onclick='newToolbar.resetImage()'> reset </li>
-				</ul>
-			</div>
-
-			<div id='brushes'>
-				<p id='brushSelect'> brushes &#9660; </p>
-				<ul>
-					<li onclick='newBrush.defaultBrush()'> default brush </li>
-					<li onclick='newBrush.radialGradBrush()'> radial gradient brush </li>
-				</ul>
-			</div>
-			
-			<div id='adjustBrushSize'>
+				<div id='buttons'>
+					<!--<button id='addCanvas' onclick='newCanvas.setupNewCanvas()'>add a new canvas</button>-->
+					<button id='insertCanvas'>insert canvas after</button>
+					<button id='deleteCanvas'>delete canvas</button>
+					<button id='copyCanvas' onclick='newCanvas.copyCanvas()'>copy canvas</button>
+					<button id='clearCanvas'>clear canvas</button>
+					<button id='importImage'> import image </button>
+					<button id='rotateCanvasImage'>rotate image</button>
+					<button id='undo'>undo</button>
+					<button id='download'>download canvas (.png)</button>
+					<button id='saveWork'>save project (.json)</button> 
+					<button id='importProject'>import project (.json)</button> 
+				</div>
+				
 				<br>
-				<p class="text-info">change brush size</p>
-				<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
-				<span id='brushSizeValue'> 2 </span>
-			</div>
-			
-			<br>
-			
-			<button id='floodfill'>floodfill with currently selected color</button>
-			<p style='font-size: 10px'> click the button and then select a place on the canvas to floodfill </p>
-			<p style='font-size: 10px'> make sure brush size is less than or equal to 2 and set to default brush! </p>
-			<div id='colorPicker'>
-			</div>
-			
-			<div id='animationControl'>
-				<h3> animation control </h3>
-				<ul id='timeOptions'>
-					<li onclick='newToolbar.playBackward()'> &larr; </li>
-					<li onclick='newToolbar.stop()'> stop! </li>
-					<li onclick='newToolbar.playForward()'> &rarr; </li>
-				</ul>
-				<label>time per frame:</label>
-				<select id='timePerFrame' onchange='newToolbar.timePerFrame = parseInt(value)'>
-					<option value='1000'>1000</option>
-					<option value='700'>700</option>
-					<option value='500'>500</option>
-					<option value='200'>200</option>
-				</select>
-				<button onclick='newToolbar.getGif("loadingScreen")'> generate gif! </button>
-			</div>
-			<p id='loadingScreen'></p>
-			
-		</div>
-	</div>
+				
+				<div id='filters'>
+					<p id='filterSelect'> filters &#9660; </p>
+					<ul id='filterChoices'>
+						<li onclick='newFilters.filterCanvas(newFilters.grayscale)'> grayscale </li>
+						<li onclick='newFilters.filterCanvas(newFilters.saturate)'> saturate </li>
+						<li onclick='newFilters.filterCanvas(newFilters.swap)'> colorswap </li>
+						<li onclick='newFilters.filterCanvas(newFilters.scary)'> scary </li>
+						<li onclick='newFilters.filterCanvas(newFilters.heatwave)'> heatwave </li>
+						<li onclick='newFilters.filterCanvas(newFilters.randomize)'> noise </li>
+						<li onclick='newFilters.filterCanvas(newFilters.invert)'> invert </li>
+						<li onclick='newFilters.filterCanvas(newFilters.blurry)'> blur </li>
+						<li onclick='newFilters.outline()'> outline </li>
+						<li onclick='newFilters.defaultFisheye()'> fisheye </li>
+						<li onclick='newFilters.filterCanvas(newFilters.areaColor)'> painted </li>
+						<li style="color: #ff3232" onclick='newToolbar.resetImage()'> reset </li>
+					</ul>
+				</div>
 
-	<div class='col-md-6 col-lg-6'>
-		<div id='canvasArea'>
-			<div id='pageCount'>
-					<h3> << </h3>
-					<h3 id='count'> 1 </h3>
-					<h3> >> </h3>
+				<div id='brushes'>
+					<p id='brushSelect'> brushes &#9660; </p>
+					<ul>
+						<li onclick='newBrush.defaultBrush()'> default brush </li>
+						<li onclick='newBrush.radialGradBrush()'> radial gradient brush </li>
+					</ul>
+				</div>
+				
+				<div id='adjustBrushSize'>
+					<br>
+					<p class="text-info">change brush size</p>
+					<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
+					<span id='brushSizeValue'> 2 </span>
+				</div>
+				
+				<br>
+				
+				<button id='floodfill'>floodfill with currently selected color</button>
+				<p style='font-size: 10px'> click the button and then select a place on the canvas to floodfill </p>
+				<p style='font-size: 10px'> make sure brush size is less than or equal to 2 and set to default brush! </p>
+				<div id='colorPicker'>
+				</div>
+				
+				<div id='animationControl'>
+					<h3> animation control </h3>
+					<ul id='timeOptions'>
+						<li onclick='newToolbar.playBackward()'> &larr; </li>
+						<li onclick='newToolbar.stop()'> stop! </li>
+						<li onclick='newToolbar.playForward()'> &rarr; </li>
+					</ul>
+					<label>time per frame:</label>
+					<select id='timePerFrame' onchange='newToolbar.timePerFrame = parseInt(value)'>
+						<option value='200'>200</option>
+						<option value='500'>500</option>
+						<option value='700'>700</option>
+						<option value='1000'>1000</option>
+					</select>
+					<button onclick='newToolbar.getGif("loadingScreen")'> generate gif! </button>
+				</div>
+				<p id='loadingScreen'></p>
+				
+				<br>
+				
+				<div id='showDemos'>
+					<h3> demos </h3>
+					<select id='chooseDemo' onchange='getDemo(this)'>
+						<option label=""></option>
+						<option>run_demo</option>
+					</select>
+				</div>
+				
 			</div>
 		</div>
-	</div>
+
+		<div class='col-md-6 col-lg-6'>
+			<div id='canvasArea'>
+				<div id='pageCount'>
+					<h3 id='goLeft'> << </h3>
+					<h3 id='count'> 1 </h3>
+					<h3 id='goRight'> >> </h3>
+				</div>
+			</div>
+		</div>
 		
 	</div> <!-- end row -->
 	
@@ -210,6 +223,11 @@
 
 <script>
 
+// prevent FOUC
+$(document).ready(function(){
+	$('html').css('display', 'block');
+});
+
 // set up initial canvas
 var newCanvas = new SuperCanvas('canvasArea');
 newCanvas.setupNewCanvas();
@@ -219,17 +237,33 @@ var newBrush = new Brush(newCanvas);
 newBrush.defaultBrush();
 
 // set up toolbar 
+// here I'm passing in element Id's that these functions will attach to
 var newToolbar = new Toolbar(newCanvas, newBrush);
 newToolbar.setKeyDown(document, 'count');	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
 newToolbar.createColorWheel('colorPicker', 200);
 newToolbar.floodFill('floodfill');
+newToolbar.insertFrame('insertCanvas');
+newToolbar.deleteFrame('deleteCanvas', 'count');
 newToolbar.setClearCanvas('clearCanvas');
-newToolbar.rotateImage('rotateCanvasImage');	// here I'm passing in element Id's that these functions will attach to 
+newToolbar.rotateImage('rotateCanvasImage'); 
 newToolbar.undo('undo');
 newToolbar.download('download');
 newToolbar.importImage('importImage');
 newToolbar.save('saveWork');
 newToolbar.importProject('importProject', 'count');
+
+// make the goLeft and goRight arrows clickable 
+$('#goLeft').click(function(){
+	if(newToolbar.down()){
+		document.getElementById("count").textContent = newCanvas.currentIndex + 1;
+	}
+});
+$('#goRight').click(function(){
+	if(newToolbar.up()){
+		document.getElementById("count").textContent = newCanvas.currentIndex + 1;
+	}
+});
+
 
 // set up filters object
 var newFilters = new Filters(newCanvas, newBrush);
@@ -254,10 +288,69 @@ function showSize(){
 	document.getElementById('brushSizeValue').textContent = document.getElementById('brushSize').value;
 }
 
-// prevent FOUC
-$(document).ready(function(){
-	$('html').css('display', 'block');
-});
+// show some samples/demos!!
+function getDemo(selectedDemo){
+
+	// case for the blank option 
+	if(selectedDemo.options[selectedDemo.selectedIndex].text === ""){
+		return;
+	}
+
+	// get the selected demo from the dropbox
+	// selectedDemo is the path to the demo to load 
+	var selectedDemo = "demos/" + selectedDemo.options[selectedDemo.selectedIndex].text + ".json"; 
+
+	var httpRequest = new XMLHttpRequest();
+
+	if(!httpRequest){
+		return;
+	}
+	
+	// set request type
+	httpRequest.open("GET", selectedDemo);
+	
+	// what to do when data comes back
+	httpRequest.onload = function(){
+
+		// reset the canvas 
+		newCanvas.resetCanvas();
+		
+		// parse the JSON using JSON.parse 
+		var data = JSON.parse(httpRequest.responseText);
+
+		// data is an array of objects, with each object representing a canvas 
+		// add the canvasses in order 
+		for(var i = 0; i < data.length; i++){
+			
+			// create a new canvas first 
+			// this adds a new blank canvas to canvas.canvasList 
+			if(i > 0){
+				newCanvas.setupNewCanvas();
+			}
+
+			// make any changes to the dimensions based on data[i]
+			var newestCanvasIndex = newCanvas.canvasList.length - 1;
+			newCanvas.canvasList[newestCanvasIndex].height = data[i].height;
+			newCanvas.canvasList[newestCanvasIndex].width = data[i].width;
+			
+			// then add the image
+			var newestCanvas = newCanvas.canvasList[newestCanvasIndex];
+			var newCtx = newestCanvas.getContext('2d');
+			
+				var img = new Image();
+				
+				(function(context, image){
+					image.onload = function(){
+							context.drawImage(image, 0, 0);
+						}
+					image.src = data[i].data;
+				})(newCtx, img);
+		}
+	}
+	
+	// send the request 
+	httpRequest.send();
+}
 
 </script>
 

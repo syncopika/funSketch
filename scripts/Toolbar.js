@@ -11,8 +11,8 @@ function Toolbar(canvas, brush){
 	// used as a counter for the animation playback features
 	var play = null;
 	
-	// used to hold user-indicated time (ms) per frame 
-	this.timePerFrame = 1000; // set to 1000 be default
+	// used to hold user-indicated time (ms) per frame for animation playback and gif
+	this.timePerFrame = 200; // set to 200 be default
 	
 	this.up = function(){
 		if(canvas.currentIndex + 1 < canvas.canvasList.length){
@@ -82,14 +82,12 @@ function Toolbar(canvas, brush){
 			switch(e.which){
 				case 37: //left arrow key
 					if(toolbar.down() && elementId){
-						var currNum = document.getElementById(elementId).textContent;
-						document.getElementById(elementId).textContent = parseInt(currNum) - 1;
+						document.getElementById(elementId).textContent = canvas.currentIndex + 1;
 					}
 				break;
 				case 39: //right arrow key
 					if(toolbar.up() && elementId){
-						var currNum = document.getElementById(elementId).textContent;
-						document.getElementById(elementId).textContent = parseInt(currNum) + 1;
+						document.getElementById(elementId).textContent = canvas.currentIndex + 1;
 					}
 				break;
 				case 32: //space bar
@@ -101,6 +99,76 @@ function Toolbar(canvas, brush){
 			e.preventDefault();
 		});
 	}
+	
+	/***
+		insert a frame after the current frame 
+	***/
+	this.insertFrame = function(elementId){
+		$('#' + elementId).click(function(){
+			
+			// add a new canvas first 
+			canvas.setupNewCanvas();
+			
+			// then move it after the current canvas 
+			var newestCanvas = canvas.canvasList.pop();
+			canvas.canvasList.splice(canvas.currentIndex + 1, 0, newestCanvas);
+		});
+	}
+	
+	/***
+		delete current frame
+		shifts the current frame to the next one if there is one. 
+		otherwise, the previous frame will become the current one.
+		if there isn't a previous one either, then the frame will just be made blank.
+	***/
+	this.deleteFrame = function(elementId, counterId){
+			
+			var toolbarReference = this;
+			
+			$('#' + elementId).click(function(){
+				
+				var oldCanvasIndex = canvas.currentIndex;
+				var oldCanvasId = canvas.currentCanvas.id;
+				var parentNode = document.getElementById(oldCanvasId).parentNode;
+				
+				// if there's a canvas ahead of the current one 
+				if(canvas.currentIndex + 1 < canvas.canvasList.length){
+					
+					// move current canvas to the next one 
+					toolbarReference.up();
+					
+					// remove the old canvas from the array and the DOM!
+					canvas.canvasList.splice(oldCanvasIndex, 1);
+					parentNode.removeChild(document.getElementById(oldCanvasId));
+					
+					// adjust the current canvas index after the removal 
+					canvas.currentIndex -= 1;
+					
+				}else if(canvas.currentIndex - 1 >= 0){
+					// if there's a canvas behind the current one (and no more ahead)
+					
+					// move current canvas to the previous one 
+					// note that currentIndex doesn't need to be adjusted because removing the 
+					// next canvas doesn't affect the current canvas' index
+					toolbarReference.down();
+					canvas.canvasList.splice(oldCanvasIndex, 1);
+					parentNode.removeChild(document.getElementById(oldCanvasId));
+					
+					// but need to adjust the counter, if present
+					if(counterId){
+						document.getElementById(counterId).textContent = canvas.currentIndex + 1;
+					}
+					
+				}else{
+					// otherwise, just blank the canvas 
+					var context = canvas.currentCanvas.getContext("2d");
+					context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+					context.fillStyle = "#FFFFFF";
+					context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+				}
+			});
+	}
+	
 
 	/***
 		color wheel functions
@@ -570,12 +638,15 @@ function Toolbar(canvas, brush){
 		create a gif from the frames.
 		using gif.js - https://github.com/jnordberg/gif.js
 	
-		elementId is for the loading message
+		elementId is for the loading message, 
+		i.e. a <p> element that says "now loading..."
 	
 	***/
 	this.getGif = function(elementId){
 		
-		document.getElementById(elementId).textContent = "now loading...";
+		if(elementId){
+			document.getElementById(elementId).textContent = "now loading...";
+		}
 		
 		var gif = new GIF({
 			workers: 2,
@@ -712,7 +783,6 @@ function Toolbar(canvas, brush){
 							var newestCanvas = canvas.canvasList[newestCanvasIndex];
 							var newCtx = newestCanvas.getContext('2d');
 							
-
 								var img = new Image();
 								
 								// a great example of javascript closures!
@@ -734,6 +804,6 @@ function Toolbar(canvas, brush){
 		
 	}
 	
-}
+} // end of Toolbar 
 
 

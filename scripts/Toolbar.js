@@ -738,8 +738,6 @@ function Toolbar(canvas, brush){
 		
 		$('#' + elementId).click(function(){
 			
-			canvas.resetCanvas(counterId);
-			
 			fileHandler();
 			
 			//import project json file
@@ -776,6 +774,9 @@ function Toolbar(canvas, brush){
 							console.log("it appears to not be a valid project! :<");
 							return;
 						}
+						
+						// everything checks out so far, so reset the canvas before loading the project 
+						canvas.resetCanvas(counterId);
 						
 						// data is an array of objects, with each object representing a canvas 
 						// add the canvasses in order 

@@ -758,11 +758,24 @@ function Toolbar(canvas, brush){
 				reader.onload = (function(theFile){
 				
 					return function(e){
-						
-						// should validate file!! 
 
 						// parse the JSON using JSON.parse 
-						var data = JSON.parse(e.target.result);
+						// check if it can be parsed though first!
+						var data;
+						try{
+							data = JSON.parse(e.target.result);
+						}catch(e){
+							// not valid json file 
+							return;
+						}
+						
+						// do some validation
+						// if there is no canvas
+						// or it's a valid json object but no fields correspond to a canvas, quit
+						if(!data[0] || (!data[0].name && !data[0].height && !data[0].width && !data[0].data)){
+							console.log("it appears to not be a valid project! :<");
+							return;
+						}
 						
 						// data is an array of objects, with each object representing a canvas 
 						// add the canvasses in order 

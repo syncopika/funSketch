@@ -87,6 +87,9 @@ function SuperCanvas(container){
 		
 		- can pass in an element ID that corresponds to the canvas counter, which 
 		also needs to be reset
+		
+		- be careful! note that if this function needs to be used, no other DOM 
+		  element should have an id that contains the string 'canvas'!
 	***/
 	this.resetCanvas = function(counterElementId){
 		

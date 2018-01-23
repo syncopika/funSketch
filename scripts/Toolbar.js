@@ -276,10 +276,9 @@ function Toolbar(canvas, brush){
 				currColorArray = currColorArray.map(function(a){ return parseInt(a) });
 
 				// get the coordinates of the selected pixel 
-				//var rect = document.getElementById(canvas.currentCanvas.id).getBoundingClientRect();
-				var x = e.clientX - $('#' + canvas.currentCanvas.id).offset().left;
-				var y = e.clientY - $('#' + canvas.currentCanvas.id).offset().top;
-				//console.log("x: " + x + ", y: " + y);
+				var x = e.pageX - $('#' + canvas.currentCanvas.id).offset().left;
+				var y = e.pageY - $('#' + canvas.currentCanvas.id).offset().top;
+				console.log("x: " + x + ", y: " + y);
 				
 				/* debugging cursor/click position - if you scroll, that offsets the position and ruins everything :<
 				var d = document.getElementById(canvas.currentCanvas.id).getContext("2d").getImageData(x, y, 10, 10);
@@ -293,7 +292,7 @@ function Toolbar(canvas, brush){
 				
 				var colorData = document.getElementById(canvas.currentCanvas.id).getContext("2d").getImageData(x, y, 1, 1).data;
 				var color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')';
-				
+				console.log(color)
 				// create an object with the pixel data
 				var pixel = {'x': Math.floor(x), 'y': Math.floor(y), 'color': color};
 				

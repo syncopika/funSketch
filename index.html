@@ -40,7 +40,6 @@
 		margin-left: 50px;
 	}
 	#canvasArea{
-		height: auto;
 	}
 	canvas{
 		margin-left: 5%;
@@ -94,6 +93,49 @@
 	#filterSelect, #brushSelect{
 		margin-bottom: 0;
 	}
+	
+	/* accomodate smaller screens */
+	@media (max-width: 1400px){
+	
+		#toolbarArea{
+			width: 80%;
+			margin: 0 auto;
+		}
+		#colorPicker p{
+			margin-bottom: 0;
+		}
+		
+		/* 
+			there's currently a bug such that 
+			when painting on a canvas on a smaller screen, 
+			floodfill doesn't work.
+			
+			it seems like it's coloring the spot before getting 
+			the color of the spot. so for now, turn it off
+			for smaller screens.
+		*/
+		#colorPicker p, #colorPicker button{
+			display: none;
+		}
+		
+		#colorPicker, #animationControl{
+			width: 45%;
+			display: inline-block;
+			margin: 0;
+			vertical-align: top;
+		}
+	
+		#canvas{
+			width: 100%;
+			height: 800px;
+			margin: 0 auto;
+		}
+		
+		#footer{
+			margin-top: 10%;
+		}
+	
+	}
 </style>
 
 <body>
@@ -102,7 +144,7 @@
 
 	<div class='row'>
 
-		<div class='col-md-4 col-lg-4'>
+		<div id='toolbar' class='col-lg-4'>
 			<div id='toolbarArea'>
 
 				<h3 id='title'> funSketch: draw, edit, and animate! </h3>
@@ -158,12 +200,10 @@
 					<span id='brushSizeValue'> 2 </span>
 				</div>
 				
-				<br>
-				
-				<button id='floodfill'>floodfill with currently selected color</button>
-				<p style='font-size: 10px'> click the button and then select a place on the canvas to floodfill </p>
-				<p style='font-size: 10px'> make sure brush size is less than or equal to 2 and set to default brush! </p>
 				<div id='colorPicker'>
+					<p style='font-size: 10px'> click the button and then select a place on the canvas to floodfill </p>
+					<p style='font-size: 10px'> make sure brush size is less than or equal to 2 and set to default brush! </p>
+					<button id='floodfill'>floodfill with currently selected color</button>
 				</div>
 				
 				<div id='animationControl'>
@@ -198,7 +238,7 @@
 			</div>
 		</div>
 
-		<div class='col-md-6 col-lg-6'>
+		<div id='canvas' class='col-lg-6'>
 			<div id='canvasArea'>
 				<div id='pageCount'>
 					<h3 id='goLeft'> << </h3>
@@ -210,11 +250,9 @@
 		
 	</div> <!-- end row -->
 	
-	<div class='row'>
-		<div id='footer'>
-			<hr>
-			<p> n.c.h works 2017 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
-		</div>
+	<div id='footer' class='row'>
+		<hr>
+		<p> n.c.h works 2017 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
 	</div>
 	
 </div> <!-- end container -->

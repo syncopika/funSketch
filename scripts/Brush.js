@@ -41,10 +41,9 @@ function Brush(canvas){
 		// reset mouse action functions first 
 		resetBrush();
 		var paint;
-		$('#' + canvas.currentCanvas.id).mousedown(function(e){
-			if(e.which === 1){ //when left click only
-				
-				// update previousCanvas 
+		$('#' + canvas.currentCanvas.id).on('mousedown touchstart', function(e){
+			if((e.which === 1 && e.type === 'mousedown') || e.type === 'touchstart'){ //when left click only
+				// update previousCanvas
 				if(thisBrushInstance.previousCanvas !== canvas.currentCanvas){
 					thisBrushInstance.previousCanvas = canvas.currentCanvas;
 					// reset the snapshots array
@@ -54,19 +53,36 @@ function Brush(canvas){
 					thisBrushInstance.currentCanvasSnapshots.push(tempSnapshot);
 				}
 				paint = true;
+				
+				// offset will be different with mobile
+				// use e.originalEvent because using jQuery
+				// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
+				// https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
+				// using rect seems to work pretty well
+				if(e.type === 'touchstart'){
+					var rect = e.target.getBoundingClientRect();
+					e.offsetX = e.originalEvent.touches[0].pageX - rect.left;
+					e.offsetY = e.originalEvent.touches[0].pageY - rect.top;
+				}
+				
 				addClick(e.offsetX, e.offsetY, true);
 				redraw(canvas);
 			}
 		});
 		//draw the lines as mouse moves
-		$('#' + canvas.currentCanvas.id).mousemove(function(e){
+		$('#' + canvas.currentCanvas.id).on('mousemove touchmove', function(e){
 			if(paint){
+				if(e.type === 'touchmove'){
+					var rect = e.target.getBoundingClientRect();
+					e.offsetX = e.originalEvent.touches[0].pageX - rect.left;
+					e.offsetY = e.originalEvent.touches[0].pageY - rect.top;
+				}
 				addClick(e.offsetX, e.offsetY, true);
 				redraw(canvas);
 			}
 		});
 		//stop drawing
-		$('#' + canvas.currentCanvas.id).mouseup(function(e) {
+		$('#' + canvas.currentCanvas.id).on('mouseup touchend', function(e) {
 			// see if it's a new canvas or we're still on the same one as before the mousedown
 			if(thisBrushInstance.previousCanvas === canvas.currentCanvas){
 				// if it is, then log the current image data. this is important for the undo feature

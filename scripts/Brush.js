@@ -78,7 +78,6 @@ function Brush(canvas){
 					e.offsetY = e.originalEvent.touches[0].pageY - rect.top;
 
 					// prevent page scrolling when drawing 
-					// doesn't seem to be working on samsung internet browser?
 					e.preventDefault();
 					
 				}

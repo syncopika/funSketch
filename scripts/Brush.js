@@ -63,9 +63,6 @@ function Brush(canvas){
 					var rect = e.target.getBoundingClientRect();
 					e.offsetX = e.originalEvent.touches[0].pageX - rect.left;
 					e.offsetY = e.originalEvent.touches[0].pageY - rect.top;
-					
-					// prevent page scrolling 
-					e.preventDefault();
 				}
 				
 				addClick(e.offsetX, e.offsetY, true);
@@ -79,9 +76,11 @@ function Brush(canvas){
 					var rect = e.target.getBoundingClientRect();
 					e.offsetX = e.originalEvent.touches[0].pageX - rect.left;
 					e.offsetY = e.originalEvent.touches[0].pageY - rect.top;
+
+					// prevent page scrolling when drawing 
+					// see: https://stackoverflow.com/questions/4770025/how-to-disable-scrolling-temporarily
+					$('body').bind('touchmove', e.preventDefault());
 					
-					// prevent page scrolling 
-					e.preventDefault();				
 				}
 				addClick(e.offsetX, e.offsetY, true);
 				redraw(canvas);
@@ -97,6 +96,12 @@ function Brush(canvas){
 				var h = c.height;
 				tempSnapshot = canvas.currentCanvas.getContext("2d").getImageData(0, 0, w, h);
 			}
+			
+			if(e.type === 'touchend'){
+				// reactivate page scrolling  
+				$('body').unbind('touchmove');
+			}
+			
 			clearClick();
 			paint = false;
 		});

@@ -63,6 +63,9 @@ function Brush(canvas){
 					var rect = e.target.getBoundingClientRect();
 					e.offsetX = e.originalEvent.touches[0].pageX - rect.left;
 					e.offsetY = e.originalEvent.touches[0].pageY - rect.top;
+					
+					// prevent page scrolling 
+					e.preventDefault();
 				}
 				
 				addClick(e.offsetX, e.offsetY, true);
@@ -76,6 +79,9 @@ function Brush(canvas){
 					var rect = e.target.getBoundingClientRect();
 					e.offsetX = e.originalEvent.touches[0].pageX - rect.left;
 					e.offsetY = e.originalEvent.touches[0].pageY - rect.top;
+					
+					// prevent page scrolling 
+					e.preventDefault();				
 				}
 				addClick(e.offsetX, e.offsetY, true);
 				redraw(canvas);

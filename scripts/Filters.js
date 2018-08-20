@@ -706,6 +706,60 @@ function Filters(canvas, brush){
 		}
 		return pixels;
 	}
+	
+	/***
+	
+		mosaic filter attempt
+		breaks image into chunks, takes a pixel from each chunk, set all pixels for that chunk 
+		to that pixel's color 
+	
+	***/
+	this.mosaic = function(pixels){
+		
+		var d = pixels.data;
+		var copy = new Uint8ClampedArray(d);
+		
+		// get dimensions 
+		var width = canvas.currentCanvas.getAttribute('width');
+		var height = canvas.currentCanvas.getAttribute('height');
+		
+		var chunkWidth = 100;
+		var chunkHeight = 100;
+		
+		// make sure chunkWidth can completely divide the image width * 4 
+		while(width % chunkWidth != 0){
+			chunkWidth--;
+			chunkHeight--;
+		}
+	
+		for(var i = 0; i < d.length; i += chunkWidth*2){
+			
+			for(var j = 0; j < height; j += chunkHeight){
+				
+				
+				// 4i + j = index of first pixel in chunk 
+				var r = copy[4*i+j];
+				var g = copy[4*i+j+1];
+				var b = copy[4*i+j+2];
+				
+				
+				for(var k = 4*i; k < (4*i)+(4*chunkWidth); k+=4){
+					for(var l = j; l < j+chunkHeight; l++){
+						
+						d[k+l] = r;
+						d[k+l+1] = g;
+						d[k+l+2] = b;
+						
+					}
+				}
+			}
+			
+		}
+		
+		return pixels;
+		
+	}
+	
 
 	/***
 		control brightness - increase

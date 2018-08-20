@@ -505,8 +505,8 @@ function Toolbar(canvas, brush){
 					// height back by multiplying .9 to 800. 
 					var currentCanvas = canvas.currentCanvas;
 					var context = currentCanvas.getContext("2d");
-					var height;
-					var width;
+					var height = img.height;
+					var width = img.width;
 					
 					if((img.width - img.height) >= 100){
 						// if image is wider than it is tall
@@ -527,6 +527,7 @@ function Toolbar(canvas, brush){
 						currentCanvas.setAttribute('height', height);
 						currentCanvas.setAttribute('width', width);
 					}
+					
 					context.drawImage(img, 0, 0, width, height);
 					
 					// assign recentImage variable the image 

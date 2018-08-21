@@ -709,13 +709,72 @@ function Filters(canvas, brush){
 	
 	/***
 	
-		mosaic filter attempt
+		mosaic filter
 		breaks image into chunks, takes a pixel from each chunk, set all pixels for that chunk 
 		to that pixel's color 
 	
 	***/
 	this.mosaic = function(pixels){
 		
+		var d = pixels.data;
+		var copy = new Uint8ClampedArray(d);
+		
+		// get dimensions 
+		var width = canvas.currentCanvas.getAttribute('width');
+		var height = canvas.currentCanvas.getAttribute('height');
+		
+		// change sampling size here. lower for higher detail preservation, higher for less detail (because larger chunks)
+		var chunkWidth = 40;
+		var chunkHeight = 40;
+		
+		// make sure chunkWidth can completely divide the image width * 4 
+		while(width % chunkWidth != 0){
+			chunkWidth--;
+			chunkHeight--;
+		}
+	
+		// when looking at each chunk of the image, for these 2 outer for loops, 
+		// focus on looking at each chunk as if looking at a single pixel first (think bigger picture; abstraction!) 
+		// don't think about selecting single channels yet 
+		for(var i = 0; i < width; i += chunkWidth){
+			for(var j = 0; j < height; j += chunkHeight){
+				
+				// 4*i + 4*j*width = index of first pixel in chunk 
+				// get the color of the first pixel in this chunk
+				// multiply by 4 because 4 channels per pixel
+				// multiply by width because all the image data is in a single array and a row is dependent on width
+				var r = copy[4*i+4*j*width];
+				var g = copy[4*i+4*j*width+1];
+				var b = copy[4*i+4*j*width+2];
+				
+				// now for all the other pixels in this chunk, set them to this color 
+				for(var k = i; k < i+chunkWidth; k++){
+					for(var l = j; l < j+chunkHeight; l++){
+						
+						d[4*k+4*l*width] = r;
+						d[4*k+4*l*width+1] = g;
+						d[4*k+4*l*width+2] = b;
+
+					}
+				}
+			}
+			
+		}
+		
+		return pixels;
+		
+	}
+	
+	/***
+		this function seems to pixelate an image 
+		it was my first attempt at the mosaic filter 
+		and I was getting confused how to traverse chunks of an array 
+		and ended up with this. the time complexity is very bad 
+		because my traversal of the chunks in the array is completely wrong 
+		but sometimes this filter yields interesting results 
+	***/
+	this.pixelate = function(pixels){
+	
 		var d = pixels.data;
 		var copy = new Uint8ClampedArray(d);
 		
@@ -731,11 +790,10 @@ function Filters(canvas, brush){
 			chunkWidth--;
 			chunkHeight--;
 		}
-	
+
 		for(var i = 0; i < d.length; i += chunkWidth*2){
 			
 			for(var j = 0; j < height; j += chunkHeight){
-				
 				
 				// 4i + j = index of first pixel in chunk 
 				var r = copy[4*i+j];
@@ -757,9 +815,7 @@ function Filters(canvas, brush){
 		}
 		
 		return pixels;
-		
 	}
-	
 
 	/***
 		control brightness - increase

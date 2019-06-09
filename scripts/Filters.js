@@ -792,7 +792,6 @@ function Filters(canvas, brush){
 		}
 
 		for(var i = 0; i < d.length; i += chunkWidth*2){
-			
 			for(var j = 0; j < height; j += chunkHeight){
 				
 				// 4i + j = index of first pixel in chunk 
@@ -900,7 +899,123 @@ function Filters(canvas, brush){
 		return pixels;
 	}
 
-}
+
+	/***
+
+		voronoi filter 
+		https://softwarebydefault.com/tag/voronoi-diagrams/
+		https://www.codeproject.com/Articles/882739/Simple-approach-to-Voronoi-diagrams
+		
+		- nearest neighbor automatically creates 'boundaries'.
+		- for each pixel, find the nearest neighbor (a collection of pre-selected pixels)
+		- color that pixel whatever the nearest neighbor's color is 
+		
+	***/
+
+	function Point(x, y, r, g, b){
+		this.x = x;
+		this.y = y;
+		this.r = r;
+		this.g = g;
+		this.b = b;
+	}
+
+	function getPixelCoords(index, width, height){
+		// assuming index represents the r channel of a pixel 
+		// index therefore represents the index of a pixel, since the pixel data 
+		// is laid out like r,g,b,a,r,g,b,a,... in the image data 
+		// so to figure out the x and y coords, take the index and divide by 4,
+		// which gives us the pixel's number. then we need to know its position 
+		// on the canvas.
+		if((width*4) * height < index){
+			// if index is out of bounds 
+			return {};
+		}
+		
+		var pixelNum = Math.floor(index / 4);
+		var yCoord =  Math.floor(pixelNum / width) - 1; // find what row this pixel belongs in, and subtract 1 because 0-indexing 
+		var xCoord = pixelNum - ((yCoord+1) * width); // find the difference between the pixel number of the pixel at the start of the row and this pixel 
+		return {'x': xCoord, 'y': yCoord};
+	}
+
+	function getDist(x1, x2, y1, y2){
+		return Math.abs((y2 - y1) / (x2 - x1));
+	}
+
+
+	this.voronoi = function(pixels){
+		
+		var data = pixels.data;
+		var width = canvas.currentCanvas.getAttribute('width');
+		var height = canvas.currentCanvas.getAttribute('height');
+		console.log("width: " + width);
+		console.log("height: " + height);
+		
+		var neighborList = []; // array of Points 
+		
+		// randomly select some points and add to neighborList
+		var idx1 = width*4*5 + Math.floor((width*4) - 40);
+		var idx2 = width*4*(height - 20) + 400;
+		var idx3 = width*4*20 + Math.floor((width*4)/2);
+		var idx4 = width*4*(height - 30) + Math.floor(width / 2)*4;
+		var idx5 = width*4*Math.floor(height/3) + 40;
+		var idx6 = width*4*Math.floor(height/5) + (width*4 - 4);
+		
+		// try this strategy:
+		// don't randomly select. for every other row of the image, select 10 pixels to serve as neighbors to look at 
+		
+		//console.log(idx1);
+		//console.log(data.length);
+		
+		var c1 = getPixelCoords(idx1, width, height);
+		var c2 = getPixelCoords(idx2, width, height);
+		var c3 = getPixelCoords(idx3, width, height);
+		var c4 = getPixelCoords(idx4, width, height);
+		var c5 = getPixelCoords(idx5, width, height);
+		var c6 = getPixelCoords(idx6, width, height);
+		
+		var p1 = new Point(c1.x, c1.y, data[idx1], data[idx1+1], data[idx1+2]);
+		var p2 = new Point(c2.x, c2.y, data[idx2], data[idx2+1], data[idx2+2]);
+		var p3 = new Point(c3.x, c3.y, data[idx3], data[idx3+1], data[idx3+2]);
+		var p4 = new Point(c4.x, c4.y, data[idx4], data[idx4+1], data[idx4+2]);
+		var p5 = new Point(c5.x, c5.y, data[idx5], data[idx5+1], data[idx5+2]);
+		var p6 = new Point(c6.x, c6.y, data[idx6], data[idx6+1], data[idx6+2]);
+		
+		neighborList = [p1,p2,p3,p4,p5,p6];
+		console.log(neighborList);
+		
+		for(var i = 0; i < data.length; i+=4){
+			var currCoords = getPixelCoords(i, width, height);
+			
+			var nearestNeighbor = neighborList[0];
+			var minDist = getDist(nearestNeighbor.x, currCoords.x, nearestNeighbor.y, currCoords.y);
+			
+			// find the nearest neighbor for this pixel 
+			for(var j = 0; j < neighborList.length; j++){
+				var neighbor = neighborList[j];
+				var dist = getDist(neighbor.x, currCoords.x, neighbor.y, currCoords.y);
+				if(dist < minDist){
+					minDist = dist;
+					nearestNeighbor = neighborList[j];
+				}
+			}
+			
+			// found nearest neighbor. color the current pixel the color of the nearest neighbor. 
+			data[i] = nearestNeighbor.r;
+			data[i+1] = nearestNeighbor.g;
+			data[i+2] = nearestNeighbor.b;
+		}
+		
+		return pixels;
+		
+	}
+
+	
+
+} // end filter object
+
+
+
 
 
 

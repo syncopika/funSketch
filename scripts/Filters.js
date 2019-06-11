@@ -958,52 +958,21 @@ function Filters(canvas, brush){
 		
 		var neighborList = []; // array of Points 
 		
-		//var widthCounter = 0;
-		//var rowNeighborCounter = 0;
 		for(var i = 0; i < data.length; i += 4){
-			// get neighbors. every 100th pixel in a row will be a neighbor
+			// get neighbors.
+			// add some offset to each neighbor for randomness (we don't really want evenly spaced neighbors)
+			var offset = Math.floor(Math.random() * 10); // to be applied in x or y direction
+			var sign = Math.random() > .5 ? 1 : -1;
+			
 			var c1 = getPixelCoords(i, width, height);
 			if(c1.x % Math.floor(width / 30) === 0 && c1.y % Math.floor(height / 30) === 0 && c1.x !== 0){
-				var p1 = new Point(c1.x, c1.y, data[i], data[i+1], data[i+2]);
+				var x = (sign * offset) + c1.x;
+				var y = (sign * offset) + c1.y;
+				var p1 = new Point(x, y, data[i], data[i+1], data[i+2]);
 				neighborList.push(p1);
 			}
-			//rowNeighborCounter++;
 		}
 		//console.log(neighborList)
-		//console.log(neighborList.length)
-
-		
-		/* randomly select some points and add to neighborList
-		var idx1 = width*4*5 + Math.floor((width*4) - 40);
-		var idx2 = width*4*(height - 20) + 400;
-		var idx3 = width*4*20 + Math.floor((width*4)/2);
-		var idx4 = width*4*(height - 30) + Math.floor(width / 2)*4;
-		var idx5 = width*4*Math.floor(height/3) + 40;
-		var idx6 = width*4*Math.floor(height/5) + (width*4 - 4);
-		
-		// try this strategy:
-		// don't randomly select. for every other row of the image, select 10 pixels to serve as neighbors to look at 
-		
-		//console.log(idx1);
-		//console.log(data.length);
-		
-		var c1 = getPixelCoords(idx1, width, height);
-		var c2 = getPixelCoords(idx2, width, height);
-		var c3 = getPixelCoords(idx3, width, height);
-		var c4 = getPixelCoords(idx4, width, height);
-		var c5 = getPixelCoords(idx5, width, height);
-		var c6 = getPixelCoords(idx6, width, height);
-		
-		var p1 = new Point(c1.x, c1.y, data[idx1], data[idx1+1], data[idx1+2]);
-		var p2 = new Point(c2.x, c2.y, data[idx2], data[idx2+1], data[idx2+2]);
-		var p3 = new Point(c3.x, c3.y, data[idx3], data[idx3+1], data[idx3+2]);
-		var p4 = new Point(c4.x, c4.y, data[idx4], data[idx4+1], data[idx4+2]);
-		var p5 = new Point(c5.x, c5.y, data[idx5], data[idx5+1], data[idx5+2]);
-		var p6 = new Point(c6.x, c6.y, data[idx6], data[idx6+1], data[idx6+2]);
-		
-		neighborList = [p1,p2,p3,p4,p5,p6];
-		console.log(neighborList);
-		*/
 		
 		for(var i = 0; i < data.length; i+=4){
 			var currCoords = getPixelCoords(i, width, height);
@@ -1026,12 +995,7 @@ function Filters(canvas, brush){
 			data[i+1] = nearestNeighbor.g;
 			data[i+2] = nearestNeighbor.b;
 		}
-		
-		/*
-		neighborList.forEach(function(el){
-			makePath(el.x, el.y);
-		});*/
-		
+
 		return pixels;
 		
 	}

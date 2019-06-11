@@ -409,7 +409,7 @@ function Filters(canvas, brush){
 	function makePath(col, row){
 		var context = canvas.currentCanvas.getContext("2d");
 		context.lineJoin = 'round';
-		context.lineWidth = 1;
+		context.lineWidth = 5;
 		context.beginPath();
 		context.moveTo(col, row);
 		context.lineTo(col+2, row+1);
@@ -909,6 +909,7 @@ function Filters(canvas, brush){
 		- nearest neighbor automatically creates 'boundaries'.
 		- for each pixel, find the nearest neighbor (a collection of pre-selected pixels)
 		- color that pixel whatever the nearest neighbor's color is 
+		- evenly spaced neighbors will yield a mosaic! awesome!
 		
 	***/
 
@@ -939,21 +940,40 @@ function Filters(canvas, brush){
 	}
 
 	function getDist(x1, x2, y1, y2){
-		return Math.abs((y2 - y1) / (x2 - x1));
+		return Math.sqrt((Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)));
 	}
 
 
 	this.voronoi = function(pixels){
-		
-		var data = pixels.data;
+
+		var context = canvas.currentCanvas.getContext("2d");
 		var width = canvas.currentCanvas.getAttribute('width');
 		var height = canvas.currentCanvas.getAttribute('height');
-		console.log("width: " + width);
-		console.log("height: " + height);
+		
+		var imgData = context.getImageData(0, 0, width, height);
+		var data = pixels.data; //imgData.data;
+
+		//console.log("width: " + width);
+		//console.log("height: " + height);
 		
 		var neighborList = []; // array of Points 
 		
-		// randomly select some points and add to neighborList
+		//var widthCounter = 0;
+		//var rowNeighborCounter = 0;
+		for(var i = 0; i < data.length; i += 4){
+			// get neighbors. every 100th pixel in a row will be a neighbor
+			var c1 = getPixelCoords(i, width, height);
+			if(c1.x % Math.floor(width / 30) === 0 && c1.y % Math.floor(height / 30) === 0 && c1.x !== 0){
+				var p1 = new Point(c1.x, c1.y, data[i], data[i+1], data[i+2]);
+				neighborList.push(p1);
+			}
+			//rowNeighborCounter++;
+		}
+		//console.log(neighborList)
+		//console.log(neighborList.length)
+
+		
+		/* randomly select some points and add to neighborList
 		var idx1 = width*4*5 + Math.floor((width*4) - 40);
 		var idx2 = width*4*(height - 20) + 400;
 		var idx3 = width*4*20 + Math.floor((width*4)/2);
@@ -983,6 +1003,7 @@ function Filters(canvas, brush){
 		
 		neighborList = [p1,p2,p3,p4,p5,p6];
 		console.log(neighborList);
+		*/
 		
 		for(var i = 0; i < data.length; i+=4){
 			var currCoords = getPixelCoords(i, width, height);
@@ -991,7 +1012,7 @@ function Filters(canvas, brush){
 			var minDist = getDist(nearestNeighbor.x, currCoords.x, nearestNeighbor.y, currCoords.y);
 			
 			// find the nearest neighbor for this pixel 
-			for(var j = 0; j < neighborList.length; j++){
+			for(let j = 0; j < neighborList.length; j++){
 				var neighbor = neighborList[j];
 				var dist = getDist(neighbor.x, currCoords.x, neighbor.y, currCoords.y);
 				if(dist < minDist){
@@ -1005,6 +1026,11 @@ function Filters(canvas, brush){
 			data[i+1] = nearestNeighbor.g;
 			data[i+2] = nearestNeighbor.b;
 		}
+		
+		/*
+		neighborList.forEach(function(el){
+			makePath(el.x, el.y);
+		});*/
 		
 		return pixels;
 		

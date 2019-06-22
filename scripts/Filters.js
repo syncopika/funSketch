@@ -912,13 +912,26 @@ function Filters(canvas, brush){
 		- evenly spaced neighbors will yield a mosaic! awesome!
 		
 	***/
-
+	
+	// kd tree to be used in Voronoi function 
+	// https://blog.krum.io/k-d-trees/
+	// https://github.com/z2oh/chromatic_confinement/blob/master/src/main.rs
+	// https://stackoverflow.com/questions/1627305/nearest-neighbor-k-d-tree-wikipedia-proof/37107030#37107030
+	// each node takes Point info (x, y, rgb) and a dimension
 	function Point(x, y, r, g, b){
 		this.x = x;
 		this.y = y;
 		this.r = r;
 		this.g = g;
 		this.b = b;
+	}
+	
+	function Node(point, dim){
+		this.data = [point.x, point.y];
+		this.point = point;
+		this.dim = dim;
+		this.left = null;
+		this.right = null;
 	}
 
 	function getPixelCoords(index, width, height){
@@ -934,30 +947,16 @@ function Filters(canvas, brush){
 		}
 		
 		var pixelNum = Math.floor(index / 4);
-		var yCoord =  Math.floor(pixelNum / width) - 1; // find what row this pixel belongs in, and subtract 1 because 0-indexing 
-		var xCoord = pixelNum - ((yCoord+1) * width); // find the difference between the pixel number of the pixel at the start of the row and this pixel 
+		var yCoord =  Math.floor(pixelNum / width); // find what row this pixel belongs in
+		var xCoord = pixelNum - (yCoord * width); // find the difference between the pixel number of the pixel at the start of the row and this pixel 
 		return {'x': xCoord, 'y': yCoord};
 	}
 
 	function getDist(x1, x2, y1, y2){
 		// removing Math.sqrt from the equation seemed to be the fix in producing 
-		// the correct output (with sqrt you get the wrong neighbor choices for some points going along a diagonal in the image)
-		// not sure why? 
+		// the correct output (with sqrt it looks like you get the wrong neighbor choices for some points going along a diagonal in the image)
+		// not sure why? however, with Math.sqrt it's considerably faster...
 		return Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
-	}
-	
-	
-	// kd tree to be used in Voronoi function 
-	// https://blog.krum.io/k-d-trees/
-	// https://github.com/z2oh/chromatic_confinement/blob/master/src/main.rs
-	// https://stackoverflow.com/questions/1627305/nearest-neighbor-k-d-tree-wikipedia-proof/37107030#37107030
-	// each node takes Point info (x, y, rgb) and a dimension
-	function Node(point, dim){
-		this.data = [point.x, point.y];
-		this.point = point;
-		this.dim = dim;
-		this.left = null;
-		this.right = null;
 	}
 	
 	// in this use case our dimensions will be x and y (since each pixel has an x,y coordinate)
@@ -1124,12 +1123,12 @@ function Filters(canvas, brush){
 				}else{
 					if(y > root.data[1]){
 						findNearestNeighborHelper(root.right, record, x, y);
-						if(y - record.minDist < root.data[0]){
+						if(y - record.minDist < root.data[1]){
 							findNearestNeighborHelper(root.left, record, x, y);
 						}
 					}else{
 						findNearestNeighborHelper(root.left, record, x, y);
-						if(y + record.minDist > root.data[0]){
+						if(y + record.minDist > root.data[1]){
 							findNearestNeighborHelper(root.right, record, x, y);
 						}
 					}
@@ -1167,6 +1166,7 @@ function Filters(canvas, brush){
 		}
 
 		var kdtree = build2dTree(neighborList, 0);
+		console.log(kdtree);
 
 		for(var i = 0; i < data.length; i+=4){
 			var currCoords = getPixelCoords(i, width, height);

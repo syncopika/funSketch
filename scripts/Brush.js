@@ -4,7 +4,8 @@
 	the canvas argument will have a reference to the current canvas so that
 	only the current canvas will be a target for the brush
 ***/
-function Brush(canvas){
+function Brush(animationProject){
+	// pass in an animation project, from which you can access the current frame and the current canvas
 
 	this.previousCanvas = undefined;	
 	this.currentCanvasSnapshots = [];	// keep track of what the current canvas looks like after each mouseup
@@ -40,6 +41,7 @@ function Brush(canvas){
 	this.defaultBrush = function(){	
 		// reset mouse action functions first 
 		resetBrush();
+		var canvas = animationProject.getCurrFrame();
 		var paint;
 		$('#' + canvas.currentCanvas.id).on('mousedown touchstart', function(e){
 			if((e.which === 1 && e.type === 'mousedown') || e.type === 'touchstart'){ //when left click only
@@ -111,6 +113,7 @@ function Brush(canvas){
 	this.radialGradBrush = function(){
 		// reset mouse action functions first 
 		resetBrush();
+		var canvas = animationProject.getCurrFrame();
 		var curCanvas = canvas.currentCanvas.id;
 		var context = canvas.currentCanvas.getContext("2d");
 		var paint;
@@ -143,6 +146,7 @@ function Brush(canvas){
 	}
 	
 	function radialGrad(x,y){
+		var canvas = animationProject.getCurrFrame();
 		var context = canvas.currentCanvas.getContext("2d");
 		var radGrad = context.createRadialGradient(x,y,thisBrushInstance.currSize,x,y,thisBrushInstance.currSize*1.5);
 		var colorPicked = thisBrushInstance.currColorArray;
@@ -160,6 +164,7 @@ function Brush(canvas){
 	
 	
 	function resetBrush(){
+		var canvas = animationProject.getCurrFrame();
 		var curCanvas = canvas.currentCanvas.id;
 		//detach any events from mouse actions (reset the events connected with mouse events)
 		$('#' + curCanvas).off("mousedown");
@@ -169,7 +174,7 @@ function Brush(canvas){
 
 	//collect info where each pixel is to be drawn on canvas
 	function addClick(x, y, dragging){
-		var brushInstance = 
+		//var brushInstance = 
 		clickX.push(x);
 		clickY.push(y);
 		clickDrag.push(dragging);
@@ -178,6 +183,7 @@ function Brush(canvas){
 	}
 	
 	function redraw(canvas){
+		var canvas = animationProject.getCurrFrame();
 		var context = canvas.currentCanvas.getContext("2d");
 		context.lineJoin = 'round';
 		for(var i = 0; i < clickX.length; i++){

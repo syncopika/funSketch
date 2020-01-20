@@ -74,6 +74,32 @@ function Toolbar(canvas, brush, animationProj){
 		return false;
 	}
 	
+	this.nextFrame = function(){
+		animationProj.updateOnionSkin();
+		var curr = animationProj.getCurrFrame();
+		var next = animationProj.nextFrame();
+		if(next !== null){
+			curr.hide(); // maybe do something else so as to not clutter the DOM?
+			next.show();
+			brush.defaultBrush();
+			return true;
+		}
+		return false;
+	}
+	
+	this.prevFrame = function(){
+		animationProj.updateOnionSkin();
+		var curr = animationProj.getCurrFrame();
+		var prev = animationProj.prevFrame();
+		if(prev !== null){
+			curr.hide(); // maybe do something else so as to not clutter the DOM?
+			prev.show();
+			brush.defaultBrush();
+			return true;
+		}
+		return false;
+	}
+	
 	this.addPage = function(){
 		var canvas = animationProj.getCurrFrame();
 		canvas.setupNewLayer();
@@ -87,20 +113,33 @@ function Toolbar(canvas, brush, animationProj){
 		var toolbar = this;
 		//keymapping
 		$(doc).keydown(function(e){
-			var canvas = animationProj.getCurrFrame();
 			switch(e.which){
 				case 37: //left arrow key
 					if(toolbar.down() && elementId){
+						var canvas = animationProj.getCurrFrame();
 						document.getElementById(elementId).textContent = "frame: " + (animationProj.currentFrame+1) + ", layer: " + (canvas.currentIndex + 1);
 					}
 				break;
 				case 39: //right arrow key
 					if(toolbar.up() && elementId){
+						var canvas = animationProj.getCurrFrame();
 						document.getElementById(elementId).textContent = "frame: " + (animationProj.currentFrame+1) + ", layer: " + (canvas.currentIndex + 1);
 					}
 				break;
 				case 32: //space bar
 					toolbar.addPage();
+				break;
+				case 65: // a key 
+					if(toolbar.prevFrame() && elementId){
+						var canvas = animationProj.getCurrFrame();
+						document.getElementById(elementId).textContent = "frame: " + (animationProj.currentFrame+1) + ", layer: " + (canvas.currentIndex + 1);
+					}
+				break;
+				case 68: // d key 
+					if(toolbar.nextFrame() && elementId){
+						var canvas = animationProj.getCurrFrame();
+						document.getElementById(elementId).textContent = "frame: " + (animationProj.currentFrame+1) + ", layer: " + (canvas.currentIndex + 1);
+					}
 				break;
 				default:
 				return;
@@ -135,10 +174,10 @@ function Toolbar(canvas, brush, animationProj){
 	this.deleteLayer = function(elementId, counterId){
 			
 			var toolbarReference = this;
-			var canvas = animationProj.getCurrFrame();
 			
 			$('#' + elementId).click(function(){
 				
+				var canvas = animationProj.getCurrFrame();
 				var oldCanvasIndex = canvas.currentIndex;
 				var oldCanvasId = canvas.currentCanvas.id;
 				var parentNode = document.getElementById(oldCanvasId).parentNode;
@@ -168,7 +207,7 @@ function Toolbar(canvas, brush, animationProj){
 					
 					// but need to adjust the counter, if present
 					if(counterId){
-						document.getElementById(counterId).textContent = canvas.currentIndex + 1;
+						document.getElementById(counterId).textContent = "frame: " + (animationProj.currentFrame+1) + ", layer:" + (canvas.currentIndex+1);
 					}
 					
 				}else{
@@ -194,7 +233,6 @@ function Toolbar(canvas, brush, animationProj){
 			newFrame.setupNewLayer();
 			newFrame.hide();
 			animationProj.add(newFrame);
-			//console.log("added a new frame!");
 		});
 	}
 	

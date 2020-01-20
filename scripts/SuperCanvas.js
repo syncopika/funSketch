@@ -177,7 +177,7 @@ function Animation(container){
 	}
 	
 	this.prevFrame = function(){
-		if(this.currentFrame - 1 > 0){
+		if(this.currentFrame - 1 < 0){
 			return null; // no more frames to see
 		}
 		
@@ -190,8 +190,16 @@ function Animation(container){
 	}
 	
 	this.updateOnionSkin = function(){
+		// https://stackoverflow.com/questions/6787899/combining-two-or-more-canvas-elements-with-some-sort-of-blending
+		var onionSkinCtx = this.onionSkinFrame.getContext("2d");
 		// take the previous frame, merge all layers, put into onion skin frame
-		console.log("update onion skin");
+		this.getCurrFrame().canvasList.forEach(function(layer){
+			// apply each layer to the onion skin
+			onionSkinCtx.drawImage(layer, 0, 0, layer.width, layer.height);
+		});
+		this.onionSkinFrame.zIndex = 0;
+		this.onionSkinFrame.opacity = 0.92;
+		//console.log("updated onion skin");
 	}
 	
 }

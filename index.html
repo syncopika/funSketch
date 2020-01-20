@@ -311,39 +311,32 @@ newToolbar.importProject('importProject', 'count');
 newToolbar.addNewFrame('addNewFrame');
 
 // make the goLeft and goRight arrows clickable FOR LAYERS
+// note this is for clicking the icons with a mouse
 $('#goLeft').click(function(){
 	if(newToolbar.down()){
-		var curr = project.frameList[project.currentFrame];
+		var curr = project.getCurrFrame();
 		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
 	}
 });
 $('#goRight').click(function(){
 	if(newToolbar.up()){
-		var curr = project.frameList[project.currentFrame];
+		var curr = project.getCurrFrame();
 		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
 	}
 });
 
 // left and right arrows for FRAMES
 $('#prevFrame').click(function(){
-	var curr = project.frameList[project.currentFrame];
-	var prev = project.prevFrame();
-	if(prev !== null){
-		curr.hide(); // maybe do something else so as to not clutter the DOM?
-		prev.show();
+	if(newToolbar.prevFrame()){
+		var curr = project.getCurrFrame();
 		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (prev.currentIndex + 1);
-		newBrush.defaultBrush(); // TODO: move to toolbar
 	}
 });
 
 $('#nextFrame').click(function(){
-	var curr = project.frameList[project.currentFrame];
-	var next = project.nextFrame();
-	if(next !== null){
-		curr.hide(); // maybe do something else so as to not clutter the DOM?
-		next.show();
+	if(newToolbar.nextFrame()){
+		var curr = project.getCurrFrame();
 		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (next.currentIndex + 1);
-		newBrush.defaultBrush();
 	}
 });
 

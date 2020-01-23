@@ -192,13 +192,30 @@ function Animation(container){
 	this.updateOnionSkin = function(){
 		// https://stackoverflow.com/questions/6787899/combining-two-or-more-canvas-elements-with-some-sort-of-blending
 		var onionSkinCtx = this.onionSkinFrame.getContext("2d");
+		onionSkinCtx.clearRect(0,0,this.onionSkinFrame.width,this.onionSkinFrame.height);
+		
 		// take the previous frame, merge all layers, put into onion skin frame
-		this.getCurrFrame().canvasList.forEach(function(layer){
+		// try this? only draw pixels that are non-white?
+		var onionSkinImageData = onionSkinCtx.getImageData(0,0,this.onionSkinFrame.width,this.onionSkinFrame.height);
+		this.getCurrFrame().canvasList.reverse().forEach(function(layer){
+			var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
+			for(var i = 0; i < imageData.length; i += 4){
+				if(imageData[i] === 255 && imageData[i+1] === 255 && imageData[i+2] === 255){
+					continue;
+				}else{
+					// what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
+					// we might run into index/length issues...
+					onionSkinImageData.data[i] = imageData[i];
+					onionSkinImageData.data[i+1] = imageData[i+1];
+					onionSkinImageData.data[i+2] = imageData[i+2];
+					onionSkinImageData.data[i+3] = 255;
+				}
+			}
 			// apply each layer to the onion skin
-			onionSkinCtx.drawImage(layer, 0, 0, layer.width, layer.height);
+			onionSkinCtx.putImageData(onionSkinImageData, 0, 0);
 		});
-		this.onionSkinFrame.zIndex = 0;
-		this.onionSkinFrame.opacity = 0.92;
+		this.onionSkinFrame.style.zIndex = 0;
+		this.onionSkinFrame.style.opacity = 0.92;
 		//console.log("updated onion skin");
 	}
 	
@@ -231,7 +248,7 @@ function setCanvas(canvasElement, width, height){
 	canvasElement.style.opacity = 0;
 	canvasElement.setAttribute('width', width);
 	canvasElement.setAttribute('height', height);
-	canvasElement.getContext("2d").fillStyle = "#fff";
+	canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,255)"; //"#fff";
 	canvasElement.getContext("2d").fillRect(0, 0, width, height);
 }
 

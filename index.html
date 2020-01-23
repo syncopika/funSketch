@@ -329,14 +329,14 @@ $('#goRight').click(function(){
 $('#prevFrame').click(function(){
 	if(newToolbar.prevFrame()){
 		var curr = project.getCurrFrame();
-		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (prev.currentIndex + 1);
+		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
 	}
 });
 
 $('#nextFrame').click(function(){
 	if(newToolbar.nextFrame()){
 		var curr = project.getCurrFrame();
-		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (next.currentIndex + 1);
+		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
 	}
 });
 

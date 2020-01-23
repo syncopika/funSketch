@@ -214,7 +214,7 @@ function Toolbar(canvas, brush, animationProj){
 					// otherwise, just blank the canvas 
 					var context = canvas.currentCanvas.getContext("2d");
 					context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
-					context.fillStyle = "#FFFFFF";
+					context.fillStyle = "#fff";
 					context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
 				}
 			});

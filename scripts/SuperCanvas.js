@@ -16,7 +16,6 @@
 ***/
 function SuperCanvas(container, number){
 
-	this.count = 0; 					// keep count of canvasses - unnecessary since you have a list!
 	this.width = 800; 					// default value
 	this.height = 800;
 	this.currentIndex = 0;
@@ -25,7 +24,16 @@ function SuperCanvas(container, number){
 	this.container = container;			// this is the html container id to hold all the layers of this frame
 	this.tainted = false;				// set to true if any layers are edited
 	this.number = number;				// frame number
-
+	this.count = 0;						// current number of layers
+	
+	this.getMetadata = function(){
+		return {
+			'width': this.width,
+			'height': this.height,
+			'currentIndex': this.currentIndex,
+			'number': this.number
+		};
+	}
 
 	this.getCurrCanvas = function(){
 		return this.canvasList[this.currentIndex];
@@ -88,7 +96,6 @@ function SuperCanvas(container, number){
 		clone the current canvas
 	***/
 	this.copyCanvas = function(){
-		
 		var newCanvas = document.createElement('canvas');
 		newCanvas.id = 'frame' + this.number + 'canvas' + this.count;
 		setCanvas(newCanvas, this.width, this.height);
@@ -110,6 +117,14 @@ function SuperCanvas(container, number){
 		this.count++;	
 	}
 	
+	this.clearCurrentLayer = function(){
+		var currLayer = this.getCurrCanvas();
+		var context = currLayer.getContext("2d");
+		context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
+		context.fillStyle = "#FFFFFF";
+		context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
+	}
+	
 		
 	/***
 		reset the canvas object - i.e. remove all frames, reset values, etc.
@@ -120,7 +135,7 @@ function SuperCanvas(container, number){
 		
 		- be careful! note that if this function needs to be used, no other DOM 
 		  element should have an id that contains the string 'canvas'!
-	***/
+
 	this.resetCanvas = function(counterElementId){
 		
 		// delete all canvasses except first one from the dom
@@ -147,6 +162,7 @@ function SuperCanvas(container, number){
 			document.getElementById(counterElementId).textContent = "1";
 		}
 	}
+	***/
 
 }
 
@@ -162,6 +178,35 @@ function Animation(container){
 	this.mode = 0;	// 0 == drawing mode. 1 == animation mode.
 	this.onionSkinFrame = createOnionSkinFrame(container);
 	this.container = container; // id of the html element the frames are displayed in
+	
+	this.resetProject = function(){
+		// this could use some refactoring. have a resetFrame function in SuperCanvas. maybe rename to frame later?
+		this.frameList.forEach(function(frame, frameIndex){
+			// remove each layer from the DOM 
+			var parent = document.getElementById(frame['container']);
+			
+			// just keep the first layer
+			frame.canvasList.forEach(function(layer, layerIndex){
+				if(layerIndex > 0){
+					parent.removeChild(layer);
+				}
+			});
+			frame.canvasList = [frame.canvasList[0]];
+			
+			if(frameIndex === 0){
+				frame.currentIndex = 0;
+				frame.currentCanvas = frame.canvasList[0];
+			}
+		});
+		this.frameList = [this.frameList[0]]; // just keep the first frame.
+		
+		// clear the first layer of the first frame!
+		this.frameList[0].clearCurrentLayer();
+		
+		this.currentFrame = 0;
+		this.mode = 0;
+		this.speed = 100;
+	}
 	
 	this.add = function(frame){
 		this.frameList.push(frame);

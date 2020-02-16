@@ -165,7 +165,7 @@ function Brush(animationProject){
 	
 	function resetBrush(){
 		var canvas = animationProject.getCurrFrame();
-		var curCanvas = canvas.currentCanvas.id;
+		var curCanvas = canvas.getCurrCanvas().id;//canvas.currentCanvas.id;
 		//detach any events from mouse actions (reset the events connected with mouse events)
 		$('#' + curCanvas).off("mousedown");
 		$('#' + curCanvas).off("mouseup");

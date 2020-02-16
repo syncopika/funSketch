@@ -166,6 +166,7 @@
 					<button id='download'>download canvas (.png)</button>
 					<button id='saveWork'>save project (.json)</button> 
 					<button id='importProject'>import project (.json)</button> 
+					<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
 				</div>
 				
 				<br>
@@ -296,7 +297,8 @@ newBrush.defaultBrush();
 // set up toolbar 
 // here I'm passing in element Id's that these functions will attach to
 var newToolbar = new Toolbar(newCanvas, newBrush, project);
-newToolbar.setKeyDown(document, 'count');	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
+newToolbar.setCounter("count");
+newToolbar.setKeyDown(document);	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
 newToolbar.createColorWheel('colorPicker', 200);
 newToolbar.floodFill('floodfill');
 newToolbar.insertLayer('insertCanvas');
@@ -308,10 +310,10 @@ newToolbar.download('download');
 newToolbar.importImage('importImage');
 newToolbar.save('saveWork');
 newToolbar.importProject('importProject', 'count');
-newToolbar.addNewFrame('addNewFrame');
+newToolbar.addNewFrameButton('addNewFrame');
 
 // make the goLeft and goRight arrows clickable FOR LAYERS
-// note this is for clicking the icons with a mouse
+// note: this is for clicking the icons with a mouse!
 $('#goLeft').click(function(){
 	if(newToolbar.down()){
 		var curr = project.getCurrFrame();
@@ -340,7 +342,16 @@ $('#nextFrame').click(function(){
 	}
 });
 
-
+$('#toggleLayerOrFrame').click(function(){
+	element = document.getElementById("toggleLayerOrFrame");
+	if(newToolbar.layerMode){
+		newToolbar.layerMode = false;
+		element.textContent = "toggle layer addition on spacebar press";
+	}else{
+		newToolbar.layerMode = true;
+		element.textContent = "toggle frame addition on spacebar press";
+	}
+});
 
 // set up filters object
 var newFilters = new Filters(newCanvas, newBrush);

@@ -20,7 +20,7 @@ function Toolbar(canvas, brush, animationProj){
 	
 	// should the keyboard keys be affecting the layer or the frame? 2 options only
 	// this is useful for the arrow keys and space bar
-	this.layerMode = true;
+	this.layerMode = true; 
 	
 	this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
 	
@@ -113,6 +113,7 @@ function Toolbar(canvas, brush, animationProj){
 	}
 	
 	this.addPage = function(){
+		// TODO: shouldn't this be in Animation? 
 		var canvas = animationProj.getCurrFrame();
 		canvas.setupNewLayer();
 	}
@@ -141,7 +142,7 @@ function Toolbar(canvas, brush, animationProj){
 					if(toolbar.layerMode){
 						toolbar.addPage();
 					}else{
-						toolbar.addNewFrame();
+						animationProj.addNewFrame();
 					}
 				break;
 				case 65: // a key 
@@ -159,7 +160,7 @@ function Toolbar(canvas, brush, animationProj){
 				default:
 				return;
 			}
-			if(toolbar.htmlCounter){
+			if(toolbar.htmlCounter && counterUpdateString){
 				counterText.textContent = counterUpdateString;
 			}
 			e.preventDefault();

@@ -74,6 +74,8 @@ function SuperCanvas(container, number){
 	
 		this.canvasList.push(newCanvas);
 		this.count++;
+		console.log("this is the current layer list for canvas " + this.number + ": ");
+		console.log(this.canvasList);
 	}
 	
 	this.hide = function(){
@@ -125,44 +127,8 @@ function SuperCanvas(container, number){
 		context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
 	}
 	
-		
-	/***
-		reset the canvas object - i.e. remove all frames, reset values, etc.
-		necessary to do before importing an old project
-		
-		- can pass in an element ID that corresponds to the canvas counter, which 
-		also needs to be reset
-		
-		- be careful! note that if this function needs to be used, no other DOM 
-		  element should have an id that contains the string 'canvas'!
-
-	this.resetCanvas = function(counterElementId){
-		
-		// delete all canvasses except first one from the dom
-		var allCanvas = document.querySelectorAll('[id^="canvas"]');
-		
-		// because I also have an element with the id "canvasArea", the element at the 0th index 
-		// is actually canvasArea, so skip that element 
-		var parentNodeCanvas = allCanvas[1].parentNode;
-
-		for(var i = 2; i < allCanvas.length; i++){
-			parentNodeCanvas.removeChild(allCanvas[i]);
-		}
-		
-		this.count = 1;
-		this.currentIndex = 0;
-		this.canvasList = this.canvasList.splice(0,1);	// only keep the first canvas 
-		
-		// ensure the first canvas is visible if this resetCanvas function was called while looking at 
-		// some other canvas 
-		this.canvasList[0].style.opacity = 1;
-		this.canvasList[0].style.zIndex = 1;
-	
-		if(counterElementId){
-			document.getElementById(counterElementId).textContent = "1";
-		}
+	this.resetFrame = function(){
 	}
-	***/
 
 }
 
@@ -180,7 +146,6 @@ function Animation(container){
 	this.container = container; // id of the html element the frames are displayed in
 	
 	this.resetProject = function(){
-		// this could use some refactoring. have a resetFrame function in SuperCanvas. maybe rename to frame later?
 		this.frameList.forEach(function(frame, frameIndex){
 			// remove each layer from the DOM 
 			var parent = document.getElementById(frame['container']);
@@ -208,9 +173,15 @@ function Animation(container){
 		this.speed = 100;
 	}
 	
-	this.add = function(frame){
-		this.frameList.push(frame);
+	this.addNewFrame = function(showFlag){
+		var newFrame = new SuperCanvas(this.container, this.frameList.length);
+		newFrame.setupNewLayer();
+		this.frameList.push(newFrame);
+		if(!showFlag){
+			newFrame.hide();
+		}
 	}
+
 	
 	this.nextFrame = function(){
 		if(this.frameList.length === this.currentFrame + 1){
@@ -242,7 +213,9 @@ function Animation(container){
 		// take the previous frame, merge all layers, put into onion skin frame
 		// try this? only draw pixels that are non-white?
 		var onionSkinImageData = onionSkinCtx.getImageData(0,0,this.onionSkinFrame.width,this.onionSkinFrame.height);
-		this.getCurrFrame().canvasList.reverse().forEach(function(layer){
+		
+		// build the merged image from the first to last
+		this.getCurrFrame().canvasList.forEach(function(layer){
 			var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
 			for(var i = 0; i < imageData.length; i += 4){
 				if(imageData[i] === 255 && imageData[i+1] === 255 && imageData[i+2] === 255){
@@ -261,7 +234,6 @@ function Animation(container){
 		});
 		this.onionSkinFrame.style.zIndex = 0;
 		this.onionSkinFrame.style.opacity = 0.92;
-		//console.log("updated onion skin");
 	}
 	
 }

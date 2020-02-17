@@ -286,9 +286,10 @@ $(document).ready(function(){
 
 // set up project
 var project = new Animation('canvasArea');
-var newCanvas = new SuperCanvas('canvasArea', project.frameList.length);
-newCanvas.setupNewLayer();
-project.add(newCanvas);
+project.addNewFrame(true); // since it's the first frame, show it
+var newCanvas = project.getCurrFrame(); //new SuperCanvas('canvasArea', project.frameList.length);
+//newCanvas.setupNewLayer();
+//project.add(newCanvas);
 
 // set up brush
 var newBrush = new Brush(project);
@@ -407,11 +408,7 @@ function getDemo(selectedDemo){
 			console.log("it appears to not be a valid project! :<");
 			return;
 		}
-		
-		// everything checks out so far, so reset the canvas before loading the project 
-		//canvas.resetCanvas(counterId);
-		//console.log(data);
-		
+
 		// clear existing project
 		project.resetProject();
 		// update UI 
@@ -425,7 +422,7 @@ function getDemo(selectedDemo){
 		data.forEach(function(frame, index){
 			if(index > 0){
 				// add a new frame
-				newToolbar.addNewFrame();
+				project.addNewFrame();
 			}
 			// overwrite existing frame
 			// TODO: implement an updateFrame method 

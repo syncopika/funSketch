@@ -69,6 +69,7 @@ function Toolbar(canvas, brush, animationProj){
 			// make previous canvas visible 
 			canvas.canvasList[canvas.currentIndex - 1].style.opacity = .97;
 			canvas.canvasList[canvas.currentIndex - 1].style.zIndex = 1;
+			console.log("moving to frame: " + (canvas.number) + ", layer: " + (canvas.currentIndex-1));
 			
 			// if there is another canvas before the previous one, apply onion skin
 			if(canvas.currentIndex - 2 >= 0){
@@ -256,7 +257,7 @@ function Toolbar(canvas, brush, animationProj){
 	}
 	
 	this.addNewFrame = function(){
-		// TODO: why is this here? I think it should be Animation's responsibility to be able to add a new frame
+		// TODO: why is this here? I think it should be Animation's responsibility to be able to add a new frame!
 		var newFrame = new SuperCanvas(animationProj.container, animationProj.frameList.length);
 		newFrame.setupNewLayer();
 		newFrame.hide();
@@ -880,7 +881,7 @@ function Toolbar(canvas, brush, animationProj){
 						
 						// everything checks out so far, so reset the canvas before loading the project 
 						//canvas.resetCanvas(counterId);
-						console.log(data);
+						//console.log(data);
 						
 						// clear existing project
 						animationProj.resetProject();
@@ -902,42 +903,36 @@ function Toolbar(canvas, brush, animationProj){
 							// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
 							var currFrame = animationProj.frameList[index];
 							console.log("need to add " + frame.layers.length + " layers for frame: " + (index+1));
-						});
-						
-						return;
-						
-						/* data is an array of objects, with each object representing a canvas 
-						// add the canvasses in order 
-						for(var i = 0; i < data.length; i++){
 							
-							// create a new canvas first 
-							// this adds a new blank canvas to canvas.canvasList 
-							if(i > 0){
-								canvas.setupNewLayer();
-							}
-
-							// make any changes to the dimensions based on data[i]
-							var newestCanvasIndex = canvas.canvasList.length - 1;
-							canvas.canvasList[newestCanvasIndex].height = data[i].height;
-							canvas.canvasList[newestCanvasIndex].width = data[i].width;
-							
-							// then add the image
-							var newestCanvas = canvas.canvasList[newestCanvasIndex];
-							var newCtx = newestCanvas.getContext('2d');
-							
+							var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+							var currFrameLayersFromCurrPrj = currFrame.canvasList;
+							currFrameLayersFromImport.forEach(function(layer, layerIndex){
+								if((layerIndex+1) > currFrameLayersFromCurrPrj.length){
+									// add new layer to curr project as needed based on import
+									console.log("need to add a new layer for frame: " + index);
+									animationProj.frameList[index].setupNewLayer();
+								}
+								var currLayer = animationProj.frameList[index].canvasList[layerIndex];
+								
+								// is this part necessary? maybe, if you want the project to look exactly as when it was saved.
+								currLayer.style.opacity = layer.opacity;
+								currLayer.style.zIndex = layer.zIndex;  
+								currLayer.height = layer.height;
+								currLayer.width = layer.width;
+								
+								// add the image data 
+								var newCtx = currLayer.getContext("2d");
 								var img = new Image();
 								
-								// a great example of javascript closures!
 								(function(context, image){
 									image.onload = function(){
 											context.drawImage(image, 0, 0);
 										}
-									image.src = data[i].data;
+									image.src = layer.imageData;
 								})(newCtx, img);
-
-						}*/
-						
-						
+								
+							});
+						});
 					}
 				})(file);
 				

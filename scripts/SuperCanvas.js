@@ -172,7 +172,7 @@ function SuperCanvas(container, number){
 ***/
 function Animation(container){
 	this.name = "";
-	this.currentFrame = 0;
+	this.currentFrame = 0; // should this be a ref to the current frame!?
 	this.speed = 100;	// 100 ms per frame 
 	this.frameList = [];
 	this.mode = 0;	// 0 == drawing mode. 1 == animation mode.

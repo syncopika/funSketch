@@ -399,41 +399,70 @@ function getDemo(selectedDemo){
 	
 	// what to do when data comes back
 	httpRequest.onload = function(){
-
-		// reset the canvas 
-		newCanvas.resetCanvas();
 		
 		// parse the JSON using JSON.parse 
 		var data = JSON.parse(httpRequest.responseText);
 
-		// data is an array of objects, with each object representing a canvas 
-		// add the canvasses in order 
-		for(var i = 0; i < data.length; i++){
-			
-			// create a new canvas first 
-			// this adds a new blank canvas to canvas.canvasList 
-			if(i > 0){
-				newCanvas.setupNewLayer();
+		if(!data[0] || (!data[0].name && !data[0].height && !data[0].width && !data[0].data)){
+			console.log("it appears to not be a valid project! :<");
+			return;
+		}
+		
+		// everything checks out so far, so reset the canvas before loading the project 
+		//canvas.resetCanvas(counterId);
+		//console.log(data);
+		
+		// clear existing project
+		project.resetProject();
+		// update UI 
+		if(newToolbar.htmlCounter){
+			// ideally if you use react or some library that can update the view based on the current state,
+			// you shouldn't need this at all. hint hint.
+			newToolbar.htmlCounter.textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (project.frameList[project.currentFrame].currentIndex + 1);
+		}
+		
+		// load saved project
+		data.forEach(function(frame, index){
+			if(index > 0){
+				// add a new frame
+				newToolbar.addNewFrame();
 			}
-
-			// make any changes to the dimensions based on data[i]
-			var newestCanvasIndex = newCanvas.canvasList.length - 1;
-			newCanvas.canvasList[newestCanvasIndex].height = data[i].height;
-			newCanvas.canvasList[newestCanvasIndex].width = data[i].width;
+			// overwrite existing frame
+			// TODO: implement an updateFrame method 
+			// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
+			var currFrame = project.frameList[index];
+			console.log("need to add " + frame.layers.length + " layers for frame: " + (index+1));
 			
-			// then add the image
-			var newestCanvas = newCanvas.canvasList[newestCanvasIndex];
-			var newCtx = newestCanvas.getContext('2d');
-			
+			var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+			var currFrameLayersFromCurrPrj = currFrame.canvasList;
+			currFrameLayersFromImport.forEach(function(layer, layerIndex){
+				if((layerIndex+1) > currFrameLayersFromCurrPrj.length){
+					// add new layer to curr project as needed based on import
+					console.log("need to add a new layer for frame: " + index);
+					project.frameList[index].setupNewLayer();
+				}
+				var currLayer = project.frameList[index].canvasList[layerIndex];
+				
+				// is this part necessary? maybe, if you want the project to look exactly as when it was saved.
+				currLayer.style.opacity = layer.opacity;
+				currLayer.style.zIndex = layer.zIndex;  
+				currLayer.height = layer.height;
+				currLayer.width = layer.width;
+				
+				// add the image data 
+				var newCtx = currLayer.getContext("2d");
 				var img = new Image();
 				
 				(function(context, image){
 					image.onload = function(){
 							context.drawImage(image, 0, 0);
 						}
-					image.src = data[i].data;
+					image.src = layer.imageData;
 				})(newCtx, img);
-		}
+				
+			});
+		});
+						
 	}
 	
 	// send the request 

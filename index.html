@@ -229,7 +229,7 @@
 						<option value='700'>700</option>
 						<option value='1000'>1000</option>
 					</select>
-					<button onclick='newToolbar.getGif("loadingScreen")'> generate gif! </button>
+					<button id='generateGif'> generate gif! </button>
 				</div>
 				<p id='loadingScreen'></p>
 				
@@ -341,6 +341,10 @@ $('#nextFrame').click(function(){
 		var curr = project.getCurrFrame();
 		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
 	}
+});
+
+$('#generateGif').click(function(){
+	newToolbar.getGif("loadingScreen");
 });
 
 $('#toggleLayerOrFrame').click(function(){

@@ -69,7 +69,6 @@ function Toolbar(canvas, brush, animationProj){
 			// make previous canvas visible 
 			canvas.canvasList[canvas.currentIndex - 1].style.opacity = .97;
 			canvas.canvasList[canvas.currentIndex - 1].style.zIndex = 1;
-			console.log("moving to frame: " + (canvas.number) + ", layer: " + (canvas.currentIndex-1));
 			
 			// if there is another canvas before the previous one, apply onion skin
 			if(canvas.currentIndex - 2 >= 0){
@@ -87,12 +86,12 @@ function Toolbar(canvas, brush, animationProj){
 	}
 	
 	this.nextFrame = function(){
-		animationProj.updateOnionSkin();
 		var curr = animationProj.getCurrFrame();
 		var next = animationProj.nextFrame();
 		if(next !== null){
 			curr.hide();
 			next.show();
+			animationProj.updateOnionSkin();
 			brush.defaultBrush();
 			return true;
 		}
@@ -100,12 +99,12 @@ function Toolbar(canvas, brush, animationProj){
 	}
 	
 	this.prevFrame = function(){
-		animationProj.updateOnionSkin();
 		var curr = animationProj.getCurrFrame();
 		var prev = animationProj.prevFrame();
 		if(prev !== null){
 			curr.hide();
 			prev.show();
+			animationProj.updateOnionSkin();
 			brush.defaultBrush();
 			return true;
 		}
@@ -121,44 +120,44 @@ function Toolbar(canvas, brush, animationProj){
 	this.setKeyDown = function(doc){
 		
 		var toolbar = this;
-		var counterUpdateString = "";
 		var counterText = this.htmlCounter;
 		
 		$(doc).keydown(function(e){
+			var counterUpdateString = "";
 			switch(e.which){
 				case 37: //left arrow key
 					if(toolbar.down()){
 						var canvas = animationProj.getCurrFrame();
-						counterUpdateString = "frame: " + (animationProj.currentFrame+1) + ", layer: " + (canvas.currentIndex + 1);
+						counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
 					}
-				break;
+					break;
 				case 39: //right arrow key
 					if(toolbar.up()){
 						var canvas = animationProj.getCurrFrame();
-						counterUpdateString = "frame: " + (animationProj.currentFrame+1) + ", layer: " + (canvas.currentIndex + 1);
+						counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
 					}
-				break;
+					break;
 				case 32: //space bar
 					if(toolbar.layerMode){
 						toolbar.addPage();
 					}else{
 						animationProj.addNewFrame();
 					}
-				break;
+					break;
 				case 65: // a key 
 					if(toolbar.prevFrame()){
 						var canvas = animationProj.getCurrFrame();
-						counterUpdateString = "frame: " + (animationProj.currentFrame+1) + ", layer: " + (canvas.currentIndex + 1);
+						counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
 					}
-				break;
+					break;
 				case 68: // d key 
 					if(toolbar.nextFrame()){
 						var canvas = animationProj.getCurrFrame();
-						counterUpdateString = "frame: " + (animationProj.currentFrame+1) + ", layer: " + (canvas.currentIndex + 1);
+						counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
 					}
-				break;
+					break;
 				default:
-				return;
+					break;
 			}
 			if(toolbar.htmlCounter && counterUpdateString){
 				counterText.textContent = counterUpdateString;
@@ -741,10 +740,41 @@ function Toolbar(canvas, brush, animationProj){
 			quality: 10
 		});
 		
-		// add frames
-		for(var i = 0; i < canvas.canvasList.length; i++){
+		// add frames		
+		for(var i = 0; i < animationProj.frameList.length; i++){
+			
+			var tempCanvas = document.createElement('canvas');
+			tempCanvas.width = 800; // don't hardcode dimensions :<
+			tempCanvas.height = 800;
+			
+			var tempCtx = tempCanvas.getContext("2d");
+			tempCtx.fillStyle = "white";
+			tempCtx.fillRect(0, 0, 800, 800);
+			var tempImageData = tempCtx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
+			
+			var currFrame = animationProj.frameList[i];
+			for(var j = 0; j < currFrame.canvasList.length; j++){
+				var layer = currFrame.canvasList[j];
+				var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
+
+				for(var k = 0; k < imageData.length; k += 4){
+					if(imageData[k] === 255 && imageData[k+1] === 255 && imageData[k+2] === 255){
+						continue;
+					}else{
+						// what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
+						// we might run into index/length issues...
+						tempImageData.data[k] = imageData[k];
+						tempImageData.data[k+1] = imageData[k+1];
+						tempImageData.data[k+2] = imageData[k+2];
+						tempImageData.data[k+3] = 255;
+					}
+				}
+				// apply each layer to the onion skin
+				tempCtx.putImageData(tempImageData, 0, 0);
+			}
 			// TODO: make sure to merge all the layers for each frame!
-			gif.addFrame(canvas.canvasList[i], {delay: this.timePerFrame});
+			gif.addFrame(tempCanvas, {delay: this.timePerFrame});
+			
 		}
 		
 		gif.on('finished', function(blob){

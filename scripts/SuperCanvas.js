@@ -74,8 +74,6 @@ function SuperCanvas(container, number){
 	
 		this.canvasList.push(newCanvas);
 		this.count++;
-		console.log("this is the current layer list for canvas " + this.number + ": ");
-		console.log(this.canvasList);
 	}
 	
 	this.hide = function(){
@@ -142,7 +140,10 @@ function Animation(container){
 	this.speed = 100;	// 100 ms per frame 
 	this.frameList = [];
 	this.mode = 0;	// 0 == drawing mode. 1 == animation mode.
+	
 	this.onionSkinFrame = createOnionSkinFrame(container);
+	this.onionSkinFrame.style.display = 'none'; // hide it initially
+	
 	this.container = container; // id of the html element the frames are displayed in
 	
 	this.resetProject = function(){
@@ -207,6 +208,7 @@ function Animation(container){
 	
 	this.updateOnionSkin = function(){
 		// https://stackoverflow.com/questions/6787899/combining-two-or-more-canvas-elements-with-some-sort-of-blending
+		this.onionSkinFrame.style.display = ''; // show onion skin
 		var onionSkinCtx = this.onionSkinFrame.getContext("2d");
 		onionSkinCtx.clearRect(0,0,this.onionSkinFrame.width,this.onionSkinFrame.height);
 		

@@ -7,6 +7,8 @@ function Filters(canvas, brush){
 	var tempImage; // only push current image to snapshots if a tempImage exists already.
 	               // this way when undo is called the image being looked at by the user won't already be saved in snapshots,
 				   // and so undo wouldn't need to be clicked twice to see the last saved image. a bit confusing. :/
+				   
+	var self = this;
 		
 	//general filtering function. pass any kind of filter through this function.
 	this.filterCanvas = function(filter){
@@ -1194,6 +1196,54 @@ function Filters(canvas, brush){
 
 		return pixels;
 		
+	}
+	
+	// edge detection
+	this.edgeDetect = function(pixels){
+		var context = canvas.currentCanvas.getContext("2d");
+		var width = canvas.currentCanvas.getAttribute('width');
+		var height = canvas.currentCanvas.getAttribute('height');
+		
+		var imgData = context.getImageData(0, 0, width, height);
+		var data = pixels.data
+		var sourceImageCopy = new Uint8ClampedArray(data);
+		
+		pixels = self.grayscale(pixels);
+		var xKernel = [[-1,0,1],[-2,0,2],[-1,0,1]];
+		var yKernel = [[-1,-2,-1],[0,0,0],[1,2,1]];
+		
+		for(var i = 1; i < height - 1; i++){
+			for(var j = 4; j < 4*width - 4; j+=4){
+				
+				var left = (4*i*width) + (j-4);
+				var right = (4*i*width) + (j+4);
+				var top = (4*(i-1)*width) + j;
+				var bottom = (4*(i+1)*width) + j;
+				var topLeft = (4*(i-1)*width) + (j-4);
+				var topRight = (4*(i-1)*width) + (j+4);
+				var bottomLeft = (4*(i+1)*width) + (j-4);
+				var bottomRight = (4*(i+1)*width) + (j+4);
+				var center = (4*width*i) + j;
+				
+				// use the xKernel to detect edges horizontally 
+				var pX = (xKernel[0][0]*sourceImageCopy[topLeft]) + (xKernel[0][1]*sourceImageCopy[top]) + (xKernel[0][2]*sourceImageCopy[topRight]) + 
+						(xKernel[1][0]*sourceImageCopy[left]) + (xKernel[1][1]*sourceImageCopy[center]) + (xKernel[1][2]*sourceImageCopy[right]) +
+						(xKernel[2][0]*sourceImageCopy[bottomLeft]) + (xKernel[2][1]*sourceImageCopy[bottom]) + (xKernel[2][2]*sourceImageCopy[bottomRight]);
+				
+				// use the yKernel to detect edges vertically 
+				var pY = (yKernel[0][0]*sourceImageCopy[topLeft]) + (yKernel[0][1]*sourceImageCopy[top]) + (yKernel[0][2]*sourceImageCopy[topRight]) + 
+						(yKernel[1][0]*sourceImageCopy[left]) + (yKernel[1][1]*sourceImageCopy[center]) + (yKernel[1][2]*sourceImageCopy[right]) +
+						(yKernel[2][0]*sourceImageCopy[bottomLeft]) + (yKernel[2][1]*sourceImageCopy[bottom]) + (yKernel[2][2]*sourceImageCopy[bottomRight]);
+				
+				// finally set the current pixel to the new value based on the formula 
+				var newVal = ( Math.ceil( Math.sqrt((pX * pX) + (pY * pY)) ) );
+				data[center] = newVal;
+				data[center+1] = newVal;
+				data[center+2] = newVal;
+				data[center+3] = 255;
+			}
+		}
+		return pixels;
 	}
 
 	

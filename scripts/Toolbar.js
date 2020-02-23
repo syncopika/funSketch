@@ -1,8 +1,8 @@
 // toolbar class
 // assemble the common functions for the toolbar
 
-// pass in a super canvas and brush object
-function Toolbar(canvas, brush){
+// remove canvas param since you have animationProj
+function Toolbar(canvas, brush, animationProj){
 
 	// keep this variable for storing the most recent imported image
 	// can be useful for resetting image
@@ -10,11 +10,27 @@ function Toolbar(canvas, brush){
 	
 	// used as a counter for the animation playback features
 	var play = null;
+
+	// this will only work for the very first frame!!
+	// when each method is called, the current canvas needs to be recalculated
+	//var canvas = animationProj.frameList[animationProj.currentFrame];
 	
 	// used to hold user-indicated time (ms) per frame for animation playback and gif
 	this.timePerFrame = 200; // set to 200 be default
 	
+	// should the keyboard keys be affecting the layer or the frame? 2 options only
+	// this is useful for the arrow keys and space bar
+	this.layerMode = true; 
+	
+	this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
+	
+	this.setCounter = function(elementId){
+		this.htmlCounter = document.getElementById(elementId);
+	}
+	
 	this.up = function(){
+		// this moves the current layer to the next one if exists
+		var canvas = animationProj.getCurrFrame();
 		if(canvas.currentIndex + 1 < canvas.canvasList.length){
 			// move to next canvas
 			canvas.currentCanvas.style.opacity = .92; // apply onion skin to current canvas 
@@ -35,13 +51,15 @@ function Toolbar(canvas, brush){
 			canvas.currentIndex++;
 			
 			// apply brush on new current canvas 
-			brush.defaultBrush(canvas);
+			brush.defaultBrush();
 			return true;
 		}
 		return false;
 	}
 	
 	this.down = function(){	
+		// this moves the current layer to the previous one if exists
+		var canvas = animationProj.getCurrFrame();
 		if(canvas.currentIndex - 1 >= 0){
 			// move to previous canvas 
 			// first make current canvas not visible anymore
@@ -61,40 +79,88 @@ function Toolbar(canvas, brush){
 			canvas.currentIndex--;
 			
 			// apply brush
-			brush.defaultBrush(canvas);
+			brush.defaultBrush();
+			return true;
+		}
+		return false;
+	}
+	
+	this.nextFrame = function(){
+		var curr = animationProj.getCurrFrame();
+		var next = animationProj.nextFrame();
+		if(next !== null){
+			curr.hide();
+			next.show();
+			animationProj.updateOnionSkin();
+			brush.defaultBrush();
+			return true;
+		}
+		return false;
+	}
+	
+	this.prevFrame = function(){
+		var curr = animationProj.getCurrFrame();
+		var prev = animationProj.prevFrame();
+		if(prev !== null){
+			curr.hide();
+			prev.show();
+			animationProj.updateOnionSkin();
+			brush.defaultBrush();
 			return true;
 		}
 		return false;
 	}
 	
 	this.addPage = function(){
-		canvas.setupNewCanvas();
+		// TODO: shouldn't this be in Animation? 
+		var canvas = animationProj.getCurrFrame();
+		canvas.setupNewLayer();
 	}
 	
-	/***
-		add an optional second argument (an element id) for an element to function like a counter to
-		show what canvas number is curently shown 
-	***/
-	this.setKeyDown = function(doc, elementId){
+	this.setKeyDown = function(doc){
+		
 		var toolbar = this;
-		//keymapping
+		var counterText = this.htmlCounter;
+		
 		$(doc).keydown(function(e){
+			var counterUpdateString = "";
 			switch(e.which){
 				case 37: //left arrow key
-					if(toolbar.down() && elementId){
-						document.getElementById(elementId).textContent = canvas.currentIndex + 1;
+					if(toolbar.down()){
+						var canvas = animationProj.getCurrFrame();
+						counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
 					}
-				break;
+					break;
 				case 39: //right arrow key
-					if(toolbar.up() && elementId){
-						document.getElementById(elementId).textContent = canvas.currentIndex + 1;
+					if(toolbar.up()){
+						var canvas = animationProj.getCurrFrame();
+						counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
 					}
-				break;
+					break;
 				case 32: //space bar
-					toolbar.addPage();
-				break;
+					if(toolbar.layerMode){
+						toolbar.addPage();
+					}else{
+						animationProj.addNewFrame();
+					}
+					break;
+				case 65: // a key 
+					if(toolbar.prevFrame()){
+						var canvas = animationProj.getCurrFrame();
+						counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
+					}
+					break;
+				case 68: // d key 
+					if(toolbar.nextFrame()){
+						var canvas = animationProj.getCurrFrame();
+						counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
+					}
+					break;
 				default:
-				return;
+					break;
+			}
+			if(toolbar.htmlCounter && counterUpdateString){
+				counterText.textContent = counterUpdateString;
 			}
 			e.preventDefault();
 		});
@@ -103,11 +169,15 @@ function Toolbar(canvas, brush){
 	/***
 		insert a frame after the current frame 
 	***/
-	this.insertFrame = function(elementId){
+	this.insertLayer = function(elementId){
+		// not sure if better idea to add the container the layers go in as an instance variable 
+		// or pass in elementId here? 
 		$('#' + elementId).click(function(){
+
+			var canvas = animationProj.getCurrFrame();
 			
 			// add a new canvas first 
-			canvas.setupNewCanvas();
+			canvas.setupNewLayer();
 			
 			// then move it after the current canvas 
 			var newestCanvas = canvas.canvasList.pop();
@@ -121,54 +191,65 @@ function Toolbar(canvas, brush){
 		otherwise, the previous frame will become the current one.
 		if there isn't a previous one either, then the frame will just be made blank.
 	***/
-	this.deleteFrame = function(elementId, counterId){
+	this.deleteLayer = function(elementId){
+		// elementId here refers to the display that shows current frame and layer
+		var toolbarReference = this;
+		
+		$('#' + elementId).click(function(){
 			
-			var toolbarReference = this;
+			var canvas = animationProj.getCurrFrame();
+			var oldCanvasIndex = canvas.currentIndex;
+			var oldCanvasId = canvas.currentCanvas.id;
+			var parentNode = document.getElementById(oldCanvasId).parentNode;
 			
-			$('#' + elementId).click(function(){
+			// if there's a canvas ahead of the current one 
+			if(canvas.currentIndex + 1 < canvas.canvasList.length){
 				
-				var oldCanvasIndex = canvas.currentIndex;
-				var oldCanvasId = canvas.currentCanvas.id;
-				var parentNode = document.getElementById(oldCanvasId).parentNode;
+				// move current canvas to the next one 
+				toolbarReference.up();
 				
-				// if there's a canvas ahead of the current one 
-				if(canvas.currentIndex + 1 < canvas.canvasList.length){
-					
-					// move current canvas to the next one 
-					toolbarReference.up();
-					
-					// remove the old canvas from the array and the DOM!
-					canvas.canvasList.splice(oldCanvasIndex, 1);
-					parentNode.removeChild(document.getElementById(oldCanvasId));
-					
-					// adjust the current canvas index after the removal 
-					canvas.currentIndex -= 1;
-					
-				}else if(canvas.currentIndex - 1 >= 0){
-					// if there's a canvas behind the current one (and no more ahead)
-					
-					// move current canvas to the previous one 
-					// note that currentIndex doesn't need to be adjusted because removing the 
-					// next canvas doesn't affect the current canvas' index
-					toolbarReference.down();
-					canvas.canvasList.splice(oldCanvasIndex, 1);
-					parentNode.removeChild(document.getElementById(oldCanvasId));
-					
-					// but need to adjust the counter, if present
-					if(counterId){
-						document.getElementById(counterId).textContent = canvas.currentIndex + 1;
-					}
-					
-				}else{
-					// otherwise, just blank the canvas 
-					var context = canvas.currentCanvas.getContext("2d");
-					context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
-					context.fillStyle = "#FFFFFF";
-					context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+				// remove the old canvas from the array and the DOM!
+				canvas.canvasList.splice(oldCanvasIndex, 1);
+				parentNode.removeChild(document.getElementById(oldCanvasId));
+				
+				// adjust the current canvas index after the removal 
+				canvas.currentIndex -= 1;
+				
+			}else if(canvas.currentIndex - 1 >= 0){
+				// if there's a canvas behind the current one (and no more ahead)
+				
+				// move current canvas to the previous one 
+				// note that currentIndex doesn't need to be adjusted because removing the 
+				// next canvas doesn't affect the current canvas' index
+				toolbarReference.down();
+				canvas.canvasList.splice(oldCanvasIndex, 1);
+				parentNode.removeChild(document.getElementById(oldCanvasId));
+				
+				// but need to adjust the counter, if present
+				if(toolbarReference.htmlCounter){
+					toolbarReference.htmlCounter.textContent = "frame: " + (animationProj.currentFrame+1) + ", layer:" + (canvas.currentIndex+1);
 				}
-			});
+				
+			}else{
+				// otherwise, just blank the canvas 
+				var context = canvas.currentCanvas.getContext("2d");
+				context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+				context.fillStyle = "#fff";
+				context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+			}
+		});
 	}
 	
+	/***
+		add a new frame 
+		note that it's adding a supercanvas instance
+	***/
+	this.addNewFrameButton = function(elementId){
+		$('#' + elementId).click(function(){
+			animationProj.addNewFrame();
+		});
+	}
+
 
 	/***
 		color wheel functions
@@ -265,6 +346,8 @@ function Toolbar(canvas, brush){
 	this.floodFill = function(elementId){
 
 		$('#' + elementId).click(function(){
+
+			var canvas = animationProj.getCurrFrame();
 			
 			var doFloodFill = function(e){
 	
@@ -278,17 +361,7 @@ function Toolbar(canvas, brush){
 				// get the coordinates of the selected pixel 
 				var x = e.pageX - $('#' + canvas.currentCanvas.id).offset().left;
 				var y = e.pageY - $('#' + canvas.currentCanvas.id).offset().top;
-				console.log("x: " + x + ", y: " + y);
-				
-				/* debugging cursor/click position - if you scroll, that offsets the position and ruins everything :<
-				var d = document.getElementById(canvas.currentCanvas.id).getContext("2d").getImageData(x, y, 10, 10);
-				for(var i = 0; i < d.data.length; i+=4){
-					d.data[i] = 100;
-					d.data[i + 1] = 170;
-					d.data[i + 2] = 200;
-				}
-				document.getElementById(canvas.currentCanvas.id).getContext("2d").putImageData(d, x, y);
-				*/
+				//console.log("x: " + x + ", y: " + y);
 				
 				var colorData = document.getElementById(canvas.currentCanvas.id).getContext("2d").getImageData(x, y, 1, 1).data;
 				var color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')';
@@ -414,6 +487,7 @@ function Toolbar(canvas, brush){
 	this.rotateImage = function(elementId){
 		//rotate image
 		$('#' + elementId).click(function(){
+			var canvas = animationProj.getCurrFrame();
 			//using a promise to convert the initial image to a bitmap
 			var width = canvas.currentCanvas.getAttribute("width");
 			var height = canvas.currentCanvas.getAttribute("height");
@@ -437,6 +511,7 @@ function Toolbar(canvas, brush){
 	***/
 	this.setClearCanvas = function(elementId){
 		$('#' + elementId).click(function(){
+			var canvas = animationProj.getCurrFrame();
 			var context = canvas.currentCanvas.getContext("2d");
 			context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
 			context.fillStyle = "#FFFFFF";
@@ -450,6 +525,7 @@ function Toolbar(canvas, brush){
 	***/
 	this.undo = function(elementId){
 		$('#' + elementId).click(function(){
+			var canvas = animationProj.getCurrFrame();
 			var context = canvas.currentCanvas.getContext("2d");
 			var width = canvas.currentCanvas.getAttribute("width");
 			var height = canvas.currentCanvas.getAttribute("height");
@@ -475,6 +551,8 @@ function Toolbar(canvas, brush){
 	***/
 	this.importImage = function(elementId){
 		$('#' + elementId).click(function(){
+
+			var canvas = animationProj.getCurrFrame();
 			
 			// call fileHandler here
 			fileHandler();
@@ -554,6 +632,7 @@ function Toolbar(canvas, brush){
 	***/
 	this.resetImage = function(){
 		if(recentImage){
+			var canvas = animationProj.getCurrFrame();
 			var context = canvas.currentCanvas.getContext("2d");
 			var height = canvas.currentCanvas.getAttribute("height");
 			var width = canvas.currentCanvas.getAttribute("width");
@@ -594,20 +673,26 @@ function Toolbar(canvas, brush){
 		
 		note that I specifically added my page counter element to the 
 		functions so that they change with the call to up() and down()
+
+		this will need to be applied for FRAMES, not LAYERS of a frame.
 	
 	*********/
 	var toolbar = this;
 	var playFor = function(){
-		if(toolbar.up()){
-			var currNum = document.getElementById("count").textContent;
-			document.getElementById("count").textContent = parseInt(currNum) + 1;
+		if(toolbar.nextFrame()){
+			if(toolbar.htmlCounter){
+				var counterText = toolbar.htmlCounter;
+				counterText.textContent = "frame: " + (animationProj.currentFrame+1) + ", layer: " + (canvas.currentIndex + 1);
+			}
 		}
 	}
 	
 	var playBack = function(){
-		if(toolbar.down()){
-			var currNum = document.getElementById("count").textContent;
-			document.getElementById("count").textContent = parseInt(currNum) - 1;
+		if(toolbar.prevFrame()){
+			if(toolbar.htmlCounter){
+				var counterText = toolbar.htmlCounter;
+				counterText.textContent = "frame: " + (animationProj.currentFrame+1) + ", layer: " + (canvas.currentIndex + 1);
+			}
 		}
 	}
 
@@ -622,8 +707,8 @@ function Toolbar(canvas, brush){
 		play = null;
 	
 		//canvas.currentCanvas = canvas.canvasList[canvas.canvasList.length - 1];
-		canvas.currentCanvas.style.zIndex = 1;
-		canvas.currentCanvas.style.opacity = .97;
+		//canvas.currentCanvas.style.zIndex = 1;
+		//canvas.currentCanvas.style.opacity = .97;
 		
 		play = setInterval(playBack, this.timePerFrame);
 	}
@@ -640,6 +725,8 @@ function Toolbar(canvas, brush){
 	
 		elementId is for the loading message, 
 		i.e. a <p> element that says "now loading..."
+		
+		this will need to be applied for FRAMES, not LAYERS of a frame.
 	
 	***/
 	this.getGif = function(elementId){
@@ -653,9 +740,41 @@ function Toolbar(canvas, brush){
 			quality: 10
 		});
 		
-		// add frames
-		for(var i = 0; i < canvas.canvasList.length; i++){
-			gif.addFrame(canvas.canvasList[i], {delay: this.timePerFrame});
+		// add frames		
+		for(var i = 0; i < animationProj.frameList.length; i++){
+			
+			var tempCanvas = document.createElement('canvas');
+			tempCanvas.width = 800; // don't hardcode dimensions :<
+			tempCanvas.height = 800;
+			
+			var tempCtx = tempCanvas.getContext("2d");
+			tempCtx.fillStyle = "white";
+			tempCtx.fillRect(0, 0, 800, 800);
+			var tempImageData = tempCtx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
+			
+			var currFrame = animationProj.frameList[i];
+			for(var j = 0; j < currFrame.canvasList.length; j++){
+				var layer = currFrame.canvasList[j];
+				var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
+
+				for(var k = 0; k < imageData.length; k += 4){
+					if(imageData[k] === 255 && imageData[k+1] === 255 && imageData[k+2] === 255){
+						continue;
+					}else{
+						// what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
+						// we might run into index/length issues...
+						tempImageData.data[k] = imageData[k];
+						tempImageData.data[k+1] = imageData[k+1];
+						tempImageData.data[k+2] = imageData[k+2];
+						tempImageData.data[k+3] = 255;
+					}
+				}
+				// apply each layer to the onion skin
+				tempCtx.putImageData(tempImageData, 0, 0);
+			}
+			// TODO: make sure to merge all the layers for each frame!
+			gif.addFrame(tempCanvas, {delay: this.timePerFrame});
+			
 		}
 		
 		gif.on('finished', function(blob){
@@ -681,36 +800,37 @@ function Toolbar(canvas, brush){
 	this.save = function(elementId){
 		
 		$('#' + elementId).click(function(){
-		
-			// loop through the array of canvasses 
-			// for each canvas, save the data as base64 
-			// add to object 
-			// export JSON
+			
+			// prompt the user to name the file 
+			var name = prompt("name of file: ");
+			if(name === ""){
+				name = "funSketch_saveFile";
+			}else if(name === null){
+				return;
+			}
 			
 			var savedData = [];
 			
-			for(var i = 0; i < canvas.canvasList.length; i++){
-				
-				var canvasInfo = {};
-				var currCanvas = document.getElementById(canvas.canvasList[i].id);
-				
-				// get image data for this canvas and add to JSON 
-				// as well as some key features like dimensions
-				var name = "canvas" + i;	// i.e. canvas0, canvas1, ...
-				var height = currCanvas.height;
-				var width = currCanvas.width;
-				
-				canvasInfo["name"] = name;
-				canvasInfo["height"] = height;
-				canvasInfo["width"] = width;
-				
-				var canvasData = currCanvas.toDataURL();
-				
-				canvasInfo["data"] = canvasData;
-				
-				// add this canvas' data to the object that will hold each canvas' data
-				savedData.push(JSON.stringify(canvasInfo));
-			}
+			animationProj.frameList.forEach(function(frame){
+				// get frame metadata
+				var newFrame = frame.getMetadata();
+				newFrame['layers'] = []; // list of objects
+				frame.canvasList.forEach(function(layer){
+					// get layer metadata
+					var newLayer = {
+						'id': layer.id,
+						'width': layer.getAttribute("height"),
+						'height': layer.getAttribute("width"),
+						'zIndex': layer.style.zIndex,
+						'opacity': layer.style.opacity,
+					};
+					
+					// add layer image data
+					newLayer['imageData'] = layer.toDataURL();
+					newFrame.layers.push(newLayer);
+				});
+				savedData.push(JSON.stringify(newFrame));
+			});
 			
 			var json = "[\n";
 			json += savedData.join(",\n"); // put a line break between each new object, which represents a frame
@@ -719,12 +839,6 @@ function Toolbar(canvas, brush){
 			// make a blob so it can be downloaded 
 			var blob = new Blob([json], {type: "application/json"});
 			var url = URL.createObjectURL(blob);
-			
-			// prompt the user to name the file 
-			var name = prompt("name of file: ");
-			if(name === ""){
-				name = "funSketch_saveFile";
-			}
 			
 			var link = document.createElement('a');
 			link.href = url;
@@ -735,6 +849,8 @@ function Toolbar(canvas, brush){
 	}
 	
 	this.importProject = function(elementId, counterId){
+		
+		var self = this;
 		
 		$('#' + elementId).click(function(){
 			
@@ -774,40 +890,57 @@ function Toolbar(canvas, brush){
 							console.log("it appears to not be a valid project! :<");
 							return;
 						}
-						
-						// everything checks out so far, so reset the canvas before loading the project 
-						canvas.resetCanvas(counterId);
-						
-						// data is an array of objects, with each object representing a canvas 
-						// add the canvasses in order 
-						for(var i = 0; i < data.length; i++){
-							
-							// create a new canvas first 
-							// this adds a new blank canvas to canvas.canvasList 
-							if(i > 0){
-								canvas.setupNewCanvas();
-							}
 
-							// make any changes to the dimensions based on data[i]
-							var newestCanvasIndex = canvas.canvasList.length - 1;
-							canvas.canvasList[newestCanvasIndex].height = data[i].height;
-							canvas.canvasList[newestCanvasIndex].width = data[i].width;
+						// clear existing project
+						animationProj.resetProject();
+						// update UI 
+						if(self.htmlCounter){
+							// ideally if you use react or some library that can update the view based on the current state,
+							// you shouldn't need this at all. hint hint.
+							self.htmlCounter.textContent = "frame: " + (animationProj.currentFrame+1) + ", layer: " + (canvas.currentIndex + 1);
+						}
+						
+						// load saved project
+						data.forEach(function(frame, index){
+							if(index > 0){
+								// add a new frame
+								animationProj.addNewFrame();
+							}
+							// overwrite existing frame
+							// TODO: implement an updateFrame method 
+							// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
+							var currFrame = animationProj.frameList[index];
+							console.log("need to add " + frame.layers.length + " layers for frame: " + (index+1));
 							
-							// then add the image
-							var newestCanvas = canvas.canvasList[newestCanvasIndex];
-							var newCtx = newestCanvas.getContext('2d');
-							
+							var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+							var currFrameLayersFromCurrPrj = currFrame.canvasList;
+							currFrameLayersFromImport.forEach(function(layer, layerIndex){
+								if((layerIndex+1) > currFrameLayersFromCurrPrj.length){
+									// add new layer to curr project as needed based on import
+									console.log("need to add a new layer for frame: " + index);
+									animationProj.frameList[index].setupNewLayer();
+								}
+								var currLayer = animationProj.frameList[index].canvasList[layerIndex];
+								
+								// is this part necessary? maybe, if you want the project to look exactly as when it was saved.
+								currLayer.style.opacity = layer.opacity;
+								currLayer.style.zIndex = layer.zIndex;  
+								currLayer.height = layer.height;
+								currLayer.width = layer.width;
+								
+								// add the image data 
+								var newCtx = currLayer.getContext("2d");
 								var img = new Image();
 								
-								// a great example of javascript closures!
 								(function(context, image){
 									image.onload = function(){
 											context.drawImage(image, 0, 0);
 										}
-									image.src = data[i].data;
+									image.src = layer.imageData;
 								})(newCtx, img);
-
-						}
+								
+							});
+						});
 					}
 				})(file);
 				

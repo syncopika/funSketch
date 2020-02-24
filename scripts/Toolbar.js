@@ -613,9 +613,6 @@ function Toolbar(canvas, brush, animationProj){
 					
 					// add the current image to snapshots 
 					brush.currentCanvasSnapshots.push(context.getImageData(0, 0, width, height));
-					
-					//reset the value for the HTML input file thing so that you can use the same pic for consecutive frames!  
-					//document.querySelector("#fileInput").value = null;
 				}
 				//after reader has loaded file, put the data in the image object.
 				reader.onloadend = function(){

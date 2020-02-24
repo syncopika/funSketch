@@ -217,7 +217,8 @@ function Animation(container){
 		var onionSkinImageData = onionSkinCtx.getImageData(0,0,this.onionSkinFrame.width,this.onionSkinFrame.height);
 		
 		// build the merged image from the first to last
-		this.getCurrFrame().canvasList.forEach(function(layer){
+		var prevFrame = this.frameList[this.currentFrame-1];
+		prevFrame.canvasList.forEach(function(layer){
 			var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
 			for(var i = 0; i < imageData.length; i += 4){
 				if(imageData[i] === 255 && imageData[i+1] === 255 && imageData[i+2] === 255){

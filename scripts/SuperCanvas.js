@@ -64,7 +64,7 @@ function SuperCanvas(container, number){
 		}
 		
 		// if at least 1 canvas already present, make the previous canvas be slightly opaque for onion-skin effect
-		if(this.count >= 1){	
+		if(this.count >= 1){
 			// position the new canvas directly on top of the previous one 
 			var top = $('#' + this.canvasList[0].id).position().top;
 			var left = $('#' + this.canvasList[0].id).position().left;
@@ -80,7 +80,7 @@ function SuperCanvas(container, number){
 		// puts all layers at zIndex -1 so they're not visible
 		this.canvasList.forEach(function(canvas){
 			canvas.style.zIndex = -1;
-			canvas.hidden = true;
+			canvas.style.visibility = 'hidden';
 		});
 	}
 	
@@ -88,7 +88,7 @@ function SuperCanvas(container, number){
 		// makes all layers visible
 		this.canvasList.forEach(function(canvas){
 			canvas.style.zIndex = 1;
-			canvas.hidden = false;
+			canvas.style.visibility = '';
 		});
 	}
 	
@@ -207,6 +207,11 @@ function Animation(container){
 	}
 	
 	this.updateOnionSkin = function(){
+		
+		if(this.currentFrame-1 < 0){
+			return;
+		}
+		
 		// https://stackoverflow.com/questions/6787899/combining-two-or-more-canvas-elements-with-some-sort-of-blending
 		this.onionSkinFrame.style.display = ''; // show onion skin
 		var onionSkinCtx = this.onionSkinFrame.getContext("2d");

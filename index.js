@@ -9,19 +9,17 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 // set up project
-var project = new AnimationProject('canvasArea');
+let project = new AnimationProject('canvasArea');
 project.addNewFrame(true); // since it's the first frame, show it
-var newCanvas = project.getCurrFrame(); //new SuperCanvas('canvasArea', project.frameList.length);
-//newCanvas.setupNewLayer();
-//project.add(newCanvas);
+let newCanvas = project.getCurrFrame();
 
 // set up brush
-var newBrush = new Brush(project);
+let newBrush = new Brush(project);
 newBrush.defaultBrush();
 
 // set up toolbar 
 // here I'm passing in element Id's that these functions will attach to
-var newToolbar = new Toolbar(newCanvas, newBrush, project);
+let newToolbar = new Toolbar(newCanvas, newBrush, project);
 newToolbar.setCounter("count");
 newToolbar.setKeyDown(document);	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
 newToolbar.createColorWheel('colorPicker', 200);
@@ -39,39 +37,40 @@ newToolbar.addNewFrameButton('addNewFrame');
 
 // make the goLeft and goRight arrows clickable FOR LAYERS
 // note: this is for clicking the icons with a mouse!
-$('#goLeft').click(function(){
+document.getElementById('goLeft').addEventListener('click', () => {
 	if(newToolbar.down()){
-		var curr = project.getCurrFrame();
+		let curr = project.getCurrFrame();
 		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
 	}
 });
-$('#goRight').click(function(){
+
+document.getElementById('goRight').addEventListener('click', () => {
 	if(newToolbar.up()){
-		var curr = project.getCurrFrame();
+		let curr = project.getCurrFrame();
 		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
 	}
 });
 
 // left and right arrows for FRAMES
-$('#prevFrame').click(function(){
+document.getElementById('prevFrame').addEventListener('click', () => {
 	if(newToolbar.prevFrame()){
-		var curr = project.getCurrFrame();
+		let curr = project.getCurrFrame();
 		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
 	}
 });
 
-$('#nextFrame').click(function(){
+document.getElementById('nextFrame').addEventListener('click', () => {
 	if(newToolbar.nextFrame()){
-		var curr = project.getCurrFrame();
+		let curr = project.getCurrFrame();
 		document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
 	}
 });
 
-$('#generateGif').click(function(){
+document.getElementById('generateGif').addEventListener('click', () => {
 	newToolbar.getGif("loadingScreen");
 });
 
-$('#toggleLayerOrFrame').click(function(){
+document.getElementById('toggleLayerOrFrame').addEventListener('click', () => {
 	element = document.getElementById("toggleLayerOrFrame");
 	if(newToolbar.layerMode){
 		newToolbar.layerMode = false;
@@ -83,15 +82,15 @@ $('#toggleLayerOrFrame').click(function(){
 });
 
 // set up filters object
-var newFilters = new Filters(newCanvas, newBrush);
+let newFilters = new Filters(newCanvas, newBrush);
 
 document.getElementById('filterSelect').addEventListener('click', function(){ showOptions('filters') });
 document.getElementById('brushSelect').addEventListener('click', function(){ showOptions('brushes') });
 
 // show options when clicking on filters or brushes 
 function showOptions(category){
-	var el = document.getElementById(category);
-	var child = el.children[1]; // skip the p element and get the ul element
+	let el = document.getElementById(category);
+	let child = el.children[1]; // skip the p element and get the ul element
 	if(child.style.display !== "block" ){
 		child.style.display = "block";
 	}else{
@@ -106,18 +105,18 @@ function showSize(){
 }
 
 // show some samples/demos!!
-function getDemo(selectedDemo){
+function getDemo(selected){
 
 	// case for the blank option 
-	if(selectedDemo.options[selectedDemo.selectedIndex].text === ""){
+	if(selected.options[selectedDemo.selectedIndex].text === ""){
 		return;
 	}
 
 	// get the selected demo from the dropbox
 	// selectedDemo is the path to the demo to load 
-	var selectedDemo = "demos/" + selectedDemo.options[selectedDemo.selectedIndex].text + ".json"; 
+	let selectedDemo = "demos/" + selected.options[selected.selectedIndex].text + ".json"; 
 
-	var httpRequest = new XMLHttpRequest();
+	let httpRequest = new XMLHttpRequest();
 
 	if(!httpRequest){
 		return;
@@ -130,7 +129,7 @@ function getDemo(selectedDemo){
 	httpRequest.onload = function(){
 		
 		// parse the JSON using JSON.parse 
-		var data = JSON.parse(httpRequest.responseText);
+		let data = JSON.parse(httpRequest.responseText);
 
 		if(!data[0] || (!data[0].name && !data[0].height && !data[0].width && !data[0].data)){
 			console.log("it appears to not be a valid project! :<");
@@ -155,18 +154,18 @@ function getDemo(selectedDemo){
 			// overwrite existing frame
 			// TODO: implement an updateFrame method 
 			// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
-			var currFrame = project.frameList[index];
+			let currFrame = project.frameList[index];
 			console.log("need to add " + frame.layers.length + " layers for frame: " + (index+1));
 			
-			var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-			var currFrameLayersFromCurrPrj = currFrame.canvasList;
+			let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+			let currFrameLayersFromCurrPrj = currFrame.canvasList;
 			currFrameLayersFromImport.forEach(function(layer, layerIndex){
 				if((layerIndex+1) > currFrameLayersFromCurrPrj.length){
 					// add new layer to curr project as needed based on import
 					console.log("need to add a new layer for frame: " + index);
 					project.frameList[index].setupNewLayer();
 				}
-				var currLayer = project.frameList[index].canvasList[layerIndex];
+				let currLayer = project.frameList[index].canvasList[layerIndex];
 				
 				// is this part necessary? maybe, if you want the project to look exactly as when it was saved.
 				currLayer.style.opacity = layer.opacity;
@@ -175,8 +174,8 @@ function getDemo(selectedDemo){
 				currLayer.width = layer.width;
 				
 				// add the image data 
-				var newCtx = currLayer.getContext("2d");
-				var img = new Image();
+				let newCtx = currLayer.getContext("2d");
+				let img = new Image();
 				
 				(function(context, image){
 					image.onload = function(){

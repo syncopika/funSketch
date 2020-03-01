@@ -66,8 +66,9 @@ function SuperCanvas(container, number){
 		// if at least 1 canvas already present, make the previous canvas be slightly opaque for onion-skin effect
 		if(this.count >= 1){
 			// position the new canvas directly on top of the previous one 
-			var top = $('#' + this.canvasList[0].id).position().top;
-			var left = $('#' + this.canvasList[0].id).position().left;
+			var canvas = document.getElementById(this.canvasList[0].id);
+			var top = canvas.offsetTop;
+			var left = canvas.offsetLeft;
 			newCanvas.style.top = top;
 			newCanvas.style.left = left;
 		}
@@ -106,8 +107,9 @@ function SuperCanvas(container, number){
 		document.getElementById(container).appendChild(newCanvas);
 		
 		// position the new canvas directly on top of the previous one 
-		var top = $('#' + (this.canvasList[0].id)).position().top;
-		var left = $('#' + (this.canvasList[0].id)).position().left;
+		var canvas = document.getElementById(this.canvasList[0].id);
+		var top = canvas.offsetTop;
+		var left = canvas.offsetLeft;
 		newCanvas.style.top = top;
 		newCanvas.style.left = left;
 		
@@ -134,7 +136,7 @@ function SuperCanvas(container, number){
 	an animation is a single project containing one or more supercanvases (or frames).
 	it also instantiates an onion skin frame.
 ***/
-function Animation(container){
+function AnimationProject(container){
 	this.name = "";
 	this.currentFrame = 0; // should this be a ref to the current frame!?
 	this.speed = 100;	// 100 ms per frame 

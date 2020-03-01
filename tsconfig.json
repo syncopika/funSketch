@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"outDir": "./built",
+		"noImplicitAny": true,
+		"strictNullChecks": true,
+	},
+	"include": [
+		"./lib/**/*"
+	]
+}

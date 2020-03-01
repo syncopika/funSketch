@@ -1,5 +1,6 @@
 import { Frame, AnimationProject } from './built/SuperCanvas.js';
 import { Brush } from './built/Brush.js';
+import { Filters } from './built/Filters.js';
 import { Toolbar } from './built/Toolbar.js';
 
 // prevent FOUC

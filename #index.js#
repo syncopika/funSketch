@@ -1,16 +1,3 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { PresentationWrapper } from "./built/component1.js";
-
-ReactDOM.render(
-	<PresentationWrapper />,
-	document.getElementById('root')
-);
-
-
-
-/*
-
 import { Frame, AnimationProject } from './built/SuperCanvas.js';
 import { Brush } from './built/Brush.js';
 import { Filters } from './built/Filters.js';
@@ -205,4 +192,3 @@ function getDemo(selected){
 	// send the request 
 	httpRequest.send();
 }
-*/

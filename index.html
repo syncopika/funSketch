@@ -17,10 +17,13 @@
 </head>
 
 <style>
+/*
 	html{
 		/* to prevent FOUC! */
 		display: none;
 	}
+	*/
+	
 	body, button{
 		font-family: 'Merriweather', serif;
 	}
@@ -139,10 +142,14 @@
 		}
 	
 	}
+	
+	*/
 </style>
 
 <body>
 
+
+<!--
 <div class='container-fluid'>
 
 	<div class='row'>
@@ -215,7 +222,7 @@
 					<button id='floodfill'>floodfill with currently selected color</button>
 				</div>
 				
-				<!-- this should only be visible when animation mode is on -->
+				<!-- this should only be visible when animation mode is on? - ->
 				<div id='animationControl'>
 					<h3> animation control </h3>
 					<ul id='timeOptions'>
@@ -237,7 +244,6 @@
 				
 				<br>
 				
-				<!-- gotta fix these? -->
 				<div id='showDemos'>
 					<h3> demos </h3>
 					<select id='chooseDemo' onchange='getDemo(this)'>
@@ -267,18 +273,24 @@
 		</div>
 	-->
 		
-	</div> <!-- end row -->
+	</div> <!-- end row - ->
 	
 	<div id='footer' class='row'>
 		<hr>
 		<p> n.c.h works 2017-2020 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
 	</div>
 	
-</div> <!-- end container -->
+</div> <!-- end container - ->
+	
+-->
+
+<div id='root'>
+</div>
 	
 </body>
 
-
+<script src="https://unpkg.com/react@16.4.1/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@16.4.1/umd/react-dom.production.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script type="text/javascript" src="dist/bundle.js"></script>
 

@@ -6,6 +6,7 @@
 ***/
 function Brush(animationProject) {
     // pass in an animation project, from which you can access the current frame and the current canvas
+	this.animationProject = animationProject;
     this.previousCanvas = undefined;
     this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
     this.selectedBrush = 'default'; // user-selected brush 
@@ -34,8 +35,8 @@ function Brush(animationProject) {
     };
     this.defaultBrush = function () {
         // reset mouse action functions first 
-        resetBrush();
-        var canvas = animationProject.getCurrFrame();
+        thisBrushInstance.resetBrush();
+        var canvas = thisBrushInstance.animationProject.getCurrFrame();
         var paint;
         $('#' + canvas.currentCanvas.id).on('mousedown touchstart', function (e) {
             if ((e.which === 1 && e.type === 'mousedown') || e.type === 'touchstart') { //when left click only
@@ -100,8 +101,8 @@ function Brush(animationProject) {
     ***/
     this.radialGradBrush = function () {
         // reset mouse action functions first 
-        resetBrush();
-        var canvas = animationProject.getCurrFrame();
+        thisBrushInstance.resetBrush();
+        var canvas = this.animationProject.getCurrFrame();
         var curCanvas = canvas.currentCanvas.id;
         var context = canvas.currentCanvas.getContext("2d");
         var paint;
@@ -132,8 +133,8 @@ function Brush(animationProject) {
             paint = false;
         });
     };
-    function radialGrad(x, y) {
-        var canvas = animationProject.getCurrFrame();
+    this.radialGrad = function(x, y) {
+        var canvas = thisBrushInstance.animationProject.getCurrFrame();
         var context = canvas.currentCanvas.getContext("2d");
         var radGrad = context.createRadialGradient(x, y, thisBrushInstance.currSize, x, y, thisBrushInstance.currSize * 1.5);
         var colorPicked = thisBrushInstance.currColorArray;
@@ -149,8 +150,9 @@ function Brush(animationProject) {
         context.fillStyle = radGrad;
         context.fillRect(x - 20, y - 20, 40, 40);
     }
-    function resetBrush() {
-        var canvas = animationProject.getCurrFrame();
+    this.resetBrush = function() {
+		console.log(thisBrushInstance);
+        var canvas = thisBrushInstance.animationProject.getCurrFrame();
         var curCanvas = canvas.getCurrCanvas().id; //canvas.currentCanvas.id;
         //detach any events from mouse actions (reset the events connected with mouse events)
         $('#' + curCanvas).off("mousedown");
@@ -167,7 +169,7 @@ function Brush(animationProject) {
         clickSize.push(thisBrushInstance.currSize);
     }
     function redraw(canvas) {
-        var canvas = animationProject.getCurrFrame();
+        var canvas = thisBrushInstance.animationProject.getCurrFrame();
         var context = canvas.currentCanvas.getContext("2d");
         context.lineJoin = 'round';
         for (var i = 0; i < clickX.length; i++) {

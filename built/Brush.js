@@ -151,7 +151,6 @@ function Brush(animationProject) {
         context.fillRect(x - 20, y - 20, 40, 40);
     }
     this.resetBrush = function() {
-		console.log(thisBrushInstance);
         var canvas = thisBrushInstance.animationProject.getCurrFrame();
         var curCanvas = canvas.getCurrCanvas().id; //canvas.currentCanvas.id;
         //detach any events from mouse actions (reset the events connected with mouse events)

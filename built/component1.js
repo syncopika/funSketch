@@ -1,6 +1,7 @@
 import { AnimationProject } from './SuperCanvas.js';
 import { Toolbar } from './Toolbar.js';
 import { Brush } from './Brush.js';
+import { Filters } from './Filters.js';
 
 class PresentationWrapper extends React.Component {
 
@@ -10,10 +11,31 @@ class PresentationWrapper extends React.Component {
 			'animationProject': null,
 			'brushInstance': null,
 			'toolbarInstance': null,
+			'filtersInstance': null,
 		};
 	}
 	
+	_setupToolbar(){
+		let newToolbar = this.state.toolbarInstance;
+		console.log(newToolbar);
+		newToolbar.setCounter("count");
+		newToolbar.setKeyDown(document);	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
+		newToolbar.createColorWheel('colorPicker', 200);
+		newToolbar.floodFill('floodfill');
+		newToolbar.insertLayer('insertCanvas');
+		newToolbar.deleteLayer('deleteCanvas', 'count');
+		newToolbar.setClearCanvas('clearCanvas');
+		newToolbar.rotateImage('rotateCanvasImage'); 
+		newToolbar.undo('undo');
+		newToolbar.download('download');
+		newToolbar.importImage('importImage');
+		newToolbar.save('saveWork');
+		newToolbar.importProject('importProject', 'count');
+		newToolbar.addNewFrameButton('addNewFrame');
+	}
+	
 	_setupFilters(){
+		
 		/*
 		<li onclick='newFilters.filterCanvas(newFilters.grayscale)'> grayscale </li>
 		<li onclick='newFilters.filterCanvas(newFilters.saturate)'> saturate </li>
@@ -69,16 +91,19 @@ class PresentationWrapper extends React.Component {
 		
 		const newBrush = new Brush(animationProj);
 		newBrush.defaultBrush();
-		console.log(newBrush);
 		
-		animationProj.addNewFrame(true);
+		const newFilters = new Filters(animationProj.getCurrFrame(), newBrush);
 		
 		let currCanvas = animationProj.getCurrFrame().currentCanvas;
+		const newToolbar = new Toolbar(currCanvas, newBrush, animationProj);
 		
 		this.setState({
 			'animationProject': animationProj,
 			'brushInstance': newBrush,
-			'toolbarInstance': currCanvas,
+			'toolbarInstance': newToolbar,
+			'filtersInstance': newFilters,
+		}, () => {
+			this._setupToolbar();
 		});
 		
 	}

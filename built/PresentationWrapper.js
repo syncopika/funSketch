@@ -103,19 +103,16 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_setupAnimationControl(){
-		/*
-		<li onclick='newToolbar.playBackward()'> &larr; </li>
-		<li onclick='newToolbar.stop()'> stop! </li>
-		<li onclick='newToolbar.playForward()'> &rarr; </li>
-		
-										<select id='timePerFrame' onchange='newToolbar.timePerFrame = parseInt(value)'>
-									<option value='100'>100</option>
-									<option value='200'>200</option>
-									<option value='500'>500</option>
-									<option value='700'>700</option>
-									<option value='1000'>1000</option>
-								</select>
-		*/
+		document.getElementById('timePerFrame').addEventListener('onchange', (evt) => {
+			this.state.toolbarInstance.timePerFrame = parseInt(evt.target.selectedOptions[0].value);
+		});
+	}
+	
+	_linkDemos(){
+		let demoSelect = document.getElementById("chooseDemo");
+		demoSelect.addEventListener("change", (evt) => {
+			this._getDemo(evt.target.selectedOptions[0].value);
+		});
 	}
 	
 	_setupBrushControls(){
@@ -157,10 +154,96 @@ class PresentationWrapper extends React.Component {
 		document.getElementById('brushSizeValue').textContent = document.getElementById('brushSize').value;
 	}
 	
-	_getDemo(arg){
-		// do something
+	_getDemo(selected){
+		// case for the blank option 
+		if(selected === ""){
+			return;
+		}
+
+		// get the selected demo from the dropbox
+		// selectedDemo is the path to the demo to load 
+		let selectedDemo = "demos/" + selected + ".json"; 
+
+		let httpRequest = new XMLHttpRequest();
+
+		if(!httpRequest){
+			return;
+		}
+		
+		// set request type
+		httpRequest.open("GET", selectedDemo);
+		
+		// what to do when data comes back
+		httpRequest.onload = () => {
+			
+			let toolbar = this.state.toolbarInstance;
+			let project = this.state.animationProject;
+			
+			// parse the JSON using JSON.parse 
+			let data = JSON.parse(httpRequest.responseText);
+
+			if(!data[0] || (!data[0].name && !data[0].height && !data[0].width && !data[0].data)){
+				console.log("it appears to not be a valid project! :<");
+				return;
+			}
+
+			// clear existing project
+			project.resetProject();
+			// update UI 
+			if(toolbar.htmlCounter){
+				// ideally if you use react or some library that can update the view based on the current state,
+				// you shouldn't need this at all. hint hint.
+				toolbar.htmlCounter.textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (project.frameList[project.currentFrame].currentIndex + 1);
+			}
+			
+			// load saved project
+			data.forEach(function(frame, index){
+				if(index > 0){
+					// add a new frame
+					project.addNewFrame();
+				}
+				// overwrite existing frame
+				// TODO: implement an updateFrame method 
+				// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
+				let currFrame = project.frameList[index];
+				//console.log("need to add " + frame.layers.length + " layers for frame: " + (index+1));
+				
+				let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+				let currFrameLayersFromCurrPrj = currFrame.canvasList;
+				currFrameLayersFromImport.forEach(function(layer, layerIndex){
+					if((layerIndex+1) > currFrameLayersFromCurrPrj.length){
+						// add new layer to curr project as needed based on import
+						//console.log("need to add a new layer for frame: " + index);
+						project.frameList[index].setupNewLayer();
+					}
+					let currLayer = project.frameList[index].canvasList[layerIndex];
+					
+					// is this part necessary? maybe, if you want the project to look exactly as when it was saved.
+					currLayer.style.opacity = layer.opacity;
+					currLayer.style.zIndex = layer.zIndex;  
+					currLayer.height = layer.height;
+					currLayer.width = layer.width;
+					
+					// add the image data 
+					let newCtx = currLayer.getContext("2d");
+					let img = new Image();
+					
+					(function(context, image){
+						image.onload = function(){
+								context.drawImage(image, 0, 0);
+							}
+						image.src = layer.imageData;
+					})(newCtx, img);
+					
+				});
+			});
+		}
+		
+		// send the request 
+		httpRequest.send();
 	}
 	
+
 	componentDidMount(){
 		
 		const animationProj = new AnimationProject('canvasArea');
@@ -182,8 +265,8 @@ class PresentationWrapper extends React.Component {
 		}, () => {
 			this._setupToolbar();
 			this._setupBrushControls();
+			this._linkDemos();
 		});
-		
 	}
 	
 	render(){
@@ -249,6 +332,13 @@ class PresentationWrapper extends React.Component {
 							<div id='animationControl'>
 								<h3> animation control </h3>
 								<ul id='timeOptions'>
+									<select id='timePerFrame'>
+										<option value='100'>100</option>
+										<option value='200'>200</option>
+										<option value='500'>500</option>
+										<option value='700'>700</option>
+										<option value='1000'>1000</option>
+									</select>
 								</ul>
 								<label>time per frame:</label>
 								<button id='generateGif'> generate gif! </button>
@@ -259,10 +349,10 @@ class PresentationWrapper extends React.Component {
 							
 							<div id='showDemos'>
 								<h3> demos </h3>
-								<select id='chooseDemo' onchange='getDemo(this)'>
+								<select id='chooseDemo'>
 									<option label=""></option>
-									<option>run_demo</option>
-									<option>floaty_thingy</option>
+									<option class='demo'>run_demo</option>
+									<option class='demo'>floaty_thingy</option>
 								</select>
 							</div>
 							

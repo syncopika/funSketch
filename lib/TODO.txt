@@ -1,2 +1,6 @@
 migrate to typescript?
 add React components that utilize these modules.
+
+add logging to mmp-to-musicxml
+
+soundmaker

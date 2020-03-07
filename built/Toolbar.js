@@ -48,8 +48,7 @@ function Toolbar(canvas, brush, animationProj) {
         // this moves the current layer to the previous one if exists
         let canvas = animationProj.getCurrFrame();
         if (canvas.currentIndex - 1 >= 0) {
-            // move to previous canvas 
-            // first make current canvas not visible anymore
+            // move to previous canvas
             canvas.currentCanvas.style.opacity = 0;
             canvas.currentCanvas.style.zIndex = 0;
             // make previous canvas visible 

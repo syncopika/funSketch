@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { PresentationWrapper } from "./built/component1.js";
+import { PresentationWrapper } from "./built/PresentationWrapper.js";
 
 ReactDOM.render(
 	<PresentationWrapper />,

@@ -17,7 +17,8 @@ class PresentationWrapper extends React.Component {
 	
 	_setupToolbar(){
 		let newToolbar = this.state.toolbarInstance;
-		console.log(newToolbar);
+		let project = this.state.animationProject;
+		
 		newToolbar.setCounter("count");
 		newToolbar.setKeyDown(document);	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
 		newToolbar.createColorWheel('colorPicker', 200);
@@ -32,6 +33,52 @@ class PresentationWrapper extends React.Component {
 		newToolbar.save('saveWork');
 		newToolbar.importProject('importProject', 'count');
 		newToolbar.addNewFrameButton('addNewFrame');
+		
+		// make the goLeft and goRight arrows clickable FOR LAYERS
+		// note: this is for clicking the icons with a mouse!
+		document.getElementById('goLeft').addEventListener('click', () => {
+			if(newToolbar.down()){
+				let curr = project.getCurrFrame();
+				document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
+			}
+		});
+
+		document.getElementById('goRight').addEventListener('click', () => {
+			if(newToolbar.up()){
+				let curr = project.getCurrFrame();
+				document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
+			}
+		});
+
+		// left and right arrows for FRAMES
+		document.getElementById('prevFrame').addEventListener('click', () => {
+			if(newToolbar.prevFrame()){
+				let curr = project.getCurrFrame();
+				document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
+			}
+		});
+
+		document.getElementById('nextFrame').addEventListener('click', () => {
+			if(newToolbar.nextFrame()){
+				let curr = project.getCurrFrame();
+				document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
+			}
+		});
+
+		document.getElementById('generateGif').addEventListener('click', () => {
+			newToolbar.getGif("loadingScreen");
+		});
+
+		document.getElementById('toggleLayerOrFrame').addEventListener('click', () => {
+			let element = document.getElementById("toggleLayerOrFrame");
+			if(newToolbar.layerMode){
+				newToolbar.layerMode = false;
+				element.textContent = "toggle layer addition on spacebar press";
+			}else{
+				newToolbar.layerMode = true;
+				element.textContent = "toggle frame addition on spacebar press";
+			}
+		});
 	}
 	
 	_setupFilters(){
@@ -72,15 +119,45 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_setupBrushControls(){
-		/*
-		<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
+
+		let brush = this.state.brushInstance;
 		
-											<li onclick='newBrush.defaultBrush()'> default brush </li>
-									<li onclick='newBrush.radialGradBrush()'> radial gradient brush </li>
-		*/
+		document.getElementById('brushSelect').addEventListener('click', () => { 
+			this._showOptions('brushes');
+		});
+		
+		document.getElementById('defaultBrush').addEventListener('click', () => {
+			brush.defaultBrush();
+		});
+		
+		document.getElementById('radialBrush').addEventListener('click', () => {
+			brush.radialGradBrush();
+		});
+		
+		//<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
+		// make a function component for the brush? but then need to maintain state of brush size...
+		document.getElementById('brushSize').addEventListener('oninput', () => {
+			brush.changeBrushSize(document.getElementById('brushSize').value); 
+			this._showSize();
+		});
 	}
 	
-	getDemo(arg){
+	_showOptions(category){
+		let el = document.getElementById(category);
+		let child = el.children[1]; // skip the p element and get the ul element
+		if(child.style.display !== "block" ){
+			child.style.display = "block";
+		}else{
+			child.style.display = "none";
+			el.style.marginBottom = 0;
+		}
+	}
+	
+	_showSize(){
+		document.getElementById('brushSizeValue').textContent = document.getElementById('brushSize').value;
+	}
+	
+	_getDemo(arg){
 		// do something
 	}
 	
@@ -104,6 +181,7 @@ class PresentationWrapper extends React.Component {
 			'filtersInstance': newFilters,
 		}, () => {
 			this._setupToolbar();
+			this._setupBrushControls();
 		});
 		
 	}
@@ -117,7 +195,10 @@ class PresentationWrapper extends React.Component {
 
 							<h3 id='title'> funSketch: draw, edit, and animate! </h3>
 
-							<p> use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
+							<p> 
+							use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). 
+							use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! 
+							</p>
 
 							<div id='buttons'>
 								<button id='insertCanvas'>add layer</button>
@@ -145,12 +226,15 @@ class PresentationWrapper extends React.Component {
 							<div id='brushes'>
 								<p id='brushSelect'> brushes &#9660; </p>
 								<ul>
+									<li id='defaultBrush'> default brush </li>
+									<li id='radialBrush'> radial gradient brush </li>
 								</ul>
 							</div>
 							
 							<div id='adjustBrushSize'>
 								<br />
 								<p class="text-info">change brush size</p>
+									<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' />
 								<span id='brushSizeValue'> 2 </span>
 							</div>
 							

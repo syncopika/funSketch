@@ -5,7 +5,7 @@
 // animation mode was switched to.
 /***
     super canvas class
-    the instance variables hold the default attributes for any canvas.
+    the instance letiables hold the default attributes for any canvas.
     it also holds important information like a list of all the canvas instances.
     setupNewCanvas should be used to create a new canvas instance
     @param container = the parent element ID (i.e. of a div) to append the canvas elements to
@@ -40,7 +40,7 @@ function Frame(container, number) {
     ***/
     this.setupNewLayer = function () {
         // create the new canvas element 
-        var newCanvas = document.createElement('canvas');
+        let newCanvas = document.createElement('canvas');
         newCanvas.id = "frame" + this.number + "canvas" + this.count;
         setCanvas(newCanvas, this.width, this.height);
         if (this.count === 0) {
@@ -56,9 +56,9 @@ function Frame(container, number) {
         // if at least 1 canvas already present, make the previous canvas be slightly opaque for onion-skin effect
         if (this.count >= 1) {
             // position the new canvas directly on top of the previous one 
-            var canvas = document.getElementById(this.canvasList[0].id);
-            var top = canvas.offsetTop;
-            var left = canvas.offsetLeft;
+            let canvas = document.getElementById(this.canvasList[0].id);
+            let top = canvas.offsetTop;
+            let left = canvas.offsetLeft;
             newCanvas.style.top = top;
             newCanvas.style.left = left;
         }
@@ -83,16 +83,16 @@ function Frame(container, number) {
         clone the current canvas
     ***/
     this.copyCanvas = function () {
-        var newCanvas = document.createElement('canvas');
+        let newCanvas = document.createElement('canvas');
         newCanvas.id = 'frame' + this.number + 'canvas' + this.count;
         setCanvas(newCanvas, this.width, this.height);
         this.canvasList[this.count - 1].style.opacity = .92;
         // place the canvas in the container 
         document.getElementById(container).appendChild(newCanvas);
         // position the new canvas directly on top of the previous one 
-        var canvas = document.getElementById(this.canvasList[0].id);
-        var top = canvas.offsetTop;
-        var left = canvas.offsetLeft;
+        let canvas = document.getElementById(this.canvasList[0].id);
+        let top = canvas.offsetTop;
+        let left = canvas.offsetLeft;
         newCanvas.style.top = top;
         newCanvas.style.left = left;
         newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
@@ -100,8 +100,8 @@ function Frame(container, number) {
         this.count++;
     };
     this.clearCurrentLayer = function () {
-        var currLayer = this.getCurrCanvas();
-        var context = currLayer.getContext("2d");
+        let currLayer = this.getCurrCanvas();
+        let context = currLayer.getContext("2d");
         context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
         context.fillStyle = "#FFFFFF";
         context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
@@ -125,7 +125,7 @@ function AnimationProject(container) {
     this.resetProject = function () {
         this.frameList.forEach(function (frame, frameIndex) {
             // remove each layer from the DOM 
-            var parent = document.getElementById(frame['container']);
+            let parent = document.getElementById(frame['container']);
             // just keep the first layer
             frame.canvasList.forEach(function (layer, layerIndex) {
                 if (layerIndex > 0) {
@@ -146,7 +146,7 @@ function AnimationProject(container) {
         this.speed = 100;
     };
     this.addNewFrame = function (showFlag) {
-        var newFrame = new Frame(this.container, this.frameList.length);
+        let newFrame = new Frame(this.container, this.frameList.length);
         newFrame.setupNewLayer();
         this.frameList.push(newFrame);
         if (!showFlag) {
@@ -176,16 +176,16 @@ function AnimationProject(container) {
         }
         // https://stackoverflow.com/questions/6787899/combining-two-or-more-canvas-elements-with-some-sort-of-blending
         this.onionSkinFrame.style.display = ''; // show onion skin
-        var onionSkinCtx = this.onionSkinFrame.getContext("2d");
+        let onionSkinCtx = this.onionSkinFrame.getContext("2d");
         onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
         // take the previous frame, merge all layers, put into onion skin frame
         // try this? only draw pixels that are non-white?
-        var onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
+        let onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
         // build the merged image from the first to last
-        var prevFrame = this.frameList[this.currentFrame - 1];
+        let prevFrame = this.frameList[this.currentFrame - 1];
         prevFrame.canvasList.forEach(function (layer) {
-            var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
-            for (var i = 0; i < imageData.length; i += 4) {
+            let imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
+            for (let i = 0; i < imageData.length; i += 4) {
                 if (imageData[i] === 255 && imageData[i + 1] === 255 && imageData[i + 2] === 255) {
                     continue;
                 }
@@ -207,10 +207,10 @@ function AnimationProject(container) {
 }
 
 function createOnionSkinFrame(container) {
-    var width = 800;
-    var height = 800;
+    let width = 800;
+    let height = 800;
     // create the new canvas element 
-    var newCanvas = document.createElement('canvas');
+    let newCanvas = document.createElement('canvas');
     newCanvas.id = "onionSkinCanvas";
     setCanvas(newCanvas, width, height);
     newCanvas.style.opacity = .97;

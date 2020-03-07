@@ -82,24 +82,40 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_setupFilters(){
+		//console.log(Object.getOwnPropertyNames(this.state.filtersInstance));
+		let filterInstance = this.state.filtersInstance;
+		let filterNames = Object.getOwnPropertyNames(filterInstance).filter((name) => name.indexOf('filter') < 0);
+		let filterChoices = document.getElementById("filterChoices");
 		
-		/*
-		<li onclick='newFilters.filterCanvas(newFilters.grayscale)'> grayscale </li>
-		<li onclick='newFilters.filterCanvas(newFilters.saturate)'> saturate </li>
-		<li onclick='newFilters.filterCanvas(newFilters.swap)'> colorswap </li>
-		<li onclick='newFilters.filterCanvas(newFilters.scary)'> scary </li>
-		<li onclick='newFilters.filterCanvas(newFilters.heatwave)'> heatwave </li>
-		<li onclick='newFilters.filterCanvas(newFilters.randomize)'> noise </li>
-		<li onclick='newFilters.filterCanvas(newFilters.invert)'> invert </li>
-		<li onclick='newFilters.filterCanvas(newFilters.blurry)'> blur </li>
-		<li onclick='newFilters.outline()'> outline </li>
-		<li onclick='newFilters.defaultFisheye()'> fisheye </li>
-		<li onclick='newFilters.filterCanvas(newFilters.areaColor)'> painted </li>
-		<li onclick='newFilters.filterCanvas(newFilters.mosaic)'> mosaic </li>
-		<li onclick='newFilters.filterCanvas(newFilters.voronoi)'> voronoi </li>
-		<li onclick='newFilters.filterCanvas(newFilters.edgeDetect)'> edge detection </li>
-		<li style="color: #ff3232" onclick='newToolbar.resetImage()'> reset </li>
-		*/
+		filterNames.forEach((name) => {
+			let newFilterElement = document.createElement('li');
+			newFilterElement.id = name;
+			newFilterElement.textContent = name;
+			
+			if(name === "defaultFisheye" || name === "outline"){
+				newFilterElement.addEventListener('click', () => {
+					filterInstance[name]();
+				});
+			}else{
+				newFilterElement.addEventListener('click', () => {
+					filterInstance.filterCanvas(filterInstance[name]);
+				});
+			}
+			filterChoices.appendChild(newFilterElement);
+		});
+		
+		let resetOption = document.createElement('li');
+		resetOption.style.color = "#ff3232";
+		resetOption.textContent = "reset";
+		resetOption.addEventListener('click', () => {
+			this.state.toolbarInstance.resetImage();
+		});
+		
+		filterChoices.appendChild(resetOption);
+		
+		document.getElementById('filters').addEventListener('click', () => {
+			this._showOptions('filters');
+		});
 	}
 	
 	_setupAnimationControl(){
@@ -239,7 +255,7 @@ class PresentationWrapper extends React.Component {
 			});
 		}
 		
-		// send the request 
+		// send the request h
 		httpRequest.send();
 	}
 	
@@ -266,6 +282,7 @@ class PresentationWrapper extends React.Component {
 			this._setupToolbar();
 			this._setupBrushControls();
 			this._linkDemos();
+			this._setupFilters();
 		});
 	}
 	

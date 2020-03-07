@@ -3,12 +3,11 @@ import { Toolbar } from './Toolbar.js';
 import { Brush } from './Brush.js';
 import { Filters } from './Filters.js';
 
-// for displaying current frame and layer number
-// what you could do is make a function that will 
+/* for displaying current frame and layer number
 let frameCounterDisplay = (props) => {
 	return (
 	);
-}
+}*/
 
 class PresentationWrapper extends React.Component {
 
@@ -19,7 +18,7 @@ class PresentationWrapper extends React.Component {
 			'brushInstance': null,
 			'toolbarInstance': null,
 			'filtersInstance': null,
-			// maybe add current frame and layer as state variables as well.
+			// TODO: maybe add current frame and layer as state variables as well.
 			// that way you can pass as props to frameCounterDisplay when they change
 			// also, move keypress bindings from Toolbar.js to here
 		};
@@ -123,7 +122,7 @@ class PresentationWrapper extends React.Component {
 		
 		filterChoices.appendChild(resetOption);
 		
-		document.getElementById('filters').addEventListener('click', () => {
+		document.getElementById('filterSelect').addEventListener('click', () => {
 			this._showOptions('filters');
 		});
 	}
@@ -159,7 +158,7 @@ class PresentationWrapper extends React.Component {
 		
 		//<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
 		// make a function component for the brush? but then need to maintain state of brush size...
-		document.getElementById('brushSize').addEventListener('oninput', () => {
+		document.getElementById('brushSize').addEventListener('input', () => {
 			brush.changeBrushSize(document.getElementById('brushSize').value); 
 			this._showSize();
 		});
@@ -340,7 +339,7 @@ class PresentationWrapper extends React.Component {
 							<div id='adjustBrushSize'>
 								<br />
 								<p class="text-info">change brush size</p>
-									<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' />
+									<input id='brushSize' type='range' min='1' max='15' step='.5' defaultValue='2' />
 								<span id='brushSizeValue'> 2 </span>
 							</div>
 							
@@ -386,9 +385,9 @@ class PresentationWrapper extends React.Component {
 						<div id='canvasArea'>
 							<div id='pageCount'>
 								<h3 id='prevFrame'> ◀ &nbsp;&nbsp;</h3>
-								<h3 id='goLeft'> prev </h3>
+								<h3 id='goLeft'> &#60; </h3>
 								<h3 id='count'> frame: 1, layer: 1 </h3>
-								<h3 id='goRight'> next </h3>
+								<h3 id='goRight'> &#62; </h3>
 								<h3 id='nextFrame'>&nbsp;&nbsp;	▶</h3>
 							</div>
 						</div>

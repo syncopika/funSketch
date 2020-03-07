@@ -929,7 +929,7 @@ function Filters(canvas, brush) {
         }
         else {
             // compare current dist with min dist 
-            currDist = getDist(root.data[0], x, root.data[1], y);
+            let currDist = getDist(root.data[0], x, root.data[1], y);
             if (currDist < record.minDist) {
                 record.nearestNeighbor = root.point;
                 record.minDist = currDist;

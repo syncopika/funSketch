@@ -3,6 +3,13 @@ import { Toolbar } from './Toolbar.js';
 import { Brush } from './Brush.js';
 import { Filters } from './Filters.js';
 
+// for displaying current frame and layer number
+// what you could do is make a function that will 
+let frameCounterDisplay = (props) => {
+	return (
+	);
+}
+
 class PresentationWrapper extends React.Component {
 
 	constructor(props){
@@ -12,6 +19,9 @@ class PresentationWrapper extends React.Component {
 			'brushInstance': null,
 			'toolbarInstance': null,
 			'filtersInstance': null,
+			// maybe add current frame and layer as state variables as well.
+			// that way you can pass as props to frameCounterDisplay when they change
+			// also, move keypress bindings from Toolbar.js to here
 		};
 	}
 	
@@ -222,14 +232,12 @@ class PresentationWrapper extends React.Component {
 				// TODO: implement an updateFrame method 
 				// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
 				let currFrame = project.frameList[index];
-				//console.log("need to add " + frame.layers.length + " layers for frame: " + (index+1));
 				
 				let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
 				let currFrameLayersFromCurrPrj = currFrame.canvasList;
 				currFrameLayersFromImport.forEach(function(layer, layerIndex){
 					if((layerIndex+1) > currFrameLayersFromCurrPrj.length){
 						// add new layer to curr project as needed based on import
-						//console.log("need to add a new layer for frame: " + index);
 						project.frameList[index].setupNewLayer();
 					}
 					let currLayer = project.frameList[index].canvasList[layerIndex];
@@ -254,8 +262,6 @@ class PresentationWrapper extends React.Component {
 				});
 			});
 		}
-		
-		// send the request h
 		httpRequest.send();
 	}
 	

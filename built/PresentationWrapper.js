@@ -3,11 +3,20 @@ import { Toolbar } from './Toolbar.js';
 import { Brush } from './Brush.js';
 import { Filters } from './Filters.js';
 
-/* for displaying current frame and layer number
-let frameCounterDisplay = (props) => {
+// for displaying current frame and layer number
+const FrameCounterDisplay = (props) => {
+	let currFrame = props.currFrame;
+	let currLayer = props.currLayer;
 	return (
+		<div id='pageCount'>
+			<h3 id='prevFrame'> &#9664; &nbsp;&nbsp;</h3>
+			<h3 id='goLeft'> &#60; </h3>
+			<h3 id='count'> frame: {currFrame}, layer: {currLayer} </h3>
+			<h3 id='goRight'> &#62; </h3>
+			<h3 id='nextFrame'>&nbsp;&nbsp;	&#9654;</h3>
+		</div>
 	);
-}*/
+}
 
 class PresentationWrapper extends React.Component {
 
@@ -18,10 +27,65 @@ class PresentationWrapper extends React.Component {
 			'brushInstance': null,
 			'toolbarInstance': null,
 			'filtersInstance': null,
-			// TODO: maybe add current frame and layer as state variables as well.
-			// that way you can pass as props to frameCounterDisplay when they change
-			// also, move keypress bindings from Toolbar.js to here
+			'currentFrame': 1,
+			'currentLayer': 1
 		};
+	}
+	
+	_setKeyDown(doc){
+		
+		let toolbar = this.state.toolbarInstance;
+		let animationProj = this.state.animationProject;
+		let self = this;
+
+		$(doc).keydown(function(e){
+			let updateStateFlag = false;
+			let canvas = null;
+			switch(e.which){
+				case 37: //left arrow key
+					if(toolbar.down()){
+						canvas = animationProj.getCurrFrame();
+						updateStateFlag = true;
+					}
+					break;
+				case 39: //right arrow key
+					if(toolbar.up()){
+						canvas = animationProj.getCurrFrame();
+						updateStateFlag = true;
+					}
+					break;
+				case 32: //space bar
+					if(toolbar.layerMode){
+						toolbar.addPage();
+					}else{
+						animationProj.addNewFrame();
+					}
+					break;
+				case 65: // a key 
+					if(toolbar.prevFrame()){
+						canvas = animationProj.getCurrFrame();
+						updateStateFlag = true;
+					}
+					break;
+				case 68: // d key 
+					if(toolbar.nextFrame()){
+						canvas = animationProj.getCurrFrame();
+						updateStateFlag = true;
+					}
+					break;
+				default:
+					break;
+			}
+			e.preventDefault();
+			if(updateStateFlag){
+				self.setState({
+					'currentFrame': animationProj.currentFrame + 1,
+					'currentLayer': canvas.currentIndex + 1
+				});
+				canvas = null;
+				updateStateFlag = false;
+			}
+		});
 	}
 	
 	_setupToolbar(){
@@ -29,7 +93,7 @@ class PresentationWrapper extends React.Component {
 		let project = this.state.animationProject;
 		
 		newToolbar.setCounter("count");
-		newToolbar.setKeyDown(document);	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
+		//newToolbar.setKeyDown(document);	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
 		newToolbar.createColorWheel('colorPicker', 200);
 		newToolbar.floodFill('floodfill');
 		newToolbar.insertLayer('insertCanvas');
@@ -48,14 +112,20 @@ class PresentationWrapper extends React.Component {
 		document.getElementById('goLeft').addEventListener('click', () => {
 			if(newToolbar.down()){
 				let curr = project.getCurrFrame();
-				document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
+				this.setState({
+					'currentFrame': project.currentFrame + 1,
+					'currentLayer': curr.currentIndex + 1
+				});
 			}
 		});
 
 		document.getElementById('goRight').addEventListener('click', () => {
 			if(newToolbar.up()){
 				let curr = project.getCurrFrame();
-				document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
+				this.setState({
+					'currentFrame': project.currentFrame + 1,
+					'currentLayer': curr.currentIndex + 1
+				});
 			}
 		});
 
@@ -63,14 +133,20 @@ class PresentationWrapper extends React.Component {
 		document.getElementById('prevFrame').addEventListener('click', () => {
 			if(newToolbar.prevFrame()){
 				let curr = project.getCurrFrame();
-				document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
+				this.setState({
+					'currentFrame': project.currentFrame + 1,
+					'currentLayer': curr.currentIndex + 1
+				});
 			}
 		});
 
 		document.getElementById('nextFrame').addEventListener('click', () => {
 			if(newToolbar.nextFrame()){
 				let curr = project.getCurrFrame();
-				document.getElementById("count").textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (curr.currentIndex + 1);
+				this.setState({
+					'currentFrame': project.currentFrame + 1,
+					'currentLayer': curr.currentIndex + 1
+				});
 			}
 		});
 
@@ -284,6 +360,7 @@ class PresentationWrapper extends React.Component {
 			'toolbarInstance': newToolbar,
 			'filtersInstance': newFilters,
 		}, () => {
+			this._setKeyDown(document); // set key down on the whole document
 			this._setupToolbar();
 			this._setupBrushControls();
 			this._linkDemos();
@@ -383,13 +460,10 @@ class PresentationWrapper extends React.Component {
 
 					<div id='screen' class='col-lg-9'>
 						<div id='canvasArea'>
-							<div id='pageCount'>
-								<h3 id='prevFrame'> ◀ &nbsp;&nbsp;</h3>
-								<h3 id='goLeft'> &#60; </h3>
-								<h3 id='count'> frame: 1, layer: 1 </h3>
-								<h3 id='goRight'> &#62; </h3>
-								<h3 id='nextFrame'>&nbsp;&nbsp;	▶</h3>
-							</div>
+							<FrameCounterDisplay
+								currFrame={this.state.currentFrame}
+								currLayer={this.state.currentLayer}
+							/>
 						</div>
 					</div>
 					

@@ -95,52 +95,7 @@ function Toolbar(canvas, brush, animationProj) {
         let canvas = animationProj.getCurrFrame();
         canvas.setupNewLayer();
     };
-    this.setKeyDown = function (doc) {
-        let toolbar = this;
-        let counterText = this.htmlCounter;
-        $(doc).keydown(function (e) {
-            let counterUpdateString = "";
-            switch (e.which) {
-                case 37: //left arrow key
-                    if (toolbar.down()) {
-                        let canvas = animationProj.getCurrFrame();
-                        counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-                    }
-                    break;
-                case 39: //right arrow key
-                    if (toolbar.up()) {
-                        let canvas = animationProj.getCurrFrame();
-                        counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-                    }
-                    break;
-                case 32: //space bar
-                    if (toolbar.layerMode) {
-                        toolbar.addPage();
-                    } else {
-                        animationProj.addNewFrame();
-                    }
-                    break;
-                case 65: // a key 
-                    if (toolbar.prevFrame()) {
-                        let canvas = animationProj.getCurrFrame();
-                        counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-                    }
-                    break;
-                case 68: // d key 
-                    if (toolbar.nextFrame()) {
-                        let canvas = animationProj.getCurrFrame();
-                        counterUpdateString = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-                    }
-                    break;
-                default:
-                    break;
-            }
-            if (toolbar.htmlCounter && counterUpdateString) {
-                counterText.textContent = counterUpdateString;
-            }
-            e.preventDefault();
-        });
-    };
+
     /***
         insert a frame after the current frame
     ***/

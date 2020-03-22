@@ -9,10 +9,11 @@ class AnimationTimeline extends React.Component {
 		return (
 			<div id='animationTimeline' style={
 				{
-					'width': '60%',
+					'width': '100%',
 					'height': '200px',
 					'border': '1px solid #000',
 					'display': 'block',
+					'backgroundColor': '#fff'
 				}
 			}>
 				

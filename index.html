@@ -131,7 +131,30 @@
 		#floodfillDir{
 			font-size: 10px;
 		}
+	}
 	
+	.grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 70px 850px 220px;
+	}
+	
+	.grid #pageCount {
+		grid-row-start: 1;
+		grid-column-start: 1;
+	}
+	
+	.grid canvas {
+		grid-row-start: 2;
+		grid-column-start: 1;
+		background-color: rgba(0,0,0,0.5);
+	}
+	
+	.grid #animationTimeline {
+		grid-row-start: 3;
+		grid-column-start: 1;
+		padding: 50px;
+		background-color: rgba(0,0,0,0.5);
 	}
 	
 </style>

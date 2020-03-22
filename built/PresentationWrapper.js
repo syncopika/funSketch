@@ -7,7 +7,7 @@ import { AnimationTimeline } from './AnimationTimeline.js';
 // stuff to check:
 // css stuff :< 
 // https://stackoverflow.com/questions/18027751/overlay-divs-without-absolute-position
-
+// https://gedd.ski/post/overlapping-grid-items/
 
 
 // for displaying current frame and layer number
@@ -459,22 +459,18 @@ class PresentationWrapper extends React.Component {
 						</div>
 					</div>
 
-					<div id='screen' class='col-lg-9'>
-					
-						<div class='row'>
-							<div id='canvasArea'>
-								<FrameCounterDisplay
-									currFrame={this.state.currentFrame}
-									currLayer={this.state.currentLayer}
-								/>
-							</div>
-							<hr />
+					<div id='screen' class='col-lg-9 grid'>
+								
+						<FrameCounterDisplay
+							currFrame={this.state.currentFrame}
+							currLayer={this.state.currentLayer}
+						/>
+						
+						<div id='canvasArea'>
 						</div>
 						
-						<div class='row'>
-							<AnimationTimeline />
-						</div>
-						
+						<AnimationTimeline />
+
 					</div>
 					
 					

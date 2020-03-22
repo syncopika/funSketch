@@ -2,16 +2,23 @@ import { AnimationProject } from './SuperCanvas.js';
 import { Toolbar } from './Toolbar.js';
 import { Brush } from './Brush.js';
 import { Filters } from './Filters.js';
+import { AnimationTimeline } from './AnimationTimeline.js';
+
+// stuff to check:
+// css stuff :< 
+// https://stackoverflow.com/questions/18027751/overlay-divs-without-absolute-position
+
+
 
 // for displaying current frame and layer number
+// TODO: importing a project won't update the counter display since it's using the Toolbar class functions
+// and so the PresentationWrapper's state doesn't gets updated with the new currentFrame/Layer
 const FrameCounterDisplay = (props) => {
-	let currFrame = props.currFrame;
-	let currLayer = props.currLayer;
 	return (
 		<div id='pageCount'>
 			<h3 id='prevFrame'> &#9664; &nbsp;&nbsp;</h3>
 			<h3 id='goLeft'> &#60; </h3>
-			<h3 id='count'> frame: {currFrame}, layer: {currLayer} </h3>
+			<h3 id='count'> frame: {props.currFrame}, layer: {props.currLayer} </h3>
 			<h3 id='goRight'> &#62; </h3>
 			<h3 id='nextFrame'>&nbsp;&nbsp;	&#9654;</h3>
 		</div>
@@ -36,7 +43,7 @@ class PresentationWrapper extends React.Component {
 		
 		let toolbar = this.state.toolbarInstance;
 		let animationProj = this.state.animationProject;
-		let self = this;
+		const self = this;
 
 		$(doc).keydown(function(e){
 			let updateStateFlag = false;
@@ -290,12 +297,6 @@ class PresentationWrapper extends React.Component {
 
 			// clear existing project
 			project.resetProject();
-			// update UI 
-			if(toolbar.htmlCounter){
-				// ideally if you use react or some library that can update the view based on the current state,
-				// you shouldn't need this at all. hint hint.
-				toolbar.htmlCounter.textContent = "frame: " + (project.currentFrame+1) + ", layer: " + (project.frameList[project.currentFrame].currentIndex + 1);
-			}
 			
 			// load saved project
 			data.forEach(function(frame, index){
@@ -358,13 +359,13 @@ class PresentationWrapper extends React.Component {
 			'animationProject': animationProj,
 			'brushInstance': newBrush,
 			'toolbarInstance': newToolbar,
-			'filtersInstance': newFilters,
+			'filtersInstance': newFilters
 		}, () => {
-			this._setKeyDown(document); // set key down on the whole document
 			this._setupToolbar();
 			this._setupBrushControls();
 			this._linkDemos();
 			this._setupFilters();
+			this._setKeyDown(document); // set key down on the whole document
 		});
 	}
 	
@@ -459,12 +460,21 @@ class PresentationWrapper extends React.Component {
 					</div>
 
 					<div id='screen' class='col-lg-9'>
-						<div id='canvasArea'>
-							<FrameCounterDisplay
-								currFrame={this.state.currentFrame}
-								currLayer={this.state.currentLayer}
-							/>
+					
+						<div class='row'>
+							<div id='canvasArea'>
+								<FrameCounterDisplay
+									currFrame={this.state.currentFrame}
+									currLayer={this.state.currentLayer}
+								/>
+							</div>
+							<hr />
 						</div>
+						
+						<div class='row'>
+							<AnimationTimeline />
+						</div>
+						
 					</div>
 					
 					

@@ -42,7 +42,6 @@ function Filters(canvas, brush) {
     };
     /***
         sepia filter
-    ***/
     this.sepia = function (pixels) {
         let d = pixels.data;
         for (let i = 0; i < d.length; i += 4) {
@@ -55,6 +54,7 @@ function Filters(canvas, brush) {
         }
         return pixels;
     };
+	***/
     /***
         SATURATION FILTER
         source: http://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
@@ -86,7 +86,6 @@ function Filters(canvas, brush) {
     /***
         COLOR SWAP FILTER
         this function swaps colors
-    ***/
     this.swap = function (pixels) {
         let d = pixels.data;
         for (let i = 0; i < d.length; i += 4) {
@@ -99,10 +98,10 @@ function Filters(canvas, brush) {
         }
         return pixels;
     };
+	***/
     /***
         BANDED FILTER
         this function creates bands
-    ***/
     this.banded = function (pixels) {
         let d = pixels.data;
         for (let i = 0; i < d.length; i += 12) {
@@ -114,6 +113,7 @@ function Filters(canvas, brush) {
             d[i + 2] = "#FFFFFF";
         }
     };
+	***/
     /***
         PURPLE CHROME FILTER
         this function creates a light purplish 'chrome' effect
@@ -134,7 +134,6 @@ function Filters(canvas, brush) {
     /***
         PURPLIZER
         this filter turns any white spots purple
-    ***/
     this.purplizer = function (pixels) {
         //aka purplefier - all pixels with green=red or green>red become purple
         let d = pixels.data;
@@ -150,6 +149,7 @@ function Filters(canvas, brush) {
         }
         return pixels;
     };
+	***/
     /***
         SCARY(?) FILTER
         this filter turns everything dark

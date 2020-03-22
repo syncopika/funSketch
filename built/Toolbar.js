@@ -688,8 +688,7 @@ function Toolbar(canvas, brush, animationProj) {
                         let data;
                         try {
                             data = JSON.parse(e.target.result);
-                        }
-                        catch (e) {
+                        } catch (e) {
                             // not valid json file 
                             return;
                         }
@@ -703,13 +702,6 @@ function Toolbar(canvas, brush, animationProj) {
                         // clear existing project
                         animationProj.resetProject();
 						
-                        // update UI 
-                        if (self.htmlCounter) {
-                            // ideally if you use react or some library that can update the view based on the current state,
-                            // you shouldn't need this at all. hint hint.
-                            self.htmlCounter.textContent = "frame: 1, layer: 1";
-                        }
-						
                         // load saved project
                         data.forEach(function (frame, index) {
                             if (index > 0) {
@@ -720,13 +712,11 @@ function Toolbar(canvas, brush, animationProj) {
                             // TODO: implement an updateFrame method 
                             // animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
                             let currFrame = animationProj.frameList[index];
-                            //console.log("need to add " + frame.layers.length + " layers for frame: " + (index + 1));
                             let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
                             let currFrameLayersFromCurrPrj = currFrame.canvasList;
                             currFrameLayersFromImport.forEach(function (layer, layerIndex) {
                                 if ((layerIndex + 1) > currFrameLayersFromCurrPrj.length) {
                                     // add new layer to curr project as needed based on import
-                                   // console.log("need to add a new layer for frame: " + index);
                                     animationProj.frameList[index].setupNewLayer();
                                 }
                                 let currLayer = animationProj.frameList[index].canvasList[layerIndex];

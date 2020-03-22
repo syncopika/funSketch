@@ -23,7 +23,8 @@ function Frame(container, number) {
     this.tainted = false; // set to true if any layers are edited
     this.number = number; // frame number
     this.count = 0; // current number of layers
-    this.getMetadata = function () {
+	
+    this.getMetadata = function(){
         return {
             'width': this.width,
             'height': this.height,
@@ -31,14 +32,17 @@ function Frame(container, number) {
             'number': this.number
         };
     };
+	
+	// do we need this? since we have this.currentCanvas... :|
     this.getCurrCanvas = function () {
         return this.canvasList[this.currentIndex];
     };
+	
     /***
         set up a new canvas element
         makes the new canvas the current canvas
     ***/
-    this.setupNewLayer = function () {
+    this.setupNewLayer = function(){
         // create the new canvas element 
         let newCanvas = document.createElement('canvas');
         newCanvas.id = "frame" + this.number + "canvas" + this.count;
@@ -65,24 +69,27 @@ function Frame(container, number) {
         this.canvasList.push(newCanvas);
         this.count++;
     };
-    this.hide = function () {
+	
+    this.hide = function(){
         // puts all layers at zIndex -1 so they're not visible
         this.canvasList.forEach(function (canvas) {
             canvas.style.zIndex = -1;
             canvas.style.visibility = 'hidden';
         });
     };
-    this.show = function () {
+	
+    this.show = function(){
         // makes all layers visible
         this.canvasList.forEach(function (canvas) {
             canvas.style.zIndex = 1;
             canvas.style.visibility = '';
         });
     };
+	
     /***
         clone the current canvas
     ***/
-    this.copyCanvas = function () {
+    this.copyCanvas = function(){
         let newCanvas = document.createElement('canvas');
         newCanvas.id = 'frame' + this.number + 'canvas' + this.count;
         setCanvas(newCanvas, this.width, this.height);
@@ -99,14 +106,16 @@ function Frame(container, number) {
         this.canvasList.push(newCanvas);
         this.count++;
     };
-    this.clearCurrentLayer = function () {
+	
+    this.clearCurrentLayer = function(){
         let currLayer = this.getCurrCanvas();
         let context = currLayer.getContext("2d");
         context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
         context.fillStyle = "#FFFFFF";
         context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
     };
-    this.resetFrame = function () {
+	
+    this.resetFrame = function(){
     };
 }
 /***
@@ -122,30 +131,34 @@ function AnimationProject(container) {
     this.onionSkinFrame = createOnionSkinFrame(container);
     this.onionSkinFrame.style.display = 'none'; // hide it initially
     this.container = container; // id of the html element the frames are displayed in
-    this.resetProject = function () {
-        this.frameList.forEach(function (frame, frameIndex) {
-            // remove each layer from the DOM 
+	
+    this.resetProject = function(){
+        this.frameList.forEach(function(frame, frameIndex){ 
             let parent = document.getElementById(frame['container']);
-            // just keep the first layer
-            frame.canvasList.forEach(function (layer, layerIndex) {
-                if (layerIndex > 0) {
+            // just keep the first frame
+            frame.canvasList.forEach(function(layer, layerIndex){
+                if (frameIndex > 0 || (frameIndex === 0 && layerIndex > 0)) {
                     parent.removeChild(layer);
                 }
             });
-            frame.canvasList = [frame.canvasList[0]];
-            if (frameIndex === 0) {
-                frame.currentIndex = 0;
-                frame.currentCanvas = frame.canvasList[0];
-            }
+			if(frameIndex === 0){
+				frame.canvasList = [frame.canvasList[0]];
+				frame.currentIndex = 0;
+				frame.currentCanvas = frame.canvasList[0];
+			}
         });
-        this.frameList = [this.frameList[0]]; // just keep the first frame.
+        this.frameList = [this.frameList[0]];
         // clear the first layer of the first frame!
         this.frameList[0].clearCurrentLayer();
         this.currentFrame = 0;
         this.mode = 0;
         this.speed = 100;
+		
+		this.frameList[0].currentCanvas.style.visibility = '';
+		this.clearOnionSkin();
     };
-    this.addNewFrame = function (showFlag) {
+	
+    this.addNewFrame = function(showFlag){
         let newFrame = new Frame(this.container, this.frameList.length);
         newFrame.setupNewLayer();
         this.frameList.push(newFrame);
@@ -153,25 +166,29 @@ function AnimationProject(container) {
             newFrame.hide();
         }
     };
-    this.nextFrame = function () {
+	
+    this.nextFrame = function(){
         if (this.frameList.length === this.currentFrame + 1) {
             return null; // no more frames to see
         }
         this.currentFrame += 1;
         return this.frameList[this.currentFrame];
     };
-    this.prevFrame = function () {
+	
+    this.prevFrame = function(){
         if (this.currentFrame - 1 < 0) {
             return null; // no more frames to see
         }
         this.currentFrame -= 1;
         return this.frameList[this.currentFrame];
     };
-    this.getCurrFrame = function () {
+	
+    this.getCurrFrame = function(){
         return this.frameList[this.currentFrame];
     };
-    this.updateOnionSkin = function () {
-        if (this.currentFrame - 1 < 0) {
+	
+    this.updateOnionSkin = function(){
+        if(this.currentFrame - 1 < 0) {
             return;
         }
         // https://stackoverflow.com/questions/6787899/combining-two-or-more-canvas-elements-with-some-sort-of-blending
@@ -185,7 +202,7 @@ function AnimationProject(container) {
         let prevFrame = this.frameList[this.currentFrame - 1];
         prevFrame.canvasList.forEach(function (layer) {
             let imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
-            for (let i = 0; i < imageData.length; i += 4) {
+            for(let i = 0; i < imageData.length; i += 4) {
                 if (imageData[i] === 255 && imageData[i + 1] === 255 && imageData[i + 2] === 255) {
                     continue;
                 }
@@ -204,9 +221,18 @@ function AnimationProject(container) {
         this.onionSkinFrame.style.zIndex = 0;
         this.onionSkinFrame.style.opacity = 0.92;
     };
+	
+	this.clearOnionSkin = function(){
+		let onionSkin = this.onionSkinFrame;
+		let context = this.onionSkinFrame.getContext("2d");
+        context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
+        context.fillStyle = "#FFFFFF";
+        context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
+		onionSkin.style.visibility = 'hidden';
+	}
 }
 
-function createOnionSkinFrame(container) {
+function createOnionSkinFrame(container){
     let width = 800;
     let height = 800;
     // create the new canvas element 
@@ -220,7 +246,7 @@ function createOnionSkinFrame(container) {
     return newCanvas;
 }
 // assigns position, z-index, border, width, height and opacity
-function setCanvas(canvasElement, width, height) {
+function setCanvas(canvasElement, width, height){
     canvasElement.style.position = 'absolute';
     canvasElement.style.border = '1px #000 solid';
     canvasElement.style.zIndex = 0;
@@ -231,7 +257,7 @@ function setCanvas(canvasElement, width, height) {
     canvasElement.getContext("2d").fillRect(0, 0, width, height);
 }
 
-export {
+export{
 	Frame,
 	AnimationProject,
 	createOnionSkinFrame,

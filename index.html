@@ -133,6 +133,17 @@
 		}
 	}
 	
+	#canvasArea {
+		display: grid;
+		grid-template-rows: 1fr;
+		grid-template-columns: 1fr 1fr 1fr;
+	}
+	
+	#canvasArea canvas {
+		grid-row: 1;
+		grid-column: 2;
+	}
+	
 	.grid {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -140,19 +151,13 @@
 	}
 	
 	.grid #pageCount {
-		grid-row-start: 1;
-		grid-column-start: 1;
-	}
-	
-	.grid canvas {
-		grid-row-start: 2;
-		grid-column-start: 1;
-		background-color: rgba(0,0,0,0.5);
+		grid-row: 1;
+		grid-column: 1;
 	}
 	
 	.grid #animationTimeline {
-		grid-row-start: 3;
-		grid-column-start: 1;
+		grid-row: 3;
+		grid-column: 1;
 		padding: 50px;
 		background-color: rgba(0,0,0,0.5);
 	}

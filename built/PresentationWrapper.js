@@ -35,7 +35,8 @@ class PresentationWrapper extends React.Component {
 			'toolbarInstance': null,
 			'filtersInstance': null,
 			'currentFrame': 1,
-			'currentLayer': 1
+			'currentLayer': 1,
+			'timelineFrames': [{'data': null}, {'data': null}, {'data': null}]
 		};
 	}
 	
@@ -469,7 +470,7 @@ class PresentationWrapper extends React.Component {
 						<div id='canvasArea'>
 						</div>
 						
-						<AnimationTimeline />
+						<AnimationTimeline frames={this.state.timelineFrames} />
 
 					</div>
 					

@@ -556,6 +556,40 @@ function Toolbar(canvas, brush, animationProj) {
         clearInterval(play);
         play = null;
     };
+	
+	
+	this.mergeFrameLayers = function(frame){
+		let tempCanvas = document.createElement('canvas');
+		tempCanvas.width = 800; // don't hardcode dimensions :<
+		tempCanvas.height = 800;
+		let tempCtx = tempCanvas.getContext("2d");
+		tempCtx.fillStyle = "white";
+		tempCtx.fillRect(0, 0, 800, 800);
+		let tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+		let currFrame = frame;
+		for (let j = 0; j < currFrame.canvasList.length; j++) {
+			let layer = currFrame.canvasList[j];
+			let imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
+			for (let k = 0; k < imageData.length; k += 4) {
+				if (imageData[k] === 255 && imageData[k + 1] === 255 && imageData[k + 2] === 255) {
+					continue;
+				}
+				else {
+					// what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
+					// we might run into index/length issues...
+					tempImageData.data[k] = imageData[k];
+					tempImageData.data[k + 1] = imageData[k + 1];
+					tempImageData.data[k + 2] = imageData[k + 2];
+					tempImageData.data[k + 3] = 255;
+				}
+			}
+			// apply each layer to the onion skin
+			tempCtx.putImageData(tempImageData, 0, 0);
+		}
+		return tempCanvas;
+	}
+
+	
     /***
     
         create a gif from the frames.
@@ -577,33 +611,8 @@ function Toolbar(canvas, brush, animationProj) {
         });
         // add frames		
         for (let i = 0; i < animationProj.frameList.length; i++) {
-            let tempCanvas = document.createElement('canvas');
-            tempCanvas.width = 800; // don't hardcode dimensions :<
-            tempCanvas.height = 800;
-            let tempCtx = tempCanvas.getContext("2d");
-            tempCtx.fillStyle = "white";
-            tempCtx.fillRect(0, 0, 800, 800);
-            let tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-            let currFrame = animationProj.frameList[i];
-            for (let j = 0; j < currFrame.canvasList.length; j++) {
-                let layer = currFrame.canvasList[j];
-                let imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
-                for (let k = 0; k < imageData.length; k += 4) {
-                    if (imageData[k] === 255 && imageData[k + 1] === 255 && imageData[k + 2] === 255) {
-                        continue;
-                    }
-                    else {
-                        // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
-                        // we might run into index/length issues...
-                        tempImageData.data[k] = imageData[k];
-                        tempImageData.data[k + 1] = imageData[k + 1];
-                        tempImageData.data[k + 2] = imageData[k + 2];
-                        tempImageData.data[k + 3] = 255;
-                    }
-                }
-                // apply each layer to the onion skin
-                tempCtx.putImageData(tempImageData, 0, 0);
-            }
+            let tempCanvas = this.mergeFrameLayers(animationProj.frameList[i]); //document.createElement('canvas');
+
             // TODO: make sure to merge all the layers for each frame!
             gif.addFrame(tempCanvas, { delay: this.timePerFrame });
         }

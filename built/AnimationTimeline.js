@@ -1,3 +1,6 @@
+// https://stackoverflow.com/questions/55340888/fast-way-to-resize-imagedata-in-browser
+// https://stackoverflow.com/questions/19262141/resize-image-with-javascript-canvas-smoothly
+// https://stackoverflow.com/questions/13416800/how-to-generate-an-image-from-imagedata-in-javascript
 
 const TimelineFrameThumnail = (props) => {
 	let frameImgData = props.imgData;
@@ -21,7 +24,7 @@ class AnimationTimeline extends React.Component {
 	constructor(props){
 		super(props);	
 		this.state = {
-			'frames': props.frames, // a list of image data (all layers merged) for each frame
+			'frames': this.props.frames, // a list of image data (all layers merged) for each frame
 			'flags': []
 		};
 	}
@@ -30,7 +33,6 @@ class AnimationTimeline extends React.Component {
 	}
 	
 	render(){
-		
 		return (
 			<div id='animationTimeline' style={
 				{

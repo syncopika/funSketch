@@ -36,8 +36,14 @@ class PresentationWrapper extends React.Component {
 			'filtersInstance': null,
 			'currentFrame': 1,
 			'currentLayer': 1,
-			'timelineFrames': [{'data': null}, {'data': null}, {'data': null}]
+			'timelineFrames': [{'data': null}],
+			'updateFlag': false
 		};
+	}
+	
+	_getFramesForTimeline(){
+		let animProj = this.state.animationProject;
+		
 	}
 	
 	_setKeyDown(doc){
@@ -76,6 +82,17 @@ class PresentationWrapper extends React.Component {
 					}
 					break;
 				case 68: // d key 
+										
+					// add merged frame layers of prev frame to the list 
+					// and update animation timeline 
+					let frame = this.state.toolbarInstance.mergeFrameLayers(animationProj.getCurrFrame());
+					let currFrameData = frame.getContext('2d').getImageData(0, 0, frame.width, frame.height);
+					let newFrames = [...this.state.timelineFrames];
+					newFrames.push({"data": currFrameData});
+					self.setState({
+						'timelineFrames': newFrames
+					});
+					
 					if(toolbar.nextFrame()){
 						canvas = animationProj.getCurrFrame();
 						updateStateFlag = true;

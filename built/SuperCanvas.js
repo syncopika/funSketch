@@ -57,16 +57,6 @@ function Frame(container, number) {
         if (this.count === 0) {
             this.currentCanvas = newCanvas;
         }
-        /* if at least 1 canvas already present, make the previous canvas be slightly opaque for onion-skin effect
-        if (this.count >= 1) {
-            // position the new canvas directly on top of the previous one 
-            let canvas = document.getElementById(this.canvasList[0].id);
-            let top = canvas.offsetTop;
-            let left = canvas.offsetLeft;
-            newCanvas.style.top = top;
-            newCanvas.style.left = left;
-        }
-		*/
         this.canvasList.push(newCanvas);
         this.count++;
     };
@@ -99,14 +89,6 @@ function Frame(container, number) {
         document.getElementById(container).appendChild(newCanvas);
         // position the new canvas directly on top of the previous one 
         let canvas = document.getElementById(this.canvasList[0].id);
-		
-		/*
-        let top = canvas.offsetTop;
-        let left = canvas.offsetLeft;
-        newCanvas.style.top = top;
-        newCanvas.style.left = left;
-		*/
-		
         newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
         this.canvasList.push(newCanvas);
         this.count++;

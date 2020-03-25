@@ -36,9 +36,12 @@ class PresentationWrapper extends React.Component {
 			'filtersInstance': null,
 			'currentFrame': 1,
 			'currentLayer': 1,
-			'timelineFrames': [{'data': null}],
-			'updateFlag': false
+			'timelineFrames': []
 		};
+		
+		// I think PresentationWrapper should be responsible for taking care of AnimationTimeline's state.
+		// all AnimationTimeline needs to do is show the timelineFrames and a couple other things
+		// like where the speed between frames change; showing which frames belong to which scene
 	}
 	
 	_getFramesForTimeline(){
@@ -85,14 +88,15 @@ class PresentationWrapper extends React.Component {
 										
 					// add merged frame layers of prev frame to the list 
 					// and update animation timeline 
-					let frame = this.state.toolbarInstance.mergeFrameLayers(animationProj.getCurrFrame());
-					let currFrameData = frame.getContext('2d').getImageData(0, 0, frame.width, frame.height);
-					let newFrames = [...this.state.timelineFrames];
+					let frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
+					let currFrameData = frame.toDataURL();
+					let newFrames = [...self.state.timelineFrames];
 					newFrames.push({"data": currFrameData});
+					
 					self.setState({
 						'timelineFrames': newFrames
 					});
-					
+
 					if(toolbar.nextFrame()){
 						canvas = animationProj.getCurrFrame();
 						updateStateFlag = true;

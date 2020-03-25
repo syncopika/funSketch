@@ -7,18 +7,44 @@ const TimelineFrameThumnail = (props) => {
 	let height = '120px'; //props.height;
 	let width = '120px'; //props.width;
 	return(
-		<div style={{
+		<img style={{
 			'display': 'inline-block', 
 			'border': '1px solid #000',
-			'width': width,
-			'height': height,
-			'margin': '5px'
-			}}>
-		</div>
+			'margin': '3px',
+			}}
+			width={width}
+			height={height}
+			src={frameImgData}
+		/>
 	)
 }
 
 
+const AnimationTimeline = (props) => {
+	
+	return (
+			<div id='animationTimeline' style={
+				{
+					'width': '100%',
+					'height': '200px',
+					'border': '1px solid #000',
+					'display': 'block',
+					'backgroundColor': '#fff'
+				}
+			}>
+			
+			{
+				props.frames.map((frame, index) => {
+					return <TimelineFrameThumnail imgData={frame.data} key={index} />
+				})
+			}
+				
+			</div>
+		)
+}
+
+
+/*
 class AnimationTimeline extends React.Component {
 	
 	constructor(props){
@@ -33,6 +59,7 @@ class AnimationTimeline extends React.Component {
 	}
 	
 	render(){
+		console.log(this.state.frames);
 		return (
 			<div id='animationTimeline' style={
 				{
@@ -55,6 +82,7 @@ class AnimationTimeline extends React.Component {
 	}
 	
 }
+*/
 
 export{
 	AnimationTimeline

@@ -36,7 +36,8 @@ class PresentationWrapper extends React.Component {
 			'filtersInstance': null,
 			'currentFrame': 1,
 			'currentLayer': 1,
-			'timelineFrames': []
+			'timelineFrames': [],
+			'timelineSpeedChangeMarkers': [] // keep track of where fps should change
 		};
 		
 		// I think PresentationWrapper should be responsible for taking care of AnimationTimeline's state.
@@ -492,6 +493,12 @@ class PresentationWrapper extends React.Component {
 						</div>
 						
 						<AnimationTimeline frames={this.state.timelineFrames} />
+						<canvas id='animationTimelineCanvas' style={{
+									'width': '100%',
+									'height': '180px',
+									'border': '1px solid #000',
+									'display': 'block',
+						}}></canvas>
 
 					</div>
 					

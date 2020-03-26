@@ -22,25 +22,23 @@ const TimelineFrameThumnail = (props) => {
 
 const AnimationTimeline = (props) => {
 	
+	let timelineStyle = {
+		'width': '100%',
+		'height': '200px',
+		'border': '1px solid #000',
+		'display': 'block',
+		'backgroundColor': '#fff'
+	};
+	
 	return (
-			<div id='animationTimeline' style={
-				{
-					'width': '100%',
-					'height': '200px',
-					'border': '1px solid #000',
-					'display': 'block',
-					'backgroundColor': '#fff'
-				}
-			}>
-			
+		<div id='animationTimeline' style={timelineStyle}>
 			{
 				props.frames.map((frame, index) => {
 					return <TimelineFrameThumnail imgData={frame.data} key={index} />
 				})
 			}
-				
-			</div>
-		)
+		</div>
+	)
 }
 
 

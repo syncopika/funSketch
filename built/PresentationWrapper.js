@@ -40,14 +40,26 @@ class PresentationWrapper extends React.Component {
 			'timelineSpeedChangeMarkers': [] // keep track of where fps should change
 		};
 		
+		this.timelineFramesSet = new Set(); // keep track of what frames have been added to timeline so we don't duplicate
+		
 		// I think PresentationWrapper should be responsible for taking care of AnimationTimeline's state.
 		// all AnimationTimeline needs to do is show the timelineFrames and a couple other things
 		// like where the speed between frames change; showing which frames belong to which scene
 	}
 	
-	_getFramesForTimeline(){
-		let animProj = this.state.animationProject;
-		
+	_timelineMarkerSetup(){
+		let timelineCanvas = document.getElementById('animationTimelineCanvas');
+		timelineCanvas.addEventListener('mousemove', (event) => {
+			//console.log("i'm hovered over!");
+			// clear canvas first 
+			// get canvas coordinates
+			// just get all x-coords while holding that y coord
+			// draw a line
+			// if click, mark that line in canvas. have to figure out how to not erase that line 
+			// how wide should line be?
+			// also need to figure out how to translate distance between lines as frames per second...
+			// you also can't have half a frame be a different frame rate than the other half...
+		});
 	}
 	
 	_setKeyDown(doc){
@@ -89,19 +101,25 @@ class PresentationWrapper extends React.Component {
 										
 					// add merged frame layers of prev frame to the list 
 					// and update animation timeline 
+					// we need to prevent the adding of duplicates!
 					let frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
-					let currFrameData = frame.toDataURL();
 					let newFrames = [...self.state.timelineFrames];
-					newFrames.push({"data": currFrameData});
-					
-					self.setState({
-						'timelineFrames': newFrames
-					});
 
 					if(toolbar.nextFrame()){
 						canvas = animationProj.getCurrFrame();
 						updateStateFlag = true;
 					}
+
+					let currFrameData = frame.toDataURL();
+					
+					if(!self.timelineFramesSet.has(currFrameData)){
+						newFrames.push({"data": currFrameData});
+						self.setState({
+							'timelineFrames': newFrames
+						});
+						self.timelineFramesSet.add(currFrameData);
+					}
+			
 					break;
 				default:
 					break;
@@ -389,6 +407,7 @@ class PresentationWrapper extends React.Component {
 			this._linkDemos();
 			this._setupFilters();
 			this._setKeyDown(document); // set key down on the whole document
+			this._timelineMarkerSetup();
 		});
 	}
 	

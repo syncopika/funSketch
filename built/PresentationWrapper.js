@@ -51,14 +51,34 @@ class PresentationWrapper extends React.Component {
 		let timelineCanvas = document.getElementById('animationTimelineCanvas');
 		timelineCanvas.addEventListener('mousemove', (event) => {
 			//console.log("i'm hovered over!");
-			// clear canvas first 
+			// https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
+			let context = timelineCanvas.getContext('2d');
+			// clear canvas first
+			context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
 			// get canvas coordinates
-			// just get all x-coords while holding that y coord
+			
+			let rect = timelineCanvas.getBoundingClientRect();
+			let scaleX = timelineCanvas.width / rect.width;
+			let scaleY = timelineCanvas.width / rect.height;
+			let x = (event.clientX - rect.left) * scaleX;
+			let y = (event.clientY - rect.top) * scaleY;
+			
+			//console.log("x: " + x + " y: " + y);
+			context.beginPath();
+			context.moveTo(x, 0);
+			context.lineTo(x, rect.height);
+			context.stroke();
+			// just get all y-coords while holding that x coord
 			// draw a line
 			// if click, mark that line in canvas. have to figure out how to not erase that line 
 			// how wide should line be?
 			// also need to figure out how to translate distance between lines as frames per second...
 			// you also can't have half a frame be a different frame rate than the other half...
+		});
+		
+		timelineCanvas.addEventListener('mouseleave', (event) => {
+			let context = timelineCanvas.getContext('2d');
+			context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
 		});
 	}
 	

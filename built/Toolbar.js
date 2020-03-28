@@ -16,19 +16,21 @@ function Toolbar(canvas, brush, animationProj) {
     // this is useful for the arrow keys and space bar
     this.layerMode = true;
     this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
-    this.setCounter = function (elementId) {
+	
+    this.setCounter = function(elementId){
         this.htmlCounter = document.getElementById(elementId);
     };
-    this.up = function () {
+	
+    this.up = function(){
         // this moves the current layer to the next one if exists
         let canvas = animationProj.getCurrFrame();
-        if (canvas.currentIndex + 1 < canvas.canvasList.length) {
+        if(canvas.currentIndex + 1 < canvas.canvasList.length) {
             // move to next canvas
             canvas.currentCanvas.style.opacity = .92; // apply onion skin to current canvas 
             canvas.currentCanvas.style.zIndex = 0;
             // in the special case for when you want to go to the next canvas from the very first one, 
             // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
-            if (canvas.currentIndex > 0) {
+            if(canvas.currentIndex > 0) {
                 // reset opacity and z-index for previous canvas (because of onionskin)
                 canvas.canvasList[canvas.currentIndex - 1].style.opacity = 0;
                 canvas.canvasList[canvas.currentIndex - 1].style.zIndex = 0;
@@ -44,10 +46,11 @@ function Toolbar(canvas, brush, animationProj) {
         }
         return false;
     };
-    this.down = function () {
+	
+    this.down = function(){
         // this moves the current layer to the previous one if exists
         let canvas = animationProj.getCurrFrame();
-        if (canvas.currentIndex - 1 >= 0) {
+        if(canvas.currentIndex - 1 >= 0){
             // move to previous canvas
             canvas.currentCanvas.style.opacity = 0;
             canvas.currentCanvas.style.zIndex = 0;
@@ -55,7 +58,7 @@ function Toolbar(canvas, brush, animationProj) {
             canvas.canvasList[canvas.currentIndex - 1].style.opacity = .97;
             canvas.canvasList[canvas.currentIndex - 1].style.zIndex = 1;
             // if there is another canvas before the previous one, apply onion skin
-            if (canvas.currentIndex - 2 >= 0) {
+            if(canvas.currentIndex - 2 >= 0){
                 canvas.canvasList[canvas.currentIndex - 2].style.opacity = .92;
             }
             canvas.currentCanvas = canvas.canvasList[canvas.currentIndex - 1];
@@ -66,10 +69,11 @@ function Toolbar(canvas, brush, animationProj) {
         }
         return false;
     };
-    this.nextFrame = function () {
+	
+    this.nextFrame = function(){
         let curr = animationProj.getCurrFrame();
         let next = animationProj.nextFrame();
-        if (next !== null) {
+        if(next !== null){
             curr.hide();
             next.show();
             animationProj.updateOnionSkin();
@@ -78,10 +82,11 @@ function Toolbar(canvas, brush, animationProj) {
         }
         return false;
     };
-    this.prevFrame = function () {
+	
+    this.prevFrame = function(){
         let curr = animationProj.getCurrFrame();
         let prev = animationProj.prevFrame();
-        if (prev !== null) {
+        if(prev !== null){
             curr.hide();
             prev.show();
             animationProj.updateOnionSkin();
@@ -90,7 +95,8 @@ function Toolbar(canvas, brush, animationProj) {
         }
         return false;
     };
-    this.addPage = function () {
+	
+    this.addPage = function(){
         // TODO: shouldn't this be in Animation? 
         let canvas = animationProj.getCurrFrame();
         canvas.setupNewLayer();
@@ -99,10 +105,10 @@ function Toolbar(canvas, brush, animationProj) {
     /***
         insert a frame after the current frame
     ***/
-    this.insertLayer = function (elementId) {
+    this.insertLayer = function(elementId){
         // not sure if better idea to add the container the layers go in as an instance letiable 
         // or pass in elementId here? 
-        $('#' + elementId).click(function () {
+        $('#' + elementId).click(function(){
             let canvas = animationProj.getCurrFrame();
             // add a new canvas first 
             canvas.setupNewLayer();
@@ -111,22 +117,23 @@ function Toolbar(canvas, brush, animationProj) {
             canvas.canvasList.splice(canvas.currentIndex + 1, 0, newestCanvas);
         });
     };
+	
     /***
         delete current frame
         shifts the current frame to the next one if there is one.
         otherwise, the previous frame will become the current one.
         if there isn't a previous one either, then the frame will just be made blank.
     ***/
-    this.deleteLayer = function (elementId) {
+    this.deleteLayer = function(elementId){
         // elementId here refers to the display that shows current frame and layer
         let toolbarReference = this;
-        $('#' + elementId).click(function () {
+        $('#' + elementId).click(function(){
             let canvas = animationProj.getCurrFrame();
             let oldCanvasIndex = canvas.currentIndex;
             let oldCanvasId = canvas.currentCanvas.id;
             let parentNode = document.getElementById(oldCanvasId).parentNode;
             // if there's a canvas ahead of the current one 
-            if (canvas.currentIndex + 1 < canvas.canvasList.length) {
+            if(canvas.currentIndex + 1 < canvas.canvasList.length){
                 // move current canvas to the next one 
                 toolbarReference.up();
                 // remove the old canvas from the array and the DOM!
@@ -134,7 +141,7 @@ function Toolbar(canvas, brush, animationProj) {
                 parentNode.removeChild(document.getElementById(oldCanvasId));
                 // adjust the current canvas index after the removal 
                 canvas.currentIndex -= 1;
-            } else if (canvas.currentIndex - 1 >= 0) {
+            }else if(canvas.currentIndex - 1 >= 0){
                 // if there's a canvas behind the current one (and no more ahead)
                 // move current canvas to the previous one 
                 // note that currentIndex doesn't need to be adjusted because removing the 
@@ -146,7 +153,7 @@ function Toolbar(canvas, brush, animationProj) {
                 if (toolbarReference.htmlCounter) {
                     toolbarReference.htmlCounter.textContent = "frame: " + (animationProj.currentFrame + 1) + ", layer:" + (canvas.currentIndex + 1);
                 }
-            } else {
+            }else{
                 // otherwise, just blank the canvas 
                 let context = canvas.currentCanvas.getContext("2d");
                 context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
@@ -155,32 +162,37 @@ function Toolbar(canvas, brush, animationProj) {
             }
         });
     };
+	
     /***
         add a new frame
         note that it's adding a supercanvas instance
     ***/
-    this.addNewFrameButton = function (elementId) {
-        $('#' + elementId).click(function () {
+    this.addNewFrameButton = function(elementId){
+        $('#' + elementId).click(() => {
             animationProj.addNewFrame();
         });
     };
+	
     /***
         color wheel functions
     ***/
     // pass in the elementId of the div where the color wheel should be 
     // pass in the size of the canvas of the color wheel 
-    this.createColorWheel = function (elementId, size) {
+    this.createColorWheel = function(elementId, size){
         let location = document.getElementById(elementId);
-        let colorWheel = document.createElement('canvas');
+        
+		let colorWheel = document.createElement('canvas');
         colorWheel.id = "colorWheel";
         colorWheel.setAttribute('width', size);
         colorWheel.setAttribute('height', size);
-        let colorWheelContext = colorWheel.getContext('2d');
+        
+		let colorWheelContext = colorWheel.getContext('2d');
         let x = colorWheel.width / 2;
         let y = colorWheel.height / 2;
         let radius = 90;
-        // why 5600??
-        for (let angle = 0; angle <= 5600; angle++) {
+       
+	   // why 5600??
+        for(let angle = 0; angle <= 5600; angle++) {
             let startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
             let endAngle = (angle) * Math.PI / 180;
             colorWheelContext.beginPath();
@@ -196,6 +208,7 @@ function Toolbar(canvas, brush, animationProj) {
             colorWheelContext.fillStyle = gradient;
             colorWheelContext.fill();
         }
+		
         // make black a pickable color 
         colorWheelContext.fillStyle = "#000";
         colorWheelContext.fillRect(0, 0, 8, 8);
@@ -204,21 +217,23 @@ function Toolbar(canvas, brush, animationProj) {
         colorWheelContext.fillStyle = "#fff";
         colorWheelContext.fillRect(11, 0, 6, 7);
         location.appendChild(colorWheel);
+		
         // make the color wheel interactive and show picked color 
         let showColor = document.createElement('p'); // this element will show the color picked 
         showColor.style.textAlign = 'center';
         showColor.id = 'colorPicked';
         showColor.textContent = "pick a color! :)";
         location.appendChild(showColor);
-        $('#' + colorWheel.id).mousedown(function (e) {
+        
+		$('#' + colorWheel.id).mousedown((e) => {
             let x = e.offsetX;
             let y = e.offsetY;
             let colorPicked = (document.getElementById(colorWheel.id).getContext('2d')).getImageData(x, y, 1, 1).data;
             let colorPickedText = document.getElementById(showColor.id);
             //correct the font color if the color is really dark
-            if (colorPicked[0] > 10 && colorPicked[1] > 200) {
+            if(colorPicked[0] > 10 && colorPicked[1] > 200){
                 $('#' + showColor.id).css("color", "#000");
-            } else {
+            }else{
                 $('#' + showColor.id).css("color", "#FFF");
             }
             colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
@@ -228,6 +243,7 @@ function Toolbar(canvas, brush, animationProj) {
             brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
         });
     };
+	
     /***
     
         attach floodfill function!
@@ -240,16 +256,16 @@ function Toolbar(canvas, brush, animationProj) {
         might have to turn off the brush temporarily, then reconnect it?
     
     ***/
-    this.floodFill = function (elementId) {
-        $('#' + elementId).click(function () {
+    this.floodFill = function(elementId){
+        $('#' + elementId).click(() => {
             let canvas = animationProj.getCurrFrame();
-            let doFloodFill = function (e) {
+            let doFloodFill = function(e){
                 // this is the color to change to!
                 // need to parse the currColor because right now it looks like "rgb(x,y,z)". 
                 // I want it to look like [x, y, z]
                 let currColor = brush.currColor;
                 let currColorArray = currColor.substring(currColor.indexOf('(') + 1, currColor.length - 1).split(',');
-                currColorArray = currColorArray.map(function (a) { return parseInt(a); });
+                currColorArray = currColorArray.map(function(a){ return parseInt(a); });
 				
                 // get the coordinates of the selected pixel 
                 let x = e.pageX - $('#' + canvas.currentCanvas.id).offset().left;
@@ -268,8 +284,9 @@ function Toolbar(canvas, brush, animationProj) {
             canvas.currentCanvas.addEventListener('click', doFloodFill);
         });
     };
+	
     // the actual floodfill function 
-    function floodfill(currentCanvas, newColor, pixelSelected) {
+    function floodfill(currentCanvas, newColor, pixelSelected){
         // create a stack 
         let stack = [];
         // create visited set 
@@ -284,7 +301,7 @@ function Toolbar(canvas, brush, animationProj) {
         let imageData = ctx.getImageData(0, 0, currentCanvas.width, currentCanvas.height);
         let data = imageData.data;
         stack.push(pixelSelected);
-        while (stack.length !== 0) {
+        while(stack.length !== 0){
             // get a pixel
             let currPixel = stack.pop();
             // add to visited set 
@@ -347,6 +364,7 @@ function Toolbar(canvas, brush, animationProj) {
         // put new edited image back on canvas 
         ctx.putImageData(imageData, 0, 0);
     }
+	
     /***
         rotate image
         pass in an element id that will rotate the current canvas image on click
@@ -354,7 +372,7 @@ function Toolbar(canvas, brush, animationProj) {
         currently buggy! after rotation, image becomes blurred. also, when attempting to draw on same canvas,
         coordinates get altered so on mousedown the drawing gets offset
     ***/
-    this.rotateImage = function (elementId) {
+    this.rotateImage = function(elementId){
         //rotate image
         $('#' + elementId).click(function () {
             let canvas = animationProj.getCurrFrame();
@@ -374,12 +392,13 @@ function Toolbar(canvas, brush, animationProj) {
             });
         });
     };
+	
     /***
         clear the current canvas
         pass in an element id that will execute clear canvas onclick
     ***/
-    this.setClearCanvas = function (elementId) {
-        $('#' + elementId).click(function () {
+    this.setClearCanvas = function(elementId){
+        $('#' + elementId).click(() => {
             let canvas = animationProj.getCurrFrame();
             let context = canvas.currentCanvas.getContext("2d");
             context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
@@ -387,12 +406,13 @@ function Toolbar(canvas, brush, animationProj) {
             context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
         });
     };
+	
     /***
         undo a previous drawing operation on the current canvas.
         still a little incorrect?
     ***/
-    this.undo = function (elementId) {
-        $('#' + elementId).click(function () {
+    this.undo = function(elementId){
+        $('#' + elementId).click(() => {
             let canvas = animationProj.getCurrFrame();
             let context = canvas.currentCanvas.getContext("2d");
             let width = canvas.currentCanvas.getAttribute("width");
@@ -410,15 +430,19 @@ function Toolbar(canvas, brush, animationProj) {
             }
         });
     };
+	
     /***
         import an image
     ***/
-    this.importImage = function (elementId) {
-        $('#' + elementId).click(function () {
-            let canvas = animationProj.getCurrFrame();
-            // call fileHandler here
+    this.importImage = function(elementId) {
+        $('#' + elementId).click(() => {
+            
+			let canvas = animationProj.getCurrFrame();
+            
+			// call fileHandler here
             fileHandler();
-            // define fileHandler 
+            
+			// define fileHandler 
             function fileHandler() {
                 //initiate file choosing after button click
                 let input = document.createElement('input');
@@ -426,6 +450,7 @@ function Toolbar(canvas, brush, animationProj) {
                 input.addEventListener('change', getFile, false);
                 input.click();
             }
+			
             function getFile(e) {
                 let img = new Image();
                 let reader = new FileReader();
@@ -444,19 +469,19 @@ function Toolbar(canvas, brush, animationProj) {
                     let context = currentCanvas.getContext("2d");
                     let height = img.height;
                     let width = img.width;
-                    if ((img.width - img.height) >= 100) {
+                    if ((img.width - img.height) >= 100){
                         // if image is wider than it is tall
                         currentCanvas.setAttribute('height', Math.floor(800 * .9));
                         currentCanvas.setAttribute('width', Math.floor(800 * 1.1));
                         height = currentCanvas.height;
                         width = currentCanvas.width;
-                    } else if ((img.height - img.width) >= 200) {
+                    }else if((img.height - img.width) >= 200){
                         // if image is taller than it is wide
                         currentCanvas.setAttribute('width', Math.floor(800 * .9));
                         currentCanvas.setAttribute('height', Math.floor(800 * 1.1));
                         height = currentCanvas.height;
                         width = currentCanvas.width;
-                    } else {
+                    }else{
                         // default value in super canvas object
                         height = canvas.height;
                         width = canvas.width;
@@ -478,10 +503,11 @@ function Toolbar(canvas, brush, animationProj) {
             }
         });
     };
+	
     /***
         reset the canvas to most recent imported image
     ***/
-    this.resetImage = function () {
+    this.resetImage = function(){
         if (recentImage) {
             let canvas = animationProj.getCurrFrame();
             let context = canvas.currentCanvas.getContext("2d");
@@ -490,11 +516,12 @@ function Toolbar(canvas, brush, animationProj) {
             context.drawImage(recentImage, 0, 0, width, height);
         }
     };
+	
     /***
         download a png file of the current canvas
     ***/
-    this.download = function (elementId) {
-        $('#' + elementId).click(function () {
+    this.download = function(elementId){
+        $('#' + elementId).click(() => {
             // get image data from current canvas as blob
             let data = document.getElementById(canvas.currentCanvas.id).toBlob(function (blob) {
                 let url = URL.createObjectURL(blob);
@@ -512,6 +539,7 @@ function Toolbar(canvas, brush, animationProj) {
             });
         });
     };
+	
     /********
     
         this section controls the animation playback features
@@ -523,15 +551,16 @@ function Toolbar(canvas, brush, animationProj) {
     
     *********/
     let toolbar = this;
-    let playFor = function () {
-        if (toolbar.nextFrame()) {
-            if (toolbar.htmlCounter) {
+    let playFor = function(){
+        if(toolbar.nextFrame()){
+            if(toolbar.htmlCounter){
                 let counterText = toolbar.htmlCounter;
                 counterText.textContent = "frame: " + (animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
             }
         }
     };
-    let playBack = function () {
+	
+    let playBack = function(){
         if (toolbar.prevFrame()) {
             if (toolbar.htmlCounter) {
                 let counterText = toolbar.htmlCounter;
@@ -539,12 +568,14 @@ function Toolbar(canvas, brush, animationProj) {
             }
         }
     };
-    this.playForward = function () {
+	
+    this.playForward = function(){
         clearInterval(play);
         play = null;
         play = setInterval(playFor, this.timePerFrame);
     };
-    this.playBackward = function () {
+	
+    this.playBackward = function(){
         clearInterval(play);
         play = null;
         //canvas.currentCanvas = canvas.canvasList[canvas.canvasList.length - 1];
@@ -552,7 +583,8 @@ function Toolbar(canvas, brush, animationProj) {
         //canvas.currentCanvas.style.opacity = .97;
         play = setInterval(playBack, this.timePerFrame);
     };
-    this.stop = function () {
+	
+    this.stop = function(){
         clearInterval(play);
         play = null;
     };
@@ -601,7 +633,7 @@ function Toolbar(canvas, brush, animationProj) {
         this will need to be applied for FRAMES, not LAYERS of a frame.
     
     ***/
-    this.getGif = function (elementId) {
+    this.getGif = function(elementId){
         if (elementId) {
             document.getElementById(elementId).textContent = "now loading...";
         }
@@ -610,19 +642,20 @@ function Toolbar(canvas, brush, animationProj) {
             quality: 10
         });
         // add frames		
-        for (let i = 0; i < animationProj.frameList.length; i++) {
+        for(let i = 0; i < animationProj.frameList.length; i++){
             let tempCanvas = this.mergeFrameLayers(animationProj.frameList[i]); //document.createElement('canvas');
 
             // TODO: make sure to merge all the layers for each frame!
             gif.addFrame(tempCanvas, { delay: this.timePerFrame });
         }
-        gif.on('finished', function (blob) {
+        gif.on('finished', function(blob){
             document.getElementById(elementId).textContent = "";
             let newGif = URL.createObjectURL(blob);
             window.open(newGif);
         });
         gif.render();
     };
+	
     /***
     
         save/export & import functions
@@ -633,8 +666,8 @@ function Toolbar(canvas, brush, animationProj) {
         that has several frames, especially if you take into account different colors and more detail
         
     ***/
-    this.save = function (elementId) {
-        $('#' + elementId).click(function () {
+    this.save = function(elementId){
+        $('#' + elementId).click(() => {
             // prompt the user to name the file 
             let name = prompt("name of file: ");
             if (name === "") {
@@ -675,7 +708,8 @@ function Toolbar(canvas, brush, animationProj) {
             link.click();
         });
     };
-    this.importProject = function (elementId, counterId) {
+	
+    this.importProject = function(elementId, counterId){
         let self = this;
         $('#' + elementId).click(function () {
             fileHandler();

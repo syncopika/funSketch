@@ -215,7 +215,6 @@ function AnimationProject(container) {
         context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
         context.fillStyle = "#FFFFFF";
         context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
-		onionSkin.style.visibility = 'hidden';
 	}
 }
 

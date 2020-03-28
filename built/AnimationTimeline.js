@@ -10,7 +10,7 @@ const TimelineFrameThumnail = (props) => {
 		<img style={{
 			'display': 'inline-block', 
 			'border': '1px solid #000',
-			'margin': '3px',
+			//'margin': '3px',
 			}}
 			width={width}
 			height={height}

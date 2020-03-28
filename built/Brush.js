@@ -30,32 +30,39 @@ function Brush(animationProject) {
     // that is because when you go inside another function (i.e. mousedown), 
     // using "this" doesn't refer to the object you're in, but that other function itself. 
     let thisBrushInstance = this;
-    this.changeBrushSize = function (size) {
+	
+    this.changeBrushSize = function(size){
         this.currSize = size;
     };
-    this.defaultBrush = function () {
+	
+    this.defaultBrush = function(){
+		
         // reset mouse action functions first 
         thisBrushInstance.resetBrush();
+		
         let canvas = thisBrushInstance.animationProject.getCurrFrame();
         let paint;
-        $('#' + canvas.currentCanvas.id).on('mousedown touchstart', function (e) {
-            if ((e.which === 1 && e.type === 'mousedown') || e.type === 'touchstart') { //when left click only
+		
+        $('#' + canvas.currentCanvas.id).on('mousedown touchstart', (e) => {
+            if((e.which === 1 && e.type === 'mousedown') || e.type === 'touchstart') { //when left click only
                 // update previousCanvas
-                if (thisBrushInstance.previousCanvas !== canvas.currentCanvas) {
+                if(thisBrushInstance.previousCanvas !== canvas.currentCanvas) {
                     thisBrushInstance.previousCanvas = canvas.currentCanvas;
                     // reset the snapshots array
                     thisBrushInstance.currentCanvasSnapshots = [];
                 }
-                if (tempSnapshot) {
+				
+                if(tempSnapshot) {
                     thisBrushInstance.currentCanvasSnapshots.push(tempSnapshot);
                 }
+				
                 paint = true;
                 // offset will be different with mobile
                 // use e.originalEvent because using jQuery
                 // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
                 // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
                 // using rect seems to work pretty well
-                if (e.type === 'touchstart') {
+                if(e.type === 'touchstart') {
                     let rect = e.target.getBoundingClientRect();
                     e.offsetX = e.originalEvent.touches[0].pageX - rect.left;
                     e.offsetY = e.originalEvent.touches[0].pageY - rect.top;
@@ -64,10 +71,11 @@ function Brush(animationProject) {
                 redraw();
             }
         });
+		
         //draw the lines as mouse moves
-        $('#' + canvas.currentCanvas.id).on('mousemove touchmove', function (e) {
-            if (paint) {
-                if (e.type === 'touchmove') {
+        $('#' + canvas.currentCanvas.id).on('mousemove touchmove', (e) => {
+            if(paint) {
+                if(e.type === 'touchmove') {
                     let rect = e.target.getBoundingClientRect();
                     e.offsetX = e.originalEvent.touches[0].pageX - rect.left;
                     e.offsetY = e.originalEvent.touches[0].pageY - rect.top;
@@ -78,10 +86,11 @@ function Brush(animationProject) {
                 redraw();
             }
         });
+		
         //stop drawing
-        $('#' + canvas.currentCanvas.id).on('mouseup touchend', function (e) {
+        $('#' + canvas.currentCanvas.id).on('mouseup touchend', (e) => {
             // see if it's a new canvas or we're still on the same one as before the mousedown
-            if (thisBrushInstance.previousCanvas === canvas.currentCanvas) {
+            if(thisBrushInstance.previousCanvas === canvas.currentCanvas) {
                 // if it is, then log the current image data. this is important for the undo feature
                 let c = canvas.currentCanvas;
                 let w = c.width;
@@ -91,15 +100,18 @@ function Brush(animationProject) {
             clearClick();
             paint = false;
         });
+		
         //stop drawing when mouse leaves
-        $('#' + canvas.currentCanvas.id).mouseleave(function (e) {
+        $('#' + canvas.currentCanvas.id).mouseleave((e) => {
+			clearClick();
             paint = false;
         });
     };
     /***
         radial gradient brush
     ***/
-    this.radialGradBrush = function () {
+    this.radialGradBrush = function(){
+		
         // reset mouse action functions first 
         thisBrushInstance.resetBrush();
         let canvas = this.animationProject.getCurrFrame();
@@ -107,20 +119,23 @@ function Brush(animationProject) {
         let context = canvas.currentCanvas.getContext("2d");
         let paint;
         context.lineJoin = context.lineCap = 'round';
-        $('#' + curCanvas).mousedown(function (e) {
-            if (e.which === 1) {
+		
+        $('#' + curCanvas).mousedown((e) => {
+            if(e.which === 1){
                 paint = true;
                 radialGrad(e.offsetX, e.offsetY);
             }
         });
-        $('#' + curCanvas).mousemove(function (e) {
-            if (paint) {
+		
+        $('#' + curCanvas).mousemove((e) => {
+            if(paint){
                 radialGrad(e.offsetX, e.offsetY);
             }
         });
-        $('#' + curCanvas).mouseup(function (e) {
+		
+        $('#' + curCanvas).mouseup((e) => {
             paint = false;
-            if (thisBrushInstance.previousCanvas === canvas.currentCanvas) {
+            if(thisBrushInstance.previousCanvas === canvas.currentCanvas) {
                 // if it is, then log the current image data. this is important for the undo feature
                 let c = canvas.currentCanvas;
                 let w = c.width;
@@ -128,29 +143,32 @@ function Brush(animationProject) {
                 thisBrushInstance.currentCanvasSnapshots.push(canvas.currentCanvas.getContext("2d").getImageData(0, 0, w, h));
             }
         });
+		
         //stop drawing when mouse leaves
-        $('#' + curCanvas).mouseleave(function (e) {
+        $('#' + curCanvas).mouseleave((e) => {
+			clearClick();
             paint = false;
         });
     };
-    function radialGrad(x, y) {
+	
+    function radialGrad(x, y){
         let canvas = thisBrushInstance.animationProject.getCurrFrame();
         let context = canvas.currentCanvas.getContext("2d");
         let radGrad = context.createRadialGradient(x, y, thisBrushInstance.currSize, x, y, thisBrushInstance.currSize * 1.5);
         let colorPicked = thisBrushInstance.currColorArray;
         radGrad.addColorStop(0, thisBrushInstance.currColor);
-        if (colorPicked !== undefined) {
+        if(colorPicked !== undefined) {
             radGrad.addColorStop(.5, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',.5)');
             radGrad.addColorStop(1, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',0)');
-        }
-        else {
+        }else{
             radGrad.addColorStop(.5, 'rgba(0,0,0,.5)');
             radGrad.addColorStop(1, 'rgba(0,0,0,0)');
         }
         context.fillStyle = radGrad;
         context.fillRect(x - 20, y - 20, 40, 40);
     }
-    this.resetBrush = function() {
+	
+    this.resetBrush = function(){
         let canvas = thisBrushInstance.animationProject.getCurrFrame();
         let curCanvas = canvas.getCurrCanvas().id; //canvas.currentCanvas.id;
         //detach any events from mouse actions (reset the events connected with mouse events)
@@ -158,28 +176,28 @@ function Brush(animationProject) {
         $('#' + curCanvas).off("mouseup");
         $('#' + curCanvas).off("mousemove");
     }
+	
     //collect info where each pixel is to be drawn on canvas
     function addClick(x, y, dragging) {
-        //let brushInstance = 
         clickX.push(x);
         clickY.push(y);
         clickDrag.push(dragging);
         clickColor.push(thisBrushInstance.currColor);
         clickSize.push(thisBrushInstance.currSize);
     }
-    function redraw() {
+	
+    function redraw(){
         let canvas = thisBrushInstance.animationProject.getCurrFrame();
         let context = canvas.currentCanvas.getContext("2d");
         context.lineJoin = 'round';
-        for (let i = 0; i < clickX.length; i++) {
+        for(let i = 0; i < clickX.length; i++) {
             context.beginPath();
             //this helps generate a solid line, rather than a line of dots. 
             //the subtracting of 1 from i means that the point at i is being connected
             //with the previous point
-            if (clickDrag[i] && i) {
+            if(clickDrag[i] && i) {
                 context.moveTo(clickX[i - 1], clickY[i - 1]);
-            }
-            else {
+            }else{
                 //the adding of 1 allows you to make a dot on click
                 context.moveTo(clickX[i], clickY[i] + 1);
             }
@@ -190,6 +208,7 @@ function Brush(animationProject) {
             context.stroke();
         }
     }
+	
     function clearClick() {
         clickX = [];
         clickY = [];

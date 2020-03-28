@@ -8,7 +8,7 @@ import { AnimationTimeline } from './AnimationTimeline.js';
 // css stuff :< 
 // https://stackoverflow.com/questions/18027751/overlay-divs-without-absolute-position
 // https://gedd.ski/post/overlapping-grid-items/
-
+// https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
 
 // for displaying current frame and layer number
 // TODO: importing a project won't update the counter display since it's using the Toolbar class functions
@@ -47,21 +47,33 @@ class PresentationWrapper extends React.Component {
 		// like where the speed between frames change; showing which frames belong to which scene
 	}
 	
+	_getCoordinates(canvas, event){
+		let rect = canvas.getBoundingClientRect();
+		let scaleX = canvas.width / rect.width;
+		let scaleY = canvas.width / rect.height;
+		let x = (event.clientX - rect.left) * scaleX;
+		let y = (event.clientY - rect.top) * scaleY;
+		return {'x': x, 'y': y, 'rect': rect};
+	}
+	
 	_timelineMarkerSetup(){
 		let timelineCanvas = document.getElementById('animationTimelineCanvas');
+		
+		// make sure pixel width of canvas is the same as the timeline element
+		timelineCanvas.width = document.getElementById('animationTimeline').clientWidth;
+		timelineCanvas.height = document.getElementById('animationTimeline').clientHeight - 20; // leave a gap for the scrollbar
+		
 		timelineCanvas.addEventListener('mousemove', (event) => {
-			//console.log("i'm hovered over!");
-			// https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
+			
 			let context = timelineCanvas.getContext('2d');
 			// clear canvas first
 			context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
 			// get canvas coordinates
 			
-			let rect = timelineCanvas.getBoundingClientRect();
-			let scaleX = timelineCanvas.width / rect.width;
-			let scaleY = timelineCanvas.width / rect.height;
-			let x = (event.clientX - rect.left) * scaleX;
-			let y = (event.clientY - rect.top) * scaleY;
+			let coords = this._getCoordinates(timelineCanvas, event);
+			let x = coords.x;
+			let y = coords.y;
+			let rect = coords.rect;
 			
 			//console.log("x: " + x + " y: " + y);
 			context.beginPath();
@@ -79,6 +91,27 @@ class PresentationWrapper extends React.Component {
 		timelineCanvas.addEventListener('mouseleave', (event) => {
 			let context = timelineCanvas.getContext('2d');
 			context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
+		});
+		
+		timelineCanvas.addEventListener('click', (event) => {
+			
+			// also take into account horizontal scroll distance, if any
+			let scrollDistance = document.getElementById('animationTimeline').scrollLeft;
+			
+			let coords = this._getCoordinates(timelineCanvas, event);
+			let x = coords.x + scrollDistance;
+			let y = coords.y;
+			
+			// which frame does this coordinate match to?
+			if(this.state.timelineFrames.length > 0){
+				//console.log("x: " + x + ", y: " + y);
+				// get a timeline frame height and width (they should all be the same?)
+				let frame = this.state.timelineFrames[0];
+				let width = 120; // don't hardcode this pls? :< it should be based on img width in the timeline
+				
+				let frameGuess = Math.floor(x/width) + 1; // do we really want floor?
+				console.log("you're at frame: " + frameGuess + " / " + this.state.timelineFrames.length);
+			}
 		});
 	}
 	
@@ -133,7 +166,7 @@ class PresentationWrapper extends React.Component {
 					let currFrameData = frame.toDataURL();
 					
 					if(!self.timelineFramesSet.has(currFrameData)){
-						newFrames.push({"data": currFrameData});
+						newFrames.push({"data": currFrameData, "height": frame.height, "width": frame.width});
 						self.setState({
 							'timelineFrames': newFrames
 						});
@@ -533,8 +566,6 @@ class PresentationWrapper extends React.Component {
 						
 						<AnimationTimeline frames={this.state.timelineFrames} />
 						<canvas id='animationTimelineCanvas' style={{
-									'width': '100%',
-									'height': '180px',
 									'border': '1px solid #000',
 									'display': 'block',
 						}}></canvas>

@@ -37,7 +37,7 @@ class PresentationWrapper extends React.Component {
 			'currentFrame': 1,
 			'currentLayer': 1,
 			'timelineFrames': [],
-			'timelineSpeedChangeMarkers': [] // keep track of where fps should change
+			'timelineMarkers': {} // keep track of where fps should change
 		};
 		
 		this.timelineFramesSet = new Set(); // keep track of what frames have been added to timeline so we don't duplicate
@@ -110,7 +110,14 @@ class PresentationWrapper extends React.Component {
 				let width = 120; // don't hardcode this pls? :< it should be based on img width in the timeline
 				
 				let frameGuess = Math.floor(x/width) + 1; // do we really want floor?
-				console.log("you're at frame: " + frameGuess + " / " + this.state.timelineFrames.length);
+				//console.log("you're at frame: " + frameGuess + " / " + this.state.timelineFrames.length);
+				
+				// update markers in state
+				let markers = this.state.timelineMarkers;
+				markers[frameGuess] = {'xCoord': x, 'frameNumber': frameGuess, 'speed': 100 }; // use frame number as the key
+				this.setState({
+					'timelineMarkers': markers
+				});
 			}
 		});
 	}
@@ -552,6 +559,12 @@ class PresentationWrapper extends React.Component {
 							</div>
 							
 						</div>
+						
+						<div id='footer' class='row'>
+							<hr />
+							<p> n.c.h works 2017-2020 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
+						</div>
+						
 					</div>
 
 					<div id='screen' class='col-lg-9 grid'>
@@ -569,15 +582,31 @@ class PresentationWrapper extends React.Component {
 									'border': '1px solid #000',
 									'display': 'block',
 						}}></canvas>
+						
+						<div>
+						{
+							Object.keys(this.state.timelineMarkers).map((markerKey, index) => {
+								let marker = this.state.timelineMarkers[markerKey];
+								return (
+									<div>
+										<label for={'marker' + marker.frameNumber + 'Select'}>marker for frame {marker.frameNumber}: &nbsp;</label>
+										<select id={'marker' + marker.frameNumber + 'Select'} name={'marker' + marker.frameNumber + 'Select'}>
+											<option>100</option>
+											<option>200</option>
+											<option>300</option>
+										</select>
+										<label id={'deleteMarker' + marker.frameNumber} style={{'color': 'red'}}> &nbsp;delete </label>
+									</div>
+								);
+							})
+						}
+						<br />
+						<br />
+					</div>
 
 					</div>
 					
 					
-				</div>
-				
-				<div id='footer' class='row'>
-					<hr />
-					<p> n.c.h works 2017-2020 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
 				</div>
 				
 			</div> 

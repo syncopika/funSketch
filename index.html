@@ -14,77 +14,90 @@
 	body, button{
 		font-family: 'Merriweather', serif;
 	}
+	
 	#buttons{
 		text-align: center;
 		border: 1px solid #000;
 	}
+	
 	button{
 		margin: 3px;
 		font-size: 13px;
 	}
+	
 	#toolbarArea{
 		width: 400px;
 		text-align: center;
 		margin-left: 50px;
 	}
+	
 	#canvasArea{
 		display: block;
 		margin: 0px auto;
 		width: 800px;
 	}
+	
 	#pageCount{
 		text-align: center;
 	}
+	
 	#pageCount h3{
 		display: inline-block;
 	}
+	
 	#count{
 		padding-left: 50px;
 		padding-right: 50px;
 	}
+	
 	#footer{
 		margin-left: 20px;
 	}
+	
 	#filters, #brushes{
 		width: 150px;
 		text-align: center;
 		border: 1px solid #000;
 		display: inline-block;
 	}
+	
 	#colorPicker{
 		margin-top: 10%;
 		margin-bottom: 15%;
 	}
+	
 	li{
 		list-style-type: none;
 		padding: 2px;
 	}
+	
 	ul:not(#timeOptions){
 		display: none;
 		padding: 0;
 	}
+	
 	a{
 		text-decoration: none;
 	}
+	
 	li:hover{
 		color: #99b5d1;
 	}
+	
 	#timeOptions{
 		padding: 0;
 	}
+	
 	#timeOptions li{
 		display: inline-block;
 	}
+	
 	#animationControl{
 		text-align: center;
 	}
+	
 	#filterSelect, #brushSelect{
 		margin-bottom: 0;
-	}
-	#frameBar{
-		margin-top: 5%;
-		height: 500px;
-		border: 1px solid #000;
 	}
 	
 	/* accomodate smaller screens */
@@ -133,37 +146,35 @@
 		}
 	}
 	
-	#canvasArea {
+	#canvasArea{
 		display: grid;
 		grid-template-rows: 1fr;
 		grid-template-columns: 1fr 1fr 1fr;
 	}
 	
-	#canvasArea canvas {
+	#canvasArea canvas{
 		grid-row: 1;
 		grid-column: 2;
 	}
 	
-	.grid {
+	.grid{
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: 70px 850px 220px;
 	}
 	
-	.grid #pageCount {
+	.grid #pageCount{
 		grid-row: 1;
 		grid-column: 1;
 	}
 	
-	.grid #animationTimeline {
+
+	.grid #animationTimeline{
 		grid-row: 3;
 		grid-column: 1;
-		background-color: rgba(0,0,0,0.5);
-		overflow-x: auto;
-		white-space: nowrap;
 	}
 	
-	.grid #animationTimelineCanvas {
+	.grid #animationTimelineCanvas{
 		grid-row: 3;
 		grid-column: 1;
 	}

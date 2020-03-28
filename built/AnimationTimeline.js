@@ -19,7 +19,9 @@ const TimelineFrameThumnail = (props) => {
 	)
 }
 
-
+// need to pass in a method from PresentationWrapper to allow updates that may occur 
+// in AnimationTimeline (i.e. changing the fps at a marker or deleting a marker)
+// to persist (these changes should be stored in PresentationWrapper's state)
 const AnimationTimeline = (props) => {
 	
 	let timelineStyle = {
@@ -27,7 +29,9 @@ const AnimationTimeline = (props) => {
 		'height': '200px',
 		'border': '1px solid #000',
 		'display': 'block',
-		'backgroundColor': '#fff'
+		'backgroundColor': '#fff',
+		'overflow-x': 'auto',
+		'white-space': 'nowrap'
 	};
 	
 	return (

@@ -290,7 +290,6 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_setupFilters(){
-		//console.log(Object.getOwnPropertyNames(this.state.filtersInstance));
 		let filterInstance = this.state.filtersInstance;
 		let filterNames = Object.getOwnPropertyNames(filterInstance).filter((name) => name.indexOf('filter') < 0);
 		let filterChoices = document.getElementById("filterChoices");
@@ -376,6 +375,29 @@ class PresentationWrapper extends React.Component {
 	
 	_showSize(){
 		document.getElementById('brushSizeValue').textContent = document.getElementById('brushSize').value;
+	}
+	
+	_playAnimation(){
+		console.log(this.state.timelineMarkers);
+		
+		let animationDisplay = document.createElement('canvas');
+		animationDisplay.width = '800px'; 
+		animationDisplay.height = '800px';
+		animationDisplay.zIndex = 200;
+		animationDisplay.style.border = '1px solid #000';
+		
+		document.getElementById("canvasArea").appendChild(animationDisplay);
+
+		let displayContext = animationDisplay.getContext('2d');
+		this.state.timelineFrames.forEach((frame, index) => {
+			console.log("showing frame: " + (index+1));
+			if(this.state.timelineMarkers[index+1]){
+				console.log("adjust fps for frame: " + (index+1));
+			}
+		});
+		
+		// remove animationDisplay
+		document.getElementById("canvasArea").removeChild(animationDisplay);
 	}
 	
 	_getDemo(selected){
@@ -560,7 +582,7 @@ class PresentationWrapper extends React.Component {
 								</ul>
 								<button onClick={
 									() => {
-										console.log(this.state.timelineMarkers);
+										this._playAnimation();
 									}
 								}> play animation </button>
 								<button id='generateGif'> generate gif! </button>

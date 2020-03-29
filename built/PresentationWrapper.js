@@ -122,6 +122,18 @@ class PresentationWrapper extends React.Component {
 		});
 	}
 	
+	_timelineMarkerDelete(frameNumToDelete){
+		let currentMarkers = this.state.timelineMarkers;
+		
+		if(!delete currentMarkers[frameNumToDelete]){
+			console.log("couldn't delete frame marker for frame: " + frameNumToDelete);
+		}
+		
+		this.setState({
+			'timelineMarkers': currentMarkers
+		});
+	}
+	
 	_setKeyDown(doc){
 		
 		let toolbar = this.state.toolbarInstance;
@@ -594,8 +606,14 @@ class PresentationWrapper extends React.Component {
 											<option>100</option>
 											<option>200</option>
 											<option>300</option>
+											<option>500</option>
+											<option>1000</option>
 										</select>
-										<label id={'deleteMarker' + marker.frameNumber} style={{'color': 'red'}}> &nbsp;delete </label>
+										<label 
+											id={'deleteMarker_' + marker.frameNumber} 
+											style={{'color': 'red'}}
+											onClick={() => this._timelineMarkerDelete(marker.frameNumber)}
+										> &nbsp;delete </label>
 									</div>
 								);
 							})

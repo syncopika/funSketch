@@ -1,0 +1,10 @@
+short-term
+----------
+- maybe add a context menu for the animation timeline?
+	- i.e. besides being able to change the frame rate, set start/end points?
+- need delete frame method
+- make canvas area the whole section the canvas occupies
+
+long-term
+---------
+- try typescript conversion? lol

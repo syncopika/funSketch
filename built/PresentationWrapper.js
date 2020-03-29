@@ -109,12 +109,15 @@ class PresentationWrapper extends React.Component {
 				let frame = this.state.timelineFrames[0];
 				let width = 120; // don't hardcode this pls? :< it should be based on img width in the timeline
 				
-				let frameGuess = Math.floor(x/width) + 1; // do we really want floor?
+				let frameGuess = Math.floor(x/width) + 1;
 				//console.log("you're at frame: " + frameGuess + " / " + this.state.timelineFrames.length);
 				
 				// update markers in state
 				let markers = this.state.timelineMarkers;
-				markers[frameGuess] = {'xCoord': x, 'frameNumber': frameGuess, 'speed': 100 }; // use frame number as the key
+				
+				// use frame number as the key
+				markers[frameGuess] = {'xCoord': x, 'frameNumber': frameGuess, 'speed': 100, 'frame': this.state.timelineFrames[frameGuess-1] };
+				
 				this.setState({
 					'timelineMarkers': markers
 				});
@@ -546,7 +549,8 @@ class PresentationWrapper extends React.Component {
 							<div id='animationControl'>
 								<h3> animation control </h3>
 								<ul id='timeOptions'>
-									<select id='timePerFrame'>
+									<label for='timePerFrame'>time per frame:</label>
+									<select name='timePerFrame' id='timePerFrame'>
 										<option value='100'>100</option>
 										<option value='200'>200</option>
 										<option value='500'>500</option>
@@ -554,7 +558,11 @@ class PresentationWrapper extends React.Component {
 										<option value='1000'>1000</option>
 									</select>
 								</ul>
-								<label>time per frame:</label>
+								<button onClick={
+									() => {
+										console.log(this.state.timelineMarkers);
+									}
+								}> play animation </button>
 								<button id='generateGif'> generate gif! </button>
 							</div>
 							<p id='loadingScreen'></p>

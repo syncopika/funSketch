@@ -381,23 +381,42 @@ class PresentationWrapper extends React.Component {
 		console.log(this.state.timelineMarkers);
 		
 		let animationDisplay = document.createElement('canvas');
-		animationDisplay.width = '800px'; 
-		animationDisplay.height = '800px';
-		animationDisplay.zIndex = 200;
+		animationDisplay.width = '800'; 
+		animationDisplay.height = '800';
+		animationDisplay.style.zIndex = 200;
 		animationDisplay.style.border = '1px solid #000';
+		animationDisplay.id = "animationDisplay";
 		
 		document.getElementById("canvasArea").appendChild(animationDisplay);
 
 		let displayContext = animationDisplay.getContext('2d');
+		let totalElapsedTime = 0;
+		let lastSpeed = 100; // fix this - should be first element's speed in timelineFrames
 		this.state.timelineFrames.forEach((frame, index) => {
-			console.log("showing frame: " + (index+1));
+
+			//console.log("showing frame: " + (index+1));
+			
 			if(this.state.timelineMarkers[index+1]){
-				console.log("adjust fps for frame: " + (index+1));
+				//let speed = this.state.timelineMarkers[index+1].speed;
+				//console.log("adjust fps to: " + this.state.timelineMarkers[index+1].speed + " for frame: " + (index+1));
+				lastSpeed = parseInt(this.state.timelineMarkers[index+1].speed);
 			}
+			
+			setTimeout(() => {
+				displayContext.clearRect(0, 0, animationDisplay.width, animationDisplay.height);
+				let image = new Image();
+				image.onload = function(){
+					displayContext.drawImage(image, 0, 0);
+				};
+				image.src = frame.data;
+			}, totalElapsedTime + lastSpeed);
+			
+			totalElapsedTime += lastSpeed;
+			
 		});
 		
 		// remove animationDisplay
-		document.getElementById("canvasArea").removeChild(animationDisplay);
+		//document.getElementById("canvasArea").removeChild(animationDisplay);
 	}
 	
 	_getDemo(selected){
@@ -632,7 +651,13 @@ class PresentationWrapper extends React.Component {
 								return (
 									<div>
 										<label for={'marker' + marker.frameNumber + 'Select'}>marker for frame {marker.frameNumber}: &nbsp;</label>
-										<select id={'marker' + marker.frameNumber + 'Select'} name={'marker' + marker.frameNumber + 'Select'}>
+										<select 
+										id={'marker' + marker.frameNumber + 'Select'} 
+										name={'marker' + marker.frameNumber + 'Select'}
+										onChange={(evt) => {
+											marker.speed = evt.target.value;
+										}}
+										>
 											<option>100</option>
 											<option>200</option>
 											<option>300</option>

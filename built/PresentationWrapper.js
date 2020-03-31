@@ -378,7 +378,7 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_playAnimation(){
-		console.log(this.state.timelineMarkers);
+		//console.log(this.state.timelineMarkers);
 		
 		let animationDisplay = document.createElement('canvas');
 		animationDisplay.width = '800'; 
@@ -392,7 +392,11 @@ class PresentationWrapper extends React.Component {
 		let displayContext = animationDisplay.getContext('2d');
 		let totalElapsedTime = 0;
 		let lastSpeed = 100; // fix this - should be first element's speed in timelineFrames
-		this.state.timelineFrames.forEach((frame, index) => {
+		let timelineFrames = this.state.timelineFrames;
+		
+		// hide the current frame first 
+		
+		timelineFrames.forEach((frame, index) => {
 
 			//console.log("showing frame: " + (index+1));
 			
@@ -402,11 +406,18 @@ class PresentationWrapper extends React.Component {
 				lastSpeed = parseInt(this.state.timelineMarkers[index+1].speed);
 			}
 			
+			// https://stackoverflow.com/questions/951021/what-is-the-javascript-version-of-sleep ?
 			setTimeout(() => {
 				displayContext.clearRect(0, 0, animationDisplay.width, animationDisplay.height);
 				let image = new Image();
 				image.onload = function(){
 					displayContext.drawImage(image, 0, 0);
+					// remove animationDisplay after last frame
+					if(index+1 === timelineFrames.length){
+						setTimeout(() => {
+							document.getElementById("canvasArea").removeChild(animationDisplay);
+						}, 200);
+					};
 				};
 				image.src = frame.data;
 			}, totalElapsedTime + lastSpeed);
@@ -414,9 +425,6 @@ class PresentationWrapper extends React.Component {
 			totalElapsedTime += lastSpeed;
 			
 		});
-		
-		// remove animationDisplay
-		//document.getElementById("canvasArea").removeChild(animationDisplay);
 	}
 	
 	_getDemo(selected){

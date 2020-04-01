@@ -394,15 +394,15 @@ class PresentationWrapper extends React.Component {
 		let lastSpeed = 100; // fix this - should be first element's speed in timelineFrames
 		let timelineFrames = this.state.timelineFrames;
 		
-		// hide the current frame first 
+		// hide the current frame first (and onion skin)
+		let currFrame = this.state.animationProject.getCurrFrame().currentCanvas;
+		let onionSkin = this.state.animationProject.onionSkinFrame;
+		currFrame.style.visibility = "hidden";
+		onionSkin.style.visibility = "hidden";
 		
 		timelineFrames.forEach((frame, index) => {
-
-			//console.log("showing frame: " + (index+1));
 			
 			if(this.state.timelineMarkers[index+1]){
-				//let speed = this.state.timelineMarkers[index+1].speed;
-				//console.log("adjust fps to: " + this.state.timelineMarkers[index+1].speed + " for frame: " + (index+1));
 				lastSpeed = parseInt(this.state.timelineMarkers[index+1].speed);
 			}
 			
@@ -410,12 +410,14 @@ class PresentationWrapper extends React.Component {
 			setTimeout(() => {
 				displayContext.clearRect(0, 0, animationDisplay.width, animationDisplay.height);
 				let image = new Image();
-				image.onload = function(){
+				image.onload = () => {
 					displayContext.drawImage(image, 0, 0);
 					// remove animationDisplay after last frame
 					if(index+1 === timelineFrames.length){
 						setTimeout(() => {
 							document.getElementById("canvasArea").removeChild(animationDisplay);
+							currFrame.style.visibility = "";
+							onionSkin.style.visibility = "";
 						}, 200);
 					};
 				};

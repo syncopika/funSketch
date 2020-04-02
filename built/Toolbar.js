@@ -649,7 +649,7 @@ function Toolbar(canvas, brush, animationProj) {
         // add frames + take into account frame rate given by timelineMarkers
         for(let i = 0; i < animationProj.frameList.length; i++){
             let tempCanvas = this.mergeFrameLayers(animationProj.frameList[i]);
-			let frameTime = timelineMarkers[i+1] ? timelineMarkers[i+1].speed : this.timePerFrame;
+			let frameTime = timelineMarkers[i+1] ? timelineMarkers[i+1] : this.timePerFrame;
 			console.log("setting time: " + frameTime + " for frame: " + (i+1));
             gif.addFrame(tempCanvas, { delay: frameTime });
         }

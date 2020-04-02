@@ -285,7 +285,15 @@ class PresentationWrapper extends React.Component {
 		});
 
 		document.getElementById('generateGif').addEventListener('click', () => {
-			newToolbar.getGif("loadingScreen", this.state.timelineMarkers);
+			let frameSpeedMarkers = {};
+			let currFrameSpeed = 100; // 100 ms default
+			this.state.timelineFrames.forEach((frame, index) => {
+				if(this.state.timelineMarkers[index+1]){
+					currFrameSpeed = this.state.timelineMarkers[index+1].speed
+				}
+				frameSpeedMarkers[index+1] = currFrameSpeed;
+			})
+			newToolbar.getGif("loadingScreen", frameSpeedMarkers);
 		});
 
 		document.getElementById('toggleLayerOrFrame').addEventListener('click', () => {

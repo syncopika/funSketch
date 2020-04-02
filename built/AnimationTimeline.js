@@ -46,46 +46,6 @@ const AnimationTimeline = (props) => {
 }
 
 
-/*
-class AnimationTimeline extends React.Component {
-	
-	constructor(props){
-		super(props);	
-		this.state = {
-			'frames': this.props.frames, // a list of image data (all layers merged) for each frame
-			'flags': []
-		};
-	}
-	
-	resizeFrame(imageData, destWidth, destHeight){
-	}
-	
-	render(){
-		console.log(this.state.frames);
-		return (
-			<div id='animationTimeline' style={
-				{
-					'width': '100%',
-					'height': '200px',
-					'border': '1px solid #000',
-					'display': 'block',
-					'backgroundColor': '#fff'
-				}
-			}>
-			
-			{
-				this.state.frames.map((frame, index) => {
-					return <TimelineFrameThumnail imgData={frame.data} key={index} />
-				})
-			}
-				
-			</div>
-		)
-	}
-	
-}
-*/
-
 export{
 	AnimationTimeline
 }

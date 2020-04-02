@@ -75,7 +75,6 @@ class PresentationWrapper extends React.Component {
 			let y = coords.y;
 			let rect = coords.rect;
 			
-			//console.log("x: " + x + " y: " + y);
 			context.beginPath();
 			context.moveTo(x, 0);
 			context.lineTo(x, rect.height);
@@ -104,10 +103,10 @@ class PresentationWrapper extends React.Component {
 			
 			// which frame does this coordinate match to?
 			if(this.state.timelineFrames.length > 0){
-				//console.log("x: " + x + ", y: " + y);
+	
 				// get a timeline frame height and width (they should all be the same?)
 				let frame = this.state.timelineFrames[0];
-				let width = 120; // don't hardcode this pls? :< it should be based on img width in the timeline
+				let width = 123; // don't hardcode this pls? :< it should be based on img width in the timeline
 				
 				let frameGuess = Math.floor(x/width) + 1;
 				//console.log("you're at frame: " + frameGuess + " / " + this.state.timelineFrames.length);

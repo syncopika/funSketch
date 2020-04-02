@@ -9,7 +9,5 @@ long-term
 ---------
 - try typescript conversion? lol
 
-
 bugs:
 - floodfill should work for any brush size
-- importing a project needs to clear timeline

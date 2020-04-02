@@ -12,7 +12,7 @@ import { AnimationTimeline } from './AnimationTimeline.js';
 
 // for displaying current frame and layer number
 // TODO: importing a project won't update the counter display since it's using the Toolbar class functions
-// and so the PresentationWrapper's state doesn't gets updated with the new currentFrame/Layer
+// and so the PresentationWrapper's state doesn't get updated with the new currentFrame/Layer
 const FrameCounterDisplay = (props) => {
 	return (
 		<div id='pageCount'>
@@ -211,6 +211,10 @@ class PresentationWrapper extends React.Component {
 		});
 	}
 	
+	_updateStateFromExternalClass(params){
+		this.setState(params);
+	}
+	
 	_setupToolbar(){
 		let newToolbar = this.state.toolbarInstance;
 		let project = this.state.animationProject;
@@ -220,15 +224,22 @@ class PresentationWrapper extends React.Component {
 		newToolbar.createColorWheel('colorPicker', 200);
 		newToolbar.floodFill('floodfill');
 		newToolbar.insertLayer('insertCanvas');
-		newToolbar.deleteLayer('deleteCanvas', 'count');
+		newToolbar.deleteLayer('deleteCanvas', 'count'); // todo: dix this. shouldn't need to modify UI in toolbar
 		newToolbar.setClearCanvas('clearCanvas');
 		newToolbar.rotateImage('rotateCanvasImage'); 
 		newToolbar.undo('undo');
 		newToolbar.download('download');
 		newToolbar.importImage('importImage');
 		newToolbar.save('saveWork');
-		newToolbar.importProject('importProject', 'count');
+		newToolbar.importProject('importProject', 'count', ()=>{this._updateStateFromExternalClass({
+			'currentFrame': 1,
+			'currentLayer': 1,
+			'timelineFrames': [],
+			'timelineMarkers': {}
+		})});
 		newToolbar.addNewFrameButton('addNewFrame');
+		
+
 		
 		// make the goLeft and goRight arrows clickable FOR LAYERS
 		// note: this is for clicking the icons with a mouse!

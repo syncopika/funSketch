@@ -709,9 +709,9 @@ function Toolbar(canvas, brush, animationProj) {
         });
     };
 	
-    this.importProject = function(elementId, counterId){
+    this.importProject = function(elementId, counterId, optionalFunction){
         let self = this;
-        $('#' + elementId).click(function () {
+        $('#' + elementId).click(function() {
             fileHandler();
             //import project json file
             function fileHandler() {
@@ -774,6 +774,9 @@ function Toolbar(canvas, brush, animationProj) {
                                 (function (context, image) {
                                     image.onload = function () {
                                         context.drawImage(image, 0, 0);
+										if(optionalFunction){
+											optionalFunction();
+										}
                                     };
                                     image.src = layer.imageData;
                                 })(newCtx, img);

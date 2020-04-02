@@ -231,7 +231,7 @@ class PresentationWrapper extends React.Component {
 		newToolbar.download('download');
 		newToolbar.importImage('importImage');
 		newToolbar.save('saveWork');
-		newToolbar.importProject('importProject', 'count', ()=>{this._updateStateFromExternalClass({
+		newToolbar.importProject('importProject', ()=>{this._updateStateFromExternalClass({
 			'currentFrame': 1,
 			'currentLayer': 1,
 			'timelineFrames': [],
@@ -285,7 +285,7 @@ class PresentationWrapper extends React.Component {
 		});
 
 		document.getElementById('generateGif').addEventListener('click', () => {
-			newToolbar.getGif("loadingScreen");
+			newToolbar.getGif("loadingScreen", this.state.timelineMarkers);
 		});
 
 		document.getElementById('toggleLayerOrFrame').addEventListener('click', () => {

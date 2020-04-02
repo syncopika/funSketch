@@ -632,8 +632,13 @@ function Toolbar(canvas, brush, animationProj) {
         
         this will need to be applied for FRAMES, not LAYERS of a frame.
     
+		timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), i.e.
+		{
+			1: 100, // frame 1
+			2: 1000 // frame 2
+		}
     ***/
-    this.getGif = function(elementId){
+    this.getGif = function(elementId, timelineMarkers){
         if (elementId) {
             document.getElementById(elementId).textContent = "now loading...";
         }
@@ -641,12 +646,12 @@ function Toolbar(canvas, brush, animationProj) {
             workers: 2,
             quality: 10
         });
-        // add frames		
+        // add frames + take into account frame rate given by timelineMarkers
         for(let i = 0; i < animationProj.frameList.length; i++){
-            let tempCanvas = this.mergeFrameLayers(animationProj.frameList[i]); //document.createElement('canvas');
-
-            // TODO: make sure to merge all the layers for each frame!
-            gif.addFrame(tempCanvas, { delay: this.timePerFrame });
+            let tempCanvas = this.mergeFrameLayers(animationProj.frameList[i]);
+			let frameTime = timelineMarkers[i+1] ? timelineMarkers[i+1].speed : this.timePerFrame;
+			console.log("setting time: " + frameTime + " for frame: " + (i+1));
+            gif.addFrame(tempCanvas, { delay: frameTime });
         }
         gif.on('finished', function(blob){
             document.getElementById(elementId).textContent = "";
@@ -709,7 +714,7 @@ function Toolbar(canvas, brush, animationProj) {
         });
     };
 	
-    this.importProject = function(elementId, counterId, optionalFunction){
+    this.importProject = function(elementId, optionalFunction){
         let self = this;
         $('#' + elementId).click(function() {
             fileHandler();

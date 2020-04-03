@@ -285,13 +285,20 @@ class PresentationWrapper extends React.Component {
 
 		document.getElementById('generateGif').addEventListener('click', () => {
 			let frameSpeedMarkers = {};
-			let currFrameSpeed = 100; // 100 ms default
-			this.state.timelineFrames.forEach((frame, index) => {
-				if(this.state.timelineMarkers[index+1]){
-					currFrameSpeed = this.state.timelineMarkers[index+1].speed
-				}
-				frameSpeedMarkers[index+1] = currFrameSpeed;
-			})
+			
+			// if there's at least one timeline marker, we need to apply frame speed for each frame 
+			// based on the marker
+			// the initial speed will be whatever speed is currently selected (if no marker on the first frame)
+			if(Object.keys(this.state.timelineFrames).length > 0){
+				let currFrameSpeed = parseInt(document.getElementById('timePerFrame').selectedOptions[0].value);
+				this.state.timelineFrames.forEach((frame, index) => {
+					if(this.state.timelineMarkers[index+1]){
+						currFrameSpeed = this.state.timelineMarkers[index+1].speed
+					}
+					frameSpeedMarkers[index+1] = currFrameSpeed;
+				});
+			}
+			
 			newToolbar.getGif("loadingScreen", frameSpeedMarkers);
 		});
 
@@ -396,7 +403,7 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_playAnimation(){
-		//console.log(this.state.timelineMarkers);
+
 		
 		let animationDisplay = document.createElement('canvas');
 		animationDisplay.width = '800'; 
@@ -409,7 +416,8 @@ class PresentationWrapper extends React.Component {
 
 		let displayContext = animationDisplay.getContext('2d');
 		let totalElapsedTime = 0;
-		let lastSpeed = 100; // fix this - should be first element's speed in timelineFrames
+		let lastSpeed = this.state.toolbarInstance.timePerFrame;
+		
 		let timelineFrames = this.state.timelineFrames;
 		
 		// hide the current frame first (and onion skin)
@@ -619,7 +627,11 @@ class PresentationWrapper extends React.Component {
 								<h3> animation control </h3>
 								<ul id='timeOptions'>
 									<label for='timePerFrame'>time per frame:</label>
-									<select name='timePerFrame' id='timePerFrame'>
+									<select name='timePerFrame' id='timePerFrame' onChange={
+										(evt) => {
+											this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+										}
+									}>
 										<option value='100'>100</option>
 										<option value='200'>200</option>
 										<option value='500'>500</option>

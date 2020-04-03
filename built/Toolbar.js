@@ -650,7 +650,6 @@ function Toolbar(canvas, brush, animationProj) {
         for(let i = 0; i < animationProj.frameList.length; i++){
             let tempCanvas = this.mergeFrameLayers(animationProj.frameList[i]);
 			let frameTime = timelineMarkers[i+1] ? timelineMarkers[i+1] : this.timePerFrame;
-			//console.log("setting time: " + frameTime + " for frame: " + (i+1));
             gif.addFrame(tempCanvas, { delay: frameTime });
         }
         gif.on('finished', function(blob){

@@ -246,7 +246,6 @@ class PresentationWrapper extends React.Component {
 		newToolbar.setCounter("count");
 		//newToolbar.setKeyDown(document);	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
 		newToolbar.createColorWheel('colorPicker', 200);
-		newToolbar.floodFill('floodfill');
 		newToolbar.insertLayer('insertCanvas');
 		newToolbar.deleteLayer('deleteCanvas', 'count'); // todo: dix this. shouldn't need to modify UI in toolbar
 		newToolbar.setClearCanvas('clearCanvas');
@@ -402,6 +401,10 @@ class PresentationWrapper extends React.Component {
 		
 		document.getElementById('radialBrush').addEventListener('click', () => {
 			brush.radialGradBrush();
+		});
+		
+		document.getElementById('floodfill').addEventListener('click', () => {
+			brush.floodfillBrush();
 		});
 		
 		//<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
@@ -631,6 +634,7 @@ class PresentationWrapper extends React.Component {
 								<ul>
 									<li id='defaultBrush'> default brush </li>
 									<li id='radialBrush'> radial gradient brush </li>
+									<li id='floodfill'> floodfill </li>
 								</ul>
 							</div>
 							
@@ -642,11 +646,6 @@ class PresentationWrapper extends React.Component {
 							</div>
 							
 							<div id='colorPicker'>
-								<div id='floodfillDir'>
-									<p> click the button and then select a place on the canvas to floodfill </p>
-									<p> make sure brush size is less than or equal to 2 and set to default brush! </p>
-								</div>
-								<button id='floodfill'>floodfill with currently selected color</button>
 							</div>
 							
 							<div id='animationControl'>

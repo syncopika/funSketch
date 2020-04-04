@@ -166,13 +166,34 @@ class PresentationWrapper extends React.Component {
 					}
 					break;
 				case 65: // a key 
+				{
+					// update image data
+					let frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
+					let currFrameData = frame.toDataURL();
+					let newFrames = [...self.state.timelineFrames];
+					let currFrameIndex = animationProj.currentFrame;
+					newFrames[currFrameIndex].data = currFrameData;
+					
+					if(!self.timelineFramesSet.has(currFrameIndex)){
+						newFrames.push({"data": currFrameData, "height": frame.height, "width": frame.width});
+						self.timelineFramesSet.add(currFrameIndex);
+					}else{
+						// update image data
+						newFrames[currFrameIndex].data = currFrameData;
+					}
+					
+					self.setState({
+						'timelineFrames': newFrames
+					});
+					
 					if(toolbar.prevFrame()){
 						canvas = animationProj.getCurrFrame();
 						updateStateFlag = true;
-					}
+					}					
 					break;
+				}
 				case 68: // d key 
-										
+				{
 					// add merged frame layers of prev frame to the list 
 					// and update animation timeline 
 					// we need to prevent the adding of duplicates!
@@ -200,6 +221,7 @@ class PresentationWrapper extends React.Component {
 					});
 			
 					break;
+				}
 				default:
 					break;
 			}

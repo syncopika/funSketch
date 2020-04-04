@@ -178,6 +178,7 @@ class PresentationWrapper extends React.Component {
 					// we need to prevent the adding of duplicates!
 					let frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
 					let newFrames = [...self.state.timelineFrames];
+					let currFrameIndex = animationProj.currentFrame;
 
 					if(toolbar.nextFrame()){
 						canvas = animationProj.getCurrFrame();
@@ -186,13 +187,17 @@ class PresentationWrapper extends React.Component {
 
 					let currFrameData = frame.toDataURL();
 					
-					if(!self.timelineFramesSet.has(currFrameData)){
+					if(!self.timelineFramesSet.has(currFrameIndex)){
 						newFrames.push({"data": currFrameData, "height": frame.height, "width": frame.width});
-						self.setState({
-							'timelineFrames': newFrames
-						});
-						self.timelineFramesSet.add(currFrameData);
+						self.timelineFramesSet.add(currFrameIndex);
+					}else{
+						// update image data
+						newFrames[currFrameIndex].data = currFrameData;
 					}
+					
+					self.setState({
+						'timelineFrames': newFrames
+					});
 			
 					break;
 				default:
@@ -404,7 +409,11 @@ class PresentationWrapper extends React.Component {
 	
 	_playAnimation(){
 
-		
+		let timelineFrames = this.state.timelineFrames;
+		if(Object.keys(timelineFrames).length === 0){
+			return;
+		}
+
 		let animationDisplay = document.createElement('canvas');
 		animationDisplay.width = '800'; 
 		animationDisplay.height = '800';
@@ -417,8 +426,6 @@ class PresentationWrapper extends React.Component {
 		let displayContext = animationDisplay.getContext('2d');
 		let totalElapsedTime = 0;
 		let lastSpeed = this.state.toolbarInstance.timePerFrame;
-		
-		let timelineFrames = this.state.timelineFrames;
 		
 		// hide the current frame first (and onion skin)
 		let currFrame = this.state.animationProject.getCurrFrame().currentCanvas;
@@ -572,10 +579,9 @@ class PresentationWrapper extends React.Component {
 
 							<h3 id='title'> funSketch: draw, edit, and animate! </h3>
 
-							<p> 
-							use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). 
-							use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! 
-							</p>
+							<p> use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). </p>
+							<p> use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
+							<p> after frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
 
 							<div id='buttons'>
 								<button id='insertCanvas'>add layer</button>

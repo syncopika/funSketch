@@ -107,9 +107,7 @@ class PresentationWrapper extends React.Component {
 				// get a timeline frame height and width (they should all be the same?)
 				let frame = this.state.timelineFrames[0];
 				let width = 123; // don't hardcode this pls? :< it should be based on img width in the timeline
-				
 				let frameGuess = Math.floor(x/width) + 1;
-				//console.log("you're at frame: " + frameGuess + " / " + this.state.timelineFrames.length);
 				
 				// update markers in state
 				let markers = this.state.timelineMarkers;

@@ -258,7 +258,7 @@ function Toolbar(canvas, brush, animationProj) {
     ***/
     this.floodFill = function(elementId){
         $('#' + elementId).click(() => {
-            let canvas = animationProj.getCurrFrame();
+            let frame = animationProj.getCurrFrame();
             let doFloodFill = function(e){
                 // this is the color to change to!
                 // need to parse the currColor because right now it looks like "rgb(x,y,z)". 
@@ -268,20 +268,23 @@ function Toolbar(canvas, brush, animationProj) {
                 currColorArray = currColorArray.map(function(a){ return parseInt(a); });
 				
                 // get the coordinates of the selected pixel 
-                let x = e.pageX - $('#' + canvas.currentCanvas.id).offset().left;
-                let y = e.pageY - $('#' + canvas.currentCanvas.id).offset().top;
+				let rect = frame.currentCanvas.getBoundingClientRect();
+				let scaleX = frame.currentCanvas.width / rect.width;
+				let scaleY = frame.currentCanvas.width / rect.height;
+				let x = (e.clientX - rect.left) * scaleX;
+				let y = (e.clientY - rect.top) * scaleY;
 
-                let colorData = document.getElementById(canvas.currentCanvas.id).getContext("2d").getImageData(x, y, 1, 1).data;
+                let colorData = document.getElementById(frame.currentCanvas.id).getContext("2d").getImageData(x, y, 1, 1).data;
                 let color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')';
  
                 // create an object with the pixel data
                 let pixel = { 'x': Math.floor(x), 'y': Math.floor(y), 'color': color };
 
-                floodfill(canvas.currentCanvas, currColorArray, pixel);
+                floodfill(frame.currentCanvas, currColorArray, pixel);
 
-                canvas.currentCanvas.removeEventListener('click', doFloodFill);
+                frame.currentCanvas.removeEventListener('click', doFloodFill);
             };
-            canvas.currentCanvas.addEventListener('click', doFloodFill);
+            frame.currentCanvas.addEventListener('click', doFloodFill);
         });
     };
 	

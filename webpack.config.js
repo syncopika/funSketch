@@ -11,15 +11,11 @@ module.exports = {
 		  test: /\.(js)$/,
 		  exclude: /node_modules/,
 		  use: ['babel-loader']
-		},
-		{ 
-		  test: /\.tsx?$/, 
-		  loader: "awesome-typescript-loader" 
 		}
 	  ],
     },
 	resolve: {
-		extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js"]
+		extensions: [".webpack.js", ".web.js", ".js"]
 	},
 	output: {
 		path: __dirname + '/dist',

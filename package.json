@@ -1,0 +1,38 @@
+{
+  "name": "funsketch",
+  "version": "1.0.0",
+  "description": "an experimental application that has simple drawing features, as well as some interesting filter and brush options.    \r more importantly, you can also make some quick, simple animations! \r <br>    \r try it here: https://syncopika.github.io/funSketch/    \r also, I tried out the floodfill feature using web workers <a href='https://syncopika.github.io/funSketch/floodfillExperiment/floodfillExperiment.html'>here</a>! It looks like they definitely help speed up performance. \r <br>    \r ### problems to fix / things to do:        \r - when rotating, the coordinates where the paintbrush strikes when mousedown get changed.",
+  "main": "server.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "source-map-loader": "^0.2.4",
+    "webpack": "^4.41.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.6",
+    "@babel/preset-env": "^7.8.6",
+    "@babel/preset-react": "^7.8.3",
+    "babel-loader": "^8.0.6",
+    "webpack-cli": "^3.3.11"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --mode development",
+    "build": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syncopika/funSketch.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/syncopika/funSketch/issues"
+  },
+  "homepage": "https://github.com/syncopika/funSketch#readme"
+}

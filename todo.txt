@@ -10,4 +10,5 @@ long-term
 - try typescript conversion? lol
 
 bugs:
-- floodfill should work for any brush size
+- loading a demo should also load frames to timeline :<
+- clicking the arrow icons should produce the same effect as pressing a,d, left/right arrow keys

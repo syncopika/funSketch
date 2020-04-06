@@ -4,11 +4,9 @@ short-term
 	- i.e. besides being able to change the frame rate, set start/end points?
 - need delete frame method
 - make canvas area the whole section the canvas occupies
+- make footer span the whole page (needs its own row?)
+- stop animation, play reverse?
 
 long-term
 ---------
 - try typescript conversion? lol
-
-bugs:
-- loading a demo should also load frames to timeline :<
-- clicking the arrow icons should produce the same effect as pressing a,d, left/right arrow keys

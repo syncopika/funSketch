@@ -2,7 +2,8 @@ short-term
 ----------
 - maybe add a context menu for the animation timeline?
 	- i.e. besides being able to change the frame rate, set start/end points?
-- need delete frame method
+- be able to change layer order
+- copy a layer to another frame
 - make canvas area the whole section the canvas occupies
 - make footer span the whole page (needs its own row?)
 - stop animation, play reverse?

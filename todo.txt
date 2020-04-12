@@ -1,5 +1,7 @@
 short-term
 ----------
+- in Toolbar.js, a lot of stuff that happens in this.up() and this.down(), namely the canvas attribute changes, should be moved to SuperCanvas.js?
+  also, there's duplicate code that can be reduced :|.
 - maybe add a context menu for the animation timeline?
 	- i.e. besides being able to change the frame rate, set start/end points?
 - be able to change layer order

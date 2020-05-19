@@ -9,6 +9,8 @@ short-term
 - copy a layer to another frame
 - make footer span the whole page (needs its own row?)
 - stop animation, play reverse?
+- rethink brush implementations
+- make sure click actions are executed for touch events too
 
 long-term
 ---------

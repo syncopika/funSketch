@@ -5,12 +5,11 @@ short-term
   also, there's duplicate code that can be reduced :|.
 - maybe add a context menu for the animation timeline?
 	- i.e. besides being able to change the frame rate, set start/end points?
-- be able to change layer order
-- copy a layer to another frame
+- be able to change layer order PRIORITY
+- ERASER! PRIORITY
 - make footer span the whole page (needs its own row?)
 - stop animation, play reverse?
 - rethink brush implementations
-- make sure click actions are executed for touch events too
 
 long-term
 ---------

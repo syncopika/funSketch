@@ -9,10 +9,11 @@ short-term
 - ERASER! PRIORITY
 - make footer span the whole page (needs its own row?)
 - stop animation, play reverse?
+- cursor change for floodfill PRIORITY
 - rethink brush implementations
 
 long-term
 ---------
 - acutally make some decent animation to prove its usability
 - more brush types
-- try typescript conversion? lol
+- copy and paste?

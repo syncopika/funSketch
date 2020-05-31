@@ -8,8 +8,6 @@ short-term
 - ERASER! PRIORITY
 - make footer span the whole page (needs its own row?)
 - stop animation, play reverse?
-- cursor change for floodfill PRIORITY
-	- cursor needs to revert when switching brushes!!
 - rethink brush implementations
 
 long-term

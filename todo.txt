@@ -5,7 +5,8 @@ short-term
   also, there's duplicate code that can be reduced :|.
 - maybe add a context menu for the animation timeline?
 	- i.e. besides being able to change the frame rate, set start/end points?
-- ERASER! PRIORITY
+- ERASER!
+- check all filters, fix fisheye 
 - make footer span the whole page (needs its own row?)
 - stop animation, play reverse?
 - rethink brush implementations
@@ -15,3 +16,4 @@ long-term
 - acutally make some decent animation to prove its usability
 - more brush types
 - copy and paste?
+- loopcut/move parts of canvas?

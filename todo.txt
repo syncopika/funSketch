@@ -6,14 +6,16 @@ short-term
 - maybe add a context menu for the animation timeline?
 	- i.e. besides being able to change the frame rate, set start/end points?
 - ERASER!
-- check all filters, fix fisheye 
-- make footer span the whole page (needs its own row?)
+    - kinda hard? need a cursor that can also adjust size based on eraser size.
 - stop animation, play reverse?
 - rethink brush implementations
 
 long-term
 ---------
 - acutally make some decent animation to prove its usability
+- make footer span the whole page (needs its own row?)
 - more brush types
 - copy and paste?
 - loopcut/move parts of canvas?
+- be able to blur a section of the canvas?
+- gradients?

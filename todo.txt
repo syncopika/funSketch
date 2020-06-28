@@ -10,6 +10,8 @@ short-term
 
 long-term
 ---------
+- refactor Frame so that we don't have a current layer index AND a current layer variable since the index is enough to get information
+  about the other. the fewer things to keep track of, the better.
 - acutally make some decent animation to prove its usability
 - make footer span the whole page (needs its own row?)
 - more brush types

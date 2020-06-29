@@ -7,6 +7,9 @@ short-term
     - kinda hard? need a cursor that can also adjust size based on eraser size.
 - stop animation, play reverse?
 - rethink brush implementations
+  - use a Brush class? some basic inheritance? 	
+- fix undo
+  - going to a different frame and clicking undo overwrites the current layer with whatever layer the undo was for
 
 long-term
 ---------

@@ -7,17 +7,19 @@
 /***
     a class representing a frame, containing a list of canvas elements which represent layers of the frame
 ***/
-function Frame(container, number){
-    this.currentIndex = 0; // index of currently showing layer
-    this.canvasList = []; // keep a list of all canvas instances
-    this.currentCanvas; // the current, active canvas being looked at (reference to html element)
-    this.container = container; // this is the html container id to hold all the layers of this frame
-    this.number = number; // thid frame's number
-    this.count = 0; // current number of layers
-	this.width = 0;
-	this.height = 0;
+class Frame {
+	constructor(container, number){
+		this.currentIndex = 0; // index of currently showing layer
+		this.canvasList = []; // keep a list of all canvas instances
+		this.currentCanvas; // the current, active canvas being looked at (reference to html element)
+		this.container = container; // this is the html container id to hold all the layers of this frame
+		this.number = number; // thid frame's number
+		this.count = 0; // current number of layers
+		this.width = 0;
+		this.height = 0;
+	}
 	
-    this.getMetadata = function(){
+    getMetadata(){
         return {
 			'width': this.width,
 			'height': this.height,
@@ -28,7 +30,7 @@ function Frame(container, number){
     }
 	
 	// do we need this? since we have this.currentCanvas... :|
-    this.getCurrCanvas = function(){
+    getCurrCanvas(){
         return this.canvasList[this.currentIndex];
     }
 	
@@ -36,7 +38,7 @@ function Frame(container, number){
         set up a new canvas element
         makes the new canvas the current canvas
     ***/
-    this.setupNewLayer = function(){
+    setupNewLayer(){
         // create the new canvas element 
         let newCanvas = document.createElement('canvas');
         newCanvas.id = "frame" + this.number + "canvas" + this.count;
@@ -57,7 +59,7 @@ function Frame(container, number){
         this.count++;
     }
 	
-    this.hide = function(){
+    hide(){
         // puts all layers at zIndex -1 so they're not visible
         this.canvasList.forEach((canvas) => {
 			canvas.style.zIndex = -1;
@@ -66,7 +68,7 @@ function Frame(container, number){
         });
     }
 	
-    this.show = function(){
+    show(){
         // makes all layers visible
 		let activeLayerOpacity = .97;
         this.canvasList.forEach((canvas) => {
@@ -82,7 +84,7 @@ function Frame(container, number){
         });
     }
 	
-	this.setToLayer = function(layerIndex, onionSkin){
+	setToLayer(layerIndex, onionSkin){
 		// note that this does not hide the previous layer + previous onion skin before switching to 
 		// the new layer.
 
@@ -106,7 +108,7 @@ function Frame(container, number){
     /***
         clone the current canvas
     ***/
-    this.copyCanvas = function(){
+    copyCanvas(){
         let newCanvas = document.createElement('canvas');
         newCanvas.id = 'frame' + this.number + 'canvas' + this.count;
         setCanvas(newCanvas, this.width, this.height);
@@ -120,7 +122,7 @@ function Frame(container, number){
         this.count++;
     }
 	
-    this.clearCurrentLayer = function(){
+    clearCurrentLayer(){
         let currLayer = this.getCurrCanvas();
         let context = currLayer.getContext("2d");
         context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
@@ -128,7 +130,7 @@ function Frame(container, number){
         context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
     }
 	
-    this.resetFrame = function(){
+    resetFrame(){
 		// TODO: remove all layers except first layer, then clear it
     }
 }

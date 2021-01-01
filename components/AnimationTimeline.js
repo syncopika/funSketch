@@ -30,9 +30,9 @@ const AnimationTimeline = (props) => {
 		'border': '1px solid #000',
 		'display': 'block',
 		'backgroundColor': '#fff',
-		'overflow-x': 'auto',
-		'white-space': 'nowrap',
-		'margin-top': '10px'
+		'overflowX': 'auto',
+		'whiteSpace': 'nowrap',
+		'marginTop': '10px'
 	};
 	
 	return (

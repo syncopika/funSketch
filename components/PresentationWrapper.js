@@ -730,18 +730,18 @@ class PresentationWrapper extends React.Component {
 	
 	render(){
 		return(
-			<div class='container-fluid'>
-				<div class='row'>
-					<div id='toolbar' class='col-lg-3'>
+			<div className='container-fluid'>
+				<div className='row'>
+					<div id='toolbar' className='col-lg-3'>
 						<div id='toolbarArea'>
 
 							<h3 id='title'> funSketch: draw, edit, and animate! </h3>
 
 							<div id='buttons'>
 							
-								<p class='instructions'> Use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). </p>
-								<p class='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
-								<p class='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
+								<p className='instructions'> Use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). </p>
+								<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
+								<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
 								<button id='toggleInstructions'>hide instructions</button>
 							
 								<h4> layer: </h4>
@@ -802,7 +802,7 @@ class PresentationWrapper extends React.Component {
 									<br />
 									<h4> animation control: </h4>
 									<ul id='timeOptions'>
-										<label for='timePerFrame'>time per frame (ms):</label>
+										<label htmlFor='timePerFrame'>time per frame (ms):</label>
 										<select name='timePerFrame' id='timePerFrame' onChange={
 											(evt) => {
 												this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
@@ -848,7 +848,7 @@ class PresentationWrapper extends React.Component {
 							
 							<div id='adjustBrushSize'>
 								<br />
-								<p class="text-info">change brush size</p>
+								<p className="text-info">change brush size</p>
 									<input id='brushSize' type='range' min='1' max='15' step='.5' defaultValue='2' />
 								<span id='brushSizeValue'> 2 </span>
 							</div>
@@ -860,22 +860,22 @@ class PresentationWrapper extends React.Component {
 								<h3> demos </h3>
 								<select id='chooseDemo'>
 									<option label=""></option>
-									<option class='demo'>run_demo</option>
-									<option class='demo'>floaty_thingy</option>
-									<option class='demo'>asakusa_mizusaki_butterfly</option>
+									<option className='demo'>run_demo</option>
+									<option className='demo'>floaty_thingy</option>
+									<option className='demo'>asakusa_mizusaki_butterfly</option>
 								</select>
 							</div>
 							
 						</div>
 						
-						<div id='footer' class='row'>
+						<div id='footer' className='row'>
 							<hr />
 							<p> n.c.h works 2017-2020 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
 						</div>
 						
 					</div>
 
-					<div id='screen' class='col-lg-9 grid'>
+					<div id='screen' className='col-lg-9 grid'>
 								
 						<FrameCounterDisplay
 							currFrame={this.state.currentFrame}
@@ -888,7 +888,7 @@ class PresentationWrapper extends React.Component {
 						<AnimationTimeline frames={this.state.timelineFrames} />
 						<canvas id='animationTimelineCanvas' style={{
 									'border': '1px solid #000',
-									'border-top': 0,
+									'borderTop': 0,
 									'display': 'block',
 						}}></canvas>
 						
@@ -898,7 +898,7 @@ class PresentationWrapper extends React.Component {
 								let marker = this.state.timelineMarkers[markerKey];
 								return (
 									<div>
-										<label for={'marker' + marker.frameNumber + 'Select'}>marker for frame {marker.frameNumber}: &nbsp;</label>
+										<label htmlFor={'marker' + marker.frameNumber + 'Select'}>marker for frame {marker.frameNumber}: &nbsp;</label>
 										<select 
 										id={'marker' + marker.frameNumber + 'Select'} 
 										name={'marker' + marker.frameNumber + 'Select'}

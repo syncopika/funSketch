@@ -148,16 +148,17 @@ function Toolbar(canvas, brush, animationProj){
     this.insertLayer = function(elementId){
         // not sure if better idea to add the container the layers go in as an instance letiable 
         // or pass in elementId here? 
-        $('#' + elementId).click(function(){
+        document.getElementById(elementId).addEventListener('click', function(){
             insertNewLayer();
         });
     };
 	
 	/***
-		duplicate the current layer 
+		duplicate the current layer
+		note: the next layer after the current will have identitcal image data
 	***/
 	this.duplicateLayer = function(elementId){
-		$('#' + elementId).click(function(){
+		document.getElementById(elementId).addEventListener('click', function(){
 			let currentCanvas = animationProj.getCurrFrame().currentCanvas;
 			let newLayer = insertNewLayer();
 			newLayer.getContext('2d').drawImage(currentCanvas, 0, 0);
@@ -173,7 +174,7 @@ function Toolbar(canvas, brush, animationProj){
     this.deleteLayer = function(elementId){
         // elementId here refers to the display that shows current frame and layer
         let toolbarReference = this;
-        $('#' + elementId).click(function(){
+        document.getElementById(elementId).addEventListener('click', function(){
             let canvas = animationProj.getCurrFrame();
             let oldCanvasIndex = canvas.currentIndex;
             let oldCanvasId = canvas.currentCanvas.id;
@@ -215,7 +216,7 @@ function Toolbar(canvas, brush, animationProj){
 		
     ***/
     this.addNewFrameButton = function(elementId){
-        $('#' + elementId).click(() => {
+        document.getElementById(elementId).addEventListener('click', () => {
             animationProj.addNewFrame();
         });
     };
@@ -226,7 +227,7 @@ function Toolbar(canvas, brush, animationProj){
 		
 	***/
 	this.deleteCurrentFrameButton = function(elementId, setStateFunction){
-        $('#' + elementId).click(() => {
+        document.getElementById(elementId).addEventListener('click', () => {
 			let currFrameIdx = animationProj.currentFrame;
             
 			// move to another frame first before deleting

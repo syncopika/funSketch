@@ -14,7 +14,7 @@ class Frame {
 		this.canvasList = []; // keep a list of all canvas instances
 		this.currentCanvas; // the current, active canvas being looked at (reference to html element)
 		this.container = container; // this is the html container id to hold all the layers of this frame
-		this.number = number; // thid frame's number
+		this.number = number; // this frame's number
 		this.count = 0; // current number of layers
 		this.width = 0;
 		this.height = 0;
@@ -24,7 +24,7 @@ class Frame {
         return {
 			'width': this.width,
 			'height': this.height,
-            'containerId': container,
+            'containerId': this.container,
             'currentIndex': this.currentIndex,
             'number': this.number
         };

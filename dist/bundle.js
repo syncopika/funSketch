@@ -129,7 +129,7 @@ var Frame = /*#__PURE__*/function () {
 
     this.container = container; // this is the html container id to hold all the layers of this frame
 
-    this.number = number; // thid frame's number
+    this.number = number; // this frame's number
 
     this.count = 0; // current number of layers
 
@@ -143,7 +143,7 @@ var Frame = /*#__PURE__*/function () {
       return {
         'width': this.width,
         'height': this.height,
-        'containerId': container,
+        'containerId': this.container,
         'currentIndex': this.currentIndex,
         'number': this.number
       };
@@ -542,6 +542,8 @@ function Brush(animationProject) {
   this.previousCanvas = undefined;
   this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
 
+  this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
+
   this.selectedBrush = 'default'; // user-selected brush 
 
   this.currColor = 'rgb(0,0,0)';
@@ -604,7 +606,7 @@ function Brush(animationProject) {
     thisBrushInstance.resetBrush();
     var canvas = thisBrushInstance.animationProject.getCurrFrame();
     var paint;
-    var currCanvas = document.getElementById(canvas.currentCanvas.id);
+    var currCanvas = canvas.currentCanvas;
 
     function defaultBrushStart(evt) {
       if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
@@ -638,7 +640,9 @@ function Brush(animationProject) {
     }
 
     currCanvas.addEventListener('mousedown', defaultBrushStart);
-    currCanvas.addEventListener('touchstart', defaultBrushStart); //draw the lines as mouse moves
+    currCanvas.addEventListener('touchstart', defaultBrushStart);
+    this.currentEventListeners['mousedown'] = defaultBrushStart;
+    this.currentEventListeners['touchstart'] = defaultBrushStart; //draw the lines as mouse moves
 
     function defaultBrushMove(evt) {
       if (paint) {
@@ -656,7 +660,9 @@ function Brush(animationProject) {
     }
 
     currCanvas.addEventListener('mousemove', defaultBrushMove);
-    currCanvas.addEventListener('touchmove', defaultBrushMove); //stop drawing
+    currCanvas.addEventListener('touchmove', defaultBrushMove);
+    this.currentEventListeners['mousemove'] = defaultBrushMove;
+    this.currentEventListeners['touchmove'] = defaultBrushMove; //stop drawing
 
     function defaultBrushStop(evt) {
       // see if it's a new canvas or we're still on the same one as before the mousedown
@@ -673,7 +679,10 @@ function Brush(animationProject) {
     }
 
     currCanvas.addEventListener('mouseup', defaultBrushStop);
-    currCanvas.addEventListener('touchend', defaultBrushStop); //stop drawing when mouse leaves
+    currCanvas.addEventListener('touchend', defaultBrushStop);
+    this.currentEventListeners['mouseup'] = defaultBrushStop;
+    this.currentEventListeners['touchend'] = defaultBrushStop; //stop drawing when mouse leaves
+    // TODO: we really shouldn't have multiple instances of this
 
     currCanvas.addEventListener('mouseleave', function (evt) {
       clearClick();
@@ -711,12 +720,13 @@ function Brush(animationProject) {
     // reset mouse action functions first 
     thisBrushInstance.resetBrush();
     var canvas = this.animationProject.getCurrFrame();
-    var curCanvas = canvas.currentCanvas.id;
     var context = canvas.currentCanvas.getContext("2d");
-    var paint;
     context.lineJoin = context.lineCap = 'round';
-    $('#' + curCanvas).on('mousedown touchstart', function (e) {
-      if (e.which === 1 && e.type === 'mousedown' || e.type === 'touchstart') {
+    var paint;
+    var curCanvas = canvas.currentCanvas;
+
+    function radGradBrushStart(evt) {
+      if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
         // update previousCanvas
         if (thisBrushInstance.previousCanvas !== canvas.currentCanvas) {
           thisBrushInstance.previousCanvas = canvas.currentCanvas; // reset the snapshots array
@@ -730,37 +740,47 @@ function Brush(animationProject) {
 
         paint = true;
 
-        if (e.type === 'touchstart') {
-          var newCoords = handleTouchEvent(e);
-          e.offsetX = newCoords.x;
-          e.offsetY = newCoords.y; // prevent page scrolling when drawing 
+        if (evt.type === 'touchstart') {
+          var newCoords = handleTouchEvent(evt);
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
 
-          e.preventDefault();
+          evt.preventDefault();
         }
 
-        radialGrad(e.offsetX, e.offsetY);
-        addClick(e.offsetX, e.offsetY, null, null, true);
+        radialGrad(evt.offsetX, evt.offsetY);
+        addClick(evt.offsetX, evt.offsetY, null, null, true);
         redraw(defaultBrushStroke);
       }
-    });
-    $('#' + curCanvas).on('mousemove touchmove', function (e) {
+    }
+
+    curCanvas.addEventListener('mousedown', radGradBrushStart);
+    curCanvas.addEventListener('touchstart', radGradBrushStart);
+    this.currentEventListeners['mousedown'] = radGradBrushStart;
+    this.currentEventListeners['touchstart'] = radGradBrushStart;
+
+    function radGradBrushMove(evt) {
       if (paint) {
-        if (e.type === 'touchmove') {
-          var newCoords = handleTouchEvent(e);
-          e.offsetX = newCoords.x;
-          e.offsetY = newCoords.y; // prevent page scrolling when drawing 
+        if (evt.type === 'touchmove') {
+          var newCoords = handleTouchEvent(evt);
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
 
-          e.preventDefault();
+          evt.preventDefault();
         }
 
-        radialGrad(e.offsetX, e.offsetY);
-        addClick(e.offsetX, e.offsetY, null, null, true);
+        radialGrad(evt.offsetX, evt.offsetY);
+        addClick(evt.offsetX, evt.offsetY, null, null, true);
         redraw(defaultBrushStroke);
       }
-    });
-    $('#' + curCanvas).on('mouseup touchend', function (e) {
-      paint = false;
+    }
 
+    curCanvas.addEventListener('mousemove', radGradBrushMove);
+    curCanvas.addEventListener('touchmove', radGradBrushMove);
+    this.currentEventListeners['mousemove'] = radGradBrushMove;
+    this.currentEventListeners['touchmove'] = radGradBrushMove; // this function seems to be shared among all brushes for stopping. TODO: just have one of these functions
+
+    function radGradBrushStop(evt) {
       if (thisBrushInstance.previousCanvas === canvas.currentCanvas) {
         // if it is, then log the current image data. this is important for the undo feature
         var c = canvas.currentCanvas;
@@ -770,9 +790,15 @@ function Brush(animationProject) {
       }
 
       clearClick();
-    }); //stop drawing when mouse leaves
+      paint = false;
+    }
 
-    $('#' + curCanvas).mouseleave(function (e) {
+    curCanvas.addEventListener('mouseup', radGradBrushStop);
+    curCanvas.addEventListener('touchend', radGradBrushStop);
+    this.currentEventListeners['mouseup'] = radGradBrushStop;
+    this.currentEventListeners['touchend'] = radGradBrushStop; //stop drawing when mouse leaves
+
+    curCanvas.addEventListener('mouseleave', function (evt) {
       clearClick();
       paint = false;
     });
@@ -808,8 +834,10 @@ function Brush(animationProject) {
     thisBrushInstance.resetBrush();
     var canvas = thisBrushInstance.animationProject.getCurrFrame();
     var paint;
-    $('#' + canvas.currentCanvas.id).on('mousedown touchstart', function (e) {
-      if (e.which === 1 && e.type === 'mousedown' || e.type === 'touchstart') {
+    var currCanvas = canvas.currentCanvas;
+
+    function penBrushStart(evt) {
+      if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
         //when left click only
         // update previousCanvas
         if (thisBrushInstance.previousCanvas !== canvas.currentCanvas) {
@@ -824,32 +852,42 @@ function Brush(animationProject) {
 
         paint = true;
 
-        if (e.type === 'touchstart') {
+        if (evt.type === 'touchstart') {
           var newCoords = handleTouchEvent(e);
-          e.offsetX = newCoords.x;
-          e.offsetY = newCoords.y;
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
         }
 
-        addClick(e.offsetX, e.offsetY, null, null, true);
+        addClick(evt.offsetX, evt.offsetY, null, null, true);
         redraw(penBrushStroke);
       }
-    }); //draw the lines as mouse moves
+    }
 
-    $('#' + canvas.currentCanvas.id).on('mousemove touchmove', function (e) {
+    currCanvas.addEventListener("mousedown", penBrushStart);
+    currCanvas.addEventListener("touchstart", penBrushStart);
+    this.currentEventListeners['mousedown'] = penBrushStart;
+    this.currentEventListeners['touchstart'] = penBrushStart; //draw the lines as mouse moves
+
+    function penBrushMove(evt) {
       if (paint) {
-        if (e.type === 'touchmove') {
-          var newCoords = handleTouchEvent(e);
-          e.offsetX = newCoords.x;
-          e.offsetY = newCoords.y;
-          e.preventDefault();
+        if (evt.type === 'touchmove') {
+          var newCoords = handleTouchEvent(evt);
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
+          evt.preventDefault();
         }
 
-        addClick(e.offsetX, e.offsetY, null, null, true);
+        addClick(evt.offsetX, evt.offsetY, null, null, true);
         redraw(penBrushStroke);
       }
-    }); //stop drawing
+    }
 
-    $('#' + canvas.currentCanvas.id).on('mouseup touchend', function (e) {
+    currCanvas.addEventListener('mousemove', penBrushMove);
+    currCanvas.addEventListener('touchmove', penBrushMove);
+    this.currentEventListeners['mousemove'] = penBrushMove;
+    this.currentEventListeners['touchmove'] = penBrushMove; //stop drawing
+
+    function penBrushStop(evt) {
       // see if it's a new canvas or we're still on the same one as before the mousedown
       if (thisBrushInstance.previousCanvas === canvas.currentCanvas) {
         // if it is, then log the current image data. this is important for the undo feature
@@ -861,9 +899,14 @@ function Brush(animationProject) {
 
       clearClick();
       paint = false;
-    }); //stop drawing when mouse leaves
+    }
 
-    $('#' + canvas.currentCanvas.id).mouseleave(function (e) {
+    currCanvas.addEventListener('mouseup', penBrushStop);
+    currCanvas.addEventListener('touchend', penBrushStop);
+    this.currentEventListeners['mouseup'] = penBrushStop;
+    this.currentEventListeners['touchend'] = penBrushStop; //stop drawing when mouse leaves
+
+    currCanvas.addEventListener('mouseleave', function (evt) {
       clearClick();
       paint = false;
     });
@@ -911,8 +954,10 @@ function Brush(animationProject) {
     // reset mouse action functions first 
     thisBrushInstance.resetBrush();
     var frame = thisBrushInstance.animationProject.getCurrFrame();
-    $('#' + frame.currentCanvas.id).on('mousedown touchstart', function (e) {
-      if (e.which === 1 && e.type === 'mousedown' || e.type === 'touchstart') {
+    var curCanvas = frame.currentCanvas;
+
+    function floodfillEvt(evt) {
+      if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
         //when left click only
         // update previousCanvas
         if (thisBrushInstance.previousCanvas !== frame.currentCanvas) {
@@ -925,10 +970,10 @@ function Brush(animationProject) {
           thisBrushInstance.currentCanvasSnapshots.push(tempSnapshot);
         }
 
-        if (e.type === 'touchstart') {
-          var newCoords = handleTouchEvent(e);
-          e.offsetX = newCoords.x;
-          e.offsetY = newCoords.y;
+        if (evt.type === 'touchstart') {
+          var newCoords = handleTouchEvent(evt);
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
         } // do floodfill
         // need to parse the currColor because right now it looks like "rgb(x,y,z)". 
         // I want it to look like [x, y, z]
@@ -939,8 +984,8 @@ function Brush(animationProject) {
         currColorArray = currColorArray.map(function (a) {
           return parseInt(a);
         });
-        var x = e.offsetX;
-        var y = e.offsetY;
+        var x = evt.offsetX;
+        var y = evt.offsetY;
         var colorData = document.getElementById(frame.currentCanvas.id).getContext("2d").getImageData(x, y, 1, 1).data;
         var color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')'; // create an object with the pixel data
 
@@ -951,7 +996,12 @@ function Brush(animationProject) {
         };
         floodfill(frame.currentCanvas, currColorArray, pixel);
       }
-    });
+    }
+
+    curCanvas.addEventListener('mousedown', floodfillEvt);
+    curCanvas.addEventListener('touchstart', floodfillEvt);
+    this.currentEventListeners['mousedown'] = floodfillEvt;
+    this.currentEventListeners['touchstart'] = floodfillEvt;
   }; // the actual floodfill function 
 
 
@@ -1065,14 +1115,12 @@ function Brush(animationProject) {
 
   this.resetBrush = function () {
     var canvas = thisBrushInstance.animationProject.getCurrFrame();
-    var curCanvas = canvas.getCurrCanvas().id; //canvas.currentCanvas.id;
-    //detach any events from mouse actions (reset the events connected with mouse events)
+    var curCanvas = canvas.getCurrCanvas(); //detach any events from mouse actions (reset the events connected with mouse events)
 
-    $('#' + curCanvas).off("mousedown");
-    $('#' + curCanvas).off("mouseup");
-    $('#' + curCanvas).off("mousemove");
-    $('#' + curCanvas).off("touchstart");
-    $('#' + curCanvas).off("touchmove");
+    for (var eventType in this.currentEventListeners) {
+      curCanvas.removeEventListener(eventType, this.currentEventListeners[eventType]);
+      delete curCanvas[eventType];
+    }
   }; //collect info where each pixel is to be drawn on canvas
 
 
@@ -3622,17 +3670,18 @@ function Toolbar(canvas, brush, animationProj) {
   this.insertLayer = function (elementId) {
     // not sure if better idea to add the container the layers go in as an instance letiable 
     // or pass in elementId here? 
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       insertNewLayer();
     });
   };
   /***
-  	duplicate the current layer 
+  	duplicate the current layer
+  	note: the next layer after the current will have identitcal image data
   ***/
 
 
   this.duplicateLayer = function (elementId) {
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       var currentCanvas = animationProj.getCurrFrame().currentCanvas;
       var newLayer = insertNewLayer();
       newLayer.getContext('2d').drawImage(currentCanvas, 0, 0);
@@ -3649,7 +3698,7 @@ function Toolbar(canvas, brush, animationProj) {
   this.deleteLayer = function (elementId) {
     // elementId here refers to the display that shows current frame and layer
     var toolbarReference = this;
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       var canvas = animationProj.getCurrFrame();
       var oldCanvasIndex = canvas.currentIndex;
       var oldCanvasId = canvas.currentCanvas.id;
@@ -3691,7 +3740,7 @@ function Toolbar(canvas, brush, animationProj) {
 
 
   this.addNewFrameButton = function (elementId) {
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       animationProj.addNewFrame();
     });
   };

@@ -43,7 +43,7 @@ class Frame {
         // create the new canvas element 
         let newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
-		document.getElementById(this.container).appendChild(newCanvas);
+        document.getElementById(this.container).appendChild(newCanvas);
         setCanvas(newCanvas);
         if(this.count === 0){
             newCanvas.style.opacity = .97;
@@ -61,7 +61,7 @@ class Frame {
     }
 	
     hide(){
-        // puts all layers at zIndex -1 so they're not visible
+        // makes all layers not visible
         this.canvasList.forEach((canvas) => {
 			canvas.style.zIndex = -1;
 			canvas.style.visibility = "hidden";
@@ -186,7 +186,6 @@ class AnimationProject {
     }
 	
 	deleteFrame(index){
-		
 		// don't allow removal if only one frame exists
 		if(this.frameList.length === 1){
 			return false;

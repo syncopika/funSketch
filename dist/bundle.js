@@ -187,7 +187,7 @@ var Frame = /*#__PURE__*/function () {
   }, {
     key: "hide",
     value: function hide() {
-      // puts all layers at zIndex -1 so they're not visible
+      // makes all layers not visible
       this.canvasList.forEach(function (canvas) {
         canvas.style.zIndex = -1;
         canvas.style.visibility = "hidden";
@@ -2382,11 +2382,11 @@ var LayerOrder = function LayerOrder(props) {
 
   var layers = props.layers;
   var style = {
-    "text-align": "center"
+    "textAlign": "center"
   };
   var elementStyle = {
     "margin": "2px auto",
-    "text-align": "center",
+    "textAlign": "center",
     "border": "1px solid #000"
   }; // use a hook to be able to drag and drop with 
 
@@ -2398,11 +2398,11 @@ var LayerOrder = function LayerOrder(props) {
   if (show) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       style: style
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, " layer order for current frame: "), layers.map(function (layerNum, index) {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, " layer order for current frame: "), layers.map(function (layerIndex) {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         style: elementStyle,
-        key: index,
-        id: "layerOrder_" + index,
+        key: layerIndex,
+        id: "layerOrder_".concat(layerIndex),
         onDragStart: function onDragStart(e) {
           e.stopPropagation();
           var thisEl = e.target;
@@ -2437,7 +2437,7 @@ var LayerOrder = function LayerOrder(props) {
           e.preventDefault();
         },
         draggable: "true"
-      }, "layer ", layerNum + 1);
+      }, "layer ", layerIndex + 1);
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
       id: "doneChangingLayerButton",
       onClick: function onClick() {
@@ -2681,7 +2681,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }
 
       this.setState({
-        'timelineFrames': newFrames
+        'timelineFrames': newFrames,
+        'changingLayerOrder': false
       });
 
       if (direction === "prev") {
@@ -2702,7 +2703,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var toolbar = this.state.toolbarInstance;
       var animationProj = this.state.animationProject;
       var self = this;
-      $(doc).keydown(function (e) {
+      doc.addEventListener('keydown', function (e) {
         var updateStateFlag = false;
         var canvas = null;
 
@@ -2730,7 +2731,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             if (toolbar.layerMode) {
               toolbar.addNewLayer();
             } else {
-              animationProj.addNewFrame();
+              animationProj.addNewFrame(false);
             }
 
             break;
@@ -3182,7 +3183,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         data.forEach(function (frame, index) {
           if (index > 0) {
             // add a new frame
-            project.addNewFrame();
+            project.addNewFrame(false);
           } // overwrite existing frame
           // TODO: implement an updateFrame method 
           // animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a Frame object to update with as well
@@ -3754,7 +3755,7 @@ function Toolbar(canvas, brush, animationProj) {
   this.deleteCurrentFrameButton = function (elementId, setStateFunction) {
     var _this = this;
 
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       var currFrameIdx = animationProj.currentFrame; // move to another frame first before deleting
 
       if (currFrameIdx - 1 >= 0) {
@@ -3777,7 +3778,7 @@ function Toolbar(canvas, brush, animationProj) {
 
 
   this.changeCurrentFrameLayerOrder = function (elementId, setStateFunction) {
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       // I'm not sure why right now but something weird happens after calling 
       // changeCurrentFrameLayerOrder for the first time.
       // it acts as expected but also I get an error saying setStateFunction is undefined 
@@ -3846,22 +3847,21 @@ function Toolbar(canvas, brush, animationProj) {
     showColor.id = 'colorPicked';
     showColor.textContent = "pick a color! :)";
     location.appendChild(showColor);
-    $('#' + colorWheel.id).mousedown(function (e) {
-      var x = e.offsetX;
-      var y = e.offsetY;
-      var colorPicked = document.getElementById(colorWheel.id).getContext('2d').getImageData(x, y, 1, 1).data;
-      var colorPickedText = document.getElementById(showColor.id); //correct the font color if the color is really dark
+    document.getElementById(colorWheel.id).addEventListener('mousedown', function (evt) {
+      var x = evt.offsetX;
+      var y = evt.offsetY;
+      var colorPicked = document.getElementById(colorWheel.id).getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
+
+      var colorPickedText = document.getElementById(showColor.id);
 
       if (colorPicked[0] > 10 && colorPicked[1] > 200) {
-        $('#' + showColor.id).css("color", "#000");
+        colorPickedText.style.color = "#000";
       } else {
-        $('#' + showColor.id).css("color", "#FFF");
+        colorPickedText.style.color = "#FFF";
       }
 
       colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
-      $('#' + showColor.id).css({
-        'background-color': colorPickedText.textContent
-      }); // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
+      colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
 
       brush.currColorArray = colorPicked;
       brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
@@ -3878,7 +3878,7 @@ function Toolbar(canvas, brush, animationProj) {
 
   this.rotateImage = function (elementId) {
     //rotate image
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       var canvas = animationProj.getCurrFrame(); //using a promise to convert the initial image to a bitmap
 
       var width = canvas.currentCanvas.getAttribute("width");
@@ -3901,7 +3901,7 @@ function Toolbar(canvas, brush, animationProj) {
 
 
   this.setClearCanvas = function (elementId) {
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       var canvas = animationProj.getCurrFrame();
       var context = canvas.currentCanvas.getContext("2d");
       context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
@@ -3916,7 +3916,7 @@ function Toolbar(canvas, brush, animationProj) {
 
 
   this.undo = function (elementId) {
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       var canvas = animationProj.getCurrFrame();
       var context = canvas.currentCanvas.getContext("2d");
       var width = canvas.currentCanvas.getAttribute("width");
@@ -3940,7 +3940,7 @@ function Toolbar(canvas, brush, animationProj) {
 
 
   this.importImage = function (elementId) {
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       var canvas = animationProj.getCurrFrame(); // call fileHandler here
 
       fileHandler(); // define fileHandler 
@@ -4016,7 +4016,7 @@ function Toolbar(canvas, brush, animationProj) {
 
 
   this.downloadLayer = function (elementId) {
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       // get image data from current canvas as blob
       var canvas = animationProj.getCurrFrame();
       var data = document.getElementById(canvas.currentCanvas.id).toBlob(function (blob) {
@@ -4043,7 +4043,7 @@ function Toolbar(canvas, brush, animationProj) {
   this.downloadFrame = function (elementId) {
     var _this2 = this;
 
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       var frame = animationProj.getCurrFrame();
 
       var mergedLayers = _this2.mergeFrameLayers(frame);
@@ -4200,7 +4200,7 @@ function Toolbar(canvas, brush, animationProj) {
 
 
   this.save = function (elementId) {
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       // prompt the user to name the file 
       var name = prompt("name of file: ");
 
@@ -4249,7 +4249,7 @@ function Toolbar(canvas, brush, animationProj) {
 
   this.importProject = function (elementId, updateStateFunction) {
     var self = this;
-    $('#' + elementId).click(function () {
+    document.getElementById(elementId).addEventListener('click', function () {
       fileHandler(); //import project json file
 
       function fileHandler() {

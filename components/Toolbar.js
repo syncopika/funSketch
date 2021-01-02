@@ -249,7 +249,7 @@ function Toolbar(canvas, brush, animationProj){
 	
 	***/
 	this.changeCurrentFrameLayerOrder = function(elementId, setStateFunction){
-		$('#' + elementId).click(() => {
+		document.getElementById(elementId).addEventListener('click', () => {
 			// I'm not sure why right now but something weird happens after calling 
 			// changeCurrentFrameLayerOrder for the first time.
 			// it acts as expected but also I get an error saying setStateFunction is undefined 
@@ -323,20 +323,23 @@ function Toolbar(canvas, brush, animationProj){
         showColor.textContent = "pick a color! :)";
         location.appendChild(showColor);
         
-		$('#' + colorWheel.id).mousedown((e) => {
-            let x = e.offsetX;
-            let y = e.offsetY;
+		document.getElementById(colorWheel.id).addEventListener('mousedown', (evt) => {
+            let x = evt.offsetX;
+            let y = evt.offsetY;
             let colorPicked = (document.getElementById(colorWheel.id).getContext('2d')).getImageData(x, y, 1, 1).data;
-            let colorPickedText = document.getElementById(showColor.id);
+			
             //correct the font color if the color is really dark
-            if(colorPicked[0] > 10 && colorPicked[1] > 200){
-                $('#' + showColor.id).css("color", "#000");
+			let colorPickedText = document.getElementById(showColor.id);
+			if(colorPicked[0] > 10 && colorPicked[1] > 200){
+                colorPickedText.style.color = "#000";
             }else{
-                $('#' + showColor.id).css("color", "#FFF");
+                colorPickedText.style.color = "#FFF";
             }
+			
             colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
-            $('#' + showColor.id).css({ 'background-color': colorPickedText.textContent });
-            // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
+            colorPickedText.style.backgroundColor = colorPickedText.textContent;
+            
+			// update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
             brush.currColorArray = colorPicked;
             brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
         });
@@ -352,7 +355,7 @@ function Toolbar(canvas, brush, animationProj){
     ***/
     this.rotateImage = function(elementId){
         //rotate image
-        $('#' + elementId).click(function () {
+        document.getElementById(elementId).addEventListener('click', () => {
             let canvas = animationProj.getCurrFrame();
             //using a promise to convert the initial image to a bitmap
             let width = canvas.currentCanvas.getAttribute("width");
@@ -360,7 +363,7 @@ function Toolbar(canvas, brush, animationProj){
             let context = canvas.currentCanvas.getContext("2d");
             Promise.all([
                 createImageBitmap(canvas.currentCanvas, 0, 0, width, height)
-            ]).then(function (bitmap) {
+            ]).then(function(bitmap){
                 context.clearRect(0, 0, width, height);
                 context.translate(width / 2, height / 2);
                 context.rotate((Math.PI) / 180);
@@ -376,7 +379,7 @@ function Toolbar(canvas, brush, animationProj){
         pass in an element id that will execute clear canvas onclick
     ***/
     this.setClearCanvas = function(elementId){
-        $('#' + elementId).click(() => {
+        document.getElementById(elementId).addEventListener('click', () => {
             let canvas = animationProj.getCurrFrame();
             let context = canvas.currentCanvas.getContext("2d");
             context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
@@ -390,7 +393,7 @@ function Toolbar(canvas, brush, animationProj){
         still a little incorrect?
     ***/
     this.undo = function(elementId){
-        $('#' + elementId).click(() => {
+        document.getElementById(elementId).addEventListener('click', () => {
             let canvas = animationProj.getCurrFrame();
             let context = canvas.currentCanvas.getContext("2d");
             let width = canvas.currentCanvas.getAttribute("width");
@@ -412,8 +415,8 @@ function Toolbar(canvas, brush, animationProj){
     /***
         import an image
     ***/
-    this.importImage = function(elementId) {
-        $('#' + elementId).click(() => {
+    this.importImage = function(elementId){
+        document.getElementById(elementId).addEventListener('click', () => {
             
 			let canvas = animationProj.getCurrFrame();
             
@@ -484,7 +487,7 @@ function Toolbar(canvas, brush, animationProj){
         download a png file of the current layer
     ***/
     this.downloadLayer = function(elementId){
-        $('#' + elementId).click(() => {
+        document.getElementById(elementId).addEventListener('click', () => {
             // get image data from current canvas as blob
 			let canvas = animationProj.getCurrFrame();
             let data = document.getElementById(canvas.currentCanvas.id).toBlob((blob) => {
@@ -507,7 +510,7 @@ function Toolbar(canvas, brush, animationProj){
 		download a png file of the current frame
 	***/
 	this.downloadFrame = function(elementId){
-		$('#' + elementId).click(() => {
+		document.getElementById(elementId).addEventListener('click', () => {
 			let frame = animationProj.getCurrFrame();
 			let mergedLayers = this.mergeFrameLayers(frame);
 			let data = mergedLayers.toBlob((blob) => {
@@ -653,7 +656,7 @@ function Toolbar(canvas, brush, animationProj){
         
     ***/
     this.save = function(elementId){
-        $('#' + elementId).click(() => {
+        document.getElementById(elementId).addEventListener('click', () => {
             // prompt the user to name the file 
             let name = prompt("name of file: ");
             if(name === ""){
@@ -696,7 +699,7 @@ function Toolbar(canvas, brush, animationProj){
 	
     this.importProject = function(elementId, updateStateFunction){
         let self = this;
-        $('#' + elementId).click(function(){
+        document.getElementById(elementId).addEventListener('click', () => {
             fileHandler();
             //import project json file
             function fileHandler(){
@@ -769,8 +772,7 @@ function Toolbar(canvas, brush, animationProj){
                                     };
                                     image.src = layer.imageData;
                                 })(newCtx, img);
-								
-								
+									
 								// make sure to update this frame's current canvas so it matches currentIndex
 								// another thing to refactor later (i.e. since we have currentIndex, we really shouldn't have another variable
 								// to keep track of whose value could be known with currentIndex)

@@ -1,3 +1,13 @@
+buggy stuff / refactor
+---------
+- refactor Brush and Toolbar to use the class style
+  - make sure no excess event listeners are being added when switching brushes
+
+- fix undo
+  - going to a different frame and clicking undo overwrites the current layer with whatever layer the undo was for
+
+- need more unit tests
+
 short-term
 ----------
 - when saving a project, make sure to include any timeline markers!
@@ -8,11 +18,10 @@ short-term
 - stop animation, play reverse?
 - rethink brush implementations
   - use a Brush class? some basic inheritance? 	
-- fix undo
-  - going to a different frame and clicking undo overwrites the current layer with whatever layer the undo was for
 
 long-term
 ---------
+- be able to change frame order
 - refactor Frame so that we don't have a current layer index AND a current layer variable since the index is enough to get information
   about the other. the fewer things to keep track of, the better.
 - acutally make some decent animation to prove its usability

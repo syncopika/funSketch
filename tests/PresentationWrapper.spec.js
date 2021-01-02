@@ -18,7 +18,6 @@ describe("testing PresentationWrapper component", () => {
 			/>
 		);
 		
-		//screen.debug();
 		expect(screen.getByText(new RegExp(frameNum))).toBeInTheDocument();
 		expect(screen.getByText(new RegExp(layerNum))).toBeInTheDocument();
 	});
@@ -26,11 +25,11 @@ describe("testing PresentationWrapper component", () => {
 	it("testing PresentationWrapper rendering", () => {
 		render(<PresentationWrapper />);
 		
-		// we expect that the layer and frame should be shown as 1 initially somewhere on the page
+		// we expect that the layer and frame should be shown as 1 initially somewhere on the page		
 		const initialFrameNum = 1;
 		const initialLayerNum = 1;
-		expect(screen.getByText(new RegExp(initialFrameNum))).toBeInTheDocument();
-		expect(screen.getByText(new RegExp(initialLayerNum))).toBeInTheDocument();
+		expect(screen.getByText(new RegExp("frame: " + initialFrameNum))).toBeInTheDocument();
+		expect(screen.getByText(new RegExp("layer: " + initialLayerNum))).toBeInTheDocument();
 		
 		// add a new layer and go to it
 		//const rightClick = {button: 2};

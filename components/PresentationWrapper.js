@@ -141,21 +141,24 @@ class PresentationWrapper extends React.Component {
 		let animationProj = this.state.animationProject;
 		let toolbar = this.state.toolbarInstance;
 		
+		let currFrameIndex = animationProj.currentFrame;
 		let frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
 		let currFrameData = frame.toDataURL();
+		
 		let newFrames = [...this.state.timelineFrames];
-		let currFrameIndex = animationProj.currentFrame;
 		
 		if(!this.timelineFramesSet.has(currFrameIndex)){
+			// if the animation timeline doesn't have the current frame, add it
 			newFrames.push({"data": currFrameData, "height": frame.height, "width": frame.width});
 			this.timelineFramesSet.add(currFrameIndex);
 		}else{
-			// update image data
+			// update image data in the animation timeline
 			newFrames[currFrameIndex].data = currFrameData;
 		}
 		
 		this.setState({
-			'timelineFrames': newFrames
+			'timelineFrames': newFrames,
+			'changingLayerOrder': false,
 		});
 		
 		if(direction === "prev"){
@@ -176,7 +179,7 @@ class PresentationWrapper extends React.Component {
 		let animationProj = this.state.animationProject;
 		const self = this;
 
-		$(doc).keydown(function(e){
+		doc.addEventListener('keydown', function(e){
 			let updateStateFlag = false;
 			let canvas = null;
 			switch(e.which){
@@ -196,7 +199,7 @@ class PresentationWrapper extends React.Component {
 					if(toolbar.layerMode){
 						toolbar.addNewLayer();
 					}else{
-						animationProj.addNewFrame();
+						animationProj.addNewFrame(false);
 					}
 					break;
 				case 65: // a key 
@@ -627,7 +630,7 @@ class PresentationWrapper extends React.Component {
 			data.forEach(function(frame, index){
 				if(index > 0){
 					// add a new frame
-					project.addNewFrame();
+					project.addNewFrame(false);
 				}
 				// overwrite existing frame
 				// TODO: implement an updateFrame method 

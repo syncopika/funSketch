@@ -1,23 +1,5 @@
 // toolbar class
 
-function applyOnionSkin(canvas){
-	canvas.style.opacity = .92; // apply onion skin to current canvas 
-	canvas.style.zIndex = 0;
-	canvas.style.cursor = "";
-}
-
-function showCanvas(canvas){
-	canvas.style.opacity = .97;
-	canvas.style.zIndex = 1;
-	canvas.style.cursor = "crosshair";
-}
-
-function hideCanvas(canvas){
-	canvas.style.opacity = 0;
-	canvas.style.zIndex = 0;
-	canvas.style.cursor = "";
-}
-
 
 // assemble the common functions for the toolbar
 // remove canvas param since you have animationProj
@@ -36,6 +18,25 @@ function Toolbar(canvas, brush, animationProj){
     this.layerMode = true;
     this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
 	
+	// shouldn't the following 3 functions be actually part of the Frame class?? kinda weird to have them here...
+	this._applyOnionSkin = function(canvas){
+		canvas.style.opacity = .92; // apply onion skin to current canvas 
+		canvas.style.zIndex = 0;
+		canvas.style.cursor = "";
+	}
+
+	this._showCanvas = function(canvas){
+		canvas.style.opacity = .97;
+		canvas.style.zIndex = 1;
+		canvas.style.cursor = "crosshair";
+	}
+
+	this._hideCanvas = function(canvas){
+		canvas.style.opacity = 0;
+		canvas.style.zIndex = 0;
+		canvas.style.cursor = "";
+	}
+	
     this.setCounter = function(elementId){
         this.htmlCounter = document.getElementById(elementId);
     };
@@ -46,18 +47,18 @@ function Toolbar(canvas, brush, animationProj){
         if(frame.currentIndex + 1 < frame.canvasList.length){
             // move to next canvas
             // apply onion skin to current canvas 
-            applyOnionSkin(frame.currentCanvas);
+            this._applyOnionSkin(frame.currentCanvas);
             
 			// in the special case for when you want to go to the next canvas from the very first one, 
             // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
             if(frame.currentIndex > 0){
 				let prevLayer = frame.canvasList[frame.currentIndex - 1];
                 // reset opacity and z-index for previous canvas (because of onionskin)
-                hideCanvas(prevLayer);
+                this._hideCanvas(prevLayer);
             }
             // show the next canvas 
 			let nextLayer = frame.canvasList[frame.currentIndex + 1];
-            showCanvas(nextLayer);
+            this._showCanvas(nextLayer);
 			
             frame.currentCanvas = nextLayer;
             frame.currentIndex++;
@@ -76,11 +77,11 @@ function Toolbar(canvas, brush, animationProj){
         let frame = animationProj.getCurrFrame();
         if(frame.currentIndex - 1 >= 0){
             // move to previous canvas
-            hideCanvas(frame.currentCanvas);
+            this._hideCanvas(frame.currentCanvas);
             
 			// make previous canvas visible 
 			let prevLayer = frame.canvasList[frame.currentIndex - 1];
-            showCanvas(prevLayer);
+            this._showCanvas(prevLayer);
             
 			// if there is another canvas before the previous one, apply onion skin
             if(frame.currentIndex - 2 >= 0){

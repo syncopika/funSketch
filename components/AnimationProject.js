@@ -3,6 +3,7 @@
 // then we can use those frames in an animation.
 // to optimize performance when going into animation mode, maybe cache which frames are 'tainted' from the last time 
 // animation mode was switched to.
+import React from 'react';
 
 /***
     a class representing a frame, containing a list of canvas elements which represent layers of the frame
@@ -41,7 +42,7 @@ class Frame {
     setupNewLayer(){
         // create the new canvas element 
         let newCanvas = document.createElement('canvas');
-        newCanvas.id = "frame" + this.number + "canvas" + this.count;
+        newCanvas.id = `frame${this.number}canvas${this.count}`;
 		document.getElementById(this.container).appendChild(newCanvas);
         setCanvas(newCanvas);
         if(this.count === 0){
@@ -135,19 +136,21 @@ class Frame {
     }
 }
 /***
-    an animation is a single project containing one or more supercanvases (or frames).
+    an AnimationProject represents a single project containing one or more frames.
     it also instantiates an onion skin frame.
 ***/
-function AnimationProject(container){
-    this.name = "";
-    this.currentFrame = 0; // index of current frame
-    this.speed = 100; // 100 ms per frame 
-    this.frameList = [];
-    this.onionSkinFrame = createOnionSkinFrame(container);
-    this.onionSkinFrame.style.display = 'none'; // hide it initially
-    this.container = container; // id of the html element the frames are displayed in
+class AnimationProject {
+	constructor(container){
+		this.name = "";
+		this.currentFrame = 0; // index of current frame
+		this.speed = 100; // 100 ms per frame 
+		this.frameList = [];
+		this.onionSkinFrame = createOnionSkinFrame(container);
+		this.onionSkinFrame.style.display = 'none'; // hide it initially
+		this.container = container; // id of the html element the frames are displayed in
+	}
 	
-    this.resetProject = function(){
+    resetProject(){
         this.frameList.forEach(function(frame, frameIndex){ 
             let parent = document.getElementById(frame['container']);
             // just keep the first frame
@@ -173,7 +176,7 @@ function AnimationProject(container){
 		this.clearOnionSkin();
     }
 	
-    this.addNewFrame = function(showFlag){
+    addNewFrame(showFlag){
         let newFrame = new Frame(this.container, this.frameList.length);
         newFrame.setupNewLayer();
         this.frameList.push(newFrame);
@@ -182,7 +185,7 @@ function AnimationProject(container){
         }
     }
 	
-	this.deleteFrame = function(index){
+	deleteFrame(index){
 		
 		// don't allow removal if only one frame exists
 		if(this.frameList.length === 1){
@@ -204,7 +207,7 @@ function AnimationProject(container){
 		return true;
 	}
 	
-    this.nextFrame = function(){
+    nextFrame(){
         if(this.frameList.length === this.currentFrame + 1){
             return null; // no more frames to see
         }
@@ -213,7 +216,7 @@ function AnimationProject(container){
         return this.frameList[this.currentFrame];
     }
 	
-    this.prevFrame = function(){
+    prevFrame(){
         if(this.currentFrame - 1 < 0){
             return null; // no more frames to see
         }
@@ -222,11 +225,11 @@ function AnimationProject(container){
         return this.frameList[this.currentFrame];
     }
 	
-    this.getCurrFrame = function(){
+    getCurrFrame(){
         return this.frameList[this.currentFrame];
     }
 	
-    this.updateOnionSkin = function(){
+    updateOnionSkin(){
         if(this.currentFrame - 1 < 0){
 			// no onionskin for very first frame 
 			this.onionSkinFrame.style.opacity = 0;
@@ -262,7 +265,7 @@ function AnimationProject(container){
         this.onionSkinFrame.style.opacity = 0.92;
     }
 	
-	this.clearOnionSkin = function(){
+	clearOnionSkin(){
 		let onionSkin = this.onionSkinFrame;
 		let context = this.onionSkinFrame.getContext("2d");
         context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
@@ -279,7 +282,7 @@ function createOnionSkinFrame(container){
 	document.getElementById(container).appendChild(newCanvas);
     setCanvas(newCanvas);
     newCanvas.style.opacity = .97;
-    newCanvas.style.zIndex = -1; // come back to this later. make sure it's visible if current frame > 1!
+    newCanvas.style.zIndex = -1; // TODO: come back to this later. make sure it's visible if current frame > 1!
     return newCanvas;
 }
 

@@ -1,4 +1,5 @@
-import { AnimationProject } from './SuperCanvas.js';
+import React from 'react';
+import { AnimationProject } from './AnimationProject.js';
 import { Toolbar } from './Toolbar.js';
 import { Brush } from './Brush.js';
 import { Filters } from './Filters.js';
@@ -630,7 +631,7 @@ class PresentationWrapper extends React.Component {
 				}
 				// overwrite existing frame
 				// TODO: implement an updateFrame method 
-				// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
+				// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a Frame object to update with as well
 				let currFrame = project.frameList[index];
 				let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
 				let currFrameLayersFromCurrPrj = currFrame.canvasList;
@@ -936,4 +937,4 @@ class PresentationWrapper extends React.Component {
 
 }
 
-export { PresentationWrapper };
+export { PresentationWrapper, FrameCounterDisplay };

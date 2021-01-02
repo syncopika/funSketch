@@ -86,6 +86,373 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./components/AnimationProject.js":
+/*!****************************************!*\
+  !*** ./components/AnimationProject.js ***!
+  \****************************************/
+/*! exports provided: Frame, AnimationProject, createOnionSkinFrame, setCanvas */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Frame", function() { return Frame; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AnimationProject", function() { return AnimationProject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createOnionSkinFrame", function() { return createOnionSkinFrame; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setCanvas", function() { return setCanvas; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+// TODO: have an animation mode and a paint mode? in paint mode, you can do all the layering per frame and stuff.
+// in animation mode, we process all the frames and for each one condense all their layers into a single frame.
+// then we can use those frames in an animation.
+// to optimize performance when going into animation mode, maybe cache which frames are 'tainted' from the last time 
+// animation mode was switched to.
+
+/***
+    a class representing a frame, containing a list of canvas elements which represent layers of the frame
+***/
+
+var Frame = /*#__PURE__*/function () {
+  function Frame(container, number) {
+    _classCallCheck(this, Frame);
+
+    this.currentIndex = 0; // index of currently showing layer
+
+    this.canvasList = []; // keep a list of all canvas instances
+
+    this.currentCanvas; // the current, active canvas being looked at (reference to html element)
+
+    this.container = container; // this is the html container id to hold all the layers of this frame
+
+    this.number = number; // thid frame's number
+
+    this.count = 0; // current number of layers
+
+    this.width = 0;
+    this.height = 0;
+  }
+
+  _createClass(Frame, [{
+    key: "getMetadata",
+    value: function getMetadata() {
+      return {
+        'width': this.width,
+        'height': this.height,
+        'containerId': container,
+        'currentIndex': this.currentIndex,
+        'number': this.number
+      };
+    } // do we need this? since we have this.currentCanvas... :|
+
+  }, {
+    key: "getCurrCanvas",
+    value: function getCurrCanvas() {
+      return this.canvasList[this.currentIndex];
+    }
+    /***
+        set up a new canvas element
+        makes the new canvas the current canvas
+    ***/
+
+  }, {
+    key: "setupNewLayer",
+    value: function setupNewLayer() {
+      // create the new canvas element 
+      var newCanvas = document.createElement('canvas');
+      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
+      document.getElementById(this.container).appendChild(newCanvas);
+      setCanvas(newCanvas);
+
+      if (this.count === 0) {
+        newCanvas.style.opacity = .97;
+        newCanvas.style.zIndex = 1;
+        newCanvas.style.cursor = "crosshair";
+        this.width = newCanvas.width;
+        this.height = newCanvas.height;
+      } // set new canvas to be the current canvas only initially!
+
+
+      if (this.count === 0) {
+        this.currentCanvas = newCanvas;
+      }
+
+      this.canvasList.push(newCanvas);
+      this.count++;
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      // puts all layers at zIndex -1 so they're not visible
+      this.canvasList.forEach(function (canvas) {
+        canvas.style.zIndex = -1;
+        canvas.style.visibility = "hidden";
+        canvas.style.cursor = "";
+      });
+    }
+  }, {
+    key: "show",
+    value: function show() {
+      // makes all layers visible
+      var activeLayerOpacity = .97;
+      this.canvasList.forEach(function (canvas) {
+        if (canvas.style.opacity >= activeLayerOpacity) {
+          canvas.style.zIndex = 1;
+        } else {
+          canvas.style.zIndex = 0;
+        }
+
+        canvas.style.visibility = "";
+        canvas.style.cursor = "crosshair";
+      });
+    }
+  }, {
+    key: "setToLayer",
+    value: function setToLayer(layerIndex, onionSkin) {
+      // note that this does not hide the previous layer + previous onion skin before switching to 
+      // the new layer.
+      var newLayer = this.canvasList[layerIndex]; //console.log(newLayer);
+
+      newLayer.style.opacity = 0.97;
+      newLayer.style.zIndex = 1;
+      this.currentCanvas = newLayer;
+      this.currentIndex = layerIndex;
+
+      if (onionSkin && layerIndex - 1 > 0) {
+        // apply onionskin
+        var prevLayer = this.canvasList[layerIndex - 1];
+        prevLayer.style.opacity = .92;
+        prevLayer.style.zIndex = 0;
+      }
+    }
+    /***
+        clone the current canvas
+    ***/
+
+  }, {
+    key: "copyCanvas",
+    value: function copyCanvas() {
+      var newCanvas = document.createElement('canvas');
+      newCanvas.id = 'frame' + this.number + 'canvas' + this.count;
+      setCanvas(newCanvas, this.width, this.height);
+      this.canvasList[this.count - 1].style.opacity = .97; // place the canvas in the container 
+
+      document.getElementById(container).appendChild(newCanvas); // position the new canvas directly on top of the previous one 
+
+      var canvas = document.getElementById(this.canvasList[0].id);
+      newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
+      this.canvasList.push(newCanvas);
+      this.count++;
+    }
+  }, {
+    key: "clearCurrentLayer",
+    value: function clearCurrentLayer() {
+      var currLayer = this.getCurrCanvas();
+      var context = currLayer.getContext("2d");
+      context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
+      context.fillStyle = "#FFFFFF";
+      context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
+    }
+  }, {
+    key: "resetFrame",
+    value: function resetFrame() {// TODO: remove all layers except first layer, then clear it
+    }
+  }]);
+
+  return Frame;
+}();
+/***
+    an AnimationProject represents a single project containing one or more frames.
+    it also instantiates an onion skin frame.
+***/
+
+
+var AnimationProject = /*#__PURE__*/function () {
+  function AnimationProject(container) {
+    _classCallCheck(this, AnimationProject);
+
+    this.name = "";
+    this.currentFrame = 0; // index of current frame
+
+    this.speed = 100; // 100 ms per frame 
+
+    this.frameList = [];
+    this.onionSkinFrame = createOnionSkinFrame(container);
+    this.onionSkinFrame.style.display = 'none'; // hide it initially
+
+    this.container = container; // id of the html element the frames are displayed in
+  }
+
+  _createClass(AnimationProject, [{
+    key: "resetProject",
+    value: function resetProject() {
+      this.frameList.forEach(function (frame, frameIndex) {
+        var parent = document.getElementById(frame['container']); // just keep the first frame
+
+        frame.canvasList.forEach(function (layer, layerIndex) {
+          if (frameIndex > 0 || frameIndex === 0 && layerIndex > 0) {
+            parent.removeChild(layer);
+          }
+        });
+
+        if (frameIndex === 0) {
+          frame.canvasList = [frame.canvasList[0]];
+          frame.currentIndex = 0;
+          frame.currentCanvas = frame.canvasList[0];
+        }
+      });
+      this.frameList = [this.frameList[0]]; // clear the first layer of the first frame!
+
+      this.frameList[0].clearCurrentLayer();
+      this.currentFrame = 0;
+      this.speed = 100;
+      this.frameList[0].currentCanvas.style.visibility = "";
+      this.clearOnionSkin();
+    }
+  }, {
+    key: "addNewFrame",
+    value: function addNewFrame(showFlag) {
+      var newFrame = new Frame(this.container, this.frameList.length);
+      newFrame.setupNewLayer();
+      this.frameList.push(newFrame);
+
+      if (!showFlag) {
+        newFrame.hide();
+      }
+    }
+  }, {
+    key: "deleteFrame",
+    value: function deleteFrame(index) {
+      // don't allow removal if only one frame exists
+      if (this.frameList.length === 1) {
+        return false;
+      }
+
+      var frame = this.frameList[index]; // remove frame from frameList
+
+      this.frameList.splice(index, 1);
+      var parentContainer = document.getElementById(frame['container']); // remove all layers
+
+      frame.canvasList.forEach(function (layer) {
+        parentContainer.removeChild(layer);
+      });
+      return true;
+    }
+  }, {
+    key: "nextFrame",
+    value: function nextFrame() {
+      if (this.frameList.length === this.currentFrame + 1) {
+        return null; // no more frames to see
+      }
+
+      this.currentFrame += 1;
+      this.updateOnionSkin();
+      return this.frameList[this.currentFrame];
+    }
+  }, {
+    key: "prevFrame",
+    value: function prevFrame() {
+      if (this.currentFrame - 1 < 0) {
+        return null; // no more frames to see
+      }
+
+      this.currentFrame -= 1;
+      this.updateOnionSkin();
+      return this.frameList[this.currentFrame];
+    }
+  }, {
+    key: "getCurrFrame",
+    value: function getCurrFrame() {
+      return this.frameList[this.currentFrame];
+    }
+  }, {
+    key: "updateOnionSkin",
+    value: function updateOnionSkin() {
+      if (this.currentFrame - 1 < 0) {
+        // no onionskin for very first frame 
+        this.onionSkinFrame.style.opacity = 0;
+        return;
+      }
+
+      this.onionSkinFrame.style.display = ''; // show onion skin
+
+      var onionSkinCtx = this.onionSkinFrame.getContext("2d");
+      onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // take the previous frame, merge all layers, put into onion skin frame
+      // try this? only draw pixels that are non-white?
+
+      var onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // build the merged image from the first to last
+
+      var prevFrame = this.frameList[this.currentFrame - 1];
+      prevFrame.canvasList.forEach(function (layer) {
+        var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
+
+        for (var i = 0; i < imageData.length; i += 4) {
+          if (imageData[i] === 255 && imageData[i + 1] === 255 && imageData[i + 2] === 255) {
+            continue;
+          } else {
+            // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
+            // we might run into index/length issues...
+            onionSkinImageData.data[i] = imageData[i];
+            onionSkinImageData.data[i + 1] = imageData[i + 1];
+            onionSkinImageData.data[i + 2] = imageData[i + 2];
+            onionSkinImageData.data[i + 3] = 255;
+          }
+        } // apply each layer to the onion skin
+
+
+        onionSkinCtx.putImageData(onionSkinImageData, 0, 0);
+      });
+      this.onionSkinFrame.style.zIndex = 0;
+      this.onionSkinFrame.style.opacity = 0.92;
+    }
+  }, {
+    key: "clearOnionSkin",
+    value: function clearOnionSkin() {
+      var onionSkin = this.onionSkinFrame;
+      var context = this.onionSkinFrame.getContext("2d");
+      context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
+      context.fillStyle = "#FFFFFF";
+      context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
+    }
+  }]);
+
+  return AnimationProject;
+}();
+
+function createOnionSkinFrame(container) {
+  // create the new canvas element 
+  var newCanvas = document.createElement('canvas');
+  newCanvas.id = "onionSkinCanvas";
+  document.getElementById(container).appendChild(newCanvas);
+  setCanvas(newCanvas);
+  newCanvas.style.opacity = .97;
+  newCanvas.style.zIndex = -1; // TODO: come back to this later. make sure it's visible if current frame > 1!
+
+  return newCanvas;
+} // assigns position, z-index, border, width, height and opacity
+
+
+function setCanvas(canvasElement) {
+  canvasElement.style.position = "absolute";
+  canvasElement.style.border = '1px #000 solid';
+  canvasElement.style.zIndex = 0;
+  canvasElement.style.opacity = 0;
+  canvasElement.style.width = "100%";
+  canvasElement.style.height = "100%";
+  canvasElement.width = canvasElement.offsetWidth;
+  canvasElement.height = canvasElement.offsetHeight;
+  canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,255)";
+  canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+}
+
+
+
+/***/ }),
+
 /***/ "./components/AnimationTimeline.js":
 /*!*****************************************!*\
   !*** ./components/AnimationTimeline.js ***!
@@ -96,16 +463,20 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AnimationTimeline", function() { return AnimationTimeline; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 // https://stackoverflow.com/questions/55340888/fast-way-to-resize-imagedata-in-browser
 // https://stackoverflow.com/questions/19262141/resize-image-with-javascript-canvas-smoothly
 // https://stackoverflow.com/questions/13416800/how-to-generate-an-image-from-imagedata-in-javascript
+
+
 var TimelineFrameThumnail = function TimelineFrameThumnail(props) {
   var frameImgData = props.imgData;
   var height = '120px'; //props.height;
 
   var width = '120px'; //props.width;
 
-  return React.createElement("img", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
     style: {
       'display': 'inline-block',
       'border': '1px solid #000',
@@ -131,11 +502,11 @@ var AnimationTimeline = function AnimationTimeline(props) {
     'whiteSpace': 'nowrap',
     'marginTop': '10px'
   };
-  return React.createElement("div", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "animationTimeline",
     style: timelineStyle
   }, props.frames.map(function (frame, index) {
-    return React.createElement(TimelineFrameThumnail, {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(TimelineFrameThumnail, {
       imgData: frame.data,
       key: index
     });
@@ -158,9 +529,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Brush", function() { return Brush; });
 /***
     brush class
-    pass in an instance of the SuperCanvas class as an argument
+    pass in an instance of the AnimationProject class as an argument
     the canvas argument will have a reference to the current canvas so that
     only the current canvas will be a target for the brush
+	
+	I think we may be able to get away with leaving this 'class' as just a function
+	since there should only be one Brush instance for an animation project.
 ***/
 function Brush(animationProject) {
   // pass in an animation project, from which you can access the current frame and the current canvas
@@ -230,8 +604,10 @@ function Brush(animationProject) {
     thisBrushInstance.resetBrush();
     var canvas = thisBrushInstance.animationProject.getCurrFrame();
     var paint;
-    $('#' + canvas.currentCanvas.id).on('mousedown touchstart', function (e) {
-      if (e.which === 1 && e.type === 'mousedown' || e.type === 'touchstart') {
+    var currCanvas = document.getElementById(canvas.currentCanvas.id);
+
+    function defaultBrushStart(evt) {
+      if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
         //when left click only
         // update previousCanvas
         if (thisBrushInstance.previousCanvas !== canvas.currentCanvas) {
@@ -250,33 +626,39 @@ function Brush(animationProject) {
         // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
         // using rect seems to work pretty well
 
-        if (e.type === 'touchstart') {
-          var newCoords = handleTouchEvent(e);
-          e.offsetX = newCoords.x;
-          e.offsetY = newCoords.y;
+        if (evt.type === 'touchstart') {
+          var newCoords = handleTouchEvent(evt);
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
         }
 
-        addClick(e.offsetX, e.offsetY, null, null, true);
+        addClick(evt.offsetX, evt.offsetY, null, null, true);
         redraw(defaultBrushStroke);
       }
-    }); //draw the lines as mouse moves
+    }
 
-    $('#' + canvas.currentCanvas.id).on('mousemove touchmove', function (e) {
+    currCanvas.addEventListener('mousedown', defaultBrushStart);
+    currCanvas.addEventListener('touchstart', defaultBrushStart); //draw the lines as mouse moves
+
+    function defaultBrushMove(evt) {
       if (paint) {
-        if (e.type === 'touchmove') {
-          var newCoords = handleTouchEvent(e);
-          e.offsetX = newCoords.x;
-          e.offsetY = newCoords.y; // prevent page scrolling when drawing 
+        if (evt.type === 'touchmove') {
+          var newCoords = handleTouchEvent(evt);
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
 
-          e.preventDefault();
+          evt.preventDefault();
         }
 
-        addClick(e.offsetX, e.offsetY, null, null, true);
+        addClick(evt.offsetX, evt.offsetY, null, null, true);
         redraw(defaultBrushStroke);
       }
-    }); //stop drawing
+    }
 
-    $('#' + canvas.currentCanvas.id).on('mouseup touchend', function (e) {
+    currCanvas.addEventListener('mousemove', defaultBrushMove);
+    currCanvas.addEventListener('touchmove', defaultBrushMove); //stop drawing
+
+    function defaultBrushStop(evt) {
       // see if it's a new canvas or we're still on the same one as before the mousedown
       if (thisBrushInstance.previousCanvas === canvas.currentCanvas) {
         // if it is, then log the current image data. this is important for the undo feature
@@ -288,9 +670,12 @@ function Brush(animationProject) {
 
       clearClick();
       paint = false;
-    }); //stop drawing when mouse leaves
+    }
 
-    $('#' + canvas.currentCanvas.id).mouseleave(function (e) {
+    currCanvas.addEventListener('mouseup', defaultBrushStop);
+    currCanvas.addEventListener('touchend', defaultBrushStop); //stop drawing when mouse leaves
+
+    currCanvas.addEventListener('mouseleave', function (evt) {
       clearClick();
       paint = false;
     });
@@ -1909,21 +2294,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LayerOrder", function() { return LayerOrder; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 
 
 
@@ -1958,10 +2348,10 @@ var LayerOrder = function LayerOrder(props) {
       setDragSourceEl = _useState2[1];
 
   if (show) {
-    return React.createElement("div", {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
       style: style
-    }, React.createElement("h4", null, " layer order for current frame: "), layers.map(function (layerNum, index) {
-      return React.createElement("div", {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, " layer order for current frame: "), layers.map(function (layerNum, index) {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         style: elementStyle,
         key: index,
         id: "layerOrder_" + index,
@@ -2000,14 +2390,14 @@ var LayerOrder = function LayerOrder(props) {
         },
         draggable: "true"
       }, "layer ", layerNum + 1);
-    }), React.createElement("button", {
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
       id: "doneChangingLayerButton",
       onClick: function onClick() {
         saveNewLayerOrder(updateParentState);
       }
     }, " done "));
   } else {
-    return React.createElement("div", null);
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null);
   }
 };
 
@@ -2019,27 +2409,34 @@ var LayerOrder = function LayerOrder(props) {
 /*!*******************************************!*\
   !*** ./components/PresentationWrapper.js ***!
   \*******************************************/
-/*! exports provided: PresentationWrapper */
+/*! exports provided: PresentationWrapper, FrameCounterDisplay */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PresentationWrapper", function() { return PresentationWrapper; });
-/* harmony import */ var _SuperCanvas_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SuperCanvas.js */ "./components/SuperCanvas.js");
-/* harmony import */ var _Toolbar_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Toolbar.js */ "./components/Toolbar.js");
-/* harmony import */ var _Brush_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Brush.js */ "./components/Brush.js");
-/* harmony import */ var _Filters_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Filters.js */ "./components/Filters.js");
-/* harmony import */ var _AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./AnimationTimeline.js */ "./components/AnimationTimeline.js");
-/* harmony import */ var _LayerOrder_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./LayerOrder.js */ "./components/LayerOrder.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FrameCounterDisplay", function() { return FrameCounterDisplay; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _AnimationProject_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AnimationProject.js */ "./components/AnimationProject.js");
+/* harmony import */ var _Toolbar_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Toolbar.js */ "./components/Toolbar.js");
+/* harmony import */ var _Brush_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Brush.js */ "./components/Brush.js");
+/* harmony import */ var _Filters_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Filters.js */ "./components/Filters.js");
+/* harmony import */ var _AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./AnimationTimeline.js */ "./components/AnimationTimeline.js");
+/* harmony import */ var _LayerOrder_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./LayerOrder.js */ "./components/LayerOrder.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -2047,15 +2444,20 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 
 
@@ -2067,17 +2469,17 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 // and so the PresentationWrapper's state doesn't get updated with the new currentFrame/Layer
 
 var FrameCounterDisplay = function FrameCounterDisplay(props) {
-  return React.createElement("div", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "pageCount"
-  }, React.createElement("h3", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
     id: "prevFrame"
-  }, " \u25C0 \xA0\xA0"), React.createElement("h3", {
+  }, " \u25C0 \xA0\xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
     id: "goLeft"
-  }, " < "), React.createElement("h3", {
+  }, " < "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
     id: "count"
-  }, " frame: ", props.currFrame, ", layer: ", props.currLayer, " "), React.createElement("h3", {
+  }, " frame: ", props.currFrame, ", layer: ", props.currLayer, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
     id: "goRight"
-  }, " > "), React.createElement("h3", {
+  }, " > "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
     id: "nextFrame"
   }, "\xA0\xA0 \u25B6"));
 };
@@ -2085,12 +2487,14 @@ var FrameCounterDisplay = function FrameCounterDisplay(props) {
 var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   _inherits(PresentationWrapper, _React$Component);
 
+  var _super = _createSuper(PresentationWrapper);
+
   function PresentationWrapper(props) {
     var _this;
 
     _classCallCheck(this, PresentationWrapper);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(PresentationWrapper).call(this, props));
+    _this = _super.call(this, props);
     _this.state = {
       'animationProject': null,
       'brushInstance': null,
@@ -2733,7 +3137,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             project.addNewFrame();
           } // overwrite existing frame
           // TODO: implement an updateFrame method 
-          // animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
+          // animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a Frame object to update with as well
 
 
           var currFrame = project.frameList[index];
@@ -2808,13 +3212,13 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
     value: function componentDidMount() {
       var _this11 = this;
 
-      var animationProj = new _SuperCanvas_js__WEBPACK_IMPORTED_MODULE_0__["AnimationProject"]('canvasArea');
+      var animationProj = new _AnimationProject_js__WEBPACK_IMPORTED_MODULE_1__["AnimationProject"]('canvasArea');
       animationProj.addNewFrame(true);
-      var newBrush = new _Brush_js__WEBPACK_IMPORTED_MODULE_2__["Brush"](animationProj);
+      var newBrush = new _Brush_js__WEBPACK_IMPORTED_MODULE_3__["Brush"](animationProj);
       newBrush.defaultBrush();
-      var newFilters = new _Filters_js__WEBPACK_IMPORTED_MODULE_3__["Filters"](animationProj.getCurrFrame(), newBrush);
+      var newFilters = new _Filters_js__WEBPACK_IMPORTED_MODULE_4__["Filters"](animationProj.getCurrFrame(), newBrush);
       var currCanvas = animationProj.getCurrFrame().currentCanvas;
-      var newToolbar = new _Toolbar_js__WEBPACK_IMPORTED_MODULE_1__["Toolbar"](currCanvas, newBrush, animationProj);
+      var newToolbar = new _Toolbar_js__WEBPACK_IMPORTED_MODULE_2__["Toolbar"](currCanvas, newBrush, animationProj);
       this.setState({
         'animationProject': animationProj,
         'brushInstance': newBrush,
@@ -2840,46 +3244,46 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
     value: function render() {
       var _this12 = this;
 
-      return React.createElement("div", {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container-fluid"
-      }, React.createElement("div", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
-      }, React.createElement("div", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "toolbar",
         className: "col-lg-3"
-      }, React.createElement("div", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "toolbarArea"
-      }, React.createElement("h3", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
         id: "title"
-      }, " funSketch: draw, edit, and animate! "), React.createElement("div", {
+      }, " funSketch: draw, edit, and animate! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "buttons"
-      }, React.createElement("p", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         className: "instructions"
-      }, " Use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). "), React.createElement("p", {
+      }, " Use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         className: "instructions"
-      }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! "), React.createElement("p", {
+      }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         className: "instructions"
-      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. "), React.createElement("button", {
+      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "toggleInstructions"
-      }, "hide instructions"), React.createElement("h4", null, " layer: "), React.createElement("button", {
+      }, "hide instructions"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, " layer: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "insertCanvas"
-      }, "add new layer"), React.createElement("button", {
+      }, "add new layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "deleteCanvas"
-      }, "delete current layer"), React.createElement("button", {
+      }, "delete current layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "duplicateCanvas"
-      }, "duplicate layer"), React.createElement("button", {
+      }, "duplicate layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "clearCanvas"
-      }, "clear layer"), React.createElement("button", {
+      }, "clear layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "downloadLayer"
-      }, "download current layer"), React.createElement("h4", null, " frame: "), React.createElement("button", {
+      }, "download current layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, " frame: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "addNewFrame"
-      }, "add new frame"), React.createElement("button", {
+      }, "add new frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "deleteCurrFrame"
-      }, "delete current frame"), React.createElement("button", {
+      }, "delete current frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "changeLayerOrder"
-      }, "change layer order"), React.createElement("button", {
+      }, "change layer order"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "downloadFrame"
-      }, "download current frame"), React.createElement(_LayerOrder_js__WEBPACK_IMPORTED_MODULE_5__["LayerOrder"], {
+      }, "download current frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_LayerOrder_js__WEBPACK_IMPORTED_MODULE_6__["LayerOrder"], {
         changingLayerOrder: this.state.changingLayerOrder,
         layers: this.state.animationProject ? this.state.animationProject.getCurrFrame().canvasList.map(function (x, idx) {
           return idx;
@@ -2912,126 +3316,126 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             "changingLayerOrder": false
           });
         }
-      }), React.createElement("h4", null, " other: "), React.createElement("button", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, " other: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "importImage"
-      }, " import image "), React.createElement("button", {
+      }, " import image "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "rotateCanvasImage"
-      }, "rotate image"), React.createElement("button", {
+      }, "rotate image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "undo"
-      }, "undo"), React.createElement("button", {
+      }, "undo"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "saveWork"
-      }, "save project (.json)"), React.createElement("button", {
+      }, "save project (.json)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "importProject"
-      }, "import project "), React.createElement("button", {
+      }, "import project "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "toggleLayerOrFrame"
-      }, " toggle frame addition on spacebar press "), React.createElement("div", {
+      }, " toggle frame addition on spacebar press "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "animationControl"
-      }, React.createElement("br", null), React.createElement("h4", null, " animation control: "), React.createElement("ul", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, " animation control: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
         id: "timeOptions"
-      }, React.createElement("label", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         htmlFor: "timePerFrame"
-      }, "time per frame (ms):"), React.createElement("select", {
+      }, "time per frame (ms):"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
         name: "timePerFrame",
         id: "timePerFrame",
         onChange: function onChange(evt) {
           _this12.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
         }
-      }, React.createElement("option", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         value: "100"
-      }, "100"), React.createElement("option", {
+      }, "100"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         value: "200"
-      }, "200"), React.createElement("option", {
+      }, "200"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         value: "500"
-      }, "500"), React.createElement("option", {
+      }, "500"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         value: "700"
-      }, "700"), React.createElement("option", {
+      }, "700"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         value: "1000"
-      }, "1000"))), React.createElement("button", {
+      }, "1000"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         onClick: function onClick() {
           _this12._playAnimation();
         }
-      }, " play animation "), React.createElement("button", {
+      }, " play animation "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "generateGif"
-      }, " generate gif! ")), React.createElement("p", {
+      }, " generate gif! ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         id: "loadingScreen"
-      }), React.createElement("br", null)), React.createElement("br", null), React.createElement("div", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "filters"
-      }, React.createElement("p", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         id: "filterSelect"
-      }, " filters \u25BC "), React.createElement("ul", {
+      }, " filters \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
         id: "filterChoices"
-      })), React.createElement("div", {
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "brushes"
-      }, React.createElement("p", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         id: "brushSelect"
-      }, " brushes \u25BC "), React.createElement("ul", null, React.createElement("li", {
+      }, " brushes \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         id: "defaultBrush"
-      }, " default brush "), React.createElement("li", {
+      }, " default brush "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         id: "penBrush"
-      }, " pen brush "), React.createElement("li", {
+      }, " pen brush "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         id: "radialBrush"
-      }, " radial gradient brush "), React.createElement("li", {
+      }, " radial gradient brush "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         id: "floodfill"
-      }, " floodfill "))), React.createElement("div", {
+      }, " floodfill "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "adjustBrushSize"
-      }, React.createElement("br", null), React.createElement("p", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         className: "text-info"
-      }, "change brush size"), React.createElement("input", {
+      }, "change brush size"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         id: "brushSize",
         type: "range",
         min: "1",
         max: "15",
         step: ".5",
         defaultValue: "2"
-      }), React.createElement("span", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         id: "brushSizeValue"
-      }, " 2 ")), React.createElement("div", {
+      }, " 2 ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "colorPicker"
-      }), React.createElement("div", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "showDemos"
-      }, React.createElement("h3", null, " demos "), React.createElement("select", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, " demos "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
         id: "chooseDemo"
-      }, React.createElement("option", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         label: ""
-      }), React.createElement("option", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         className: "demo"
-      }, "run_demo"), React.createElement("option", {
+      }, "run_demo"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         className: "demo"
-      }, "floaty_thingy"), React.createElement("option", {
+      }, "floaty_thingy"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
         className: "demo"
-      }, "asakusa_mizusaki_butterfly")))), React.createElement("div", {
+      }, "asakusa_mizusaki_butterfly")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "footer",
         className: "row"
-      }, React.createElement("hr", null), React.createElement("p", null, " n.c.h works 2017-2020 | ", React.createElement("a", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, " n.c.h works 2017-2020 | ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "https://github.com/syncopika/funSketch"
-      }, "source ")))), React.createElement("div", {
+      }, "source ")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "screen",
         className: "col-lg-9 grid"
-      }, React.createElement(FrameCounterDisplay, {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FrameCounterDisplay, {
         currFrame: this.state.currentFrame,
         currLayer: this.state.currentLayer
-      }), React.createElement("div", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "canvasArea"
-      }), React.createElement(_AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_4__["AnimationTimeline"], {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_5__["AnimationTimeline"], {
         frames: this.state.timelineFrames
-      }), React.createElement("canvas", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
         id: "animationTimelineCanvas",
         style: {
           'border': '1px solid #000',
           'borderTop': 0,
           'display': 'block'
         }
-      }), React.createElement("div", null, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
         var marker = _this12.state.timelineMarkers[markerKey];
-        return React.createElement("div", null, React.createElement("label", {
+        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
           htmlFor: 'marker' + marker.frameNumber + 'Select'
-        }, "marker for frame ", marker.frameNumber, ": \xA0"), React.createElement("select", {
+        }, "marker for frame ", marker.frameNumber, ": \xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
           id: 'marker' + marker.frameNumber + 'Select',
           name: 'marker' + marker.frameNumber + 'Select',
           onChange: function onChange(evt) {
             marker.speed = evt.target.value;
           }
-        }, React.createElement("option", null, "100"), React.createElement("option", null, "200"), React.createElement("option", null, "300"), React.createElement("option", null, "500"), React.createElement("option", null, "1000")), React.createElement("label", {
+        }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", null, "100"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", null, "200"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", null, "300"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", null, "500"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", null, "1000")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
           id: 'deleteMarker_' + marker.frameNumber,
           style: {
             'color': 'red'
@@ -3040,360 +3444,12 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             return _this12._timelineMarkerDelete(marker.frameNumber);
           }
         }, " \xA0delete "));
-      }), React.createElement("br", null), React.createElement("br", null)))));
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null)))));
     }
   }]);
 
   return PresentationWrapper;
-}(React.Component);
-
-
-
-/***/ }),
-
-/***/ "./components/SuperCanvas.js":
-/*!***********************************!*\
-  !*** ./components/SuperCanvas.js ***!
-  \***********************************/
-/*! exports provided: Frame, AnimationProject, createOnionSkinFrame, setCanvas */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Frame", function() { return Frame; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AnimationProject", function() { return AnimationProject; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createOnionSkinFrame", function() { return createOnionSkinFrame; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setCanvas", function() { return setCanvas; });
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-// TODO: have an animation mode and a paint mode? in paint mode, you can do all the layering per frame and stuff.
-// in animation mode, we process all the frames and for each one condense all their layers into a single frame.
-// then we can use those frames in an animation.
-// to optimize performance when going into animation mode, maybe cache which frames are 'tainted' from the last time 
-// animation mode was switched to.
-
-/***
-    a class representing a frame, containing a list of canvas elements which represent layers of the frame
-***/
-var Frame = /*#__PURE__*/function () {
-  function Frame(container, number) {
-    _classCallCheck(this, Frame);
-
-    this.currentIndex = 0; // index of currently showing layer
-
-    this.canvasList = []; // keep a list of all canvas instances
-
-    this.currentCanvas; // the current, active canvas being looked at (reference to html element)
-
-    this.container = container; // this is the html container id to hold all the layers of this frame
-
-    this.number = number; // thid frame's number
-
-    this.count = 0; // current number of layers
-
-    this.width = 0;
-    this.height = 0;
-  }
-
-  _createClass(Frame, [{
-    key: "getMetadata",
-    value: function getMetadata() {
-      return {
-        'width': this.width,
-        'height': this.height,
-        'containerId': container,
-        'currentIndex': this.currentIndex,
-        'number': this.number
-      };
-    } // do we need this? since we have this.currentCanvas... :|
-
-  }, {
-    key: "getCurrCanvas",
-    value: function getCurrCanvas() {
-      return this.canvasList[this.currentIndex];
-    }
-    /***
-        set up a new canvas element
-        makes the new canvas the current canvas
-    ***/
-
-  }, {
-    key: "setupNewLayer",
-    value: function setupNewLayer() {
-      // create the new canvas element 
-      var newCanvas = document.createElement('canvas');
-      newCanvas.id = "frame" + this.number + "canvas" + this.count;
-      document.getElementById(this.container).appendChild(newCanvas);
-      setCanvas(newCanvas);
-
-      if (this.count === 0) {
-        newCanvas.style.opacity = .97;
-        newCanvas.style.zIndex = 1;
-        newCanvas.style.cursor = "crosshair";
-        this.width = newCanvas.width;
-        this.height = newCanvas.height;
-      } // set new canvas to be the current canvas only initially!
-
-
-      if (this.count === 0) {
-        this.currentCanvas = newCanvas;
-      }
-
-      this.canvasList.push(newCanvas);
-      this.count++;
-    }
-  }, {
-    key: "hide",
-    value: function hide() {
-      // puts all layers at zIndex -1 so they're not visible
-      this.canvasList.forEach(function (canvas) {
-        canvas.style.zIndex = -1;
-        canvas.style.visibility = "hidden";
-        canvas.style.cursor = "";
-      });
-    }
-  }, {
-    key: "show",
-    value: function show() {
-      // makes all layers visible
-      var activeLayerOpacity = .97;
-      this.canvasList.forEach(function (canvas) {
-        if (canvas.style.opacity >= activeLayerOpacity) {
-          canvas.style.zIndex = 1;
-        } else {
-          canvas.style.zIndex = 0;
-        }
-
-        canvas.style.visibility = "";
-        canvas.style.cursor = "crosshair";
-      });
-    }
-  }, {
-    key: "setToLayer",
-    value: function setToLayer(layerIndex, onionSkin) {
-      // note that this does not hide the previous layer + previous onion skin before switching to 
-      // the new layer.
-      var newLayer = this.canvasList[layerIndex]; //console.log(newLayer);
-
-      newLayer.style.opacity = 0.97;
-      newLayer.style.zIndex = 1;
-      this.currentCanvas = newLayer;
-      this.currentIndex = layerIndex;
-
-      if (onionSkin && layerIndex - 1 > 0) {
-        // apply onionskin
-        var prevLayer = this.canvasList[layerIndex - 1];
-        prevLayer.style.opacity = .92;
-        prevLayer.style.zIndex = 0;
-      }
-    }
-    /***
-        clone the current canvas
-    ***/
-
-  }, {
-    key: "copyCanvas",
-    value: function copyCanvas() {
-      var newCanvas = document.createElement('canvas');
-      newCanvas.id = 'frame' + this.number + 'canvas' + this.count;
-      setCanvas(newCanvas, this.width, this.height);
-      this.canvasList[this.count - 1].style.opacity = .97; // place the canvas in the container 
-
-      document.getElementById(container).appendChild(newCanvas); // position the new canvas directly on top of the previous one 
-
-      var canvas = document.getElementById(this.canvasList[0].id);
-      newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
-      this.canvasList.push(newCanvas);
-      this.count++;
-    }
-  }, {
-    key: "clearCurrentLayer",
-    value: function clearCurrentLayer() {
-      var currLayer = this.getCurrCanvas();
-      var context = currLayer.getContext("2d");
-      context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
-      context.fillStyle = "#FFFFFF";
-      context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
-    }
-  }, {
-    key: "resetFrame",
-    value: function resetFrame() {// TODO: remove all layers except first layer, then clear it
-    }
-  }]);
-
-  return Frame;
-}();
-/***
-    an animation is a single project containing one or more supercanvases (or frames).
-    it also instantiates an onion skin frame.
-***/
-
-
-function AnimationProject(container) {
-  this.name = "";
-  this.currentFrame = 0; // index of current frame
-
-  this.speed = 100; // 100 ms per frame 
-
-  this.frameList = [];
-  this.onionSkinFrame = createOnionSkinFrame(container);
-  this.onionSkinFrame.style.display = 'none'; // hide it initially
-
-  this.container = container; // id of the html element the frames are displayed in
-
-  this.resetProject = function () {
-    this.frameList.forEach(function (frame, frameIndex) {
-      var parent = document.getElementById(frame['container']); // just keep the first frame
-
-      frame.canvasList.forEach(function (layer, layerIndex) {
-        if (frameIndex > 0 || frameIndex === 0 && layerIndex > 0) {
-          parent.removeChild(layer);
-        }
-      });
-
-      if (frameIndex === 0) {
-        frame.canvasList = [frame.canvasList[0]];
-        frame.currentIndex = 0;
-        frame.currentCanvas = frame.canvasList[0];
-      }
-    });
-    this.frameList = [this.frameList[0]]; // clear the first layer of the first frame!
-
-    this.frameList[0].clearCurrentLayer();
-    this.currentFrame = 0;
-    this.speed = 100;
-    this.frameList[0].currentCanvas.style.visibility = "";
-    this.clearOnionSkin();
-  };
-
-  this.addNewFrame = function (showFlag) {
-    var newFrame = new Frame(this.container, this.frameList.length);
-    newFrame.setupNewLayer();
-    this.frameList.push(newFrame);
-
-    if (!showFlag) {
-      newFrame.hide();
-    }
-  };
-
-  this.deleteFrame = function (index) {
-    // don't allow removal if only one frame exists
-    if (this.frameList.length === 1) {
-      return false;
-    }
-
-    var frame = this.frameList[index]; // remove frame from frameList
-
-    this.frameList.splice(index, 1);
-    var parentContainer = document.getElementById(frame['container']); // remove all layers
-
-    frame.canvasList.forEach(function (layer) {
-      parentContainer.removeChild(layer);
-    });
-    return true;
-  };
-
-  this.nextFrame = function () {
-    if (this.frameList.length === this.currentFrame + 1) {
-      return null; // no more frames to see
-    }
-
-    this.currentFrame += 1;
-    this.updateOnionSkin();
-    return this.frameList[this.currentFrame];
-  };
-
-  this.prevFrame = function () {
-    if (this.currentFrame - 1 < 0) {
-      return null; // no more frames to see
-    }
-
-    this.currentFrame -= 1;
-    this.updateOnionSkin();
-    return this.frameList[this.currentFrame];
-  };
-
-  this.getCurrFrame = function () {
-    return this.frameList[this.currentFrame];
-  };
-
-  this.updateOnionSkin = function () {
-    if (this.currentFrame - 1 < 0) {
-      // no onionskin for very first frame 
-      this.onionSkinFrame.style.opacity = 0;
-      return;
-    }
-
-    this.onionSkinFrame.style.display = ''; // show onion skin
-
-    var onionSkinCtx = this.onionSkinFrame.getContext("2d");
-    onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // take the previous frame, merge all layers, put into onion skin frame
-    // try this? only draw pixels that are non-white?
-
-    var onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // build the merged image from the first to last
-
-    var prevFrame = this.frameList[this.currentFrame - 1];
-    prevFrame.canvasList.forEach(function (layer) {
-      var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
-
-      for (var i = 0; i < imageData.length; i += 4) {
-        if (imageData[i] === 255 && imageData[i + 1] === 255 && imageData[i + 2] === 255) {
-          continue;
-        } else {
-          // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
-          // we might run into index/length issues...
-          onionSkinImageData.data[i] = imageData[i];
-          onionSkinImageData.data[i + 1] = imageData[i + 1];
-          onionSkinImageData.data[i + 2] = imageData[i + 2];
-          onionSkinImageData.data[i + 3] = 255;
-        }
-      } // apply each layer to the onion skin
-
-
-      onionSkinCtx.putImageData(onionSkinImageData, 0, 0);
-    });
-    this.onionSkinFrame.style.zIndex = 0;
-    this.onionSkinFrame.style.opacity = 0.92;
-  };
-
-  this.clearOnionSkin = function () {
-    var onionSkin = this.onionSkinFrame;
-    var context = this.onionSkinFrame.getContext("2d");
-    context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
-    context.fillStyle = "#FFFFFF";
-    context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
-  };
-}
-
-function createOnionSkinFrame(container) {
-  // create the new canvas element 
-  var newCanvas = document.createElement('canvas');
-  newCanvas.id = "onionSkinCanvas";
-  document.getElementById(container).appendChild(newCanvas);
-  setCanvas(newCanvas);
-  newCanvas.style.opacity = .97;
-  newCanvas.style.zIndex = -1; // come back to this later. make sure it's visible if current frame > 1!
-
-  return newCanvas;
-} // assigns position, z-index, border, width, height and opacity
-
-
-function setCanvas(canvasElement) {
-  canvasElement.style.position = "absolute";
-  canvasElement.style.border = '1px #000 solid';
-  canvasElement.style.zIndex = 0;
-  canvasElement.style.opacity = 0;
-  canvasElement.style.width = "100%";
-  canvasElement.style.height = "100%";
-  canvasElement.width = canvasElement.offsetWidth;
-  canvasElement.height = canvasElement.offsetHeight;
-  canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,255)";
-  canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
-}
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
 
 
@@ -3410,27 +3466,8 @@ function setCanvas(canvasElement) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Toolbar", function() { return Toolbar; });
 // toolbar class
-function applyOnionSkin(canvas) {
-  canvas.style.opacity = .92; // apply onion skin to current canvas 
-
-  canvas.style.zIndex = 0;
-  canvas.style.cursor = "";
-}
-
-function showCanvas(canvas) {
-  canvas.style.opacity = .97;
-  canvas.style.zIndex = 1;
-  canvas.style.cursor = "crosshair";
-}
-
-function hideCanvas(canvas) {
-  canvas.style.opacity = 0;
-  canvas.style.zIndex = 0;
-  canvas.style.cursor = "";
-} // assemble the common functions for the toolbar
+// assemble the common functions for the toolbar
 // remove canvas param since you have animationProj
-
-
 function Toolbar(canvas, brush, animationProj) {
   // keep this letiable for storing the most recent imported image
   // can be useful for resetting image
@@ -3444,6 +3481,26 @@ function Toolbar(canvas, brush, animationProj) {
 
   this.layerMode = true;
   this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
+  // shouldn't the following 3 functions be actually part of the Frame class?? kinda weird to have them here...
+
+  this._applyOnionSkin = function (canvas) {
+    canvas.style.opacity = .92; // apply onion skin to current canvas 
+
+    canvas.style.zIndex = 0;
+    canvas.style.cursor = "";
+  };
+
+  this._showCanvas = function (canvas) {
+    canvas.style.opacity = .97;
+    canvas.style.zIndex = 1;
+    canvas.style.cursor = "crosshair";
+  };
+
+  this._hideCanvas = function (canvas) {
+    canvas.style.opacity = 0;
+    canvas.style.zIndex = 0;
+    canvas.style.cursor = "";
+  };
 
   this.setCounter = function (elementId) {
     this.htmlCounter = document.getElementById(elementId);
@@ -3456,18 +3513,21 @@ function Toolbar(canvas, brush, animationProj) {
     if (frame.currentIndex + 1 < frame.canvasList.length) {
       // move to next canvas
       // apply onion skin to current canvas 
-      applyOnionSkin(frame.currentCanvas); // in the special case for when you want to go to the next canvas from the very first one, 
+      this._applyOnionSkin(frame.currentCanvas); // in the special case for when you want to go to the next canvas from the very first one, 
       // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
+
 
       if (frame.currentIndex > 0) {
         var prevLayer = frame.canvasList[frame.currentIndex - 1]; // reset opacity and z-index for previous canvas (because of onionskin)
 
-        hideCanvas(prevLayer);
+        this._hideCanvas(prevLayer);
       } // show the next canvas 
 
 
       var nextLayer = frame.canvasList[frame.currentIndex + 1];
-      showCanvas(nextLayer);
+
+      this._showCanvas(nextLayer);
+
       frame.currentCanvas = nextLayer;
       frame.currentIndex++; // apply brush
       // TODO: can we figure out a better way to handle brushes?
@@ -3485,10 +3545,13 @@ function Toolbar(canvas, brush, animationProj) {
 
     if (frame.currentIndex - 1 >= 0) {
       // move to previous canvas
-      hideCanvas(frame.currentCanvas); // make previous canvas visible 
+      this._hideCanvas(frame.currentCanvas); // make previous canvas visible 
+
 
       var prevLayer = frame.canvasList[frame.currentIndex - 1];
-      showCanvas(prevLayer); // if there is another canvas before the previous one, apply onion skin
+
+      this._showCanvas(prevLayer); // if there is another canvas before the previous one, apply onion skin
+
 
       if (frame.currentIndex - 2 >= 0) {
         frame.canvasList[frame.currentIndex - 2].style.opacity = .92;
@@ -4254,7 +4317,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_PresentationWrapper_js__WEBPACK_IMPORTED_MODULE_2__["PresentationWrapper"], null), document.getElementById('root'));
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_PresentationWrapper_js__WEBPACK_IMPORTED_MODULE_2__["PresentationWrapper"], null), document.getElementById('root'));
 
 /***/ }),
 
@@ -4506,7 +4569,7 @@ module.exports = ReactPropTypesSecret;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/** @license React v16.13.0
+/** @license React v16.14.0
  * react-dom.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -4952,271 +5015,6 @@ var SuspenseListComponent = 19;
 var FundamentalComponent = 20;
 var ScopeComponent = 21;
 var Block = 22;
-
-var BEFORE_SLASH_RE = /^(.*)[\\\/]/;
-function describeComponentFrame (name, source, ownerName) {
-  var sourceInfo = '';
-
-  if (source) {
-    var path = source.fileName;
-    var fileName = path.replace(BEFORE_SLASH_RE, '');
-
-    {
-      // In DEV, include code for a common special case:
-      // prefer "folder/index.js" instead of just "index.js".
-      if (/^index\./.test(fileName)) {
-        var match = path.match(BEFORE_SLASH_RE);
-
-        if (match) {
-          var pathBeforeSlash = match[1];
-
-          if (pathBeforeSlash) {
-            var folderName = pathBeforeSlash.replace(BEFORE_SLASH_RE, '');
-            fileName = folderName + '/' + fileName;
-          }
-        }
-      }
-    }
-
-    sourceInfo = ' (at ' + fileName + ':' + source.lineNumber + ')';
-  } else if (ownerName) {
-    sourceInfo = ' (created by ' + ownerName + ')';
-  }
-
-  return '\n    in ' + (name || 'Unknown') + sourceInfo;
-}
-
-// The Symbol used to tag the ReactElement-like types. If there is no native Symbol
-// nor polyfill, then a plain number is used for performance.
-var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
-var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
-var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
-var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
-var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
-var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
-var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
-var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
-var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
-var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
-var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
-var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
-var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
-var MAYBE_ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
-var FAUX_ITERATOR_SYMBOL = '@@iterator';
-function getIteratorFn(maybeIterable) {
-  if (maybeIterable === null || typeof maybeIterable !== 'object') {
-    return null;
-  }
-
-  var maybeIterator = MAYBE_ITERATOR_SYMBOL && maybeIterable[MAYBE_ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL];
-
-  if (typeof maybeIterator === 'function') {
-    return maybeIterator;
-  }
-
-  return null;
-}
-
-var Uninitialized = -1;
-var Pending = 0;
-var Resolved = 1;
-var Rejected = 2;
-function refineResolvedLazyComponent(lazyComponent) {
-  return lazyComponent._status === Resolved ? lazyComponent._result : null;
-}
-function initializeLazyComponentType(lazyComponent) {
-  if (lazyComponent._status === Uninitialized) {
-    lazyComponent._status = Pending;
-    var ctor = lazyComponent._ctor;
-    var thenable = ctor();
-    lazyComponent._result = thenable;
-    thenable.then(function (moduleObject) {
-      if (lazyComponent._status === Pending) {
-        var defaultExport = moduleObject.default;
-
-        {
-          if (defaultExport === undefined) {
-            error('lazy: Expected the result of a dynamic import() call. ' + 'Instead received: %s\n\nYour code should look like: \n  ' + "const MyComponent = lazy(() => import('./MyComponent'))", moduleObject);
-          }
-        }
-
-        lazyComponent._status = Resolved;
-        lazyComponent._result = defaultExport;
-      }
-    }, function (error) {
-      if (lazyComponent._status === Pending) {
-        lazyComponent._status = Rejected;
-        lazyComponent._result = error;
-      }
-    });
-  }
-}
-
-function getWrappedName(outerType, innerType, wrapperName) {
-  var functionName = innerType.displayName || innerType.name || '';
-  return outerType.displayName || (functionName !== '' ? wrapperName + "(" + functionName + ")" : wrapperName);
-}
-
-function getComponentName(type) {
-  if (type == null) {
-    // Host root, text node or just invalid type.
-    return null;
-  }
-
-  {
-    if (typeof type.tag === 'number') {
-      error('Received an unexpected object in getComponentName(). ' + 'This is likely a bug in React. Please file an issue.');
-    }
-  }
-
-  if (typeof type === 'function') {
-    return type.displayName || type.name || null;
-  }
-
-  if (typeof type === 'string') {
-    return type;
-  }
-
-  switch (type) {
-    case REACT_FRAGMENT_TYPE:
-      return 'Fragment';
-
-    case REACT_PORTAL_TYPE:
-      return 'Portal';
-
-    case REACT_PROFILER_TYPE:
-      return "Profiler";
-
-    case REACT_STRICT_MODE_TYPE:
-      return 'StrictMode';
-
-    case REACT_SUSPENSE_TYPE:
-      return 'Suspense';
-
-    case REACT_SUSPENSE_LIST_TYPE:
-      return 'SuspenseList';
-  }
-
-  if (typeof type === 'object') {
-    switch (type.$$typeof) {
-      case REACT_CONTEXT_TYPE:
-        return 'Context.Consumer';
-
-      case REACT_PROVIDER_TYPE:
-        return 'Context.Provider';
-
-      case REACT_FORWARD_REF_TYPE:
-        return getWrappedName(type, type.render, 'ForwardRef');
-
-      case REACT_MEMO_TYPE:
-        return getComponentName(type.type);
-
-      case REACT_BLOCK_TYPE:
-        return getComponentName(type.render);
-
-      case REACT_LAZY_TYPE:
-        {
-          var thenable = type;
-          var resolvedThenable = refineResolvedLazyComponent(thenable);
-
-          if (resolvedThenable) {
-            return getComponentName(resolvedThenable);
-          }
-
-          break;
-        }
-    }
-  }
-
-  return null;
-}
-
-var ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
-
-function describeFiber(fiber) {
-  switch (fiber.tag) {
-    case HostRoot:
-    case HostPortal:
-    case HostText:
-    case Fragment:
-    case ContextProvider:
-    case ContextConsumer:
-      return '';
-
-    default:
-      var owner = fiber._debugOwner;
-      var source = fiber._debugSource;
-      var name = getComponentName(fiber.type);
-      var ownerName = null;
-
-      if (owner) {
-        ownerName = getComponentName(owner.type);
-      }
-
-      return describeComponentFrame(name, source, ownerName);
-  }
-}
-
-function getStackByFiberInDevAndProd(workInProgress) {
-  var info = '';
-  var node = workInProgress;
-
-  do {
-    info += describeFiber(node);
-    node = node.return;
-  } while (node);
-
-  return info;
-}
-var current = null;
-var phase = null;
-function getCurrentFiberOwnerNameInDevOrNull() {
-  {
-    if (current === null) {
-      return null;
-    }
-
-    var owner = current._debugOwner;
-
-    if (owner !== null && typeof owner !== 'undefined') {
-      return getComponentName(owner.type);
-    }
-  }
-
-  return null;
-}
-function getCurrentFiberStackInDev() {
-  {
-    if (current === null) {
-      return '';
-    } // Safe because if current fiber exists, we are reconciling,
-    // and it is guaranteed to be the work-in-progress version.
-
-
-    return getStackByFiberInDevAndProd(current);
-  }
-}
-function resetCurrentFiber() {
-  {
-    ReactDebugCurrentFrame.getCurrentStack = null;
-    current = null;
-    phase = null;
-  }
-}
-function setCurrentFiber(fiber) {
-  {
-    ReactDebugCurrentFrame.getCurrentStack = getCurrentFiberStackInDev;
-    current = fiber;
-    phase = null;
-  }
-}
-function setCurrentPhase(lifeCyclePhase) {
-  {
-    phase = lifeCyclePhase;
-  }
-}
 
 /**
  * Injectable ordering of event plugins.
@@ -5917,10 +5715,10 @@ properties[xlinkHref] = new PropertyInfoRecord('xlinkHref', STRING, false, // mu
   true);
 });
 
-var ReactDebugCurrentFrame$1 = null;
+var ReactDebugCurrentFrame = null;
 
 {
-  ReactDebugCurrentFrame$1 = ReactSharedInternals.ReactDebugCurrentFrame;
+  ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
 } // A javascript: URL can contain leading C0 control or \u0020 SPACE,
 // and any newline or tab are filtered out as if they're not part of the URL.
 // https://url.spec.whatwg.org/#url-parsing
@@ -6122,6 +5920,271 @@ function setValueForProperty(node, name, value, isCustomComponentTag) {
     } else {
       node.setAttribute(attributeName, attributeValue);
     }
+  }
+}
+
+var BEFORE_SLASH_RE = /^(.*)[\\\/]/;
+function describeComponentFrame (name, source, ownerName) {
+  var sourceInfo = '';
+
+  if (source) {
+    var path = source.fileName;
+    var fileName = path.replace(BEFORE_SLASH_RE, '');
+
+    {
+      // In DEV, include code for a common special case:
+      // prefer "folder/index.js" instead of just "index.js".
+      if (/^index\./.test(fileName)) {
+        var match = path.match(BEFORE_SLASH_RE);
+
+        if (match) {
+          var pathBeforeSlash = match[1];
+
+          if (pathBeforeSlash) {
+            var folderName = pathBeforeSlash.replace(BEFORE_SLASH_RE, '');
+            fileName = folderName + '/' + fileName;
+          }
+        }
+      }
+    }
+
+    sourceInfo = ' (at ' + fileName + ':' + source.lineNumber + ')';
+  } else if (ownerName) {
+    sourceInfo = ' (created by ' + ownerName + ')';
+  }
+
+  return '\n    in ' + (name || 'Unknown') + sourceInfo;
+}
+
+// The Symbol used to tag the ReactElement-like types. If there is no native Symbol
+// nor polyfill, then a plain number is used for performance.
+var hasSymbol = typeof Symbol === 'function' && Symbol.for;
+var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
+var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
+var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
+var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
+var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
+var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
+var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
+var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
+var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
+var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
+var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
+var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
+var MAYBE_ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+var FAUX_ITERATOR_SYMBOL = '@@iterator';
+function getIteratorFn(maybeIterable) {
+  if (maybeIterable === null || typeof maybeIterable !== 'object') {
+    return null;
+  }
+
+  var maybeIterator = MAYBE_ITERATOR_SYMBOL && maybeIterable[MAYBE_ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL];
+
+  if (typeof maybeIterator === 'function') {
+    return maybeIterator;
+  }
+
+  return null;
+}
+
+var Uninitialized = -1;
+var Pending = 0;
+var Resolved = 1;
+var Rejected = 2;
+function refineResolvedLazyComponent(lazyComponent) {
+  return lazyComponent._status === Resolved ? lazyComponent._result : null;
+}
+function initializeLazyComponentType(lazyComponent) {
+  if (lazyComponent._status === Uninitialized) {
+    lazyComponent._status = Pending;
+    var ctor = lazyComponent._ctor;
+    var thenable = ctor();
+    lazyComponent._result = thenable;
+    thenable.then(function (moduleObject) {
+      if (lazyComponent._status === Pending) {
+        var defaultExport = moduleObject.default;
+
+        {
+          if (defaultExport === undefined) {
+            error('lazy: Expected the result of a dynamic import() call. ' + 'Instead received: %s\n\nYour code should look like: \n  ' + "const MyComponent = lazy(() => import('./MyComponent'))", moduleObject);
+          }
+        }
+
+        lazyComponent._status = Resolved;
+        lazyComponent._result = defaultExport;
+      }
+    }, function (error) {
+      if (lazyComponent._status === Pending) {
+        lazyComponent._status = Rejected;
+        lazyComponent._result = error;
+      }
+    });
+  }
+}
+
+function getWrappedName(outerType, innerType, wrapperName) {
+  var functionName = innerType.displayName || innerType.name || '';
+  return outerType.displayName || (functionName !== '' ? wrapperName + "(" + functionName + ")" : wrapperName);
+}
+
+function getComponentName(type) {
+  if (type == null) {
+    // Host root, text node or just invalid type.
+    return null;
+  }
+
+  {
+    if (typeof type.tag === 'number') {
+      error('Received an unexpected object in getComponentName(). ' + 'This is likely a bug in React. Please file an issue.');
+    }
+  }
+
+  if (typeof type === 'function') {
+    return type.displayName || type.name || null;
+  }
+
+  if (typeof type === 'string') {
+    return type;
+  }
+
+  switch (type) {
+    case REACT_FRAGMENT_TYPE:
+      return 'Fragment';
+
+    case REACT_PORTAL_TYPE:
+      return 'Portal';
+
+    case REACT_PROFILER_TYPE:
+      return "Profiler";
+
+    case REACT_STRICT_MODE_TYPE:
+      return 'StrictMode';
+
+    case REACT_SUSPENSE_TYPE:
+      return 'Suspense';
+
+    case REACT_SUSPENSE_LIST_TYPE:
+      return 'SuspenseList';
+  }
+
+  if (typeof type === 'object') {
+    switch (type.$$typeof) {
+      case REACT_CONTEXT_TYPE:
+        return 'Context.Consumer';
+
+      case REACT_PROVIDER_TYPE:
+        return 'Context.Provider';
+
+      case REACT_FORWARD_REF_TYPE:
+        return getWrappedName(type, type.render, 'ForwardRef');
+
+      case REACT_MEMO_TYPE:
+        return getComponentName(type.type);
+
+      case REACT_BLOCK_TYPE:
+        return getComponentName(type.render);
+
+      case REACT_LAZY_TYPE:
+        {
+          var thenable = type;
+          var resolvedThenable = refineResolvedLazyComponent(thenable);
+
+          if (resolvedThenable) {
+            return getComponentName(resolvedThenable);
+          }
+
+          break;
+        }
+    }
+  }
+
+  return null;
+}
+
+var ReactDebugCurrentFrame$1 = ReactSharedInternals.ReactDebugCurrentFrame;
+
+function describeFiber(fiber) {
+  switch (fiber.tag) {
+    case HostRoot:
+    case HostPortal:
+    case HostText:
+    case Fragment:
+    case ContextProvider:
+    case ContextConsumer:
+      return '';
+
+    default:
+      var owner = fiber._debugOwner;
+      var source = fiber._debugSource;
+      var name = getComponentName(fiber.type);
+      var ownerName = null;
+
+      if (owner) {
+        ownerName = getComponentName(owner.type);
+      }
+
+      return describeComponentFrame(name, source, ownerName);
+  }
+}
+
+function getStackByFiberInDevAndProd(workInProgress) {
+  var info = '';
+  var node = workInProgress;
+
+  do {
+    info += describeFiber(node);
+    node = node.return;
+  } while (node);
+
+  return info;
+}
+var current = null;
+var isRendering = false;
+function getCurrentFiberOwnerNameInDevOrNull() {
+  {
+    if (current === null) {
+      return null;
+    }
+
+    var owner = current._debugOwner;
+
+    if (owner !== null && typeof owner !== 'undefined') {
+      return getComponentName(owner.type);
+    }
+  }
+
+  return null;
+}
+function getCurrentFiberStackInDev() {
+  {
+    if (current === null) {
+      return '';
+    } // Safe because if current fiber exists, we are reconciling,
+    // and it is guaranteed to be the work-in-progress version.
+
+
+    return getStackByFiberInDevAndProd(current);
+  }
+}
+function resetCurrentFiber() {
+  {
+    ReactDebugCurrentFrame$1.getCurrentStack = null;
+    current = null;
+    isRendering = false;
+  }
+}
+function setCurrentFiber(fiber) {
+  {
+    ReactDebugCurrentFrame$1.getCurrentStack = getCurrentFiberStackInDev;
+    current = fiber;
+    isRendering = false;
+  }
+}
+function setIsRendering(rendering) {
+  {
+    isRendering = rendering;
   }
 }
 
@@ -10128,7 +10191,6 @@ function validateProperties$2(type, props, canUseEventSystem) {
 }
 
 var didWarnInvalidHydration = false;
-var didWarnShadyDOM = false;
 var DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 var SUPPRESS_CONTENT_EDITABLE_WARNING = 'suppressContentEditableWarning';
 var SUPPRESS_HYDRATION_WARNING = 'suppressHydrationWarning';
@@ -10448,12 +10510,6 @@ function setInitialProperties(domElement, tag, rawProps, rootContainerElement) {
 
   {
     validatePropertiesInDevelopment(tag, rawProps);
-
-    if (isCustomComponentTag && !didWarnShadyDOM && domElement.shadyRoot) {
-      error('%s is using shady DOM. Using shady DOM with React can ' + 'cause things to break subtly.', getCurrentFiberOwnerNameInDevOrNull() || 'A component');
-
-      didWarnShadyDOM = true;
-    }
   } // TODO: Make sure that we check isMounted before firing any of these events.
 
 
@@ -10807,12 +10863,6 @@ function diffHydratedProperties(domElement, tag, rawProps, parentNamespace, root
     suppressHydrationWarning = rawProps[SUPPRESS_HYDRATION_WARNING] === true;
     isCustomComponentTag = isCustomComponent(tag, rawProps);
     validatePropertiesInDevelopment(tag, rawProps);
-
-    if (isCustomComponentTag && !didWarnShadyDOM && domElement.shadyRoot) {
-      error('%s is using shady DOM. Using shady DOM with React can ' + 'cause things to break subtly.', getCurrentFiberOwnerNameInDevOrNull() || 'A component');
-
-      didWarnShadyDOM = true;
-    }
   } // TODO: Make sure that we check isMounted before firing any of these events.
 
 
@@ -15333,18 +15383,9 @@ function processChildContext(fiber, type, parentContext) {
     }
 
     var childContext;
-
-    {
-      setCurrentPhase('getChildContext');
-    }
-
     startPhaseTimer(fiber, 'getChildContext');
     childContext = instance.getChildContext();
     stopPhaseTimer();
-
-    {
-      setCurrentPhase(null);
-    }
 
     for (var contextKey in childContext) {
       if (!(contextKey in childContextTypes)) {
@@ -21269,7 +21310,6 @@ var didWarnAboutContextTypeOnFunctionComponent;
 var didWarnAboutGetDerivedStateOnFunctionComponent;
 var didWarnAboutFunctionRefs;
 var didWarnAboutReassigningProps;
-var didWarnAboutMaxDuration;
 var didWarnAboutRevealOrder;
 var didWarnAboutTailOptions;
 
@@ -21280,7 +21320,6 @@ var didWarnAboutTailOptions;
   didWarnAboutGetDerivedStateOnFunctionComponent = {};
   didWarnAboutFunctionRefs = {};
   didWarnAboutReassigningProps = false;
-  didWarnAboutMaxDuration = false;
   didWarnAboutRevealOrder = {};
   didWarnAboutTailOptions = {};
 }
@@ -21344,7 +21383,7 @@ function updateForwardRef(current, workInProgress, Component, nextProps, renderE
 
   {
     ReactCurrentOwner$1.current = workInProgress;
-    setCurrentPhase('render');
+    setIsRendering(true);
     nextChildren = renderWithHooks(current, workInProgress, render, nextProps, ref, renderExpirationTime);
 
     if ( workInProgress.mode & StrictMode) {
@@ -21354,7 +21393,7 @@ function updateForwardRef(current, workInProgress, Component, nextProps, renderE
       }
     }
 
-    setCurrentPhase(null);
+    setIsRendering(false);
   }
 
   if (current !== null && !didReceiveUpdate) {
@@ -21562,7 +21601,7 @@ function updateFunctionComponent(current, workInProgress, Component, nextProps, 
 
   {
     ReactCurrentOwner$1.current = workInProgress;
-    setCurrentPhase('render');
+    setIsRendering(true);
     nextChildren = renderWithHooks(current, workInProgress, Component, nextProps, context, renderExpirationTime);
 
     if ( workInProgress.mode & StrictMode) {
@@ -21572,7 +21611,7 @@ function updateFunctionComponent(current, workInProgress, Component, nextProps, 
       }
     }
 
-    setCurrentPhase(null);
+    setIsRendering(false);
   }
 
   if (current !== null && !didReceiveUpdate) {
@@ -21688,14 +21727,14 @@ function finishClassComponent(current, workInProgress, Component, shouldUpdate, 
     }
   } else {
     {
-      setCurrentPhase('render');
+      setIsRendering(true);
       nextChildren = instance.render();
 
       if ( workInProgress.mode & StrictMode) {
         instance.render();
       }
 
-      setCurrentPhase(null);
+      setIsRendering(false);
     }
   } // React DevTools reads this flag.
 
@@ -22009,8 +22048,10 @@ function mountIndeterminateComponent(_current, workInProgress, Component, render
       ReactStrictModeWarnings.recordLegacyContextWarning(workInProgress, null);
     }
 
+    setIsRendering(true);
     ReactCurrentOwner$1.current = workInProgress;
     value = renderWithHooks(null, workInProgress, Component, props, context, renderExpirationTime);
+    setIsRendering(false);
   } // React DevTools reads this flag.
 
 
@@ -22176,17 +22217,7 @@ function updateSuspenseComponent(current, workInProgress, renderExpirationTime) 
   }
 
   suspenseContext = setDefaultShallowSuspenseContext(suspenseContext);
-  pushSuspenseContext(workInProgress, suspenseContext);
-
-  {
-    if ('maxDuration' in nextProps) {
-      if (!didWarnAboutMaxDuration) {
-        didWarnAboutMaxDuration = true;
-
-        error('maxDuration has been removed from React. ' + 'Remove the maxDuration prop.');
-      }
-    }
-  } // This next part is a bit confusing. If the children timeout, we switch to
+  pushSuspenseContext(workInProgress, suspenseContext); // This next part is a bit confusing. If the children timeout, we switch to
   // showing the fallback children in place of the "primary" children.
   // However, we don't want to delete the primary children because then their
   // state will be lost (both the React state and the host state, e.g.
@@ -22207,7 +22238,6 @@ function updateSuspenseComponent(current, workInProgress, renderExpirationTime) 
   // Otherwise, we render the primary children directly. This requires some
   // custom reconciliation logic to preserve the state of the primary
   // children. It's essentially a very basic form of re-parenting.
-
 
   if (current === null) {
     // If we're currently hydrating, try to hydrate this boundary.
@@ -22841,9 +22871,9 @@ function updateContextConsumer(current, workInProgress, renderExpirationTime) {
 
   {
     ReactCurrentOwner$1.current = workInProgress;
-    setCurrentPhase('render');
+    setIsRendering(true);
     newChildren = render(newValue);
-    setCurrentPhase(null);
+    setIsRendering(false);
   } // React DevTools reads this flag.
 
 
@@ -25355,9 +25385,11 @@ function throwException(root, returnFiber, sourceFiber, value, renderExpirationT
       var currentSource = sourceFiber.alternate;
 
       if (currentSource) {
+        sourceFiber.updateQueue = currentSource.updateQueue;
         sourceFiber.memoizedState = currentSource.memoizedState;
         sourceFiber.expirationTime = currentSource.expirationTime;
       } else {
+        sourceFiber.updateQueue = null;
         sourceFiber.memoizedState = null;
       }
     }
@@ -27755,43 +27787,40 @@ var beginWork$1;
 }
 
 var didWarnAboutUpdateInRender = false;
-var didWarnAboutUpdateInGetChildContext = false;
+var didWarnAboutUpdateInRenderForAnotherComponent;
+
+{
+  didWarnAboutUpdateInRenderForAnotherComponent = new Set();
+}
 
 function warnAboutRenderPhaseUpdatesInDEV(fiber) {
   {
-    if ((executionContext & RenderContext) !== NoContext) {
+    if (isRendering && (executionContext & RenderContext) !== NoContext) {
       switch (fiber.tag) {
         case FunctionComponent:
         case ForwardRef:
         case SimpleMemoComponent:
           {
-            error('Cannot update a component from inside the function body of a ' + 'different component.');
+            var renderingComponentName = workInProgress && getComponentName(workInProgress.type) || 'Unknown'; // Dedupe by the rendering component because it's the one that needs to be fixed.
+
+            var dedupeKey = renderingComponentName;
+
+            if (!didWarnAboutUpdateInRenderForAnotherComponent.has(dedupeKey)) {
+              didWarnAboutUpdateInRenderForAnotherComponent.add(dedupeKey);
+              var setStateComponentName = getComponentName(fiber.type) || 'Unknown';
+
+              error('Cannot update a component (`%s`) while rendering a ' + 'different component (`%s`). To locate the bad setState() call inside `%s`, ' + 'follow the stack trace as described in https://fb.me/setstate-in-render', setStateComponentName, renderingComponentName, renderingComponentName);
+            }
 
             break;
           }
 
         case ClassComponent:
           {
-            switch (phase) {
-              case 'getChildContext':
-                if (didWarnAboutUpdateInGetChildContext) {
-                  return;
-                }
+            if (!didWarnAboutUpdateInRender) {
+              error('Cannot update during an existing state transition (such as ' + 'within `render`). Render methods should be a pure ' + 'function of props and state.');
 
-                error('setState(...): Cannot call setState() inside getChildContext()');
-
-                didWarnAboutUpdateInGetChildContext = true;
-                break;
-
-              case 'render':
-                if (didWarnAboutUpdateInRender) {
-                  return;
-                }
-
-                error('Cannot update during an existing state transition (such as ' + 'within `render`). Render methods should be a pure ' + 'function of props and state.');
-
-                didWarnAboutUpdateInRender = true;
-                break;
+              didWarnAboutUpdateInRender = true;
             }
 
             break;
@@ -28886,7 +28915,7 @@ function updateContainer(element, container, parentComponent, callback) {
   }
 
   {
-    if (phase === 'render' && current !== null && !didWarnAboutNestedUpdates) {
+    if (isRendering && current !== null && !didWarnAboutNestedUpdates) {
       didWarnAboutNestedUpdates = true;
 
       error('Render methods should be a pure function of props and state; ' + 'triggering nested component updates from render is not allowed. ' + 'If necessary, trigger nested updates in componentDidUpdate.\n\n' + 'Check the render method of %s.', getComponentName(current.type) || 'Unknown');
@@ -29110,7 +29139,7 @@ function injectIntoDevTools(devToolsConfig) {
     // Enables DevTools to append owner stacks to error messages in DEV mode.
     getCurrentFiber:  function () {
       return current;
-    } 
+    }
   }));
 }
 var IsSomeRendererActing$1 = ReactSharedInternals.IsSomeRendererActing;
@@ -29462,7 +29491,7 @@ implementation) {
   };
 }
 
-var ReactVersion = '16.13.0';
+var ReactVersion = '16.14.0';
 
 setAttemptUserBlockingHydration(attemptUserBlockingHydration$1);
 setAttemptContinuousHydration(attemptContinuousHydration$1);
@@ -29609,7 +29638,7 @@ if (false) {} else {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/** @license React v16.13.0
+/** @license React v16.14.0
  * react.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -29629,7 +29658,7 @@ if (true) {
 var _assign = __webpack_require__(/*! object-assign */ "./node_modules/object-assign/index.js");
 var checkPropTypes = __webpack_require__(/*! prop-types/checkPropTypes */ "./node_modules/prop-types/checkPropTypes.js");
 
-var ReactVersion = '16.13.0';
+var ReactVersion = '16.14.0';
 
 // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
 // nor polyfill, then a plain number is used for performance.
@@ -31550,7 +31579,7 @@ if (false) {} else {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/** @license React v0.19.0
+/** @license React v0.19.1
  * scheduler-tracing.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -31911,7 +31940,7 @@ exports.unstable_wrap = unstable_wrap;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/** @license React v0.19.0
+/** @license React v0.19.1
  * scheduler.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.

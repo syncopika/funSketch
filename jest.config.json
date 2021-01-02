@@ -1,0 +1,5 @@
+{
+  "verbose": true,
+  "roots": ["tests"],
+  "testRegex": "((\\.|/*.)(spec))\\.js?$"
+}

@@ -1,8 +1,11 @@
 /***
     brush class
-    pass in an instance of the SuperCanvas class as an argument
+    pass in an instance of the AnimationProject class as an argument
     the canvas argument will have a reference to the current canvas so that
     only the current canvas will be a target for the brush
+	
+	I think we may be able to get away with leaving this 'class' as just a function
+	since there should only be one Brush instance for an animation project.
 ***/
 function Brush(animationProject) {
     // pass in an animation project, from which you can access the current frame and the current canvas
@@ -72,53 +75,59 @@ function Brush(animationProject) {
         let canvas = thisBrushInstance.animationProject.getCurrFrame();
         let paint;
 		
-        $('#' + canvas.currentCanvas.id).on('mousedown touchstart', (e) => {
-            if((e.which === 1 && e.type === 'mousedown') || e.type === 'touchstart') { //when left click only
-                // update previousCanvas
-                if(thisBrushInstance.previousCanvas !== canvas.currentCanvas) {
-                    thisBrushInstance.previousCanvas = canvas.currentCanvas;
-                    // reset the snapshots array
-                    thisBrushInstance.currentCanvasSnapshots = [];
-                }
+		const currCanvas = document.getElementById(canvas.currentCanvas.id);
+		
+		function defaultBrushStart(evt){
+			if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart') { //when left click only
+				// update previousCanvas
+				if(thisBrushInstance.previousCanvas !== canvas.currentCanvas) {
+					thisBrushInstance.previousCanvas = canvas.currentCanvas;
+					// reset the snapshots array
+					thisBrushInstance.currentCanvasSnapshots = [];
+				}
 				
-                if(tempSnapshot) {
-                    thisBrushInstance.currentCanvasSnapshots.push(tempSnapshot);
-                }
+				if(tempSnapshot) {
+					thisBrushInstance.currentCanvasSnapshots.push(tempSnapshot);
+				}
 				
-                paint = true;
-                // offset will be different with mobile
-                // use e.originalEvent because using jQuery
-                // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
-                // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
-                // using rect seems to work pretty well
-                if(e.type === 'touchstart'){
-                    let newCoords = handleTouchEvent(e);
-                    e.offsetX = newCoords.x;
-                    e.offsetY = newCoords.y;
-                }
-                addClick(e.offsetX, e.offsetY, null, null, true);
-                redraw(defaultBrushStroke);
-            }
-        });
+				paint = true;
+				// offset will be different with mobile
+				// use e.originalEvent because using jQuery
+				// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
+				// https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
+				// using rect seems to work pretty well
+				if(evt.type === 'touchstart'){
+					let newCoords = handleTouchEvent(evt);
+					evt.offsetX = newCoords.x;
+					evt.offsetY = newCoords.y;
+				}
+				addClick(evt.offsetX, evt.offsetY, null, null, true);
+				redraw(defaultBrushStroke);
+			}
+		}
+		currCanvas.addEventListener('mousedown', defaultBrushStart);
+		currCanvas.addEventListener('touchstart', defaultBrushStart);
 		
         //draw the lines as mouse moves
-        $('#' + canvas.currentCanvas.id).on('mousemove touchmove', (e) => {
-            if(paint){
-                if(e.type === 'touchmove'){
-                    let newCoords = handleTouchEvent(e);
-                    e.offsetX = newCoords.x;
-                    e.offsetY = newCoords.y;
+		function defaultBrushMove(evt){
+			if(paint){
+                if(evt.type === 'touchmove'){
+                    let newCoords = handleTouchEvent(evt);
+                    evt.offsetX = newCoords.x;
+                    evt.offsetY = newCoords.y;
                     // prevent page scrolling when drawing 
-                    e.preventDefault();
+                    evt.preventDefault();
                 }
-                addClick(e.offsetX, e.offsetY, null, null, true);
+                addClick(evt.offsetX, evt.offsetY, null, null, true);
                 redraw(defaultBrushStroke);
             }
-        });
+		}
+		currCanvas.addEventListener('mousemove', defaultBrushMove);
+		currCanvas.addEventListener('touchmove', defaultBrushMove);
 		
         //stop drawing
-        $('#' + canvas.currentCanvas.id).on('mouseup touchend', (e) => {
-            // see if it's a new canvas or we're still on the same one as before the mousedown
+		function defaultBrushStop(evt){
+			// see if it's a new canvas or we're still on the same one as before the mousedown
             if(thisBrushInstance.previousCanvas === canvas.currentCanvas){
                 // if it is, then log the current image data. this is important for the undo feature
                 let c = canvas.currentCanvas;
@@ -128,10 +137,12 @@ function Brush(animationProject) {
             }
             clearClick();
             paint = false;
-        });
+		}
+		currCanvas.addEventListener('mouseup', defaultBrushStop);
+		currCanvas.addEventListener('touchend', defaultBrushStop);
 		
         //stop drawing when mouse leaves
-        $('#' + canvas.currentCanvas.id).mouseleave((e) => {
+        currCanvas.addEventListener('mouseleave', (evt) => {
 			clearClick();
             paint = false;
         });

@@ -569,8 +569,8 @@ function Brush(animationProject) {
 
   function handleTouchEvent(evt) {
     var rect = evt.target.getBoundingClientRect();
-    var x = evt.originalEvent.touches[0].pageX - rect.left;
-    var y = evt.originalEvent.touches[0].pageY - rect.top - window.pageYOffset;
+    var x = evt.touches[0].pageX - rect.left;
+    var y = evt.touches[0].pageY - rect.top - window.pageYOffset;
     return {
       'x': x,
       'y': y
@@ -609,6 +609,8 @@ function Brush(animationProject) {
     var currCanvas = canvas.currentCanvas;
 
     function defaultBrushStart(evt) {
+      evt.preventDefault();
+
       if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
         //when left click only
         // update previousCanvas
@@ -2661,14 +2663,14 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
     value: function _moveToFrame(direction) {
       var animationProj = this.state.animationProject;
       var toolbar = this.state.toolbarInstance;
+      var currFrameIndex = animationProj.currentFrame;
       var frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
       var currFrameData = frame.toDataURL();
 
       var newFrames = _toConsumableArray(this.state.timelineFrames);
 
-      var currFrameIndex = animationProj.currentFrame;
-
       if (!this.timelineFramesSet.has(currFrameIndex)) {
+        // if the animation timeline doesn't have the current frame, add it
         newFrames.push({
           "data": currFrameData,
           "height": frame.height,
@@ -2676,7 +2678,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         });
         this.timelineFramesSet.add(currFrameIndex);
       } else {
-        // update image data
+        // update image data in the animation timeline
         newFrames[currFrameIndex].data = currFrameData;
       }
 

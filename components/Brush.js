@@ -40,8 +40,8 @@ function Brush(animationProject) {
 	
 	function handleTouchEvent(evt){
 		let rect = evt.target.getBoundingClientRect();
-		let x = evt.originalEvent.touches[0].pageX - rect.left;
-		let y = evt.originalEvent.touches[0].pageY - rect.top - window.pageYOffset;
+		let x = evt.touches[0].pageX - rect.left;
+		let y = evt.touches[0].pageY - rect.top - window.pageYOffset;
 		return {'x': x, 'y': y};
 	}
 	
@@ -79,6 +79,7 @@ function Brush(animationProject) {
 		const currCanvas = canvas.currentCanvas;
 		
 		function defaultBrushStart(evt){
+			evt.preventDefault();
 			if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart') { //when left click only
 				// update previousCanvas
 				if(thisBrushInstance.previousCanvas !== canvas.currentCanvas) {

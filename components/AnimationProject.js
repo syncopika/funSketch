@@ -30,7 +30,6 @@ class Frame {
         };
     }
 	
-	// do we need this? since we have this.currentCanvas... :|
     getCurrCanvas(){
         return this.canvasList[this.currentIndex];
     }
@@ -71,9 +70,8 @@ class Frame {
 	
     show(){
         // makes all layers visible
-		let activeLayerOpacity = .97;
+		const activeLayerOpacity = .97;
         this.canvasList.forEach((canvas) => {
-			
 			if(canvas.style.opacity >= activeLayerOpacity){
 				canvas.style.zIndex = 1;
 			}else{
@@ -85,13 +83,12 @@ class Frame {
         });
     }
 	
+	// layerIndex (int) = the index of the layer to make active (current layer)
+	// onionSkin (bool) = whether onionskin should be visible 
 	setToLayer(layerIndex, onionSkin){
 		// note that this does not hide the previous layer + previous onion skin before switching to 
 		// the new layer.
-
 		let newLayer = this.canvasList[layerIndex];
-		//console.log(newLayer);
-		
 		newLayer.style.opacity = 0.97;
 		newLayer.style.zIndex = 1;
 		
@@ -111,7 +108,7 @@ class Frame {
     ***/
     copyCanvas(){
         let newCanvas = document.createElement('canvas');
-        newCanvas.id = 'frame' + this.number + 'canvas' + this.count;
+        newCanvas.id = `frame${this.number}canvas${this.count}`;
         setCanvas(newCanvas, this.width, this.height);
         this.canvasList[this.count-1].style.opacity = .97;
         // place the canvas in the container 

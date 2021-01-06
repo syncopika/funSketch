@@ -78,6 +78,30 @@ describe("test AnimationProject classes", () => {
 		});
 		
 		it("test frame setToLayer", () => {
+			const frame = new Frame(containerId, 0);
+			frame.setupNewLayer();
+			frame.setupNewLayer();
+			frame.setupNewLayer();
+			expect(frame.getCurrCanvas()).toEqual(frame.canvasList[0]);
+			
+			// no onion skin
+			frame.setToLayer(1, false);
+			let currCanvas = frame.getCurrCanvas();
+			expect(currCanvas).toEqual(frame.canvasList[1]);
+			expect(currCanvas.style.opacity).toEqual("0.97");
+			expect(currCanvas.style.zIndex).toEqual("1");
+			
+			// go to next layer with onion skin
+			frame.setToLayer(2, true);
+			currCanvas = frame.getCurrCanvas();
+			expect(currCanvas).toEqual(frame.canvasList[2]);
+			expect(currCanvas.style.opacity).toEqual("0.97");
+			expect(currCanvas.style.zIndex).toEqual("1");
+			
+			// make sure onion skin worked
+			let prevCanvas = frame.canvasList[1];
+			expect(prevCanvas.style.opacity).toEqual("0.92");
+			expect(prevCanvas.style.zIndex).toEqual("0");
 		});
 		
 		it("test frame copyCanvas", () => {

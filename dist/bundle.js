@@ -149,6 +149,16 @@ var Frame = /*#__PURE__*/function () {
       };
     }
   }, {
+    key: "getContainerId",
+    value: function getContainerId() {
+      return this.containerId;
+    }
+  }, {
+    key: "getCurrCanvasIndex",
+    value: function getCurrCanvasIndex() {
+      return this.currentIndex;
+    }
+  }, {
     key: "getCurrCanvas",
     value: function getCurrCanvas() {
       return this.canvasList[this.currentIndex];
@@ -251,6 +261,7 @@ var Frame = /*#__PURE__*/function () {
     /***
         clone the current canvas
     this creates a new layer whose image data is the same as the current canvas.
+    		not sure I'm using this?
     ***/
 
   }, {
@@ -293,7 +304,7 @@ var AnimationProject = /*#__PURE__*/function () {
     _classCallCheck(this, AnimationProject);
 
     this.name = "";
-    this.currentFrame = 0; // index of current frame
+    this.currentFrameIndex = 0; // index of current frame
 
     this.speed = 100; // 100 ms per frame 
 
@@ -305,32 +316,42 @@ var AnimationProject = /*#__PURE__*/function () {
   }
 
   _createClass(AnimationProject, [{
-    key: "getFrameList",
-    value: function getFrameList() {
+    key: "getFrames",
+    value: function getFrames() {
       return this.frameList;
+    }
+  }, {
+    key: "getCurrFrameIndex",
+    value: function getCurrFrameIndex() {
+      return this.currentFrameIndex;
+    }
+  }, {
+    key: "getCurrFrame",
+    value: function getCurrFrame() {
+      return this.frameList[this.currentFrameIndex];
     }
   }, {
     key: "resetProject",
     value: function resetProject() {
       this.frameList.forEach(function (frame, frameIndex) {
-        var parent = document.getElementById(frame['container']); // just keep the first frame
+        var parent = document.getElementById(frame.getContainerId()); // just keep the first frame
+        // just keep the first frame
 
-        frame.getLayers().forEach(function (layer, layerIndex) {
+        frame.canvasList.forEach(function (layer, layerIndex) {
           if (frameIndex > 0 || frameIndex === 0 && layerIndex > 0) {
             parent.removeChild(layer);
           }
         });
 
         if (frameIndex === 0) {
-          var firstLayer = frame.getLayers()[0];
-          frame.setLayers([firstLayer]);
+          frame.setLayers([frame.getLayers()[0]]);
           frame.setCurrIndex(0);
         }
       });
       this.frameList = [this.frameList[0]]; // clear the first layer of the first frame!
 
       this.frameList[0].clearCurrentLayer();
-      this.currentFrame = 0;
+      this.currentFrameIndex = 0;
       this.speed = 100;
       this.frameList[0].getCurrCanvas().style.visibility = "";
       this.clearOnionSkin();
@@ -357,7 +378,7 @@ var AnimationProject = /*#__PURE__*/function () {
       var frame = this.frameList[index]; // remove frame from frameList
 
       this.frameList.splice(index, 1);
-      var parentContainer = document.getElementById(frame['container']); // remove all layers
+      var parentContainer = document.getElementById(frame.getContainerId()); // remove all layers
 
       frame.getLayers().forEach(function (layer) {
         parentContainer.removeChild(layer);
@@ -367,34 +388,29 @@ var AnimationProject = /*#__PURE__*/function () {
   }, {
     key: "nextFrame",
     value: function nextFrame() {
-      if (this.frameList.length === this.currentFrame + 1) {
+      if (this.frameList.length === this.currentFrameIndex + 1) {
         return null; // no more frames to see
       }
 
-      this.currentFrame += 1;
+      this.currentFrameIndex += 1;
       this.updateOnionSkin();
-      return this.frameList[this.currentFrame];
+      return this.frameList[this.currentFrameIndex];
     }
   }, {
     key: "prevFrame",
     value: function prevFrame() {
-      if (this.currentFrame - 1 < 0) {
+      if (this.currentFrameIndex - 1 < 0) {
         return null; // no more frames to see
       }
 
-      this.currentFrame -= 1;
+      this.currentFrameIndex -= 1;
       this.updateOnionSkin();
-      return this.frameList[this.currentFrame];
-    }
-  }, {
-    key: "getCurrFrame",
-    value: function getCurrFrame() {
-      return this.frameList[this.currentFrame];
+      return this.frameList[this.currentFrameIndex];
     }
   }, {
     key: "updateOnionSkin",
     value: function updateOnionSkin() {
-      if (this.currentFrame - 1 < 0) {
+      if (this.currentFrameIndex - 1 < 0) {
         // no onionskin for very first frame 
         this.onionSkinFrame.style.opacity = 0;
         return;
@@ -408,7 +424,7 @@ var AnimationProject = /*#__PURE__*/function () {
 
       var onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // build the merged image from the first to last
 
-      var prevFrame = this.frameList[this.currentFrame - 1];
+      var prevFrame = this.frameList[this.currentFrameIndex - 1];
       prevFrame.getLayers().forEach(function (layer) {
         var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
 
@@ -2685,7 +2701,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
     value: function _moveToFrame(direction) {
       var animationProj = this.state.animationProject;
       var toolbar = this.state.toolbarInstance;
-      var currFrameIndex = animationProj.currentFrame;
+      var currFrameIndex = animationProj.getCurrFrameIndex();
       var frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
       var currFrameData = frame.toDataURL();
 
@@ -2729,13 +2745,13 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var self = this;
       doc.addEventListener('keydown', function (e) {
         var updateStateFlag = false;
-        var canvas = null;
+        var frame = null;
 
         switch (e.which) {
           case 37:
             //left arrow key
             if (toolbar.prevLayer()) {
-              canvas = animationProj.getCurrFrame();
+              frame = animationProj.getCurrFrame();
               updateStateFlag = true;
             }
 
@@ -2744,7 +2760,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           case 39:
             //right arrow key
             if (toolbar.nextLayer()) {
-              canvas = animationProj.getCurrFrame();
+              frame = animationProj.getCurrFrame();
               updateStateFlag = true;
             }
 
@@ -2764,7 +2780,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             // a key 
             {
               updateStateFlag = self._moveToFrame("prev");
-              canvas = animationProj.getCurrFrame();
+              frame = animationProj.getCurrFrame();
               break;
             }
 
@@ -2772,7 +2788,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             // d key 
             {
               updateStateFlag = self._moveToFrame("next");
-              canvas = animationProj.getCurrFrame();
+              frame = animationProj.getCurrFrame();
               break;
             }
 
@@ -2784,10 +2800,10 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
         if (updateStateFlag) {
           self.setState({
-            'currentFrame': animationProj.currentFrame + 1,
-            'currentLayer': canvas.currentIndex + 1
+            'currentFrame': animationProj.getCurrFrameIndex() + 1,
+            'currentLayer': frame.getCurrCanvasIndex() + 1
           });
-          canvas = null;
+          frame = null;
           updateStateFlag = false;
         }
       });
@@ -4317,21 +4333,20 @@ function Toolbar(canvas, brush, animationProj) {
                 animationProj.addNewFrame();
               } // overwrite existing frame
               // TODO: implement an updateFrame method 
-              // animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
+              // something like: animationProj.updateFrame(0, frame);
 
 
-              var currFrame = animationProj.frameList[index];
-              currFrame.currentIndex = frame.currentIndex;
-              var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+              var currFrame = animationProj.getFrames()[index];
+              var currFrameLayersFromImport = frame.getLayers(); // looking at data-to-import's curr frame's layers
 
-              var currFrameLayersFromCurrPrj = currFrame.canvasList;
+              var currFrameLayersFromCurrPrj = currFrame.getLayers();
               currFrameLayersFromImport.forEach(function (layer, layerIndex) {
                 if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
                   // add new layer to curr project as needed based on import
                   currFrame.setupNewLayer();
                 }
 
-                var currLayer = animationProj.frameList[index].canvasList[layerIndex]; // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
+                var currLayer = animationProj.getFrames()[index].getLayers()[layerIndex]; // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
 
                 currLayer.style.opacity = layer.opacity;
                 currLayer.style.zIndex = layer.zIndex; // add the image data 
@@ -4358,6 +4373,7 @@ function Toolbar(canvas, brush, animationProj) {
                   currFrame.currentCanvas = currLayer;
                 }
               });
+              currFrame.setCurrIndex(frame.getCurrCanvasIndex());
             });
           };
         }(file);

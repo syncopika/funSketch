@@ -741,12 +741,11 @@ function Toolbar(canvas, brush, animationProj){
                             }
                             // overwrite existing frame
                             // TODO: implement an updateFrame method 
-                            // animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
-                            let currFrame = animationProj.frameList[index];
-							currFrame.currentIndex = frame.currentIndex;
-					
-                            let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-                            let currFrameLayersFromCurrPrj = currFrame.canvasList;
+                            // something like: animationProj.updateFrame(0, frame);
+                            let currFrame = animationProj.getFrames()[index];
+							
+                            let currFrameLayersFromImport = frame.getLayers(); // looking at data-to-import's curr frame's layers
+                            let currFrameLayersFromCurrPrj = currFrame.getLayers();
                             
 							currFrameLayersFromImport.forEach(function(layer, layerIndex){
 								
@@ -755,7 +754,7 @@ function Toolbar(canvas, brush, animationProj){
                                     currFrame.setupNewLayer();
                                 }
 								
-                                let currLayer = animationProj.frameList[index].canvasList[layerIndex];
+                                let currLayer = animationProj.getFrames()[index].getLayers()[layerIndex];
                                 // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
                                 currLayer.style.opacity = layer.opacity;
                                 currLayer.style.zIndex = layer.zIndex;
@@ -781,6 +780,8 @@ function Toolbar(canvas, brush, animationProj){
 								}
 								
                             });
+							
+							currFrame.setCurrIndex(frame.getCurrCanvasIndex());
 							
                         });
                     };

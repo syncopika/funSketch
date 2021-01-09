@@ -14,7 +14,7 @@ describe("test AnimationProject classes", () => {
 	});
 	
 	describe("test Frame class", () => {
-		it("test frame creation and setup", () => {
+		it("test frame creation and layer setup", () => {
 			const frame1 = new Frame(containerId, 2);
 			
 			// check metadata
@@ -22,6 +22,7 @@ describe("test AnimationProject classes", () => {
 			expect(frame1data.currentIndex).toBe(0);
 			expect(frame1data.number).toBe(2);
 			expect(frame1data.containerId).toBe(containerId);
+			expect(frame1.getContainerId()).toBe(containerId);
 			
 			// add a new layer
 			frame1.setupNewLayer();
@@ -185,32 +186,58 @@ describe("test AnimationProject classes", () => {
 	});
 	
 	describe("test AnimationProject class", () => {
-		it("test AnimationProject setup", () => {
+		it("test setup", () => {
 			const animProject = new AnimationProject(containerId);
 			
 			expect(animProject.container).toEqual(containerId);
 			
-			let frames = animProject.getFrameList();
+			let frames = animProject.getFrames();
 			expect(frames.length).toEqual(0);
 			
 			animProject.addNewFrame(false);
-			frames = animProject.getFrameList();
+			frames = animProject.getFrames();
 			expect(frames.length).toEqual(1);
 			expect(frames[0].getLayers().length).toEqual(1);
 			expect(frames[0].getLayers()[0].style.visibility).toEqual("hidden");
+			expect(frames[0]).toEqual(animProject.getCurrFrame());
+			expect(animProject.getCurrFrameIndex()).toEqual(0);
 			
 			animProject.addNewFrame(true);
-			frames = animProject.getFrameList();
+			frames = animProject.getFrames();
 			expect(frames.length).toEqual(2);
 			expect(frames[1].getLayers()[0].style.visibility).toEqual("");
 		});
 		
-		it("test AnimationProject setup", () => {
+		it("test delete frame", () => {
 			const animProject = new AnimationProject(containerId);
-			animProject.deleteFrame(0);
+			expect(animProject.deleteFrame(0)).toEqual(false);
 			
-			let frames = animProject.getFrameList();
+			let frames = animProject.getFrames();
 			expect(frames.length).toEqual(0);
+			
+			animProject.addNewFrame();
+			frames = animProject.getFrames();
+			expect(frames.length).toEqual(1);
+			
+			expect(animProject.deleteFrame(1)).toEqual(false);
+			expect(animProject.deleteFrame(0)).toEqual(false); // should always have at least 1 frame
+			
+			animProject.addNewFrame();
+			expect(animProject.deleteFrame(0)).toEqual(true);
+			expect(animProject.getFrames().length).toEqual(1);
+		});
+		
+		it("test resetProject", () => {
+			const animProject = new AnimationProject(containerId);
+			animProject.addNewFrame();
+			animProject.addNewFrame();
+			animProject.addNewFrame();
+			animProject.getCurrFrame().setupNewLayer();
+			animProject.getCurrFrame().setupNewLayer();
+			animProject.resetProject();
+			expect(animProject.getFrames().length).toEqual(1);
+			expect(animProject.getCurrFrame().getLayers().length).toEqual(1);
+			expect(animProject.getCurrFrame()).toEqual(animProject.getFrames()[0]);
 		});
 		
 	});

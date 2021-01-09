@@ -141,7 +141,7 @@ class PresentationWrapper extends React.Component {
 		let animationProj = this.state.animationProject;
 		let toolbar = this.state.toolbarInstance;
 		
-		let currFrameIndex = animationProj.currentFrame;
+		let currFrameIndex = animationProj.getCurrFrameIndex();
 		let frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
 		let currFrameData = frame.toDataURL();
 		
@@ -181,17 +181,17 @@ class PresentationWrapper extends React.Component {
 
 		doc.addEventListener('keydown', function(e){
 			let updateStateFlag = false;
-			let canvas = null;
+			let frame = null;
 			switch(e.which){
 				case 37: //left arrow key
 					if(toolbar.prevLayer()){
-						canvas = animationProj.getCurrFrame();
+						frame = animationProj.getCurrFrame();
 						updateStateFlag = true;
 					}
 					break;
 				case 39: //right arrow key
 					if(toolbar.nextLayer()){
-						canvas = animationProj.getCurrFrame();
+						frame = animationProj.getCurrFrame();
 						updateStateFlag = true;
 					}
 					break;
@@ -205,13 +205,13 @@ class PresentationWrapper extends React.Component {
 				case 65: // a key 
 				{
 					updateStateFlag = self._moveToFrame("prev");
-					canvas = animationProj.getCurrFrame();				
+					frame = animationProj.getCurrFrame();				
 					break;
 				}
 				case 68: // d key 
 				{
 					updateStateFlag = self._moveToFrame("next");
-					canvas = animationProj.getCurrFrame();
+					frame = animationProj.getCurrFrame();
 					break;
 				}
 				default:
@@ -220,10 +220,10 @@ class PresentationWrapper extends React.Component {
 			e.preventDefault();
 			if(updateStateFlag){
 				self.setState({
-					'currentFrame': animationProj.currentFrame + 1,
-					'currentLayer': canvas.currentIndex + 1
+					'currentFrame': animationProj.getCurrFrameIndex() + 1,
+					'currentLayer': frame.getCurrCanvasIndex() + 1
 				});
-				canvas = null;
+				frame = null;
 				updateStateFlag = false;
 			}
 		});

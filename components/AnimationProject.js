@@ -30,6 +30,14 @@ class Frame {
         };
     }
 	
+	getContainerId(){
+		return this.containerId;
+	}
+	
+	getCurrCanvasIndex(){
+		return this.currentIndex;
+	}
+	
     getCurrCanvas(){
         return this.canvasList[this.currentIndex];
     }
@@ -155,7 +163,7 @@ class Frame {
 class AnimationProject {
 	constructor(container){
 		this.name = "";
-		this.currentFrame = 0; // index of current frame
+		this.currentFrameIndex = 0; // index of current frame
 		this.speed = 100; // 100 ms per frame 
 		this.frameList = [];
 		this.onionSkinFrame = createOnionSkinFrame(container);
@@ -163,30 +171,38 @@ class AnimationProject {
 		this.container = container; // id of the html element the frames are displayed in
 	}
 	
-	getFrameList(){
+	getFrames(){
 		return this.frameList;
 	}
 	
+	getCurrFrameIndex(){
+		return this.currentFrameIndex;
+	}
+	
+	getCurrFrame(){
+		return this.frameList[this.currentFrameIndex];
+	}
+	
     resetProject(){
-        this.frameList.forEach(function(frame, frameIndex){ 
-            const parent = document.getElementById(frame['container']);
+        this.frameList.forEach((frame, frameIndex) => { 
+            const parent = document.getElementById(frame.getContainerId());
             // just keep the first frame
-            frame.getLayers().forEach(function(layer, layerIndex){
-                if(frameIndex > 0 || (frameIndex === 0 && layerIndex > 0)) {
+            frame.canvasList.forEach(function(layer, layerIndex){
+                if (frameIndex > 0 || (frameIndex === 0 && layerIndex > 0)) {
                     parent.removeChild(layer);
                 }
             });
 			if(frameIndex === 0){
-				const firstLayer = frame.getLayers()[0];
-				frame.setLayers([firstLayer]);
+				frame.setLayers([frame.getLayers()[0]]);
 				frame.setCurrIndex(0);
 			}
         });
+		
         this.frameList = [this.frameList[0]];
 		
         // clear the first layer of the first frame!
         this.frameList[0].clearCurrentLayer();
-        this.currentFrame = 0;
+        this.currentFrameIndex = 0;
         this.speed = 100;
 		
 		this.frameList[0].getCurrCanvas().style.visibility = "";
@@ -208,12 +224,12 @@ class AnimationProject {
 			return false;
 		}
 		
-		let frame = this.frameList[index];
+		const frame = this.frameList[index];
 		
 		// remove frame from frameList
 		this.frameList.splice(index, 1);
 		
-		let parentContainer = document.getElementById(frame['container']);
+		const parentContainer = document.getElementById(frame.getContainerId());
 		
 		// remove all layers
 		frame.getLayers().forEach((layer) => {
@@ -224,29 +240,25 @@ class AnimationProject {
 	}
 	
     nextFrame(){
-        if(this.frameList.length === this.currentFrame + 1){
+        if(this.frameList.length === this.currentFrameIndex + 1){
             return null; // no more frames to see
         }
-        this.currentFrame += 1;
+        this.currentFrameIndex += 1;
 		this.updateOnionSkin()
-        return this.frameList[this.currentFrame];
+        return this.frameList[this.currentFrameIndex];
     }
 	
     prevFrame(){
-        if(this.currentFrame - 1 < 0){
+        if(this.currentFrameIndex - 1 < 0){
             return null; // no more frames to see
         }
-        this.currentFrame -= 1;
+        this.currentFrameIndex -= 1;
 		this.updateOnionSkin();
-        return this.frameList[this.currentFrame];
-    }
-	
-    getCurrFrame(){
-        return this.frameList[this.currentFrame];
+        return this.frameList[this.currentFrameIndex];
     }
 	
     updateOnionSkin(){
-        if(this.currentFrame - 1 < 0){
+        if(this.currentFrameIndex - 1 < 0){
 			// no onionskin for very first frame 
 			this.onionSkinFrame.style.opacity = 0;
             return;
@@ -258,7 +270,7 @@ class AnimationProject {
         // try this? only draw pixels that are non-white?
         let onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
         // build the merged image from the first to last
-        let prevFrame = this.frameList[this.currentFrame-1];
+        let prevFrame = this.frameList[this.currentFrameIndex-1];
         prevFrame.getLayers().forEach(function (layer) {
             let imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
             for(let i = 0; i < imageData.length; i += 4) {

@@ -8,6 +8,8 @@ describe("test AnimationProject classes", () => {
 	beforeAll(() => {
 		const container = document.createElement("div");
 		container.id = containerId;
+		container.style.height = "200px";
+		container.style.width = "200px";
 		document.body.appendChild(container);
 	});
 	
@@ -84,7 +86,7 @@ describe("test AnimationProject classes", () => {
 			frame.setupNewLayer();
 			expect(frame.getCurrCanvas()).toEqual(frame.canvasList[0]);
 			
-			// no onion skin
+			// no onion skin first
 			frame.setToLayer(1, false);
 			let currCanvas = frame.getCurrCanvas();
 			expect(currCanvas).toEqual(frame.canvasList[1]);
@@ -104,25 +106,113 @@ describe("test AnimationProject classes", () => {
 			expect(prevCanvas.style.zIndex).toEqual("0");
 		});
 		
-		it("test frame copyCanvas", () => {
+		it("test getLayers", () => {
+			const frame = new Frame(containerId, 0);
+			expect(frame.getLayers().length).toEqual(0);
+			frame.setupNewLayer();
+			expect(frame.getLayers().length).toEqual(1);
 		});
 		
-		it("test frame clearCurrentLayer", () => {
+		it("test setLayers", () => {
+			const frame = new Frame(containerId, 0);
+			frame.setupNewLayer();
+			frame.setupNewLayer();
+			expect(frame.getLayers().length).toEqual(2);
+			
+			const layer2 = frame.getLayers()[1];
+			frame.setLayers([layer2]);
+			expect(frame.getLayers().length).toEqual(1);
+			expect(frame.getLayers()[0]).toEqual(layer2);
 		});
+		
+		it("test setCurrIndex", () => {
+			const frame = new Frame(containerId, 0);
+			frame.setupNewLayer();
+			frame.setupNewLayer();
+			expect(frame.getCurrCanvas()).toEqual(frame.getLayers()[0]);
+			frame.setCurrIndex(1);
+			expect(frame.getCurrCanvas()).toEqual(frame.getLayers()[1]);
+			frame.setCurrIndex(100); // should not change anything
+			expect(frame.getCurrCanvas()).toEqual(frame.getLayers()[1]);
+		});
+		
+		/*
+		it("test frame copyCanvas", () => {
+			// TODO: figure out how to get this working? 
+			// putImageData is difficult to have: https://github.com/hustcc/jest-canvas-mock/issues/60
+			// manually set width and height canvas values
+			const width = 10;
+			const height = 10;
+			
+			const frame = new Frame(containerId, 0);
+			frame.setupNewLayer();
+		
+			const currCanvas = frame.getCurrCanvas();
+			currCanvas.height = height;
+			currCanvas.width = width;
+			frame.width = width;
+			frame.height = height;
+			
+			// 'taint' the current canvas by coloring 1 pixel (4 elements in image data, which represent RGBA)
+			const currCanvasCtx = frame.getCurrCanvas().getContext("2d");
+			const currCanvasData = currCanvasCtx.getImageData(0,0,10,10);
+			for(let i = 0; i < 4; i++){
+				currCanvasData.data[i] = 100;
+			}
+			currCanvasCtx.putImageData(currCanvasData, 0, 0);
+			
+			// make a copy
+			frame.copyCanvas();
+			
+			// verify
+			expect(frame.canvasList.length).toEqual(2);
+			expect(frame.canvasList[0]).toEqual(frame.getCurrCanvas());
+			expect(frame.canvasList[1].style.opacity).toEqual("0.97");
+			let copyCtx = frame.canvasList[1].getContext("2d");
+			let copyCtxData = copyCtx.getImageData(0,0,10,10).data;
+			for(let i = 0; i < 4; i++){
+				expect(copyCtxData[i]).toEqual(100);
+			}
+		});*/
+		
+		/*
+		it("test frame clearCurrentLayer", () => {
+			// TODO: figure out how to get this working?
+			// relies on putImageData
+			const frame = new Frame(containerId, 0);
+			frame.setupNewLayer();
+		});*/
 	});
 	
 	describe("test AnimationProject class", () => {
-		it("testAnimationProject methods", () => {
+		it("test AnimationProject setup", () => {
 			const animProject = new AnimationProject(containerId);
 			
 			expect(animProject.container).toEqual(containerId);
-			expect(animProject.frameList.length).toEqual(0);
+			
+			let frames = animProject.getFrameList();
+			expect(frames.length).toEqual(0);
 			
 			animProject.addNewFrame(false);
-			expect(animProject.frameList.length).toEqual(1);
-			expect(animProject.frameList[0].canvasList.length).toEqual(1);
-			expect(animProject.frameList[0].canvasList[0].style.visibility).toEqual("hidden");
+			frames = animProject.getFrameList();
+			expect(frames.length).toEqual(1);
+			expect(frames[0].getLayers().length).toEqual(1);
+			expect(frames[0].getLayers()[0].style.visibility).toEqual("hidden");
+			
+			animProject.addNewFrame(true);
+			frames = animProject.getFrameList();
+			expect(frames.length).toEqual(2);
+			expect(frames[1].getLayers()[0].style.visibility).toEqual("");
 		});
+		
+		it("test AnimationProject setup", () => {
+			const animProject = new AnimationProject(containerId);
+			animProject.deleteFrame(0);
+			
+			let frames = animProject.getFrameList();
+			expect(frames.length).toEqual(0);
+		});
+		
 	});
 	
 });

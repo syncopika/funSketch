@@ -118,7 +118,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 ***/
 
 var Frame = /*#__PURE__*/function () {
-  function Frame(container, number) {
+  function Frame(containerId, number) {
     _classCallCheck(this, Frame);
 
     this.currentIndex = 0; // index of currently showing layer
@@ -127,7 +127,7 @@ var Frame = /*#__PURE__*/function () {
 
     this.currentCanvas; // the current, active canvas being looked at (reference to html element)
 
-    this.container = container; // this is the html container id to hold all the layers of this frame
+    this.containerId = containerId; // this is the html container id to hold all the layers of this frame
 
     this.number = number; // this frame's number
 
@@ -143,16 +143,34 @@ var Frame = /*#__PURE__*/function () {
       return {
         'width': this.width,
         'height': this.height,
-        'containerId': this.container,
+        'containerId': this.containerId,
         'currentIndex': this.currentIndex,
         'number': this.number
       };
-    } // do we need this? since we have this.currentCanvas... :|
-
+    }
   }, {
     key: "getCurrCanvas",
     value: function getCurrCanvas() {
       return this.canvasList[this.currentIndex];
+    }
+  }, {
+    key: "getLayers",
+    value: function getLayers() {
+      return this.canvasList;
+    } // canvasList: list of canvas elements
+
+  }, {
+    key: "setLayers",
+    value: function setLayers(canvasList) {
+      this.canvasList = canvasList;
+    }
+  }, {
+    key: "setCurrIndex",
+    value: function setCurrIndex(index) {
+      if (index <= this.canvasList.length - 1 && index >= 0) {
+        this.currentIndex = index;
+        this.currentCanvas = this.canvasList[index];
+      }
     }
     /***
         set up a new canvas element
@@ -165,7 +183,7 @@ var Frame = /*#__PURE__*/function () {
       // create the new canvas element 
       var newCanvas = document.createElement('canvas');
       newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
-      document.getElementById(this.container).appendChild(newCanvas);
+      document.getElementById(this.containerId).appendChild(newCanvas);
       setCanvas(newCanvas);
 
       if (this.count === 0) {
@@ -209,14 +227,15 @@ var Frame = /*#__PURE__*/function () {
         canvas.style.visibility = "";
         canvas.style.cursor = "crosshair";
       });
-    }
+    } // layerIndex (int) = the index of the layer to make active (current layer)
+    // onionSkin (bool) = whether onionskin should be visible 
+
   }, {
     key: "setToLayer",
     value: function setToLayer(layerIndex, onionSkin) {
       // note that this does not hide the previous layer + previous onion skin before switching to 
       // the new layer.
-      var newLayer = this.canvasList[layerIndex]; //console.log(newLayer);
-
+      var newLayer = this.canvasList[layerIndex];
       newLayer.style.opacity = 0.97;
       newLayer.style.zIndex = 1;
       this.currentCanvas = newLayer;
@@ -231,19 +250,17 @@ var Frame = /*#__PURE__*/function () {
     }
     /***
         clone the current canvas
+    this creates a new layer whose image data is the same as the current canvas.
     ***/
 
   }, {
     key: "copyCanvas",
     value: function copyCanvas() {
       var newCanvas = document.createElement('canvas');
-      newCanvas.id = 'frame' + this.number + 'canvas' + this.count;
+      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
       setCanvas(newCanvas, this.width, this.height);
-      this.canvasList[this.count - 1].style.opacity = .97; // place the canvas in the container 
-
-      document.getElementById(container).appendChild(newCanvas); // position the new canvas directly on top of the previous one 
-
-      var canvas = document.getElementById(this.canvasList[0].id);
+      newCanvas.style.opacity = 0.97;
+      document.getElementById(this.containerId).appendChild(newCanvas);
       newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
       this.canvasList.push(newCanvas);
       this.count++;
@@ -288,21 +305,26 @@ var AnimationProject = /*#__PURE__*/function () {
   }
 
   _createClass(AnimationProject, [{
+    key: "getFrameList",
+    value: function getFrameList() {
+      return this.frameList;
+    }
+  }, {
     key: "resetProject",
     value: function resetProject() {
       this.frameList.forEach(function (frame, frameIndex) {
         var parent = document.getElementById(frame['container']); // just keep the first frame
 
-        frame.canvasList.forEach(function (layer, layerIndex) {
+        frame.getLayers().forEach(function (layer, layerIndex) {
           if (frameIndex > 0 || frameIndex === 0 && layerIndex > 0) {
             parent.removeChild(layer);
           }
         });
 
         if (frameIndex === 0) {
-          frame.canvasList = [frame.canvasList[0]];
-          frame.currentIndex = 0;
-          frame.currentCanvas = frame.canvasList[0];
+          var firstLayer = frame.getLayers()[0];
+          frame.setLayers([firstLayer]);
+          frame.setCurrIndex(0);
         }
       });
       this.frameList = [this.frameList[0]]; // clear the first layer of the first frame!
@@ -310,7 +332,7 @@ var AnimationProject = /*#__PURE__*/function () {
       this.frameList[0].clearCurrentLayer();
       this.currentFrame = 0;
       this.speed = 100;
-      this.frameList[0].currentCanvas.style.visibility = "";
+      this.frameList[0].getCurrCanvas().style.visibility = "";
       this.clearOnionSkin();
     }
   }, {
@@ -328,7 +350,7 @@ var AnimationProject = /*#__PURE__*/function () {
     key: "deleteFrame",
     value: function deleteFrame(index) {
       // don't allow removal if only one frame exists
-      if (this.frameList.length === 1) {
+      if (this.frameList.length === 1 || index < 0 || index > this.frameList.length - 1) {
         return false;
       }
 
@@ -337,7 +359,7 @@ var AnimationProject = /*#__PURE__*/function () {
       this.frameList.splice(index, 1);
       var parentContainer = document.getElementById(frame['container']); // remove all layers
 
-      frame.canvasList.forEach(function (layer) {
+      frame.getLayers().forEach(function (layer) {
         parentContainer.removeChild(layer);
       });
       return true;
@@ -387,7 +409,7 @@ var AnimationProject = /*#__PURE__*/function () {
       var onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // build the merged image from the first to last
 
       var prevFrame = this.frameList[this.currentFrame - 1];
-      prevFrame.canvasList.forEach(function (layer) {
+      prevFrame.getLayers().forEach(function (layer) {
         var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
 
         for (var i = 0; i < imageData.length; i += 4) {
@@ -433,18 +455,18 @@ function createOnionSkinFrame(container) {
   newCanvas.style.zIndex = -1; // TODO: come back to this later. make sure it's visible if current frame > 1!
 
   return newCanvas;
-} // assigns position, z-index, border, width, height and opacity
+} // assigns default canvas attributes and styling
 
 
-function setCanvas(canvasElement) {
+function setCanvas(canvasElement, width, height) {
   canvasElement.style.position = "absolute";
   canvasElement.style.border = '1px #000 solid';
   canvasElement.style.zIndex = 0;
   canvasElement.style.opacity = 0;
   canvasElement.style.width = "100%";
   canvasElement.style.height = "100%";
-  canvasElement.width = canvasElement.offsetWidth;
-  canvasElement.height = canvasElement.offsetHeight;
+  canvasElement.width = width ? width : canvasElement.offsetWidth;
+  canvasElement.height = height ? height : canvasElement.offsetHeight;
   canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,255)";
   canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
 }
@@ -3709,7 +3731,7 @@ function Toolbar(canvas, brush, animationProj) {
 
       if (canvas.currentIndex + 1 < canvas.canvasList.length) {
         // move current canvas to the next one 
-        toolbarReference.up(); // remove the old canvas from the array and the DOM!
+        toolbarReference.nextLayer(); // remove the old canvas from the array and the DOM!
 
         canvas.canvasList.splice(oldCanvasIndex, 1);
         parentNode.removeChild(document.getElementById(oldCanvasId)); // adjust the current canvas index after the removal 
@@ -3720,7 +3742,7 @@ function Toolbar(canvas, brush, animationProj) {
         // move current canvas to the previous one 
         // note that currentIndex doesn't need to be adjusted because removing the 
         // next canvas doesn't affect the current canvas' index
-        toolbarReference.down();
+        toolbarReference.prevLayer();
         canvas.canvasList.splice(oldCanvasIndex, 1);
         parentNode.removeChild(document.getElementById(oldCanvasId)); // but need to adjust the counter, if present
 

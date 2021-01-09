@@ -182,7 +182,7 @@ function Toolbar(canvas, brush, animationProj){
             // if there's a canvas ahead of the current one 
             if(canvas.currentIndex + 1 < canvas.canvasList.length){
                 // move current canvas to the next one 
-                toolbarReference.up();
+                toolbarReference.nextLayer();
                 // remove the old canvas from the array and the DOM!
                 canvas.canvasList.splice(oldCanvasIndex, 1);
                 parentNode.removeChild(document.getElementById(oldCanvasId));
@@ -193,7 +193,7 @@ function Toolbar(canvas, brush, animationProj){
                 // move current canvas to the previous one 
                 // note that currentIndex doesn't need to be adjusted because removing the 
                 // next canvas doesn't affect the current canvas' index
-                toolbarReference.down();
+                toolbarReference.prevLayer();
                 canvas.canvasList.splice(oldCanvasIndex, 1);
                 parentNode.removeChild(document.getElementById(oldCanvasId));
                 // but need to adjust the counter, if present

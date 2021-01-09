@@ -9,11 +9,11 @@ import React from 'react';
     a class representing a frame, containing a list of canvas elements which represent layers of the frame
 ***/
 class Frame {
-	constructor(container, number){
+	constructor(containerId, number){
 		this.currentIndex = 0; // index of currently showing layer
 		this.canvasList = []; // keep a list of all canvas instances
 		this.currentCanvas; // the current, active canvas being looked at (reference to html element)
-		this.container = container; // this is the html container id to hold all the layers of this frame
+		this.containerId = containerId; // this is the html container id to hold all the layers of this frame
 		this.number = number; // this frame's number
 		this.count = 0; // current number of layers
 		this.width = 0;
@@ -24,7 +24,7 @@ class Frame {
         return {
 			'width': this.width,
 			'height': this.height,
-            'containerId': this.container,
+            'containerId': this.containerId,
             'currentIndex': this.currentIndex,
             'number': this.number
         };
@@ -34,6 +34,22 @@ class Frame {
         return this.canvasList[this.currentIndex];
     }
 	
+	getLayers(){
+		return this.canvasList;
+	}
+	
+	// canvasList: list of canvas elements
+	setLayers(canvasList){
+		this.canvasList = canvasList;
+	}
+	
+	setCurrIndex(index){
+		if(index <= this.canvasList.length - 1 && index >= 0){
+			this.currentIndex = index;
+			this.currentCanvas = this.canvasList[index];
+		}
+	}
+	
     /***
         set up a new canvas element
         makes the new canvas the current canvas
@@ -42,7 +58,7 @@ class Frame {
         // create the new canvas element 
         let newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
-        document.getElementById(this.container).appendChild(newCanvas);
+        document.getElementById(this.containerId).appendChild(newCanvas);
         setCanvas(newCanvas);
         if(this.count === 0){
             newCanvas.style.opacity = .97;
@@ -105,17 +121,17 @@ class Frame {
 	
     /***
         clone the current canvas
+		this creates a new layer whose image data is the same as the current canvas.
+		
+		not sure I'm using this?
     ***/
     copyCanvas(){
         let newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
         setCanvas(newCanvas, this.width, this.height);
-        this.canvasList[this.count-1].style.opacity = .97;
-        // place the canvas in the container 
-        document.getElementById(container).appendChild(newCanvas);
-        // position the new canvas directly on top of the previous one 
-        let canvas = document.getElementById(this.canvasList[0].id);
-        newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
+        newCanvas.style.opacity = 0.97;
+        document.getElementById(this.containerId).appendChild(newCanvas);
+		newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
         this.canvasList.push(newCanvas);
         this.count++;
     }
@@ -147,19 +163,23 @@ class AnimationProject {
 		this.container = container; // id of the html element the frames are displayed in
 	}
 	
+	getFrameList(){
+		return this.frameList;
+	}
+	
     resetProject(){
         this.frameList.forEach(function(frame, frameIndex){ 
-            let parent = document.getElementById(frame['container']);
+            const parent = document.getElementById(frame['container']);
             // just keep the first frame
-            frame.canvasList.forEach(function(layer, layerIndex){
-                if (frameIndex > 0 || (frameIndex === 0 && layerIndex > 0)) {
+            frame.getLayers().forEach(function(layer, layerIndex){
+                if(frameIndex > 0 || (frameIndex === 0 && layerIndex > 0)) {
                     parent.removeChild(layer);
                 }
             });
 			if(frameIndex === 0){
-				frame.canvasList = [frame.canvasList[0]];
-				frame.currentIndex = 0;
-				frame.currentCanvas = frame.canvasList[0];
+				const firstLayer = frame.getLayers()[0];
+				frame.setLayers([firstLayer]);
+				frame.setCurrIndex(0);
 			}
         });
         this.frameList = [this.frameList[0]];
@@ -169,7 +189,7 @@ class AnimationProject {
         this.currentFrame = 0;
         this.speed = 100;
 		
-		this.frameList[0].currentCanvas.style.visibility = "";
+		this.frameList[0].getCurrCanvas().style.visibility = "";
 		this.clearOnionSkin();
     }
 	
@@ -184,7 +204,7 @@ class AnimationProject {
 	
 	deleteFrame(index){
 		// don't allow removal if only one frame exists
-		if(this.frameList.length === 1){
+		if(this.frameList.length === 1 || index < 0 || index > this.frameList.length - 1){
 			return false;
 		}
 		
@@ -196,7 +216,7 @@ class AnimationProject {
 		let parentContainer = document.getElementById(frame['container']);
 		
 		// remove all layers
-		frame.canvasList.forEach((layer) => {
+		frame.getLayers().forEach((layer) => {
 			parentContainer.removeChild(layer);
 		});
 		
@@ -239,7 +259,7 @@ class AnimationProject {
         let onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
         // build the merged image from the first to last
         let prevFrame = this.frameList[this.currentFrame-1];
-        prevFrame.canvasList.forEach(function (layer) {
+        prevFrame.getLayers().forEach(function (layer) {
             let imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
             for(let i = 0; i < imageData.length; i += 4) {
                 if (imageData[i] === 255 && imageData[i+1] === 255 && imageData[i+2] === 255) {
@@ -282,16 +302,16 @@ function createOnionSkinFrame(container){
     return newCanvas;
 }
 
-// assigns position, z-index, border, width, height and opacity
-function setCanvas(canvasElement){
+// assigns default canvas attributes and styling
+function setCanvas(canvasElement, width, height){
 	canvasElement.style.position = "absolute";
     canvasElement.style.border = '1px #000 solid';
     canvasElement.style.zIndex = 0;
     canvasElement.style.opacity = 0;
 	canvasElement.style.width = "100%";
 	canvasElement.style.height = "100%";
-	canvasElement.width = canvasElement.offsetWidth;
-	canvasElement.height = canvasElement.offsetHeight;
+	canvasElement.width = width ? width : canvasElement.offsetWidth;
+	canvasElement.height = height ? height : canvasElement.offsetHeight;
     canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,255)";
     canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
 }

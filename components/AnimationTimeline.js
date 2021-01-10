@@ -1,6 +1,7 @@
 // https://stackoverflow.com/questions/55340888/fast-way-to-resize-imagedata-in-browser
 // https://stackoverflow.com/questions/19262141/resize-image-with-javascript-canvas-smoothly
 // https://stackoverflow.com/questions/13416800/how-to-generate-an-image-from-imagedata-in-javascript
+import React from 'react';
 
 const TimelineFrameThumnail = (props) => {
 	let frameImgData = props.imgData;
@@ -30,9 +31,9 @@ const AnimationTimeline = (props) => {
 		'border': '1px solid #000',
 		'display': 'block',
 		'backgroundColor': '#fff',
-		'overflow-x': 'auto',
-		'white-space': 'nowrap',
-		'margin-top': '10px'
+		'overflowX': 'auto',
+		'whiteSpace': 'nowrap',
+		'marginTop': '10px'
 	};
 	
 	return (

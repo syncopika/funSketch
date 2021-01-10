@@ -1,5 +1,5 @@
+import React from 'react';
 import {useState} from 'react';
-
 
 function saveNewLayerOrder(updateParentStateFunc){
 	let layers = [...document.querySelectorAll('[id^="layerOrder"]')].map((el)=>{ 
@@ -18,12 +18,12 @@ const LayerOrder = (props) => {
 	let layers = props.layers;
 	
 	let style = {
-		"text-align": "center"
+		"textAlign": "center"
 	};
 	
 	let elementStyle = {
 		"margin": "2px auto",
-		"text-align": "center",
+		"textAlign": "center",
 		"border": "1px solid #000",
 	};
 	
@@ -35,11 +35,11 @@ const LayerOrder = (props) => {
 			<div style={style}>
 				<h4> layer order for current frame: </h4>
 				{
-					layers.map((layerNum, index) => {
+					layers.map((layerIndex) => {
 						return <div 
 							style={elementStyle} 
-							key={index}
-							id={("layerOrder_"+index)}
+							key={layerIndex}
+							id={(`layerOrder_${layerIndex}`)}
 							
 							onDragStart={
 								function(e){
@@ -97,7 +97,7 @@ const LayerOrder = (props) => {
 							
 							draggable={"true"}
 							
-						>layer {layerNum+1}</div>
+						>layer {layerIndex+1}</div>
 					})
 				}
 				<button

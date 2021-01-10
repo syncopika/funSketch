@@ -1,4 +1,5 @@
-import { AnimationProject } from './SuperCanvas.js';
+import React from 'react';
+import { AnimationProject } from './AnimationProject.js';
 import { Toolbar } from './Toolbar.js';
 import { Brush } from './Brush.js';
 import { Filters } from './Filters.js';
@@ -140,21 +141,24 @@ class PresentationWrapper extends React.Component {
 		let animationProj = this.state.animationProject;
 		let toolbar = this.state.toolbarInstance;
 		
+		let currFrameIndex = animationProj.getCurrFrameIndex();
 		let frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
 		let currFrameData = frame.toDataURL();
+		
 		let newFrames = [...this.state.timelineFrames];
-		let currFrameIndex = animationProj.currentFrame;
 		
 		if(!this.timelineFramesSet.has(currFrameIndex)){
+			// if the animation timeline doesn't have the current frame, add it
 			newFrames.push({"data": currFrameData, "height": frame.height, "width": frame.width});
 			this.timelineFramesSet.add(currFrameIndex);
 		}else{
-			// update image data
+			// update image data in the animation timeline
 			newFrames[currFrameIndex].data = currFrameData;
 		}
 		
 		this.setState({
-			'timelineFrames': newFrames
+			'timelineFrames': newFrames,
+			'changingLayerOrder': false,
 		});
 		
 		if(direction === "prev"){
@@ -175,19 +179,19 @@ class PresentationWrapper extends React.Component {
 		let animationProj = this.state.animationProject;
 		const self = this;
 
-		$(doc).keydown(function(e){
+		doc.addEventListener('keydown', function(e){
 			let updateStateFlag = false;
-			let canvas = null;
+			let frame = null;
 			switch(e.which){
 				case 37: //left arrow key
 					if(toolbar.prevLayer()){
-						canvas = animationProj.getCurrFrame();
+						frame = animationProj.getCurrFrame();
 						updateStateFlag = true;
 					}
 					break;
 				case 39: //right arrow key
 					if(toolbar.nextLayer()){
-						canvas = animationProj.getCurrFrame();
+						frame = animationProj.getCurrFrame();
 						updateStateFlag = true;
 					}
 					break;
@@ -195,19 +199,19 @@ class PresentationWrapper extends React.Component {
 					if(toolbar.layerMode){
 						toolbar.addNewLayer();
 					}else{
-						animationProj.addNewFrame();
+						animationProj.addNewFrame(false);
 					}
 					break;
 				case 65: // a key 
 				{
 					updateStateFlag = self._moveToFrame("prev");
-					canvas = animationProj.getCurrFrame();				
+					frame = animationProj.getCurrFrame();				
 					break;
 				}
 				case 68: // d key 
 				{
 					updateStateFlag = self._moveToFrame("next");
-					canvas = animationProj.getCurrFrame();
+					frame = animationProj.getCurrFrame();
 					break;
 				}
 				default:
@@ -216,10 +220,10 @@ class PresentationWrapper extends React.Component {
 			e.preventDefault();
 			if(updateStateFlag){
 				self.setState({
-					'currentFrame': animationProj.currentFrame + 1,
-					'currentLayer': canvas.currentIndex + 1
+					'currentFrame': animationProj.getCurrFrameIndex() + 1,
+					'currentLayer': frame.getCurrCanvasIndex() + 1
 				});
-				canvas = null;
+				frame = null;
 				updateStateFlag = false;
 			}
 		});
@@ -626,11 +630,11 @@ class PresentationWrapper extends React.Component {
 			data.forEach(function(frame, index){
 				if(index > 0){
 					// add a new frame
-					project.addNewFrame();
+					project.addNewFrame(false);
 				}
 				// overwrite existing frame
 				// TODO: implement an updateFrame method 
-				// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a SuperCanvas object to update with as well
+				// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a Frame object to update with as well
 				let currFrame = project.frameList[index];
 				let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
 				let currFrameLayersFromCurrPrj = currFrame.canvasList;
@@ -730,18 +734,18 @@ class PresentationWrapper extends React.Component {
 	
 	render(){
 		return(
-			<div class='container-fluid'>
-				<div class='row'>
-					<div id='toolbar' class='col-lg-3'>
+			<div className='container-fluid'>
+				<div className='row'>
+					<div id='toolbar' className='col-lg-3'>
 						<div id='toolbarArea'>
 
 							<h3 id='title'> funSketch: draw, edit, and animate! </h3>
 
 							<div id='buttons'>
 							
-								<p class='instructions'> Use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). </p>
-								<p class='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
-								<p class='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
+								<p className='instructions'> Use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). </p>
+								<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
+								<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
 								<button id='toggleInstructions'>hide instructions</button>
 							
 								<h4> layer: </h4>
@@ -802,7 +806,7 @@ class PresentationWrapper extends React.Component {
 									<br />
 									<h4> animation control: </h4>
 									<ul id='timeOptions'>
-										<label for='timePerFrame'>time per frame (ms):</label>
+										<label htmlFor='timePerFrame'>time per frame (ms):</label>
 										<select name='timePerFrame' id='timePerFrame' onChange={
 											(evt) => {
 												this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
@@ -848,7 +852,7 @@ class PresentationWrapper extends React.Component {
 							
 							<div id='adjustBrushSize'>
 								<br />
-								<p class="text-info">change brush size</p>
+								<p className="text-info">change brush size</p>
 									<input id='brushSize' type='range' min='1' max='15' step='.5' defaultValue='2' />
 								<span id='brushSizeValue'> 2 </span>
 							</div>
@@ -860,22 +864,22 @@ class PresentationWrapper extends React.Component {
 								<h3> demos </h3>
 								<select id='chooseDemo'>
 									<option label=""></option>
-									<option class='demo'>run_demo</option>
-									<option class='demo'>floaty_thingy</option>
-									<option class='demo'>asakusa_mizusaki_butterfly</option>
+									<option className='demo'>run_demo</option>
+									<option className='demo'>floaty_thingy</option>
+									<option className='demo'>asakusa_mizusaki_butterfly</option>
 								</select>
 							</div>
 							
 						</div>
 						
-						<div id='footer' class='row'>
+						<div id='footer' className='row'>
 							<hr />
 							<p> n.c.h works 2017-2020 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
 						</div>
 						
 					</div>
 
-					<div id='screen' class='col-lg-9 grid'>
+					<div id='screen' className='col-lg-9 grid'>
 								
 						<FrameCounterDisplay
 							currFrame={this.state.currentFrame}
@@ -888,7 +892,7 @@ class PresentationWrapper extends React.Component {
 						<AnimationTimeline frames={this.state.timelineFrames} />
 						<canvas id='animationTimelineCanvas' style={{
 									'border': '1px solid #000',
-									'border-top': 0,
+									'borderTop': 0,
 									'display': 'block',
 						}}></canvas>
 						
@@ -898,7 +902,7 @@ class PresentationWrapper extends React.Component {
 								let marker = this.state.timelineMarkers[markerKey];
 								return (
 									<div>
-										<label for={'marker' + marker.frameNumber + 'Select'}>marker for frame {marker.frameNumber}: &nbsp;</label>
+										<label htmlFor={'marker' + marker.frameNumber + 'Select'}>marker for frame {marker.frameNumber}: &nbsp;</label>
 										<select 
 										id={'marker' + marker.frameNumber + 'Select'} 
 										name={'marker' + marker.frameNumber + 'Select'}
@@ -936,4 +940,4 @@ class PresentationWrapper extends React.Component {
 
 }
 
-export { PresentationWrapper };
+export { PresentationWrapper, FrameCounterDisplay };

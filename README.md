@@ -1,5 +1,5 @@
 # funSketch    
-an experimental application that has simple drawing features, as well as some interesting filter and brush options.    
+an experimental application made with React that has simple drawing features, as well as some interesting filter and brush options.    
 but more importantly, you can also make some quick, simple animations!    
     
 current look:    

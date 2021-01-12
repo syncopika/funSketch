@@ -240,6 +240,26 @@ describe("test AnimationProject classes", () => {
 			expect(animProject.getCurrFrame()).toEqual(animProject.getFrames()[0]);
 		});
 		
+		it("test nextFrame", () => {
+			const animProject = new AnimationProject(containerId);
+			jest.spyOn(animProject, "updateOnionSkin").mockImplementation(() => {});
+			
+			expect(animProject.nextFrame()).toEqual(null);
+			
+			animProject.addNewFrame();
+			expect(animProject.nextFrame()).toEqual(null);
+			
+			animProject.addNewFrame();
+			expect(animProject.nextFrame()).toEqual(animProject.getCurrFrame());
+		});
+		
+		it("test prevFrame", () => {
+			const animProject = new AnimationProject(containerId);
+			jest.spyOn(animProject, "updateOnionSkin").mockImplementation(() => {});
+			
+			expect(animProject.prevFrame()).toEqual(null);
+		});
+		
 	});
 	
 });

@@ -240,11 +240,11 @@ class AnimationProject {
 	}
 	
     nextFrame(){
-        if(this.frameList.length === this.currentFrameIndex + 1){
+        if(this.frameList.length <= this.currentFrameIndex + 1){
             return null; // no more frames to see
         }
         this.currentFrameIndex += 1;
-		this.updateOnionSkin()
+		this.updateOnionSkin();
         return this.frameList[this.currentFrameIndex];
     }
 	

@@ -258,6 +258,15 @@ describe("test AnimationProject classes", () => {
 			jest.spyOn(animProject, "updateOnionSkin").mockImplementation(() => {});
 			
 			expect(animProject.prevFrame()).toEqual(null);
+			
+			animProject.addNewFrame();
+			animProject.addNewFrame();
+			animProject.addNewFrame();
+			expect(animProject.prevFrame()).toEqual(null); // still on first frame at this point
+			
+			animProject.nextFrame();
+			expect(animProject.prevFrame()).toEqual(animProject.getCurrFrame());
+			
 		});
 		
 	});

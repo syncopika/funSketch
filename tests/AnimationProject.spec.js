@@ -248,9 +248,11 @@ describe("test AnimationProject classes", () => {
 			
 			animProject.addNewFrame();
 			expect(animProject.nextFrame()).toEqual(null);
+			expect(animProject.getCurrFrameIndex()).toEqual(0);
 			
 			animProject.addNewFrame();
 			expect(animProject.nextFrame()).toEqual(animProject.getCurrFrame());
+			expect(animProject.getCurrFrameIndex()).toEqual(1);
 		});
 		
 		it("test prevFrame", () => {
@@ -265,8 +267,11 @@ describe("test AnimationProject classes", () => {
 			expect(animProject.prevFrame()).toEqual(null); // still on first frame at this point
 			
 			animProject.nextFrame();
-			expect(animProject.prevFrame()).toEqual(animProject.getCurrFrame());
+			expect(animProject.getCurrFrameIndex()).toEqual(1);
 			
+			expect(animProject.prevFrame()).toEqual(animProject.getCurrFrame());
+			expect(animProject.prevFrame()).toEqual(null);
+			expect(animProject.getCurrFrameIndex()).toEqual(0);
 		});
 		
 	});

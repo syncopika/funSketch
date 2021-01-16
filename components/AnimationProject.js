@@ -83,6 +83,74 @@ class Frame {
         this.count++;
     }
 	
+	_showLayer(canvas){
+		canvas.style.opacity = .97;
+		canvas.style.zIndex = 1;
+		canvas.style.cursor = "crosshair";
+	}
+
+	_hideLayer(canvas){
+		canvas.style.opacity = 0;
+		canvas.style.zIndex = 0;
+		canvas.style.cursor = "";
+	}
+	
+	// make current canvas an onion skin
+	_makeCurrLayerOnion(canvas){
+		canvas.style.opacity = .92; // apply onion skin to current canvas 
+		canvas.style.zIndex = 0;
+		canvas.style.cursor = "";
+	}
+	
+    nextLayer(){
+        // this moves the current layer to the next one if exists
+        if(this.currentIndex + 1 < this.canvasList.length){
+            // move to next canvas and apply onion skin to current canvas
+			let currLayer = this.currentCanvas;
+            this._makeCurrLayerOnion(currLayer);
+            
+			// in the special case for when you want to go to the next canvas from the very first one, 
+            // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
+            if(currLayer.currentIndex > 0){
+				let prevLayer = this.canvasList[this.currentIndex - 1];
+                // reset opacity and z-index for previous canvas (because of onionskin)
+                this._hideLayer(prevLayer);
+            }
+            // show the next canvas 
+			let nextLayer = this.canvasList[this.currentIndex + 1];
+            this._showLayer(nextLayer);
+			
+            this.currentCanvas = nextLayer;
+            this.currentIndex++;
+			
+            return true;
+        }
+        return false;
+    }
+	
+    prevLayer(){
+        // this moves the current layer to the previous one if exists
+        if(this.currentIndex - 1 >= 0){
+            // move to previous canvas
+			let currLayer = this.currentCanvas;
+            this._hideLayer(currLayer);
+            
+			// make previous canvas visible 
+			let prevLayer = this.canvasList[this.currentIndex - 1];
+            this._showLayer(prevLayer);
+            
+			// if there is another canvas before the previous one, apply onion skin
+            if(this.currentIndex - 2 >= 0){
+                this.canvasList[this.currentIndex - 2].style.opacity = .92;
+            }
+            this.currentCanvas = prevLayer;
+            this.currentIndex--;
+			
+            return true;
+        }
+        return false;
+    }
+	
     hide(){
         // makes all layers not visible
         this.canvasList.forEach((canvas) => {
@@ -161,14 +229,18 @@ class Frame {
     it also instantiates an onion skin frame.
 ***/
 class AnimationProject {
-	constructor(container){
+	constructor(containerId){
 		this.name = "";
 		this.currentFrameIndex = 0; // index of current frame
 		this.speed = 100; // 100 ms per frame 
 		this.frameList = [];
-		this.onionSkinFrame = createOnionSkinFrame(container);
+		this.onionSkinFrame = createOnionSkinFrame(containerId);
 		this.onionSkinFrame.style.display = 'none'; // hide it initially
-		this.container = container; // id of the html element the frames are displayed in
+		this.containerId = containerId; // id of the html element the frames are displayed in
+	}
+	
+	getContainerId(){
+		return this.containerId;
 	}
 	
 	getFrames(){
@@ -210,7 +282,7 @@ class AnimationProject {
     }
 	
     addNewFrame(showFlag){
-        let newFrame = new Frame(this.container, this.frameList.length);
+        let newFrame = new Frame(this.containerId, this.frameList.length);
         newFrame.setupNewLayer();
         this.frameList.push(newFrame);
         if(!showFlag){

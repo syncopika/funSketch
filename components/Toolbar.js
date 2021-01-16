@@ -23,13 +23,7 @@ class Toolbar {
 		this.animationProj = animationProj;
 	}
 	
-	// shouldn't the following 3 functions be actually part of the Frame class?? kinda weird to have them here...
-	_applyOnionSkin(canvas){
-		canvas.style.opacity = .92; // apply onion skin to current canvas 
-		canvas.style.zIndex = 0;
-		canvas.style.cursor = "";
-	}
-
+	// shouldn't the following 2 functions be actually part of the Frame class?? kinda weird to have them here...
 	_showCanvas(canvas){
 		canvas.style.opacity = .97;
 		canvas.style.zIndex = 1;
@@ -49,55 +43,23 @@ class Toolbar {
     nextLayer(){
         // this moves the current layer to the next one if exists
         let frame = this.animationProj.getCurrFrame();
-        if(frame.currentIndex + 1 < frame.canvasList.length){
-            // move to next canvas
-            // apply onion skin to current canvas 
-            this._applyOnionSkin(frame.currentCanvas);
-            
-			// in the special case for when you want to go to the next canvas from the very first one, 
-            // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
-            if(frame.currentIndex > 0){
-				let prevLayer = frame.canvasList[frame.currentIndex - 1];
-                // reset opacity and z-index for previous canvas (because of onionskin)
-                this._hideCanvas(prevLayer);
-            }
-            // show the next canvas 
-			let nextLayer = frame.canvasList[frame.currentIndex + 1];
-            this._showCanvas(nextLayer);
-			
-            frame.currentCanvas = nextLayer;
-            frame.currentIndex++;
-            
+		
+		if(frame.nextLayer()){
 			// apply brush
 			// TODO: can we figure out a better way to handle brushes?
             this.brush.applyBrush();
-			
-            return true;
-        }
-        return false;
+			return true;
+		}else{
+			return false;
+		}
     }
 	
     prevLayer(){
         // this moves the current layer to the previous one if exists
         let frame = this.animationProj.getCurrFrame();
-        if(frame.currentIndex - 1 >= 0){
-            // move to previous canvas
-            this._hideCanvas(frame.currentCanvas);
-            
-			// make previous canvas visible 
-			let prevLayer = frame.canvasList[frame.currentIndex - 1];
-            this._showCanvas(prevLayer);
-            
-			// if there is another canvas before the previous one, apply onion skin
-            if(frame.currentIndex - 2 >= 0){
-                frame.canvasList[frame.currentIndex - 2].style.opacity = .92;
-            }
-            frame.currentCanvas = prevLayer;
-            frame.currentIndex--;
-			
+        if(frame.prevLayer()){			
             // apply brush
             this.brush.applyBrush();
-			
             return true;
         }
         return false;

@@ -189,7 +189,8 @@ describe("test AnimationProject classes", () => {
 		it("test setup", () => {
 			const animProject = new AnimationProject(containerId);
 			
-			expect(animProject.container).toEqual(containerId);
+			expect(animProject.getContainerId()).toEqual(containerId);
+			expect(animProject.onionSkinFrame).not.toEqual(null);
 			
 			let frames = animProject.getFrames();
 			expect(frames.length).toEqual(0);

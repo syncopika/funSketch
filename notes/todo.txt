@@ -6,6 +6,8 @@ buggy stuff / refactor
 - fix undo
   - going to a different frame and clicking undo overwrites the current layer with whatever layer the undo was for
 
+- rotate image needs fixing
+
 - need more unit tests
 
 short-term

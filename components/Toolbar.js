@@ -3,7 +3,7 @@
 // assemble the common functions for the toolbar
 // remove canvas param since you have animationProj
 class Toolbar {
-	constructor(canvas, brush, animationProj){
+	constructor(brush, animationProj){
 		// use this for storing the most recent imported image
 		// can be useful for resetting image
 		this.recentImage = null;
@@ -18,7 +18,6 @@ class Toolbar {
 		this.layerMode = true;
 		this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
 		
-		this.canvas = canvas;
 		this.brush = brush;
 		this.animationProj = animationProj;
 	}

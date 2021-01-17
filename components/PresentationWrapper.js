@@ -713,9 +713,7 @@ class PresentationWrapper extends React.Component {
 		newBrush.defaultBrush();
 		
 		const newFilters = new Filters(animationProj.getCurrFrame(), newBrush);
-		
-		let currCanvas = animationProj.getCurrFrame().currentCanvas;
-		const newToolbar = new Toolbar(currCanvas, newBrush, animationProj);
+		const newToolbar = new Toolbar(newBrush, animationProj);
 		
 		this.setState({
 			'animationProject': animationProj,
@@ -749,7 +747,7 @@ class PresentationWrapper extends React.Component {
 								<button id='toggleInstructions'>hide instructions</button>
 							
 								<h4> layer: </h4>
-								<button id='insertCanvas'>add new layer</button>
+								<button id='insertCanvas'>add new layer after</button>
 								<button id='deleteCanvas'>delete current layer</button>
 								<button id='duplicateCanvas'>duplicate layer</button>
 								<button id='clearCanvas'>clear layer</button>

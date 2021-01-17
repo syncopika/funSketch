@@ -3390,8 +3390,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var newBrush = new _Brush_js__WEBPACK_IMPORTED_MODULE_3__["Brush"](animationProj);
       newBrush.defaultBrush();
       var newFilters = new _Filters_js__WEBPACK_IMPORTED_MODULE_4__["Filters"](animationProj.getCurrFrame(), newBrush);
-      var currCanvas = animationProj.getCurrFrame().currentCanvas;
-      var newToolbar = new _Toolbar_js__WEBPACK_IMPORTED_MODULE_2__["Toolbar"](currCanvas, newBrush, animationProj);
+      var newToolbar = new _Toolbar_js__WEBPACK_IMPORTED_MODULE_2__["Toolbar"](newBrush, animationProj);
       this.setState({
         'animationProject': animationProj,
         'brushInstance': newBrush,
@@ -3440,7 +3439,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "toggleInstructions"
       }, "hide instructions"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h4", null, " layer: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "insertCanvas"
-      }, "add new layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+      }, "add new layer after"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "deleteCanvas"
       }, "delete current layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         id: "duplicateCanvas"
@@ -3648,7 +3647,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 // assemble the common functions for the toolbar
 // remove canvas param since you have animationProj
 var Toolbar = /*#__PURE__*/function () {
-  function Toolbar(canvas, brush, animationProj) {
+  function Toolbar(brush, animationProj) {
     _classCallCheck(this, Toolbar);
 
     // use this for storing the most recent imported image
@@ -3664,27 +3663,11 @@ var Toolbar = /*#__PURE__*/function () {
     this.layerMode = true;
     this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
 
-    this.canvas = canvas;
     this.brush = brush;
     this.animationProj = animationProj;
-  } // shouldn't the following 2 functions be actually part of the Frame class?? kinda weird to have them here...
-
+  }
 
   _createClass(Toolbar, [{
-    key: "_showCanvas",
-    value: function _showCanvas(canvas) {
-      canvas.style.opacity = .97;
-      canvas.style.zIndex = 1;
-      canvas.style.cursor = "crosshair";
-    }
-  }, {
-    key: "_hideCanvas",
-    value: function _hideCanvas(canvas) {
-      canvas.style.opacity = 0;
-      canvas.style.zIndex = 0;
-      canvas.style.cursor = "";
-    }
-  }, {
     key: "setCounter",
     value: function setCounter(elementId) {
       this.htmlCounter = document.getElementById(elementId);
@@ -3786,13 +3769,13 @@ var Toolbar = /*#__PURE__*/function () {
         _this.insertNewLayer();
       });
     }
-  }, {
-    key: "duplicateLayer",
-
     /***
     	duplicate the current layer
     	note: the next layer after the current will have identitcal image data
     ***/
+
+  }, {
+    key: "duplicateLayer",
     value: function duplicateLayer(elementId) {
       var _this2 = this;
 
@@ -3856,9 +3839,8 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
-        
     add a new frame
-        ***/
+    ***/
 
   }, {
     key: "addNewFrameButton",
@@ -3869,14 +3851,12 @@ var Toolbar = /*#__PURE__*/function () {
         _this4.animationProj.addNewFrame();
       });
     }
+    /***
+    	delete current frame
+    ***/
+
   }, {
     key: "deleteCurrentFrameButton",
-
-    /***
-    	
-    	delete current frame
-    	
-    ***/
     value: function deleteCurrentFrameButton(elementId, setStateFunction) {
       var _this5 = this;
 
@@ -3896,9 +3876,7 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
-    
     	change layer order for current frame on button press
-    
     ***/
 
   }, {

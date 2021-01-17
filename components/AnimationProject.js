@@ -169,7 +169,6 @@ class Frame {
 			}else{
 				canvas.style.zIndex = 0;
 			}
-			
 			canvas.style.visibility = "";
 			canvas.style.cursor = "crosshair";		
         });

@@ -137,6 +137,25 @@ describe("test AnimationProject classes", () => {
 			expect(frame.getCurrCanvas()).toEqual(frame.getLayers()[1]);
 		});
 		
+		it("test nextLayer", () => {
+			const frame = new Frame(containerId, 0);
+			frame.setupNewLayer();
+			expect(frame.nextLayer()).toEqual(false);
+			
+			frame.setupNewLayer();
+			expect(frame.nextLayer()).toEqual(true);
+		});
+		
+		it("test prevLayer", () => {
+			const frame = new Frame(containerId, 0);
+			frame.setupNewLayer();
+			expect(frame.prevLayer()).toEqual(false);
+			
+			frame.setupNewLayer();
+			frame.nextLayer();
+			expect(frame.prevLayer()).toEqual(true);
+		});
+		
 		/*
 		it("test frame copyCanvas", () => {
 			// TODO: figure out how to get this working? 

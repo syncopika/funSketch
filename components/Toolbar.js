@@ -23,19 +23,6 @@ class Toolbar {
 		this.animationProj = animationProj;
 	}
 	
-	// shouldn't the following 2 functions be actually part of the Frame class?? kinda weird to have them here...
-	_showCanvas(canvas){
-		canvas.style.opacity = .97;
-		canvas.style.zIndex = 1;
-		canvas.style.cursor = "crosshair";
-	}
-
-	_hideCanvas(canvas){
-		canvas.style.opacity = 0;
-		canvas.style.zIndex = 0;
-		canvas.style.cursor = "";
-	}
-	
     setCounter(elementId){
         this.htmlCounter = document.getElementById(elementId);
     }
@@ -43,7 +30,6 @@ class Toolbar {
     nextLayer(){
         // this moves the current layer to the next one if exists
         let frame = this.animationProj.getCurrFrame();
-		
 		if(frame.nextLayer()){
 			// apply brush
 			// TODO: can we figure out a better way to handle brushes?
@@ -118,7 +104,7 @@ class Toolbar {
         document.getElementById(elementId).addEventListener('click', () => {
             this.insertNewLayer();
         });
-    };
+    }
 	
 	/***
 		duplicate the current layer
@@ -177,20 +163,16 @@ class Toolbar {
     }
 	
     /***
-        
 		add a new frame
-		
     ***/
     addNewFrameButton(elementId){
         document.getElementById(elementId).addEventListener('click', () => {
             this.animationProj.addNewFrame();
         });
-    };
+    }
 	
 	/***
-		
 		delete current frame
-		
 	***/
 	deleteCurrentFrameButton(elementId, setStateFunction){
         document.getElementById(elementId).addEventListener('click', () => {
@@ -210,9 +192,7 @@ class Toolbar {
 	}
 	
 	/***
-	
 		change layer order for current frame on button press
-	
 	***/
 	changeCurrentFrameLayerOrder(elementId, setStateFunction){
 		document.getElementById(elementId).addEventListener('click', () => {

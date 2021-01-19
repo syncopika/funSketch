@@ -1,7 +1,10 @@
 buggy stuff / refactor
 ---------
+- floodfill seems to stop working after switching frames? the wrong brush gets used.
+
 - refactor Brush and Toolbar to use the class style
   - make sure no excess event listeners are being added when switching brushes
+  - need to refactor some Toolbar and Brush methods as well
 
 - fix undo
   - going to a different frame and clicking undo overwrites the current layer with whatever layer the undo was for

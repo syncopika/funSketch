@@ -3,9 +3,6 @@
     pass in an instance of the AnimationProject class as an argument
     the canvas argument will have a reference to the current canvas so that
     only the current canvas will be a target for the brush
-	
-	I think we may be able to get away with leaving this 'class' as just a function
-	since there should only be one Brush instance for an animation project.
 ***/
 	
 class Brush {
@@ -33,12 +30,47 @@ class Brush {
 		this.tempSnapshot;
 	}
 	
+    //collect info where each pixel is to be drawn on canvas
+    _addClick(x, y, color, size, dragging){
+        this.clickX.push(x);
+        this.clickY.push(y);
+        this.clickDrag.push(dragging);
+        this.clickColor.push((color === null ? this.currColor : color));
+        this.clickSize.push((size === null ? this.currSize : size));
+    }
+	
+	
+    _redraw(strokeFunction){
+        let frame = this.animationProject.getCurrFrame();
+        let context = frame.getCurrCanvas().getContext("2d");
+        context.lineJoin = 'round';
+		strokeFunction(context);
+    }
+	
+    _clearClick() {
+        this.clickX = [];
+        this.clickY = [];
+        this.clickDrag = [];
+        this.clickColor = [];
+        this.clickSize = [];
+    }
+	
 	_handleTouchEvent(evt){
 		let rect = evt.target.getBoundingClientRect();
 		let x = evt.touches[0].pageX - rect.left;
 		let y = evt.touches[0].pageY - rect.top - window.pageYOffset;
 		return {'x': x, 'y': y};
 	}
+	
+    resetBrush(){
+        const canvas = this.animationProject.getCurrFrame();
+        const curCanvas = canvas.getCurrCanvas();
+        //detach any events from mouse actions (reset the events connected with mouse events)
+		for(let eventType in this.currentEventListeners){
+			curCanvas.removeEventListener(eventType, this.currentEventListeners[eventType]);
+			delete curCanvas[eventType];
+		}
+    }
 	
 	changeBrushSize(size){
         this.currSize = size;
@@ -65,10 +97,9 @@ class Brush {
         // reset mouse action functions first 
         this.resetBrush();
 		
-        const frame = this.animationProject.getCurrFrame();
-        let paint;
-		
+        const frame = this.animationProject.getCurrFrame();	
 		const currCanvas = frame.getCurrCanvas();
+		let paint;
 		
 		let defaultBrushStart = (evt) => {
 			evt.preventDefault();
@@ -178,13 +209,12 @@ class Brush {
         // reset mouse action functions first 
         this.resetBrush();
         
-		let frame = this.animationProject.getCurrFrame();
-		let context = frame.getCurrCanvas().getContext("2d");
+		const frame = this.animationProject.getCurrFrame();
+		const curCanvas = frame.getCurrCanvas();
+		const context = frame.getCurrCanvas().getContext("2d");
 		context.lineJoin = context.lineCap = 'round';
 		
         let paint;
-		
-		const curCanvas = frame.getCurrCanvas();
 		
 		let radGradBrushStart = (evt) => {
             if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart'){
@@ -264,10 +294,10 @@ class Brush {
     }
 	
     _radialGrad(x, y){
-        let canvas = this.animationProject.getCurrFrame();
-        let context = canvas.currentCanvas.getContext("2d");
-        let radGrad = context.createRadialGradient(x, y, this.currSize, x, y, this.currSize * 1.5);
-        let colorPicked = this.currColorArray;
+        const canvas = this.animationProject.getCurrFrame();
+        const context = canvas.currentCanvas.getContext("2d");
+        const radGrad = context.createRadialGradient(x, y, this.currSize, x, y, this.currSize * 1.5);
+        const colorPicked = this.currColorArray;
         radGrad.addColorStop(0, this.currColor);
         if(colorPicked !== undefined) {
             radGrad.addColorStop(.5, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',.5)');
@@ -287,9 +317,9 @@ class Brush {
 	penBrush(){
 		this.resetBrush();
         
-		let canvas = this.animationProject.getCurrFrame();
-        let paint;
-		const currCanvas = canvas.currentCanvas;
+		const canvas = this.animationProject.getCurrFrame();
+        const currCanvas = canvas.currentCanvas;
+		let paint;
 		
 		let penBrushStart = (evt) => {
             if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart') { //when left click only
@@ -343,9 +373,8 @@ class Brush {
             // see if it's a new canvas or we're still on the same one as before the mousedown
             if(this.previousCanvas === canvas.currentCanvas){
                 // if it is, then log the current image data. this is important for the undo feature
-                let c = canvas.currentCanvas;
-                let w = c.width;
-                let h = c.height;
+                let w = canvas.currentCanvas.width;
+                let h = canvas.currentCanvas.height;
                 this.tempSnapshot = canvas.currentCanvas.getContext("2d").getImageData(0, 0, w, h);
             }
             this._clearClick();
@@ -446,7 +475,7 @@ class Brush {
                 // create an object with the pixel data
                 let pixel = {'x': Math.floor(x), 'y': Math.floor(y), 'color': color};
 
-                this.floodfill(frame.currentCanvas, currColorArray, pixel);
+                this.floodfill(curCanvas, currColorArray, pixel);
             }
 		}
 		curCanvas.addEventListener('mousedown', floodfillEvt);
@@ -534,41 +563,6 @@ class Brush {
         }
         // put new edited image back on canvas
         ctx.putImageData(imageData, 0, 0);
-    }
-	
-    resetBrush(){
-        let canvas = this.animationProject.getCurrFrame();
-        let curCanvas = canvas.getCurrCanvas();
-        //detach any events from mouse actions (reset the events connected with mouse events)
-		for(let eventType in this.currentEventListeners){
-			curCanvas.removeEventListener(eventType, this.currentEventListeners[eventType]);
-			delete curCanvas[eventType];
-		}
-    }
-	
-    //collect info where each pixel is to be drawn on canvas
-    _addClick(x, y, color, size, dragging){
-        this.clickX.push(x);
-        this.clickY.push(y);
-        this.clickDrag.push(dragging);
-        this.clickColor.push((color === null ? this.currColor : color));
-        this.clickSize.push((size === null ? this.currSize : size));
-    }
-	
-	
-    _redraw(strokeFunction){
-        let frame = this.animationProject.getCurrFrame();
-        let context = frame.getCurrCanvas().getContext("2d");
-        context.lineJoin = 'round';
-		strokeFunction(context);
-    }
-	
-    _clearClick() {
-        this.clickX = [];
-        this.clickY = [];
-        this.clickDrag = [];
-        this.clickColor = [];
-        this.clickSize = [];
     }
 }
 

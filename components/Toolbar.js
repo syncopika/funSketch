@@ -580,7 +580,7 @@ class Toolbar {
         });
         // add frames + take into account frame rate given by timelineMarkers
         for(let i = 0; i < this.animationProj.frameList.length; i++){
-            let tempCanvas = this.mergeFrameLayers(animationProj.frameList[i]);
+            let tempCanvas = this.mergeFrameLayers(this.animationProj.frameList[i]);
 			let frameTime = timelineMarkers[i+1] ? timelineMarkers[i+1] : this.timePerFrame;
             gif.addFrame(tempCanvas, { delay: frameTime });
         }

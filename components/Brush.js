@@ -9,7 +9,7 @@ class Brush {
 	constructor(animationProj){
 		// pass in an animation project, from which you can access the current frame and the current canvas
 		this.animationProject = animationProj;
-		this.previousCanvas = undefined;
+		this.previousCanvas = null;
 		this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
 		this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
 		this.selectedBrush = 'default'; // user-selected brush 
@@ -27,7 +27,7 @@ class Brush {
 		
 		// hold the current image after mouseup. 
 		// only put it in the currentCanvasSnapshots after user starts drawing again, creating a new snapshot
-		this.tempSnapshot;
+		this.tempSnapshot = null;
 	}
 	
     //collect info where each pixel is to be drawn on canvas
@@ -64,11 +64,11 @@ class Brush {
 	
     resetBrush(){
         const canvas = this.animationProject.getCurrFrame();
-        const curCanvas = canvas.getCurrCanvas();
+        const currLayer = canvas.getCurrCanvas();
         //detach any events from mouse actions (reset the events connected with mouse events)
 		for(let eventType in this.currentEventListeners){
-			curCanvas.removeEventListener(eventType, this.currentEventListeners[eventType]);
-			delete curCanvas[eventType];
+			currLayer.removeEventListener(eventType, this.currentEventListeners[eventType]);
+			delete this.currentEventListeners[eventType];
 		}
     }
 	
@@ -98,13 +98,12 @@ class Brush {
         this.resetBrush();
 		
         const frame = this.animationProject.getCurrFrame();	
-		const currCanvas = frame.getCurrCanvas();
+		const currLayer = frame.getCurrCanvas();
 		let paint;
 		
 		let defaultBrushStart = (evt) => {
 			evt.preventDefault();
 			if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart') { //when left click only
-				const currLayer = frame.getCurrCanvas();
 				// update previousCanvas
 				if(this.previousCanvas !== currLayer){
 					this.previousCanvas = currLayer;
@@ -118,7 +117,6 @@ class Brush {
 				
 				paint = true;
 				// offset will be different with mobile
-				// use e.originalEvent because using jQuery
 				// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
 				// https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
 				// using rect seems to work pretty well
@@ -126,13 +124,14 @@ class Brush {
 					const newCoords = this._handleTouchEvent(evt);
 					evt.offsetX = newCoords.x;
 					evt.offsetY = newCoords.y;
+					evt.preventDefault();
 				}
 				this._addClick(evt.offsetX, evt.offsetY, null, null, true);
 				this._redraw(this._defaultBrushStroke.bind(this));
 			}
 		}
-		currCanvas.addEventListener('mousedown', defaultBrushStart);
-		currCanvas.addEventListener('touchstart', defaultBrushStart);
+		currLayer.addEventListener('mousedown', defaultBrushStart);
+		currLayer.addEventListener('touchstart', defaultBrushStart);
 		this.currentEventListeners['mousedown'] = defaultBrushStart;
 		this.currentEventListeners['touchstart'] = defaultBrushStart;
 		
@@ -150,15 +149,14 @@ class Brush {
                 this._redraw(this._defaultBrushStroke.bind(this));
             }
 		}
-		currCanvas.addEventListener('mousemove', defaultBrushMove);
-		currCanvas.addEventListener('touchmove', defaultBrushMove);
+		currLayer.addEventListener('mousemove', defaultBrushMove);
+		currLayer.addEventListener('touchmove', defaultBrushMove);
 		this.currentEventListeners['mousemove'] = defaultBrushMove;
 		this.currentEventListeners['touchmove'] = defaultBrushMove;
 		
         // stop drawing
 		let defaultBrushStop = (evt) => {
 			// see if it's a new canvas or we're still on the same one as before the mousedown
-			const currLayer = frame.getCurrCanvas();
 			if(this.previousCanvas === currLayer){
 				// if it is, then log the current image data. this is important for the undo feature
 				const w = currLayer.width;
@@ -168,14 +166,14 @@ class Brush {
 			this._clearClick();
 			paint = false;
 		}
-		currCanvas.addEventListener('mouseup', defaultBrushStop);
-		currCanvas.addEventListener('touchend', defaultBrushStop);
+		currLayer.addEventListener('mouseup', defaultBrushStop);
+		currLayer.addEventListener('touchend', defaultBrushStop);
 		this.currentEventListeners['mouseup'] = defaultBrushStop;
 		this.currentEventListeners['touchend'] = defaultBrushStop;
 		
         //stop drawing when mouse leaves
 		// TODO: we really shouldn't have multiple instances of this
-        currCanvas.addEventListener('mouseleave', (evt) => {
+        currLayer.addEventListener('mouseleave', (evt) => {
 			this._clearClick();
             paint = false;
         });
@@ -210,8 +208,8 @@ class Brush {
         this.resetBrush();
         
 		const frame = this.animationProject.getCurrFrame();
-		const curCanvas = frame.getCurrCanvas();
-		const context = frame.getCurrCanvas().getContext("2d");
+		const currLayer = frame.getCurrCanvas();
+		const context = currLayer.getContext("2d");
 		context.lineJoin = context.lineCap = 'round';
 		
         let paint;
@@ -219,8 +217,8 @@ class Brush {
 		let radGradBrushStart = (evt) => {
             if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart'){
 				// update previousCanvas
-                if(this.previousCanvas !== curCanvas){
-                    this.previousCanvas = curCanvas;
+                if(this.previousCanvas !== currLayer){
+                    this.previousCanvas = currLayer;
                     // reset the snapshots array
                     this.currentCanvasSnapshots = [];
                 }
@@ -244,8 +242,8 @@ class Brush {
 				this._redraw(this._defaultBrushStroke.bind(this));
             }
 		}
-		curCanvas.addEventListener('mousedown', radGradBrushStart);
-		curCanvas.addEventListener('touchstart', radGradBrushStart);
+		currLayer.addEventListener('mousedown', radGradBrushStart);
+		currLayer.addEventListener('touchstart', radGradBrushStart);
 		this.currentEventListeners['mousedown'] = radGradBrushStart;
 		this.currentEventListeners['touchstart'] = radGradBrushStart;
 		
@@ -264,14 +262,13 @@ class Brush {
 				this._redraw(this._defaultBrushStroke.bind(this));
             }
 		}
-		curCanvas.addEventListener('mousemove', radGradBrushMove);
-		curCanvas.addEventListener('touchmove', radGradBrushMove);
+		currLayer.addEventListener('mousemove', radGradBrushMove);
+		currLayer.addEventListener('touchmove', radGradBrushMove);
 		this.currentEventListeners['mousemove'] = radGradBrushMove;
 		this.currentEventListeners['touchmove'] = radGradBrushMove;
 		
 		// this function seems to be shared among all brushes for stopping. TODO: just have one of these functions
 		let radGradBrushStop = (evt) => {
-			const currLayer = frame.getCurrCanvas();
             if(this.previousCanvas === currLayer){
                 // if it is, then log the current image data. this is important for the undo feature
                 const w = currLayer.width;
@@ -281,21 +278,21 @@ class Brush {
 			this._clearClick();
 			paint = false;
 		}
-		curCanvas.addEventListener('mouseup', radGradBrushStop);
-		curCanvas.addEventListener('touchend', radGradBrushStop);
+		currLayer.addEventListener('mouseup', radGradBrushStop);
+		currLayer.addEventListener('touchend', radGradBrushStop);
 		this.currentEventListeners['mouseup'] = radGradBrushStop;
 		this.currentEventListeners['touchend'] = radGradBrushStop;
 		
         //stop drawing when mouse leaves
-		curCanvas.addEventListener('mouseleave', (evt) => {
+		currLayer.addEventListener('mouseleave', (evt) => {
 			this._clearClick();
             paint = false;			
 		});
     }
 	
     _radialGrad(x, y){
-        const canvas = this.animationProject.getCurrFrame();
-        const context = canvas.currentCanvas.getContext("2d");
+        const frame = this.animationProject.getCurrFrame();
+        const context = frame.getCurrCanvas().getContext("2d");
         const radGrad = context.createRadialGradient(x, y, this.currSize, x, y, this.currSize * 1.5);
         const colorPicked = this.currColorArray;
         radGrad.addColorStop(0, this.currColor);
@@ -317,15 +314,15 @@ class Brush {
 	penBrush(){
 		this.resetBrush();
         
-		const canvas = this.animationProject.getCurrFrame();
-        const currCanvas = canvas.currentCanvas;
+		const frame = this.animationProject.getCurrFrame();
+        const currLayer = frame.getCurrCanvas();
 		let paint;
 		
 		let penBrushStart = (evt) => {
             if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart') { //when left click only
                 // update previousCanvas
-                if(this.previousCanvas !== canvas.currentCanvas){
-                    this.previousCanvas = canvas.currentCanvas;
+                if(this.previousCanvas !== currLayer){
+                    this.previousCanvas = currLayer;
                     // reset the snapshots array
                     this.currentCanvasSnapshots = [];
                 }
@@ -337,16 +334,17 @@ class Brush {
                 paint = true;
 				
                 if(evt.type === 'touchstart'){
-                    let newCoords = this._handleTouchEvent(e);
+                    let newCoords = this._handleTouchEvent(evt);
                     evt.offsetX = newCoords.x;
                     evt.offsetY = newCoords.y;
+					evt.preventDefault();
                 }
                 this._addClick(evt.offsetX, evt.offsetY, null, null, true);
                 this._redraw(this._penBrushStroke.bind(this));
             }
 		}
-		currCanvas.addEventListener("mousedown", penBrushStart);
-		currCanvas.addEventListener("touchstart", penBrushStart);
+		currLayer.addEventListener("mousedown", penBrushStart);
+		currLayer.addEventListener("touchstart", penBrushStart);
 		this.currentEventListeners['mousedown'] = penBrushStart;
 		this.currentEventListeners['touchstart'] = penBrushStart;
 		
@@ -354,7 +352,7 @@ class Brush {
 		let penBrushMove = (evt) => {
             if(paint){
                 if(evt.type === 'touchmove'){
-                    let newCoords = this._handleTouchEvent(evt);
+                    const newCoords = this._handleTouchEvent(evt);
                     evt.offsetX = newCoords.x;
                     evt.offsetY = newCoords.y;
                     evt.preventDefault();
@@ -363,40 +361,40 @@ class Brush {
                 this._redraw(this._penBrushStroke.bind(this));
             }
 		}
-		currCanvas.addEventListener('mousemove', penBrushMove);
-		currCanvas.addEventListener('touchmove', penBrushMove);
+		currLayer.addEventListener('mousemove', penBrushMove);
+		currLayer.addEventListener('touchmove', penBrushMove);
 		this.currentEventListeners['mousemove'] = penBrushMove;
 		this.currentEventListeners['touchmove'] = penBrushMove;
 		
         //stop drawing
 		let penBrushStop = (evt) => {
             // see if it's a new canvas or we're still on the same one as before the mousedown
-            if(this.previousCanvas === canvas.currentCanvas){
+            if(this.previousCanvas === currLayer){
                 // if it is, then log the current image data. this is important for the undo feature
-                let w = canvas.currentCanvas.width;
-                let h = canvas.currentCanvas.height;
-                this.tempSnapshot = canvas.currentCanvas.getContext("2d").getImageData(0, 0, w, h);
+                const w = currLayer.width;
+                const h = currLayer.height;
+                this.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
             }
             this._clearClick();
             paint = false;
 		}
-		currCanvas.addEventListener('mouseup', penBrushStop);
-		currCanvas.addEventListener('touchend', penBrushStop);
+		currLayer.addEventListener('mouseup', penBrushStop);
+		currLayer.addEventListener('touchend', penBrushStop);
 		this.currentEventListeners['mouseup'] = penBrushStop;
 		this.currentEventListeners['touchend'] = penBrushStop;
 		
         //stop drawing when mouse leaves
-        currCanvas.addEventListener('mouseleave', (evt) => {
+        currLayer.addEventListener('mouseleave', (evt) => {
 			this._clearClick();
             paint = false;
         });
 	}
 	
 	_penBrushStroke(context){
-		let clickX = this.clickX;
-		let clickY = this.clickY;
-		let clickColor = this.clickColor;
-		let clickSize = this.clickSize;
+		const clickX = this.clickX;
+		const clickY = this.clickY;
+		const clickColor = this.clickColor;
+		const clickSize = this.clickSize;
 		
 		// connect current dot with previous dot
 		context.beginPath();
@@ -411,9 +409,9 @@ class Brush {
 		
 		// then add some extra strokes
 		for(let i = 0; i < clickX.length; i++){
-			let dx = clickX[i] - clickX[clickX.length - 1];
-			let dy = clickY[i] - clickY[clickY.length - 1];
-			let d = dx*dx + dy*dy;
+			const dx = clickX[i] - clickX[clickX.length - 1];
+			const dy = clickY[i] - clickY[clickY.length - 1];
+			const d = dx*dx + dy*dy;
 			
 			if(d < 2000 && Math.random() > (d / 1000)){
 				context.beginPath();
@@ -426,25 +424,23 @@ class Brush {
 	}
 	
 	/***
-	
 		floodfill brush
 		
 		not really a brush, but should be considered a separate brush so its mousedown action 
 		won't conflict with the other brushes (i.e. no painting at the same time of a floodfill)
-	
 	***/
 	floodfillBrush(){
 		// reset mouse action functions first 
         this.resetBrush();
 		
         const frame = this.animationProject.getCurrFrame();
-		const curCanvas = frame.currentCanvas;
+		const currLayer = frame.getCurrCanvas();
 		
 		let floodfillEvt = (evt) => {
 			if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart'){ //when left click only
                 // update previousCanvas
-                if(this.previousCanvas !== frame.currentCanvas){
-                    this.previousCanvas = frame.currentCanvas;
+                if(this.previousCanvas !== currLayer){
+                    this.previousCanvas = currLayer;
                     // reset the snapshots array
                     this.currentCanvasSnapshots = [];
                 }
@@ -454,32 +450,33 @@ class Brush {
                 }
 
                 if(evt.type === 'touchstart'){
-                    let newCoords = this._handleTouchEvent(evt);
+                    const newCoords = this._handleTouchEvent(evt);
                     evt.offsetX = newCoords.x;
                     evt.offsetY = newCoords.y;
+					evt.preventDefault();
                 }
                 
 				// do floodfill
                 // need to parse the currColor because right now it looks like "rgb(x,y,z)". 
                 // I want it to look like [x, y, z]
-				let currColor = this.currColor;
+				const currColor = this.currColor;
                 let currColorArray = currColor.substring(currColor.indexOf('(')+1, currColor.length-1).split(',');
                 currColorArray = currColorArray.map(function(a){ return parseInt(a); });
 				
-				let x = evt.offsetX;
-				let y = evt.offsetY;
+				const x = evt.offsetX;
+				const y = evt.offsetY;
 
-                let colorData = document.getElementById(frame.currentCanvas.id).getContext("2d").getImageData(x, y, 1, 1).data;
-                let color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')';
+                const colorData = document.getElementById(frame.currentCanvas.id).getContext("2d").getImageData(x, y, 1, 1).data;
+                const color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')';
  
                 // create an object with the pixel data
-                let pixel = {'x': Math.floor(x), 'y': Math.floor(y), 'color': color};
+                const pixel = {'x': Math.floor(x), 'y': Math.floor(y), 'color': color};
 
-                this.floodfill(curCanvas, currColorArray, pixel);
+                this.floodfill(currLayer, currColorArray, pixel);
             }
 		}
-		curCanvas.addEventListener('mousedown', floodfillEvt);
-		curCanvas.addEventListener('touchstart', floodfillEvt);
+		currLayer.addEventListener('mousedown', floodfillEvt);
+		currLayer.addEventListener('touchstart', floodfillEvt);
 		this.currentEventListeners['mousedown'] = floodfillEvt;
 		this.currentEventListeners['touchstart'] = floodfillEvt;
 	}

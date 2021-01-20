@@ -730,12 +730,14 @@ var Brush = /*#__PURE__*/function () {
   }, {
     key: "resetBrush",
     value: function resetBrush() {
-      var canvas = this.animationProject.getCurrFrame();
-      var currLayer = canvas.getCurrCanvas(); //detach any events from mouse actions (reset the events connected with mouse events)
-
-      for (var eventType in this.currentEventListeners) {
-        currLayer.removeEventListener(eventType, this.currentEventListeners[eventType]);
-        delete this.currentEventListeners[eventType];
+      if (this.previousCanvas) {
+        //const canvas = this.animationProject.getCurrFrame();
+        //const currLayer = canvas.getCurrCanvas();
+        //detach any events from mouse actions (reset the events connected with mouse events)
+        for (var eventType in this.currentEventListeners) {
+          this.previousCanvas.removeEventListener(eventType, this.currentEventListeners[eventType]);
+          delete this.currentEventListeners[eventType];
+        }
       }
     }
   }, {

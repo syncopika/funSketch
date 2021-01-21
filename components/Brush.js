@@ -1,8 +1,8 @@
 /***
     brush class
     pass in an instance of the AnimationProject class as an argument
-    the canvas argument will have a reference to the current canvas so that
-    only the current canvas will be a target for the brush
+	
+	the current canvas element will be the target for the brush
 ***/
 	
 class Brush {
@@ -84,8 +84,7 @@ class Brush {
 			this.penBrush();
 		}else if(this.selectedBrush === 'radial'){
 			this.radialGradBrush();
-		}else{
-			// floodfill
+		}else if(this.selectedBrush === 'floodfill'){
 			this.floodfillBrush();
 		}
 	}

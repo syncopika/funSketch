@@ -45,6 +45,14 @@ describe("test Brush class", () => {
 		expect(brush.clickY.length).toEqual(0);
 		expect(brush.clickDrag.length).toEqual(0);
 		expect(brush.clickColor.length).toEqual(0);
-		expect(brush.clickSize.length).toEqual(0);		
+		expect(brush.clickSize.length).toEqual(0);
+	});
+	
+	it("test change brush size", () => {
+		const animProj = new AnimationProject(containerId);
+		const brush = new Brush(animProj);
+		expect(brush.currSize).toEqual(2);
+		brush.changeBrushSize(10);
+		expect(brush.currSize).toEqual(10);
 	});
 });

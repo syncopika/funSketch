@@ -730,10 +730,8 @@ var Brush = /*#__PURE__*/function () {
   }, {
     key: "resetBrush",
     value: function resetBrush() {
+      // detach any events from mouse actions (reset the events connected with mouse events) from previous layer worked on
       if (this.previousCanvas) {
-        //const canvas = this.animationProject.getCurrFrame();
-        //const currLayer = canvas.getCurrCanvas();
-        //detach any events from mouse actions (reset the events connected with mouse events)
         for (var eventType in this.currentEventListeners) {
           this.previousCanvas.removeEventListener(eventType, this.currentEventListeners[eventType]);
           delete this.currentEventListeners[eventType];
@@ -755,8 +753,7 @@ var Brush = /*#__PURE__*/function () {
         this.penBrush();
       } else if (this.selectedBrush === 'radial') {
         this.radialGradBrush();
-      } else {
-        // floodfill
+      } else if (this.selectedBrush === 'floodfill') {
         this.floodfillBrush();
       }
     }

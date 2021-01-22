@@ -126,37 +126,33 @@ class Toolbar {
     deleteLayer(elementId){
         // elementId here refers to the display that shows current frame and layer
         document.getElementById(elementId).addEventListener('click', () => {
-            let canvas = this.animationProj.getCurrFrame();
-            let oldCanvasIndex = canvas.currentIndex;
-            let oldCanvasId = canvas.currentCanvas.id;
-            let parentNode = document.getElementById(oldCanvasId).parentNode;
+            const frame = this.animationProj.getCurrFrame();
+            const oldLayerIndex = frame.getCurrCanvasIndex();
+			const oldLayer = frame.getCurrCanvas();
+            const parentNode = document.getElementById(oldLayer.id).parentNode;
+			const layerList = frame.getLayers();
+			
             // if there's a canvas ahead of the current one 
-            if(canvas.currentIndex + 1 < canvas.canvasList.length){
-                // move current canvas to the next one 
-                this.nextLayer();
-                // remove the old canvas from the array and the DOM!
-                canvas.canvasList.splice(oldCanvasIndex, 1);
-                parentNode.removeChild(document.getElementById(oldCanvasId));
-                // adjust the current canvas index after the removal 
-                canvas.currentIndex -= 1;
-            }else if(canvas.currentIndex - 1 >= 0){
+            if(oldLayerIndex + 1 < layerList.length){
+                frame.deleteLayer(oldLayerIndex);
+                parentNode.removeChild(document.getElementById(oldLayer.id));
+            }else if(oldLayerIndex - 1 >= 0){
                 // if there's a canvas behind the current one (and no more ahead)
                 // move current canvas to the previous one 
                 // note that currentIndex doesn't need to be adjusted because removing the 
                 // next canvas doesn't affect the current canvas' index
-                this.prevLayer();
-                canvas.canvasList.splice(oldCanvasIndex, 1);
-                parentNode.removeChild(document.getElementById(oldCanvasId));
+                frame.deleteLayer(oldLayerIndex);
                 // but need to adjust the counter, if present
-                if(this.htmlCounter){
-                    this.htmlCounter.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer:" + (canvas.currentIndex + 1);
-                }
+                //if(this.htmlCounter){
+					// this can probably be left to React to deal with?
+                 //   this.htmlCounter.textContent = "frame: " + (this.animationProj.getCurrFrameIndex() + 1) + ", layer:" + (frame.getCurrCanvasIndex() + 1);
+                //}
             }else{
                 // otherwise, just blank the canvas 
-                let context = canvas.currentCanvas.getContext("2d");
-                context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+                let context = oldLayer.getContext("2d");
+                context.clearRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
                 context.fillStyle = "#fff";
-                context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+                context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
             }
         });
     }
@@ -175,7 +171,7 @@ class Toolbar {
 	***/
 	deleteCurrentFrameButton(elementId, setStateFunction){
         document.getElementById(elementId).addEventListener('click', () => {
-			let currFrameIdx = this.animationProj.currentFrame;
+			let currFrameIdx = this.animationProj.getCurrFrameIndex();
             
 			// move to another frame first before deleting
 			if(currFrameIdx - 1 >= 0){

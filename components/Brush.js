@@ -76,16 +76,28 @@ class Brush {
         this.currSize = size;
     }
 	
+	setBrushType(brushType){
+		this.selectedBrush = brushType;
+	}
+	
 	applyBrush(){
 		// pretty hacky but will refactor later...probably
-		if(this.selectedBrush === 'default'){
-			this.defaultBrush();
-		}else if(this.selectedBrush === 'pen'){
-			this.penBrush();
-		}else if(this.selectedBrush === 'radial'){
-			this.radialGradBrush();
-		}else if(this.selectedBrush === 'floodfill'){
-			this.floodfillBrush();
+		const selectedBrush = this.selectedBrush;
+		switch(selectedBrush){
+			case 'default':
+				this.defaultBrush();
+				break;
+			case 'pen':
+				this.penBrush();
+				break;
+			case 'radial':
+				this.radialGradBrush();
+				break;
+			case 'floodfill':
+				this.floodfillBrush();
+				break;
+			default:
+				console.log("the selected brush does not exist");
 		}
 	}
 	

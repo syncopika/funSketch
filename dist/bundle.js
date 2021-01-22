@@ -317,7 +317,8 @@ var Frame = /*#__PURE__*/function () {
         canvas.style.visibility = "";
         canvas.style.cursor = "crosshair";
       });
-    } // layerIndex (int) = the index of the layer to make active (current layer)
+    } // TODO: why have this and setCurrIndex()??
+    // layerIndex (int) = the index of the layer to make active (current layer)
     // onionSkin (bool) = whether onionskin should be visible 
 
   }, {
@@ -336,6 +337,25 @@ var Frame = /*#__PURE__*/function () {
         var prevLayer = this.canvasList[layerIndex - 1];
         prevLayer.style.opacity = .92;
         prevLayer.style.zIndex = 0;
+      }
+    }
+  }, {
+    key: "deleteLayer",
+    value: function deleteLayer(layerIndex) {
+      if (layerIndex + 1 < this.canvasList.length) {
+        // move current canvas to the next one 
+        this.nextLayer(); // then remove the old canvas from the array and the DOM!
+
+        this.canvasList.splice(layerIndex, 1); // adjust the current canvas index after the removal 
+
+        this.currentIndex -= 1;
+      } else if (layerIndex - 1 >= 0) {
+        // if there's a canvas behind the current one (and no more ahead)
+        // move current canvas to the previous one 
+        // note that currentIndex doesn't need to be adjusted because removing the 
+        // next canvas doesn't affect the current canvas' index
+        this.prevLayer();
+        this.canvasList.splice(layerIndex, 1);
       }
     }
     /***
@@ -658,8 +678,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 /***
     brush class
     pass in an instance of the AnimationProject class as an argument
-    the canvas argument will have a reference to the current canvas so that
-    only the current canvas will be a target for the brush
+	
+	the current canvas element will be the target for the brush
 ***/
 var Brush = /*#__PURE__*/function () {
   function Brush(animationProj) {
@@ -744,17 +764,35 @@ var Brush = /*#__PURE__*/function () {
       this.currSize = size;
     }
   }, {
+    key: "setBrushType",
+    value: function setBrushType(brushType) {
+      this.selectedBrush = brushType;
+    }
+  }, {
     key: "applyBrush",
     value: function applyBrush() {
       // pretty hacky but will refactor later...probably
-      if (this.selectedBrush === 'default') {
-        this.defaultBrush();
-      } else if (this.selectedBrush === 'pen') {
-        this.penBrush();
-      } else if (this.selectedBrush === 'radial') {
-        this.radialGradBrush();
-      } else if (this.selectedBrush === 'floodfill') {
-        this.floodfillBrush();
+      var selectedBrush = this.selectedBrush;
+
+      switch (selectedBrush) {
+        case 'default':
+          this.defaultBrush();
+          break;
+
+        case 'pen':
+          this.penBrush();
+          break;
+
+        case 'radial':
+          this.radialGradBrush();
+          break;
+
+        case 'floodfill':
+          this.floodfillBrush();
+          break;
+
+        default:
+          console.log("the selected brush does not exist");
       }
     }
     /***
@@ -2966,8 +3004,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         });
 
         _this3.setState({
-          'currentFrame': project.currentFrame + 1,
-          'currentLayer': project.getCurrFrame().currentIndex + 1,
+          'currentFrame': project.getCurrFrameIndex() + 1,
+          'currentLayer': project.getCurrFrame().getCurrCanvasIndex() + 1,
           'timelineFrames': newTimelineFrames,
           'timelineMarkers': newTimelineMarkers
         });
@@ -3041,8 +3079,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           var curr = project.getCurrFrame();
 
           _this3.setState({
-            'currentFrame': project.currentFrame + 1,
-            'currentLayer': curr.currentIndex + 1
+            'currentFrame': project.getCurrFrameIndex() + 1,
+            'currentLayer': curr.getCurrCanvasIndex() + 1
           });
         }
       });
@@ -3051,8 +3089,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           var curr = project.getCurrFrame();
 
           _this3.setState({
-            'currentFrame': project.currentFrame + 1,
-            'currentLayer': curr.currentIndex + 1
+            'currentFrame': project.getCurrFrameIndex() + 1,
+            'currentLayer': curr.getCurrCanvasIndex() + 1
           });
         }
       }); // left and right arrows for FRAMES
@@ -3062,8 +3100,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           var curr = project.getCurrFrame();
 
           _this3.setState({
-            'currentFrame': project.currentFrame + 1,
-            'currentLayer': curr.currentIndex + 1
+            'currentFrame': project.getCurrFrameIndex() + 1,
+            'currentLayer': curr.getCurrCanvasIndex() + 1
           });
         }
       });
@@ -3072,8 +3110,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           var curr = project.getCurrFrame();
 
           _this3.setState({
-            'currentFrame': project.currentFrame + 1,
-            'currentLayer': curr.currentIndex + 1
+            'currentFrame': project.getCurrFrameIndex() + 1,
+            'currentLayer': curr.getCurrCanvasIndex() + 1
           });
         }
       });
@@ -3210,26 +3248,26 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       document.getElementById('defaultBrush').addEventListener('click', function () {
         _this8._changeCursor("crosshair");
 
-        brush.defaultBrush();
-        brush.selectedBrush = 'default';
+        brush.setBrushType('default');
+        brush.applyBrush();
       });
       document.getElementById('penBrush').addEventListener('click', function () {
         _this8._changeCursor("crosshair");
 
-        brush.penBrush();
-        brush.selectedBrush = 'pen';
+        brush.setBrushType('pen');
+        brush.applyBrush();
       });
       document.getElementById('radialBrush').addEventListener('click', function () {
         _this8._changeCursor("crosshair");
 
-        brush.radialGradBrush();
-        brush.selectedBrush = 'radial';
+        brush.setBrushType('radial');
+        brush.applyBrush();
       });
       document.getElementById('floodfill').addEventListener('click', function () {
         _this8._changeCursor("paintbucket");
 
-        brush.floodfillBrush();
-        brush.selectedBrush = 'floodfill';
+        brush.setBrushType('floodfill');
+        brush.applyBrush();
       }); //<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
       // make a function component for the brush? but then need to maintain state of brush size...
 
@@ -3361,16 +3399,16 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           var currFrame = project.frameList[index];
           var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
 
-          var currFrameLayersFromCurrPrj = currFrame.canvasList; // make sure current index (the layer that should be showing) of this frame is consistent with the data
+          var currFrameLayersFromCurrPrj = currFrame.getLayers(); // make sure current index (the layer that should be showing) of this frame is consistent with the data
 
           currFrame.currentIndex = frame.currentIndex;
           currFrameLayersFromImport.forEach(function (layer, layerIndex) {
             if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
               // add new layer to curr project as needed based on import
-              project.frameList[index].setupNewLayer();
+              currFrame.setupNewLayer();
             }
 
-            var currLayer = project.frameList[index].canvasList[layerIndex];
+            var currLayer = currFrame.getLayers()[layerIndex];
 
             if (layerIndex === currFrame.currentIndex) {
               currFrame.currentCanvas = currLayer;
@@ -3476,7 +3514,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "buttons"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         className: "instructions"
-      }, " Use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+      }, " Use the spacebar to append a new layer or frame. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         className: "instructions"
       }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
         className: "instructions"
@@ -3846,40 +3884,32 @@ var Toolbar = /*#__PURE__*/function () {
 
       // elementId here refers to the display that shows current frame and layer
       document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this3.animationProj.getCurrFrame();
+        var frame = _this3.animationProj.getCurrFrame();
 
-        var oldCanvasIndex = canvas.currentIndex;
-        var oldCanvasId = canvas.currentCanvas.id;
-        var parentNode = document.getElementById(oldCanvasId).parentNode; // if there's a canvas ahead of the current one 
+        var oldLayerIndex = frame.getCurrCanvasIndex();
+        var oldLayer = frame.getCurrCanvas();
+        var parentNode = document.getElementById(oldLayer.id).parentNode;
+        var layerList = frame.getLayers(); // if there's a canvas ahead of the current one 
 
-        if (canvas.currentIndex + 1 < canvas.canvasList.length) {
-          // move current canvas to the next one 
-          _this3.nextLayer(); // remove the old canvas from the array and the DOM!
-
-
-          canvas.canvasList.splice(oldCanvasIndex, 1);
-          parentNode.removeChild(document.getElementById(oldCanvasId)); // adjust the current canvas index after the removal 
-
-          canvas.currentIndex -= 1;
-        } else if (canvas.currentIndex - 1 >= 0) {
+        if (oldLayerIndex + 1 < layerList.length) {
+          frame.deleteLayer(oldLayerIndex);
+          parentNode.removeChild(document.getElementById(oldLayer.id));
+        } else if (oldLayerIndex - 1 >= 0) {
           // if there's a canvas behind the current one (and no more ahead)
           // move current canvas to the previous one 
           // note that currentIndex doesn't need to be adjusted because removing the 
           // next canvas doesn't affect the current canvas' index
-          _this3.prevLayer();
-
-          canvas.canvasList.splice(oldCanvasIndex, 1);
-          parentNode.removeChild(document.getElementById(oldCanvasId)); // but need to adjust the counter, if present
-
-          if (_this3.htmlCounter) {
-            _this3.htmlCounter.textContent = "frame: " + (_this3.animationProj.currentFrame + 1) + ", layer:" + (canvas.currentIndex + 1);
-          }
+          frame.deleteLayer(oldLayerIndex); // but need to adjust the counter, if present
+          //if(this.htmlCounter){
+          // this can probably be left to React to deal with?
+          //   this.htmlCounter.textContent = "frame: " + (this.animationProj.getCurrFrameIndex() + 1) + ", layer:" + (frame.getCurrCanvasIndex() + 1);
+          //}
         } else {
           // otherwise, just blank the canvas 
-          var context = canvas.currentCanvas.getContext("2d");
-          context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+          var context = oldLayer.getContext("2d");
+          context.clearRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
           context.fillStyle = "#fff";
-          context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+          context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
         }
       });
     }
@@ -3906,7 +3936,8 @@ var Toolbar = /*#__PURE__*/function () {
       var _this5 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
-        var currFrameIdx = _this5.animationProj.currentFrame; // move to another frame first before deleting
+        var currFrameIdx = _this5.animationProj.getCurrFrameIndex(); // move to another frame first before deleting
+
 
         if (currFrameIdx - 1 >= 0) {
           _this5.prevFrame();

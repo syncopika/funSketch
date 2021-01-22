@@ -64,7 +64,7 @@ class Frame {
     ***/
     setupNewLayer(){
         // create the new canvas element 
-        let newCanvas = document.createElement('canvas');
+        const newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
         document.getElementById(this.containerId).appendChild(newCanvas);
         setCanvas(newCanvas);
@@ -106,18 +106,18 @@ class Frame {
         // this moves the current layer to the next one if exists
         if(this.currentIndex + 1 < this.canvasList.length){
             // move to next canvas and apply onion skin to current canvas
-			let currLayer = this.currentCanvas;
+			const currLayer = this.currentCanvas;
             this._makeCurrLayerOnion(currLayer);
             
 			// in the special case for when you want to go to the next canvas from the very first one, 
             // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
             if(currLayer.currentIndex > 0){
-				let prevLayer = this.canvasList[this.currentIndex - 1];
+				const prevLayer = this.canvasList[this.currentIndex - 1];
                 // reset opacity and z-index for previous canvas (because of onionskin)
                 this._hideLayer(prevLayer);
             }
             // show the next canvas 
-			let nextLayer = this.canvasList[this.currentIndex + 1];
+			const nextLayer = this.canvasList[this.currentIndex + 1];
             this._showLayer(nextLayer);
 			
             this.currentCanvas = nextLayer;
@@ -132,11 +132,11 @@ class Frame {
         // this moves the current layer to the previous one if exists
         if(this.currentIndex - 1 >= 0){
             // move to previous canvas
-			let currLayer = this.currentCanvas;
+			const currLayer = this.currentCanvas;
             this._hideLayer(currLayer);
             
 			// make previous canvas visible 
-			let prevLayer = this.canvasList[this.currentIndex - 1];
+			const prevLayer = this.canvasList[this.currentIndex - 1];
             this._showLayer(prevLayer);
             
 			// if there is another canvas before the previous one, apply onion skin
@@ -174,12 +174,13 @@ class Frame {
         });
     }
 	
+	// TODO: why have this and setCurrIndex()??
 	// layerIndex (int) = the index of the layer to make active (current layer)
 	// onionSkin (bool) = whether onionskin should be visible 
 	setToLayer(layerIndex, onionSkin){
 		// note that this does not hide the previous layer + previous onion skin before switching to 
 		// the new layer.
-		let newLayer = this.canvasList[layerIndex];
+		const newLayer = this.canvasList[layerIndex];
 		newLayer.style.opacity = 0.97;
 		newLayer.style.zIndex = 1;
 		
@@ -194,6 +195,24 @@ class Frame {
 		}
 	}
 	
+	deleteLayer(layerIndex){
+		if(layerIndex + 1 < this.canvasList.length){
+			// move current canvas to the next one 
+			this.nextLayer();
+			// then remove the old canvas from the array and the DOM!
+			this.canvasList.splice(layerIndex, 1);
+			// adjust the current canvas index after the removal 
+			this.currentIndex -= 1;
+		}else if(layerIndex - 1 >= 0){
+			// if there's a canvas behind the current one (and no more ahead)
+			// move current canvas to the previous one 
+			// note that currentIndex doesn't need to be adjusted because removing the 
+			// next canvas doesn't affect the current canvas' index
+			this.prevLayer();
+			this.canvasList.splice(layerIndex, 1);
+		}
+	}
+	
     /***
         clone the current canvas
 		this creates a new layer whose image data is the same as the current canvas.
@@ -201,7 +220,7 @@ class Frame {
 		not sure I'm using this?
     ***/
     copyCanvas(){
-        let newCanvas = document.createElement('canvas');
+        const newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
         setCanvas(newCanvas, this.width, this.height);
         newCanvas.style.opacity = 0.97;
@@ -212,8 +231,8 @@ class Frame {
     }
 	
     clearCurrentLayer(){
-        let currLayer = this.getCurrCanvas();
-        let context = currLayer.getContext("2d");
+        const currLayer = this.getCurrCanvas();
+        const context = currLayer.getContext("2d");
         context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
         context.fillStyle = "#FFFFFF";
         context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
@@ -281,7 +300,7 @@ class AnimationProject {
     }
 	
     addNewFrame(showFlag){
-        let newFrame = new Frame(this.containerId, this.frameList.length);
+        const newFrame = new Frame(this.containerId, this.frameList.length);
         newFrame.setupNewLayer();
         this.frameList.push(newFrame);
         if(!showFlag){

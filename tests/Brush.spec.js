@@ -55,4 +55,12 @@ describe("test Brush class", () => {
 		brush.changeBrushSize(10);
 		expect(brush.currSize).toEqual(10);
 	});
+	
+	it("test change brush type", () => {
+		const animProj = new AnimationProject(containerId);
+		const brush = new Brush(animProj);
+		expect(brush.selectedBrush).toEqual("default");
+		brush.setBrushType("radial");
+		expect(brush.selectedBrush).toEqual("radial");
+	});
 });

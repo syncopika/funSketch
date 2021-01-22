@@ -255,8 +255,8 @@ class PresentationWrapper extends React.Component {
 			});
 			
 			this.setState({
-				'currentFrame': project.currentFrame + 1,
-				'currentLayer': project.getCurrFrame().currentIndex + 1,
+				'currentFrame': project.getCurrFrameIndex() + 1,
+				'currentLayer': project.getCurrFrame().getCurrCanvasIndex() + 1,
 				'timelineFrames': newTimelineFrames,
 				'timelineMarkers': newTimelineMarkers
 			});
@@ -330,8 +330,8 @@ class PresentationWrapper extends React.Component {
 			if(newToolbar.prevLayer()){
 				let curr = project.getCurrFrame();
 				this.setState({
-					'currentFrame': project.currentFrame + 1,
-					'currentLayer': curr.currentIndex + 1
+					'currentFrame': project.getCurrFrameIndex() + 1,
+					'currentLayer': curr.getCurrCanvasIndex() + 1
 				});
 			}
 		});
@@ -340,8 +340,8 @@ class PresentationWrapper extends React.Component {
 			if(newToolbar.nextLayer()){
 				let curr = project.getCurrFrame();
 				this.setState({
-					'currentFrame': project.currentFrame + 1,
-					'currentLayer': curr.currentIndex + 1
+					'currentFrame': project.getCurrFrameIndex() + 1,
+					'currentLayer': curr.getCurrCanvasIndex() + 1
 				});
 			}
 		});
@@ -351,8 +351,8 @@ class PresentationWrapper extends React.Component {
 			if(this._moveToFrame("prev")){
 				let curr = project.getCurrFrame();
 				this.setState({
-					'currentFrame': project.currentFrame + 1,
-					'currentLayer': curr.currentIndex + 1
+					'currentFrame': project.getCurrFrameIndex() + 1,
+					'currentLayer': curr.getCurrCanvasIndex() + 1
 				});
 			}
 		});
@@ -361,8 +361,8 @@ class PresentationWrapper extends React.Component {
 			if(this._moveToFrame("next")){
 				let curr = project.getCurrFrame();
 				this.setState({
-					'currentFrame': project.currentFrame + 1,
-					'currentLayer': curr.currentIndex + 1
+					'currentFrame': project.getCurrFrameIndex() + 1,
+					'currentLayer': curr.getCurrCanvasIndex() + 1
 				});
 			}
 		});
@@ -486,26 +486,26 @@ class PresentationWrapper extends React.Component {
 		
 		document.getElementById('defaultBrush').addEventListener('click', () => {
 			this._changeCursor("crosshair");
-			brush.defaultBrush();
-			brush.selectedBrush = 'default';
+			brush.setBrushType('default');
+			brush.applyBrush();
 		});
 		
 		document.getElementById('penBrush').addEventListener('click', () => {
 			this._changeCursor("crosshair");
-			brush.penBrush();
-			brush.selectedBrush = 'pen';
+			brush.setBrushType('pen');
+			brush.applyBrush();
 		});
 		
 		document.getElementById('radialBrush').addEventListener('click', () => {
 			this._changeCursor("crosshair");
-			brush.radialGradBrush();
-			brush.selectedBrush = 'radial';
+			brush.setBrushType('radial');
+			brush.applyBrush();
 		});
 		
 		document.getElementById('floodfill').addEventListener('click', () => {
 			this._changeCursor("paintbucket");
-			brush.floodfillBrush();
-			brush.selectedBrush = 'floodfill';
+			brush.setBrushType('floodfill');
+			brush.applyBrush();
 		});
 		
 		//<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
@@ -566,7 +566,6 @@ class PresentationWrapper extends React.Component {
 			}
 			
 			setTimeout(() => {
-				
 				// set the animation canvas to white instead of clearRect 
 				// we don't want transparency otherwise we'll see our current frame we were working on flash between animation frames
 				displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
@@ -637,7 +636,7 @@ class PresentationWrapper extends React.Component {
 				// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a Frame object to update with as well
 				let currFrame = project.frameList[index];
 				let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-				let currFrameLayersFromCurrPrj = currFrame.canvasList;
+				let currFrameLayersFromCurrPrj = currFrame.getLayers();
 				
 				// make sure current index (the layer that should be showing) of this frame is consistent with the data
 				currFrame.currentIndex = frame.currentIndex;
@@ -645,10 +644,10 @@ class PresentationWrapper extends React.Component {
 				currFrameLayersFromImport.forEach(function(layer, layerIndex){
 					if((layerIndex+1) > currFrameLayersFromCurrPrj.length){
 						// add new layer to curr project as needed based on import
-						project.frameList[index].setupNewLayer();
+						currFrame.setupNewLayer();
 					}
 					
-					let currLayer = project.frameList[index].canvasList[layerIndex];
+					let currLayer = currFrame.getLayers()[layerIndex];
 					if(layerIndex === currFrame.currentIndex){
 						currFrame.currentCanvas = currLayer;
 					}
@@ -736,12 +735,11 @@ class PresentationWrapper extends React.Component {
 				<div className='row'>
 					<div id='toolbar' className='col-lg-3'>
 						<div id='toolbarArea'>
-
 							<h3 id='title'> funSketch: draw, edit, and animate! </h3>
 
 							<div id='buttons'>
 							
-								<p className='instructions'> Use the spacebar to create a new layer or frame (see button to toggle between frame and layer addition). </p>
+								<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
 								<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
 								<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
 								<button id='toggleInstructions'>hide instructions</button>
@@ -928,7 +926,6 @@ class PresentationWrapper extends React.Component {
 					</div>
 
 					</div>
-					
 					
 				</div>
 				

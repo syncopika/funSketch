@@ -16,3 +16,5 @@ https://www.robinwieruch.de/react-testing-jest
 https://www.robinwieruch.de/react-testing-library
 https://stackoverflow.com/questions/48828759/unit-test-raises-error-because-of-getcontext-is-not-implemented
 https://github.com/testing-library/react-testing-library/issues/353
+https://stackoverflow.com/questions/33638385/simulate-keydown-on-document-for-jest-unit-testing
+https://stackoverflow.com/questions/62937699/firing-keyboard-events-not-working-as-expected-in-jest-jsdom-react-testing-l

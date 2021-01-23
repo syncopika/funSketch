@@ -234,7 +234,6 @@ class PresentationWrapper extends React.Component {
 		let project = this.state.animationProject;
 		
 		newToolbar.setCounter("count");
-		//newToolbar.setKeyDown(document);	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
 		newToolbar.createColorWheel('colorPicker', 200);
 		newToolbar.insertLayer('insertCanvas');
 		newToolbar.deleteLayer('deleteCanvas', (newLayerIndex) => {
@@ -874,7 +873,7 @@ class PresentationWrapper extends React.Component {
 						
 						<div id='footer' className='row'>
 							<hr />
-							<p> n.c.h works 2017-2020 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
+							<p> n.c.h works 2017-2021 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
 						</div>
 						
 					</div>

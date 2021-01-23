@@ -2982,8 +2982,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
       var newToolbar = this.state.toolbarInstance;
       var project = this.state.animationProject;
-      newToolbar.setCounter("count"); //newToolbar.setKeyDown(document);	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
-
+      newToolbar.setCounter("count");
       newToolbar.createColorWheel('colorPicker', 200);
       newToolbar.insertLayer('insertCanvas');
       newToolbar.deleteLayer('deleteCanvas', function (newLayerIndex) {
@@ -3664,7 +3663,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }, "asakusa_mizusaki_butterfly")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "footer",
         className: "row"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, " n.c.h works 2017-2020 | ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, " n.c.h works 2017-2021 | ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "https://github.com/syncopika/funSketch"
       }, "source ")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "screen",

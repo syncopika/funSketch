@@ -118,12 +118,21 @@ class Toolbar {
 	}
 	
     /***
-        delete current frame
-        shifts the current frame to the next one if there is one.
-        otherwise, the previous frame will become the current one.
-        if there isn't a previous one either, then the frame will just be made blank.
+		add a new frame
     ***/
-    deleteLayer(elementId){
+    addNewFrameButton(elementId){
+        document.getElementById(elementId).addEventListener('click', () => {
+            this.animationProj.addNewFrame();
+        });
+    }
+	
+    /***
+        delete current layer
+        shifts the current layer to the next one if there is one.
+        otherwise, the previous layer will become the current one.
+        if there isn't a previous one either, then the layer will just be made blank.
+    ***/
+    deleteLayer(elementId, setStateFunction){
         // elementId here refers to the display that shows current frame and layer
         document.getElementById(elementId).addEventListener('click', () => {
             const frame = this.animationProj.getCurrFrame();
@@ -142,11 +151,6 @@ class Toolbar {
                 // note that currentIndex doesn't need to be adjusted because removing the 
                 // next canvas doesn't affect the current canvas' index
                 frame.deleteLayer(oldLayerIndex);
-                // but need to adjust the counter, if present
-                //if(this.htmlCounter){
-					// this can probably be left to React to deal with?
-                 //   this.htmlCounter.textContent = "frame: " + (this.animationProj.getCurrFrameIndex() + 1) + ", layer:" + (frame.getCurrCanvasIndex() + 1);
-                //}
             }else{
                 // otherwise, just blank the canvas 
                 let context = oldLayer.getContext("2d");
@@ -154,15 +158,8 @@ class Toolbar {
                 context.fillStyle = "#fff";
                 context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
             }
-        });
-    }
-	
-    /***
-		add a new frame
-    ***/
-    addNewFrameButton(elementId){
-        document.getElementById(elementId).addEventListener('click', () => {
-            this.animationProj.addNewFrame();
+			
+			setStateFunction(frame.getCurrCanvasIndex());
         });
     }
 	

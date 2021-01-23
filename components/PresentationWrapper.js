@@ -237,7 +237,11 @@ class PresentationWrapper extends React.Component {
 		//newToolbar.setKeyDown(document);	// enables new canvas add on spacebar, go to next with right arrow, prev with left arrow.
 		newToolbar.createColorWheel('colorPicker', 200);
 		newToolbar.insertLayer('insertCanvas');
-		newToolbar.deleteLayer('deleteCanvas', 'count'); // todo: fix this. shouldn't need to modify UI in toolbar
+		newToolbar.deleteLayer('deleteCanvas', (newLayerIndex) => {
+			this.setState({
+				'currentLayer': newLayerIndex + 1,
+			});
+		});
 		
 		newToolbar.deleteCurrentFrameButton('deleteCurrFrame', (frameIndexToRemove) => {
 			let newTimelineFrames = [...this.state.timelineFrames];

@@ -2986,8 +2986,11 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
       newToolbar.createColorWheel('colorPicker', 200);
       newToolbar.insertLayer('insertCanvas');
-      newToolbar.deleteLayer('deleteCanvas', 'count'); // todo: fix this. shouldn't need to modify UI in toolbar
-
+      newToolbar.deleteLayer('deleteCanvas', function (newLayerIndex) {
+        _this3.setState({
+          'currentLayer': newLayerIndex + 1
+        });
+      });
       newToolbar.deleteCurrentFrameButton('deleteCurrFrame', function (frameIndexToRemove) {
         var newTimelineFrames = _toConsumableArray(_this3.state.timelineFrames);
 
@@ -3871,20 +3874,33 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
-        delete current frame
-        shifts the current frame to the next one if there is one.
-        otherwise, the previous frame will become the current one.
-        if there isn't a previous one either, then the frame will just be made blank.
+    add a new frame
+    ***/
+
+  }, {
+    key: "addNewFrameButton",
+    value: function addNewFrameButton(elementId) {
+      var _this3 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        _this3.animationProj.addNewFrame();
+      });
+    }
+    /***
+        delete current layer
+        shifts the current layer to the next one if there is one.
+        otherwise, the previous layer will become the current one.
+        if there isn't a previous one either, then the layer will just be made blank.
     ***/
 
   }, {
     key: "deleteLayer",
-    value: function deleteLayer(elementId) {
-      var _this3 = this;
+    value: function deleteLayer(elementId, setStateFunction) {
+      var _this4 = this;
 
       // elementId here refers to the display that shows current frame and layer
       document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this3.animationProj.getCurrFrame();
+        var frame = _this4.animationProj.getCurrFrame();
 
         var oldLayerIndex = frame.getCurrCanvasIndex();
         var oldLayer = frame.getCurrCanvas();
@@ -3899,11 +3915,7 @@ var Toolbar = /*#__PURE__*/function () {
           // move current canvas to the previous one 
           // note that currentIndex doesn't need to be adjusted because removing the 
           // next canvas doesn't affect the current canvas' index
-          frame.deleteLayer(oldLayerIndex); // but need to adjust the counter, if present
-          //if(this.htmlCounter){
-          // this can probably be left to React to deal with?
-          //   this.htmlCounter.textContent = "frame: " + (this.animationProj.getCurrFrameIndex() + 1) + ", layer:" + (frame.getCurrCanvasIndex() + 1);
-          //}
+          frame.deleteLayer(oldLayerIndex);
         } else {
           // otherwise, just blank the canvas 
           var context = oldLayer.getContext("2d");
@@ -3911,19 +3923,8 @@ var Toolbar = /*#__PURE__*/function () {
           context.fillStyle = "#fff";
           context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
         }
-      });
-    }
-    /***
-    add a new frame
-    ***/
 
-  }, {
-    key: "addNewFrameButton",
-    value: function addNewFrameButton(elementId) {
-      var _this4 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        _this4.animationProj.addNewFrame();
+        setStateFunction(frame.getCurrCanvasIndex());
       });
     }
     /***

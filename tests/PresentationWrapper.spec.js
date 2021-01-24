@@ -1,13 +1,29 @@
 import React from 'react';
 import 'jest-canvas-mock';
 import '@testing-library/jest-dom';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { AnimationProject } from '../components/AnimationProject.js';
+import { Toolbar } from '../components/Toolbar.js';
 import { PresentationWrapper, FrameCounterDisplay } from '../components/PresentationWrapper.js';
 
 describe("testing PresentationWrapper component", () => {
 	
+	beforeAll(() => {
+		jest.spyOn(AnimationProject.prototype, "updateOnionSkin").mockImplementation(() => undefined);
+		jest.spyOn(Toolbar.prototype, "mergeFrameLayers").mockImplementation(() => {
+			return {
+				toDataURL: function(){
+					return "something";
+				}
+			}
+		});
+	});
+	
+	afterAll(() => {
+		jest.restoreAllMocks();
+	});
+	
 	it("testing FrameCounterDisplay rendering", () => {
-		
 		const frameNum = 0;
 		const layerNum = 1;
 		
@@ -30,10 +46,97 @@ describe("testing PresentationWrapper component", () => {
 		const initialLayerNum = 1;
 		expect(screen.getByText(new RegExp("frame: " + initialFrameNum))).toBeInTheDocument();
 		expect(screen.getByText(new RegExp("layer: " + initialLayerNum))).toBeInTheDocument();
-		
-		// add a new layer and go to it
-		//const rightClick = {button: 2};
-		//fireEvent.click(screen.getByRole('button', {name: 'add new layer'}), rightClick);
 	});
+	
+	it("testing adding a layer", () => {
+		const presentation = render(<PresentationWrapper />);
+		
+		// add a new layer
+		const leftClick = {button: 0};
+		fireEvent.click(screen.getByRole('button', {name: 'add new layer after'}), leftClick);
+		
+		// check that we have 2 canvas elements with id like 'frame:_canvas:_'
+		// this isn't advisable, but I'm not sure how else to make sure I have the right number
+		// of canvases in the DOM.
+		//screen.debug();
+		expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(2);
+	});
+	
+	it("testing adding a frame", () => {
+		const presentation = render(<PresentationWrapper />);
+		
+		// add a new frame
+		const leftClick = {button: 0};
+		fireEvent.click(screen.getByRole('button', {name: 'add new layer after'}), leftClick);
+		
+		expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(2);
+	});
+	
+	it("testing adding a layer and then deleting (no key down)", () => {
+		const presentation = render(<PresentationWrapper />);
+		
+		// add a new layer
+		const leftClick = {button: 0};
+		fireEvent.click(screen.getByRole('button', {name: 'add new layer after'}), leftClick);
+		
+		// move to the next layer
+		fireEvent.click(screen.getByRole('heading', {name: '>'}), leftClick);
+		const nextLayerNum = 2;
+		expect(screen.getByText(new RegExp("layer: " + nextLayerNum))).toBeInTheDocument();
+		
+		// delete the layer
+		const initialLayerNum = 1;
+		fireEvent.click(screen.getByRole('button', {name: 'delete current layer'}), leftClick);
+		
+		expect(screen.getByText(new RegExp("layer: " + initialLayerNum))).toBeInTheDocument();
+		
+		// confirm only 1 layer exists now
+		expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(1);
+	});
+	
+	it("testing adding a frame and then deleting (no key down)", () => {
+		const presentation = render(<PresentationWrapper />);
+		// add a new frame
+		const leftClick = {button: 0};
+		fireEvent.click(screen.getByRole('button', {name: 'add new frame'}), leftClick);
+		
+		// move to the next frame
+		fireEvent.click(screen.getByRole('heading', {name: '▶'}), leftClick);
+		const nextFrameNum = 2;
+		expect(screen.getByText(new RegExp("frame: " + nextFrameNum))).toBeInTheDocument();
+		
+		// delete the frame
+		const firstFrameNum = 1;
+		fireEvent.click(screen.getByRole('button', {name: 'delete current frame'}), leftClick);
+		expect(screen.getByText(new RegExp("frame: " + firstFrameNum))).toBeInTheDocument();
+		
+		// confirm only 1 frame exists now
+		expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(1);
+	});
+	
+	
+	/*
+	// having difficulty currently with simulating keydown
+	it("testing adding a frame and then deleting (key down)", () => {
+		render(<PresentationWrapper />);
+		
+		// add a new frame
+		const leftClick = {button: 0};
+		fireEvent.click(screen.getByRole('button', {name: 'add new frame'}), leftClick);		
+		fireEvent.keyDown(document, {key: 'd', code: 'KeyD', charCode: 68});
+		//fireEvent.keyDown(screen.getByText(new RegExp('frame:.*layer:.*')), {key: 'ArrowRight', code: 'ArrowRight', charCode: 39});
+		//const rightArrowEvent = new KeyboardEvent('keypress', {'keyCode': 68}); // d key
+		//document.dispatchEvent(rightArrowEvent);
+		
+		// move to the next frame
+		//const currFrameNum = 2;
+		//waitFor(() => expect(screen.getByText(new RegExp("frame: " + 1))).toBeInTheDocument());
+		
+		// delete the frame
+		//const initialFrameNum = 1;
+		//fireEvent.click(screen.getByRole('button', {name: 'delete current frame'}), leftClick);
+		//waitFor(() => expect(screen.getByText(new RegExp("frame: " + initialFrameNum))).toBeInTheDocument());
+	});
+	*/
 	
 });

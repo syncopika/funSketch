@@ -3,7 +3,7 @@
 // assemble the common functions for the toolbar
 // remove canvas param since you have animationProj
 class Toolbar {
-	constructor(canvas, brush, animationProj){
+	constructor(brush, animationProj){
 		// use this for storing the most recent imported image
 		// can be useful for resetting image
 		this.recentImage = null;
@@ -18,28 +18,8 @@ class Toolbar {
 		this.layerMode = true;
 		this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
 		
-		this.canvas = canvas;
 		this.brush = brush;
 		this.animationProj = animationProj;
-	}
-	
-	// shouldn't the following 3 functions be actually part of the Frame class?? kinda weird to have them here...
-	_applyOnionSkin(canvas){
-		canvas.style.opacity = .92; // apply onion skin to current canvas 
-		canvas.style.zIndex = 0;
-		canvas.style.cursor = "";
-	}
-
-	_showCanvas(canvas){
-		canvas.style.opacity = .97;
-		canvas.style.zIndex = 1;
-		canvas.style.cursor = "crosshair";
-	}
-
-	_hideCanvas(canvas){
-		canvas.style.opacity = 0;
-		canvas.style.zIndex = 0;
-		canvas.style.cursor = "";
 	}
 	
     setCounter(elementId){
@@ -49,55 +29,22 @@ class Toolbar {
     nextLayer(){
         // this moves the current layer to the next one if exists
         let frame = this.animationProj.getCurrFrame();
-        if(frame.currentIndex + 1 < frame.canvasList.length){
-            // move to next canvas
-            // apply onion skin to current canvas 
-            this._applyOnionSkin(frame.currentCanvas);
-            
-			// in the special case for when you want to go to the next canvas from the very first one, 
-            // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
-            if(frame.currentIndex > 0){
-				let prevLayer = frame.canvasList[frame.currentIndex - 1];
-                // reset opacity and z-index for previous canvas (because of onionskin)
-                this._hideCanvas(prevLayer);
-            }
-            // show the next canvas 
-			let nextLayer = frame.canvasList[frame.currentIndex + 1];
-            this._showCanvas(nextLayer);
-			
-            frame.currentCanvas = nextLayer;
-            frame.currentIndex++;
-            
+		if(frame.nextLayer()){
 			// apply brush
 			// TODO: can we figure out a better way to handle brushes?
             this.brush.applyBrush();
-			
-            return true;
-        }
-        return false;
+			return true;
+		}else{
+			return false;
+		}
     }
 	
     prevLayer(){
         // this moves the current layer to the previous one if exists
         let frame = this.animationProj.getCurrFrame();
-        if(frame.currentIndex - 1 >= 0){
-            // move to previous canvas
-            this._hideCanvas(frame.currentCanvas);
-            
-			// make previous canvas visible 
-			let prevLayer = frame.canvasList[frame.currentIndex - 1];
-            this._showCanvas(prevLayer);
-            
-			// if there is another canvas before the previous one, apply onion skin
-            if(frame.currentIndex - 2 >= 0){
-                frame.canvasList[frame.currentIndex - 2].style.opacity = .92;
-            }
-            frame.currentCanvas = prevLayer;
-            frame.currentIndex--;
-			
+        if(frame.prevLayer()){			
             // apply brush
             this.brush.applyBrush();
-			
             return true;
         }
         return false;
@@ -156,7 +103,7 @@ class Toolbar {
         document.getElementById(elementId).addEventListener('click', () => {
             this.insertNewLayer();
         });
-    };
+    }
 	
 	/***
 		duplicate the current layer
@@ -171,68 +118,51 @@ class Toolbar {
 	}
 	
     /***
-        delete current frame
-        shifts the current frame to the next one if there is one.
-        otherwise, the previous frame will become the current one.
-        if there isn't a previous one either, then the frame will just be made blank.
-    ***/
-    deleteLayer(elementId){
-        // elementId here refers to the display that shows current frame and layer
-        document.getElementById(elementId).addEventListener('click', () => {
-            let canvas = this.animationProj.getCurrFrame();
-            let oldCanvasIndex = canvas.currentIndex;
-            let oldCanvasId = canvas.currentCanvas.id;
-            let parentNode = document.getElementById(oldCanvasId).parentNode;
-            // if there's a canvas ahead of the current one 
-            if(canvas.currentIndex + 1 < canvas.canvasList.length){
-                // move current canvas to the next one 
-                this.nextLayer();
-                // remove the old canvas from the array and the DOM!
-                canvas.canvasList.splice(oldCanvasIndex, 1);
-                parentNode.removeChild(document.getElementById(oldCanvasId));
-                // adjust the current canvas index after the removal 
-                canvas.currentIndex -= 1;
-            }else if(canvas.currentIndex - 1 >= 0){
-                // if there's a canvas behind the current one (and no more ahead)
-                // move current canvas to the previous one 
-                // note that currentIndex doesn't need to be adjusted because removing the 
-                // next canvas doesn't affect the current canvas' index
-                this.prevLayer();
-                canvas.canvasList.splice(oldCanvasIndex, 1);
-                parentNode.removeChild(document.getElementById(oldCanvasId));
-                // but need to adjust the counter, if present
-                if(this.htmlCounter){
-                    this.htmlCounter.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer:" + (canvas.currentIndex + 1);
-                }
-            }else{
-                // otherwise, just blank the canvas 
-                let context = canvas.currentCanvas.getContext("2d");
-                context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
-                context.fillStyle = "#fff";
-                context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
-            }
-        });
-    }
-	
-    /***
-        
 		add a new frame
-		
     ***/
     addNewFrameButton(elementId){
         document.getElementById(elementId).addEventListener('click', () => {
             this.animationProj.addNewFrame();
         });
-    };
+    }
+	
+    /***
+        delete current layer
+        shifts the current layer to the next one if there is one.
+        otherwise, the previous layer will become the current one.
+        if there isn't a previous one either, then the layer will just be made blank.
+    ***/
+    deleteLayer(elementId, setStateFunction){
+        // elementId here refers to the display that shows current frame and layer
+        document.getElementById(elementId).addEventListener('click', () => {
+            const frame = this.animationProj.getCurrFrame();
+            const oldLayerIndex = frame.getCurrCanvasIndex();
+			const oldLayer = frame.getCurrCanvas();
+            const parentNode = document.getElementById(oldLayer.id).parentNode;
+			const layerList = frame.getLayers();
+			
+            if(oldLayerIndex + 1 < layerList.length || oldLayerIndex - 1 >= 0){
+                frame.deleteLayer(oldLayerIndex);
+                parentNode.removeChild(oldLayer);
+				this.brush.applyBrush();
+            }else{
+                // otherwise, just blank the canvas 
+                let context = oldLayer.getContext("2d");
+                context.clearRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
+                context.fillStyle = "#fff";
+                context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
+            }
+			
+			setStateFunction(frame.getCurrCanvasIndex());
+        });
+    }
 	
 	/***
-		
 		delete current frame
-		
 	***/
 	deleteCurrentFrameButton(elementId, setStateFunction){
         document.getElementById(elementId).addEventListener('click', () => {
-			let currFrameIdx = this.animationProj.currentFrame;
+			let currFrameIdx = this.animationProj.getCurrFrameIndex();
             
 			// move to another frame first before deleting
 			if(currFrameIdx - 1 >= 0){
@@ -248,9 +178,7 @@ class Toolbar {
 	}
 	
 	/***
-	
 		change layer order for current frame on button press
-	
 	***/
 	changeCurrentFrameLayerOrder(elementId, setStateFunction){
 		document.getElementById(elementId).addEventListener('click', () => {
@@ -639,7 +567,7 @@ class Toolbar {
         });
         // add frames + take into account frame rate given by timelineMarkers
         for(let i = 0; i < this.animationProj.frameList.length; i++){
-            let tempCanvas = this.mergeFrameLayers(animationProj.frameList[i]);
+            let tempCanvas = this.mergeFrameLayers(this.animationProj.frameList[i]);
 			let frameTime = timelineMarkers[i+1] ? timelineMarkers[i+1] : this.timePerFrame;
             gif.addFrame(tempCanvas, { delay: frameTime });
         }

@@ -1,10 +1,15 @@
 buggy stuff / refactor
 ---------
-- refactor Brush and Toolbar to use the class style
-  - make sure no excess event listeners are being added when switching brushes
+
+- keep floodfill cursor on when switching frames and also highlight current brush being used in dropdown?
+ - need to figure out how to keep cursor consistent (i.e. when using floodfill) when switching between layers and frames
+
+- need to refactor some Toolbar and Brush methods
 
 - fix undo
   - going to a different frame and clicking undo overwrites the current layer with whatever layer the undo was for
+
+- rotate image needs fixing
 
 - need more unit tests
 
@@ -22,8 +27,6 @@ short-term
 long-term
 ---------
 - be able to change frame order
-- refactor Frame so that we don't have a current layer index AND a current layer variable since the index is enough to get information
-  about the other. the fewer things to keep track of, the better.
 - acutally make some decent animation to prove its usability
 - make footer span the whole page (needs its own row?)
 - more brush types

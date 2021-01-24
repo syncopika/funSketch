@@ -64,7 +64,7 @@ class Frame {
     ***/
     setupNewLayer(){
         // create the new canvas element 
-        let newCanvas = document.createElement('canvas');
+        const newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
         document.getElementById(this.containerId).appendChild(newCanvas);
         setCanvas(newCanvas);
@@ -81,6 +81,73 @@ class Frame {
         }
         this.canvasList.push(newCanvas);
         this.count++;
+    }
+	
+	_showLayer(canvas){
+		canvas.style.opacity = .97;
+		canvas.style.zIndex = 1;
+		canvas.style.cursor = "crosshair";
+	}
+
+	_hideLayer(canvas){
+		canvas.style.opacity = 0;
+		canvas.style.zIndex = 0;
+		canvas.style.cursor = "";
+	}
+	
+	// make current canvas an onion skin
+	_makeCurrLayerOnion(canvas){
+		canvas.style.opacity = .92; // apply onion skin to current canvas 
+		canvas.style.zIndex = 0;
+		canvas.style.cursor = "";
+	}
+	
+    nextLayer(){
+        // this moves the current layer to the next one if exists
+        if(this.currentIndex + 1 < this.canvasList.length){
+            // move to next canvas and apply onion skin to current canvas
+			const currLayer = this.currentCanvas;
+            this._makeCurrLayerOnion(currLayer);
+            
+			// in the special case for when you want to go to the next canvas from the very first one, 
+            // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
+            if(currLayer.currentIndex > 0){
+				const prevLayer = this.canvasList[this.currentIndex - 1];
+                // reset opacity and z-index for previous canvas (because of onionskin)
+                this._hideLayer(prevLayer);
+            }
+            // show the next canvas 
+			const nextLayer = this.canvasList[this.currentIndex + 1];
+            this._showLayer(nextLayer);
+			
+            this.currentCanvas = nextLayer;
+            this.currentIndex++;
+			
+            return true;
+        }
+        return false;
+    }
+	
+    prevLayer(){
+        // this moves the current layer to the previous one if exists
+        if(this.currentIndex - 1 >= 0){
+			const currLayer = this.currentCanvas;
+            this._hideLayer(currLayer);
+            
+			// make previous canvas visible 
+			const prevLayer = this.canvasList[this.currentIndex - 1];
+            this._showLayer(prevLayer);
+            
+			// if there is another canvas before the previous one, apply onion skin
+            if(this.currentIndex - 2 >= 0){
+                this.canvasList[this.currentIndex - 2].style.opacity = .92;
+            }
+            this.currentCanvas = prevLayer;
+            this.currentIndex--;
+			
+            return true;
+        }
+        return false;
     }
 	
     hide(){
@@ -101,18 +168,18 @@ class Frame {
 			}else{
 				canvas.style.zIndex = 0;
 			}
-			
 			canvas.style.visibility = "";
 			canvas.style.cursor = "crosshair";		
         });
     }
 	
+	// TODO: why have this and setCurrIndex()??
 	// layerIndex (int) = the index of the layer to make active (current layer)
 	// onionSkin (bool) = whether onionskin should be visible 
 	setToLayer(layerIndex, onionSkin){
 		// note that this does not hide the previous layer + previous onion skin before switching to 
 		// the new layer.
-		let newLayer = this.canvasList[layerIndex];
+		const newLayer = this.canvasList[layerIndex];
 		newLayer.style.opacity = 0.97;
 		newLayer.style.zIndex = 1;
 		
@@ -127,6 +194,24 @@ class Frame {
 		}
 	}
 	
+	deleteLayer(layerIndex){
+		if(layerIndex + 1 < this.canvasList.length){
+			// move current canvas to the next one if there is one
+			this.nextLayer();
+			// then remove the old canvas from the array and the DOM!
+			this.canvasList.splice(layerIndex, 1);
+			// adjust the current canvas index after the removal 
+			this.currentIndex -= 1;
+		}else if(layerIndex - 1 >= 0){
+			// if there's a canvas behind the current one (and no more ahead)
+			// move current canvas to the previous one 
+			// note that currentIndex doesn't need to be adjusted because removing the 
+			// next canvas doesn't affect the current canvas' index
+			this.prevLayer();
+			this.canvasList.splice(layerIndex, 1);
+		}
+	}
+	
     /***
         clone the current canvas
 		this creates a new layer whose image data is the same as the current canvas.
@@ -134,7 +219,7 @@ class Frame {
 		not sure I'm using this?
     ***/
     copyCanvas(){
-        let newCanvas = document.createElement('canvas');
+        const newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
         setCanvas(newCanvas, this.width, this.height);
         newCanvas.style.opacity = 0.97;
@@ -145,8 +230,8 @@ class Frame {
     }
 	
     clearCurrentLayer(){
-        let currLayer = this.getCurrCanvas();
-        let context = currLayer.getContext("2d");
+        const currLayer = this.getCurrCanvas();
+        const context = currLayer.getContext("2d");
         context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
         context.fillStyle = "#FFFFFF";
         context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
@@ -161,14 +246,18 @@ class Frame {
     it also instantiates an onion skin frame.
 ***/
 class AnimationProject {
-	constructor(container){
+	constructor(containerId){
 		this.name = "";
 		this.currentFrameIndex = 0; // index of current frame
 		this.speed = 100; // 100 ms per frame 
 		this.frameList = [];
-		this.onionSkinFrame = createOnionSkinFrame(container);
+		this.onionSkinFrame = createOnionSkinFrame(containerId);
 		this.onionSkinFrame.style.display = 'none'; // hide it initially
-		this.container = container; // id of the html element the frames are displayed in
+		this.containerId = containerId; // id of the html element the frames are displayed in
+	}
+	
+	getContainerId(){
+		return this.containerId;
 	}
 	
 	getFrames(){
@@ -210,7 +299,7 @@ class AnimationProject {
     }
 	
     addNewFrame(showFlag){
-        let newFrame = new Frame(this.container, this.frameList.length);
+        const newFrame = new Frame(this.containerId, this.frameList.length);
         newFrame.setupNewLayer();
         this.frameList.push(newFrame);
         if(!showFlag){
@@ -229,9 +318,8 @@ class AnimationProject {
 		// remove frame from frameList
 		this.frameList.splice(index, 1);
 		
-		const parentContainer = document.getElementById(frame.getContainerId());
-		
 		// remove all layers
+		const parentContainer = document.getElementById(frame.getContainerId());
 		frame.getLayers().forEach((layer) => {
 			parentContainer.removeChild(layer);
 		});
@@ -240,11 +328,11 @@ class AnimationProject {
 	}
 	
     nextFrame(){
-        if(this.frameList.length === this.currentFrameIndex + 1){
+        if(this.frameList.length <= this.currentFrameIndex + 1){
             return null; // no more frames to see
         }
         this.currentFrameIndex += 1;
-		this.updateOnionSkin()
+		this.updateOnionSkin();
         return this.frameList[this.currentFrameIndex];
     }
 	

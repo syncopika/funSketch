@@ -137,6 +137,25 @@ describe("test AnimationProject classes", () => {
 			expect(frame.getCurrCanvas()).toEqual(frame.getLayers()[1]);
 		});
 		
+		it("test nextLayer", () => {
+			const frame = new Frame(containerId, 0);
+			frame.setupNewLayer();
+			expect(frame.nextLayer()).toEqual(false);
+			
+			frame.setupNewLayer();
+			expect(frame.nextLayer()).toEqual(true);
+		});
+		
+		it("test prevLayer", () => {
+			const frame = new Frame(containerId, 0);
+			frame.setupNewLayer();
+			expect(frame.prevLayer()).toEqual(false);
+			
+			frame.setupNewLayer();
+			frame.nextLayer();
+			expect(frame.prevLayer()).toEqual(true);
+		});
+		
 		/*
 		it("test frame copyCanvas", () => {
 			// TODO: figure out how to get this working? 
@@ -189,7 +208,8 @@ describe("test AnimationProject classes", () => {
 		it("test setup", () => {
 			const animProject = new AnimationProject(containerId);
 			
-			expect(animProject.container).toEqual(containerId);
+			expect(animProject.getContainerId()).toEqual(containerId);
+			expect(animProject.onionSkinFrame).not.toEqual(null);
 			
 			let frames = animProject.getFrames();
 			expect(frames.length).toEqual(0);
@@ -238,6 +258,40 @@ describe("test AnimationProject classes", () => {
 			expect(animProject.getFrames().length).toEqual(1);
 			expect(animProject.getCurrFrame().getLayers().length).toEqual(1);
 			expect(animProject.getCurrFrame()).toEqual(animProject.getFrames()[0]);
+		});
+		
+		it("test nextFrame", () => {
+			const animProject = new AnimationProject(containerId);
+			jest.spyOn(animProject, "updateOnionSkin").mockImplementation(() => {});
+			
+			expect(animProject.nextFrame()).toEqual(null);
+			
+			animProject.addNewFrame();
+			expect(animProject.nextFrame()).toEqual(null);
+			expect(animProject.getCurrFrameIndex()).toEqual(0);
+			
+			animProject.addNewFrame();
+			expect(animProject.nextFrame()).toEqual(animProject.getCurrFrame());
+			expect(animProject.getCurrFrameIndex()).toEqual(1);
+		});
+		
+		it("test prevFrame", () => {
+			const animProject = new AnimationProject(containerId);
+			jest.spyOn(animProject, "updateOnionSkin").mockImplementation(() => {});
+			
+			expect(animProject.prevFrame()).toEqual(null);
+			
+			animProject.addNewFrame();
+			animProject.addNewFrame();
+			animProject.addNewFrame();
+			expect(animProject.prevFrame()).toEqual(null); // still on first frame at this point
+			
+			animProject.nextFrame();
+			expect(animProject.getCurrFrameIndex()).toEqual(1);
+			
+			expect(animProject.prevFrame()).toEqual(animProject.getCurrFrame());
+			expect(animProject.prevFrame()).toEqual(null);
+			expect(animProject.getCurrFrameIndex()).toEqual(0);
 		});
 		
 	});

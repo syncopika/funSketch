@@ -138,14 +138,15 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_moveToFrame(direction){
-		let animationProj = this.state.animationProject;
-		let toolbar = this.state.toolbarInstance;
+		const animationProj = this.state.animationProject;
+		const toolbar = this.state.toolbarInstance;
+		const brush = this.state.brushInstance;
 		
-		let currFrameIndex = animationProj.getCurrFrameIndex();
-		let frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
-		let currFrameData = frame.toDataURL();
+		const currFrameIndex = animationProj.getCurrFrameIndex();
+		const frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
+		const currFrameData = frame.toDataURL();
 		
-		let newFrames = [...this.state.timelineFrames];
+		const newFrames = [...this.state.timelineFrames];
 		
 		if(!this.timelineFramesSet.has(currFrameIndex)){
 			// if the animation timeline doesn't have the current frame, add it
@@ -175,14 +176,14 @@ class PresentationWrapper extends React.Component {
 	
 	_setKeyDown(doc){
 		
-		let toolbar = this.state.toolbarInstance;
-		let animationProj = this.state.animationProject;
+		const toolbar = this.state.toolbarInstance;
+		const animationProj = this.state.animationProject;
 		const self = this;
 
-		doc.addEventListener('keydown', function(e){
+		doc.addEventListener('keydown', function(evt){
 			let updateStateFlag = false;
 			let frame = null;
-			switch(e.which){
+			switch(evt.which){
 				case 37: //left arrow key
 					if(toolbar.prevLayer()){
 						frame = animationProj.getCurrFrame();
@@ -217,7 +218,7 @@ class PresentationWrapper extends React.Component {
 				default:
 					break;
 			}
-			e.preventDefault();
+			evt.preventDefault();
 			if(updateStateFlag){
 				self.setState({
 					'currentFrame': animationProj.getCurrFrameIndex() + 1,
@@ -230,8 +231,8 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_setupToolbar(){
-		let newToolbar = this.state.toolbarInstance;
-		let project = this.state.animationProject;
+		const newToolbar = this.state.toolbarInstance;
+		const project = this.state.animationProject;
 		
 		newToolbar.setCounter("count");
 		newToolbar.createColorWheel('colorPicker', 200);

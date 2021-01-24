@@ -18,3 +18,6 @@ https://stackoverflow.com/questions/48828759/unit-test-raises-error-because-of-g
 https://github.com/testing-library/react-testing-library/issues/353
 https://stackoverflow.com/questions/33638385/simulate-keydown-on-document-for-jest-unit-testing
 https://stackoverflow.com/questions/62937699/firing-keyboard-events-not-working-as-expected-in-jest-jsdom-react-testing-l
+https://stackoverflow.com/questions/50091438/jest-how-to-mock-one-specific-method-of-a-class/56565849#56565849
+https://stackoverflow.com/questions/61755999/uncaught-referenceerror-regeneratorruntime-is-not-defined-in-react -> when trying to use async/await
+https://medium.com/@DavideRama/testing-global-event-listener-within-a-react-component-b9d661e59953 -> my keydown event on document doesn't seem to be getting called, maybe this explains why?

@@ -131,7 +131,6 @@ class Frame {
     prevLayer(){
         // this moves the current layer to the previous one if exists
         if(this.currentIndex - 1 >= 0){
-            // move to previous canvas
 			const currLayer = this.currentCanvas;
             this._hideLayer(currLayer);
             
@@ -197,7 +196,7 @@ class Frame {
 	
 	deleteLayer(layerIndex){
 		if(layerIndex + 1 < this.canvasList.length){
-			// move current canvas to the next one 
+			// move current canvas to the next one if there is one
 			this.nextLayer();
 			// then remove the old canvas from the array and the DOM!
 			this.canvasList.splice(layerIndex, 1);
@@ -319,9 +318,8 @@ class AnimationProject {
 		// remove frame from frameList
 		this.frameList.splice(index, 1);
 		
-		const parentContainer = document.getElementById(frame.getContainerId());
-		
 		// remove all layers
+		const parentContainer = document.getElementById(frame.getContainerId());
 		frame.getLayers().forEach((layer) => {
 			parentContainer.removeChild(layer);
 		});

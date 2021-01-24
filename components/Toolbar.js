@@ -141,17 +141,9 @@ class Toolbar {
             const parentNode = document.getElementById(oldLayer.id).parentNode;
 			const layerList = frame.getLayers();
 			
-            // if there's a canvas ahead of the current one 
-            if(oldLayerIndex + 1 < layerList.length){
+            if(oldLayerIndex + 1 < layerList.length || oldLayerIndex - 1 >= 0){
                 frame.deleteLayer(oldLayerIndex);
-                parentNode.removeChild(document.getElementById(oldLayer.id));
-				this.brush.applyBrush();
-            }else if(oldLayerIndex - 1 >= 0){
-                // if there's a canvas behind the current one (and no more ahead)
-                // move current canvas to the previous one 
-                // note that currentIndex doesn't need to be adjusted because removing the 
-                // next canvas doesn't affect the current canvas' index
-                frame.deleteLayer(oldLayerIndex);
+                parentNode.removeChild(oldLayer);
 				this.brush.applyBrush();
             }else{
                 // otherwise, just blank the canvas 

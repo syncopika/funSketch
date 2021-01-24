@@ -48,14 +48,32 @@ describe("testing PresentationWrapper component", () => {
 		expect(screen.getByText(new RegExp("layer: " + initialLayerNum))).toBeInTheDocument();
 	});
 	
-	it("testing adding a layer and then deleting (no key down)", () => {
-		render(<PresentationWrapper />);
+	it("testing adding a layer", () => {
+		const presentation = render(<PresentationWrapper />);
 		
-		// we expect that the layer and frame should be shown as 1 initially somewhere on the page		
-		const initialFrameNum = 1;
-		const initialLayerNum = 1;
-		expect(screen.getByText(new RegExp("frame: " + initialFrameNum))).toBeInTheDocument();
-		expect(screen.getByText(new RegExp("layer: " + initialLayerNum))).toBeInTheDocument();
+		// add a new layer
+		const leftClick = {button: 0};
+		fireEvent.click(screen.getByRole('button', {name: 'add new layer after'}), leftClick);
+		
+		// check that we have 2 canvas elements with id like 'frame:_canvas:_'
+		// this isn't advisable, but I'm not sure how else to make sure I have the right number
+		// of canvases in the DOM.
+		//screen.debug();
+		expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(2);
+	});
+	
+	it("testing adding a frame", () => {
+		const presentation = render(<PresentationWrapper />);
+		
+		// add a new frame
+		const leftClick = {button: 0};
+		fireEvent.click(screen.getByRole('button', {name: 'add new layer after'}), leftClick);
+		
+		expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(2);
+	});
+	
+	it("testing adding a layer and then deleting (no key down)", () => {
+		const presentation = render(<PresentationWrapper />);
 		
 		// add a new layer
 		const leftClick = {button: 0};
@@ -67,25 +85,33 @@ describe("testing PresentationWrapper component", () => {
 		expect(screen.getByText(new RegExp("layer: " + nextLayerNum))).toBeInTheDocument();
 		
 		// delete the layer
+		const initialLayerNum = 1;
 		fireEvent.click(screen.getByRole('button', {name: 'delete current layer'}), leftClick);
+		
 		expect(screen.getByText(new RegExp("layer: " + initialLayerNum))).toBeInTheDocument();
+		
+		// confirm only 1 layer exists now
+		expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(1);
 	});
 	
 	it("testing adding a frame and then deleting (no key down)", () => {
-		render(<PresentationWrapper />);
+		const presentation = render(<PresentationWrapper />);
 		// add a new frame
 		const leftClick = {button: 0};
 		fireEvent.click(screen.getByRole('button', {name: 'add new frame'}), leftClick);
 		
-		// move to the next layer
+		// move to the next frame
 		fireEvent.click(screen.getByRole('heading', {name: '▶'}), leftClick);
 		const nextFrameNum = 2;
 		expect(screen.getByText(new RegExp("frame: " + nextFrameNum))).toBeInTheDocument();
 		
-		// delete the layer
+		// delete the frame
 		const firstFrameNum = 1;
 		fireEvent.click(screen.getByRole('button', {name: 'delete current frame'}), leftClick);
 		expect(screen.getByText(new RegExp("frame: " + firstFrameNum))).toBeInTheDocument();
+		
+		// confirm only 1 frame exists now
+		expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(1);
 	});
 	
 	

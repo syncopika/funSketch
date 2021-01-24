@@ -270,7 +270,6 @@ var Frame = /*#__PURE__*/function () {
     value: function prevLayer() {
       // this moves the current layer to the previous one if exists
       if (this.currentIndex - 1 >= 0) {
-        // move to previous canvas
         var currLayer = this.currentCanvas;
 
         this._hideLayer(currLayer); // make previous canvas visible 
@@ -343,7 +342,7 @@ var Frame = /*#__PURE__*/function () {
     key: "deleteLayer",
     value: function deleteLayer(layerIndex) {
       if (layerIndex + 1 < this.canvasList.length) {
-        // move current canvas to the next one 
+        // move current canvas to the next one if there is one
         this.nextLayer(); // then remove the old canvas from the array and the DOM!
 
         this.canvasList.splice(layerIndex, 1); // adjust the current canvas index after the removal 
@@ -481,9 +480,9 @@ var AnimationProject = /*#__PURE__*/function () {
 
       var frame = this.frameList[index]; // remove frame from frameList
 
-      this.frameList.splice(index, 1);
-      var parentContainer = document.getElementById(frame.getContainerId()); // remove all layers
+      this.frameList.splice(index, 1); // remove all layers
 
+      var parentContainer = document.getElementById(frame.getContainerId());
       frame.getLayers().forEach(function (layer) {
         parentContainer.removeChild(layer);
       });
@@ -3882,19 +3881,11 @@ var Toolbar = /*#__PURE__*/function () {
         var oldLayerIndex = frame.getCurrCanvasIndex();
         var oldLayer = frame.getCurrCanvas();
         var parentNode = document.getElementById(oldLayer.id).parentNode;
-        var layerList = frame.getLayers(); // if there's a canvas ahead of the current one 
+        var layerList = frame.getLayers();
 
-        if (oldLayerIndex + 1 < layerList.length) {
+        if (oldLayerIndex + 1 < layerList.length || oldLayerIndex - 1 >= 0) {
           frame.deleteLayer(oldLayerIndex);
-          parentNode.removeChild(document.getElementById(oldLayer.id));
-
-          _this4.brush.applyBrush();
-        } else if (oldLayerIndex - 1 >= 0) {
-          // if there's a canvas behind the current one (and no more ahead)
-          // move current canvas to the previous one 
-          // note that currentIndex doesn't need to be adjusted because removing the 
-          // next canvas doesn't affect the current canvas' index
-          frame.deleteLayer(oldLayerIndex);
+          parentNode.removeChild(oldLayer);
 
           _this4.brush.applyBrush();
         } else {

@@ -126,7 +126,6 @@ function Filters(canvas, brush){
         PURPLE CHROME FILTER
         this function creates a light purplish 'chrome' effect
         hmm, seemed to stop working after adjusting canvas to 800x800 from 700x700
-    ***/
     this.purpleChrome = function(pixels){
         let d = pixels.data;
         for(let i = 0; i < d.length; i++){
@@ -139,6 +138,7 @@ function Filters(canvas, brush){
         }
         return pixels;
     };
+	***/
 	
     /***
         PURPLIZER
@@ -163,7 +163,6 @@ function Filters(canvas, brush){
     /***
         SCARY(?) FILTER
         this filter turns everything dark
-    ***/
     this.scary = function(pixels){
         let saturationValue = 2.5;
         let d = pixels.data;
@@ -189,6 +188,7 @@ function Filters(canvas, brush){
         }
         return pixels;
     };
+	***/
 	
     /***
         'HEATWAVE' FILTER

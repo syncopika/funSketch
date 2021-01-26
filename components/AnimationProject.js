@@ -71,7 +71,6 @@ class Frame {
         if(this.count === 0){
             newCanvas.style.opacity = .97;
             newCanvas.style.zIndex = 1;
-			newCanvas.style.cursor = "crosshair";
 			this.width = newCanvas.width;
 			this.height = newCanvas.height;
         }
@@ -86,20 +85,17 @@ class Frame {
 	_showLayer(canvas){
 		canvas.style.opacity = .97;
 		canvas.style.zIndex = 1;
-		canvas.style.cursor = "crosshair";
 	}
 
 	_hideLayer(canvas){
 		canvas.style.opacity = 0;
 		canvas.style.zIndex = 0;
-		canvas.style.cursor = "";
 	}
 	
 	// make current canvas an onion skin
 	_makeCurrLayerOnion(canvas){
 		canvas.style.opacity = .92; // apply onion skin to current canvas 
 		canvas.style.zIndex = 0;
-		canvas.style.cursor = "";
 	}
 	
     nextLayer(){
@@ -155,7 +151,6 @@ class Frame {
         this.canvasList.forEach((canvas) => {
 			canvas.style.zIndex = -1;
 			canvas.style.visibility = "hidden";
-			canvas.style.cursor = "";
         });
     }
 	
@@ -168,8 +163,7 @@ class Frame {
 			}else{
 				canvas.style.zIndex = 0;
 			}
-			canvas.style.visibility = "";
-			canvas.style.cursor = "crosshair";		
+			canvas.style.visibility = "";		
         });
     }
 	

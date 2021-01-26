@@ -18,11 +18,11 @@ short-term
 - when saving a project, make sure to include any timeline markers!
 - maybe add a context menu for the animation timeline?
 	- i.e. besides being able to change the frame rate, set start/end points?
-- ERASER!
-    - kinda hard? need a cursor that can also adjust size based on eraser size.
+- eraser cursor that can also adjust size based on eraser size.
 - stop animation, play reverse?
 - rethink brush implementations
-  - use a Brush class? some basic inheritance? 	
+  - use a Brush class? some basic inheritance?
+- when clicking on a frame in the animation timeline, also set current frame to that frame
 
 long-term
 ---------

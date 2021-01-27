@@ -64,11 +64,12 @@ class Brush {
 	
     resetBrush(){
 		// detach any events from mouse actions (reset the events connected with mouse events) from previous layer worked on
-		if(this.previousCanvas){
-			for(let eventType in this.currentEventListeners){
-				this.previousCanvas.removeEventListener(eventType, this.currentEventListeners[eventType]);
-				delete this.currentEventListeners[eventType];
-			}
+		const frame = this.animationProject.getCurrFrame();	
+		const currLayer = frame.getCurrCanvas();
+		
+		for(let eventType in this.currentEventListeners){
+			currLayer.removeEventListener(eventType, this.currentEventListeners[eventType]);
+			delete this.currentEventListeners[eventType];
 		}
     }
 	
@@ -112,9 +113,6 @@ class Brush {
 		eraser brush
 	***/
     eraserBrush(){
-        // reset mouse action functions first 
-        this.resetBrush();
-		
         const frame = this.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
 		let paint;
@@ -197,9 +195,6 @@ class Brush {
 		default brush
 	***/
     defaultBrush(){
-        // reset mouse action functions first 
-        this.resetBrush();
-		
         const frame = this.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
 		let paint;
@@ -306,9 +301,6 @@ class Brush {
         radial gradient brush
     ***/
     radialGradBrush(){
-        // reset mouse action functions first 
-        this.resetBrush();
-        
 		const frame = this.animationProject.getCurrFrame();
 		const currLayer = frame.getCurrCanvas();
 		const context = currLayer.getContext("2d");
@@ -414,8 +406,6 @@ class Brush {
 		thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/sketchy.js
 	***/
 	penBrush(){
-		this.resetBrush();
-        
 		const frame = this.animationProject.getCurrFrame();
         const currLayer = frame.getCurrCanvas();
 		let paint;
@@ -532,9 +522,6 @@ class Brush {
 		won't conflict with the other brushes (i.e. no painting at the same time of a floodfill)
 	***/
 	floodfillBrush(){
-		// reset mouse action functions first 
-        this.resetBrush();
-		
         const frame = this.animationProject.getCurrFrame();
 		const currLayer = frame.getCurrCanvas();
 		

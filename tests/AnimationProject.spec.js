@@ -31,7 +31,7 @@ describe("test AnimationProject classes", () => {
 			let currCanvas = frame1.getCurrCanvas();
 			expect(currCanvas.style.opacity).toEqual("0.97");
 			expect(currCanvas.style.zIndex).toEqual("1");
-			expect(currCanvas.style.cursor).toEqual("crosshair");
+			expect(currCanvas.style.cursor).toEqual("");
 			expect(currCanvas.parentNode).toBe(document.getElementById(containerId));
 			
 			// add a new layer
@@ -76,7 +76,7 @@ describe("test AnimationProject classes", () => {
 				}
 				
 				expect(layer.style.visibility).toEqual("");
-				expect(layer.style.cursor).toEqual("crosshair");				
+				expect(layer.style.cursor).toEqual("");				
 			}
 		});
 		

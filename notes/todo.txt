@@ -1,9 +1,5 @@
 buggy stuff / refactor
 ---------
-
-- keep floodfill cursor on when switching frames and also highlight current brush being used in dropdown?
- - need to figure out how to keep cursor consistent (i.e. when using floodfill) when switching between layers and frames
-
 - need to refactor some Toolbar and Brush methods
 
 - fix undo

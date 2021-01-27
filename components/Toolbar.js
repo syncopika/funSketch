@@ -27,26 +27,26 @@ class Toolbar {
     }
 	
     nextLayer(){
-        // this moves the current layer to the next one if exists
+		this.brush.resetBrush();
         let frame = this.animationProj.getCurrFrame();
 		if(frame.nextLayer()){
-			// apply brush
 			// TODO: can we figure out a better way to handle brushes?
             this.brush.applyBrush();
 			return true;
-		}else{
-			return false;
 		}
+		this.brush.applyBrush(); // apply brush whether or not layer changed because it was reset initially
+		return false;
     }
 	
     prevLayer(){
-        // this moves the current layer to the previous one if exists
+		this.brush.resetBrush();
         let frame = this.animationProj.getCurrFrame();
         if(frame.prevLayer()){			
             // apply brush
             this.brush.applyBrush();
             return true;
         }
+		this.brush.applyBrush();
         return false;
     }
 	
@@ -56,24 +56,26 @@ class Toolbar {
 	}
 	
     nextFrame(){
+		this.brush.resetBrush();
         let curr = this.animationProj.getCurrFrame();
         let next = this.animationProj.nextFrame();
-        if(next !== null){
+        this.brush.applyBrush();
+		if(next !== null){
             curr.hide();
             next.show();
-            this.brush.applyBrush();
-            return true;
+			return true;
         }
         return false;
     }
 	
     prevFrame(){
+		this.brush.resetBrush();
         let curr = this.animationProj.getCurrFrame();
         let prev = this.animationProj.prevFrame();
-        if(prev !== null){
+        this.brush.applyBrush();
+		if(prev !== null){
             curr.hide();
             prev.show();
-            this.brush.applyBrush();
             return true;
         }
         return false;

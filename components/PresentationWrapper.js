@@ -498,30 +498,35 @@ class PresentationWrapper extends React.Component {
 		});
 		
 		document.getElementById('defaultBrush').addEventListener('click', () => {
+			brush.resetBrush();
 			this._changeCursor("default");
 			brush.setBrushType('default');
 			brush.applyBrush();
 		});
 		
 		document.getElementById('penBrush').addEventListener('click', () => {
+			brush.resetBrush();
 			this._changeCursor("default");
 			brush.setBrushType('pen');
 			brush.applyBrush();
 		});
 		
 		document.getElementById('radialBrush').addEventListener('click', () => {
+			brush.resetBrush();
 			this._changeCursor("default");
 			brush.setBrushType('radial');
 			brush.applyBrush();
 		});
 		
 		document.getElementById('eraser').addEventListener('click', () => {
+			brush.resetBrush();
 			this._changeCursor("eraser");
 			brush.setBrushType('eraser');
 			brush.applyBrush();
 		});
 		
 		document.getElementById('floodfill').addEventListener('click', () => {
+			brush.resetBrush();
 			this._changeCursor("floodfill");
 			brush.setBrushType('floodfill');
 			brush.applyBrush();

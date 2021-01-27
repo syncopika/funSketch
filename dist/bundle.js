@@ -198,8 +198,7 @@ var Frame = /*#__PURE__*/function () {
 
       if (this.count === 0) {
         newCanvas.style.opacity = .97;
-        newCanvas.style.zIndex = 1; //newCanvas.style.cursor = "crosshair";
-
+        newCanvas.style.zIndex = 1;
         this.width = newCanvas.width;
         this.height = newCanvas.height;
       } // set new canvas to be the current canvas only initially!
@@ -216,13 +215,13 @@ var Frame = /*#__PURE__*/function () {
     key: "_showLayer",
     value: function _showLayer(canvas) {
       canvas.style.opacity = .97;
-      canvas.style.zIndex = 1; //canvas.style.cursor = "crosshair";
+      canvas.style.zIndex = 1;
     }
   }, {
     key: "_hideLayer",
     value: function _hideLayer(canvas) {
       canvas.style.opacity = 0;
-      canvas.style.zIndex = 0; //canvas.style.cursor = "";
+      canvas.style.zIndex = 0;
     } // make current canvas an onion skin
 
   }, {
@@ -230,7 +229,7 @@ var Frame = /*#__PURE__*/function () {
     value: function _makeCurrLayerOnion(canvas) {
       canvas.style.opacity = .92; // apply onion skin to current canvas 
 
-      canvas.style.zIndex = 0; //canvas.style.cursor = "";
+      canvas.style.zIndex = 0;
     }
   }, {
     key: "nextLayer",
@@ -294,7 +293,7 @@ var Frame = /*#__PURE__*/function () {
       // makes all layers not visible
       this.canvasList.forEach(function (canvas) {
         canvas.style.zIndex = -1;
-        canvas.style.visibility = "hidden"; //canvas.style.cursor = "";
+        canvas.style.visibility = "hidden";
       });
     }
   }, {
@@ -309,7 +308,7 @@ var Frame = /*#__PURE__*/function () {
           canvas.style.zIndex = 0;
         }
 
-        canvas.style.visibility = ""; //canvas.style.cursor = "crosshair";		
+        canvas.style.visibility = "";
       });
     } // TODO: why have this and setCurrIndex()??
     // layerIndex (int) = the index of the layer to make active (current layer)
@@ -746,11 +745,12 @@ var Brush = /*#__PURE__*/function () {
     key: "resetBrush",
     value: function resetBrush() {
       // detach any events from mouse actions (reset the events connected with mouse events) from previous layer worked on
-      if (this.previousCanvas) {
-        for (var eventType in this.currentEventListeners) {
-          this.previousCanvas.removeEventListener(eventType, this.currentEventListeners[eventType]);
-          delete this.currentEventListeners[eventType];
-        }
+      var frame = this.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      for (var eventType in this.currentEventListeners) {
+        currLayer.removeEventListener(eventType, this.currentEventListeners[eventType]);
+        delete this.currentEventListeners[eventType];
       }
     }
   }, {
@@ -808,8 +808,6 @@ var Brush = /*#__PURE__*/function () {
     value: function eraserBrush() {
       var _this = this;
 
-      // reset mouse action functions first 
-      this.resetBrush();
       var frame = this.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
       var paint;
@@ -909,8 +907,6 @@ var Brush = /*#__PURE__*/function () {
     value: function defaultBrush() {
       var _this2 = this;
 
-      // reset mouse action functions first 
-      this.resetBrush();
       var frame = this.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
       var paint;
@@ -1034,8 +1030,6 @@ var Brush = /*#__PURE__*/function () {
     value: function radialGradBrush() {
       var _this3 = this;
 
-      // reset mouse action functions first 
-      this.resetBrush();
       var frame = this.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
       var context = currLayer.getContext("2d");
@@ -1158,7 +1152,6 @@ var Brush = /*#__PURE__*/function () {
     value: function penBrush() {
       var _this4 = this;
 
-      this.resetBrush();
       var frame = this.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
       var paint;
@@ -1290,8 +1283,6 @@ var Brush = /*#__PURE__*/function () {
     value: function floodfillBrush() {
       var _this5 = this;
 
-      // reset mouse action functions first 
-      this.resetBrush();
       var frame = this.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
 
@@ -3334,30 +3325,40 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         _this8._showOptions('brushes');
       });
       document.getElementById('defaultBrush').addEventListener('click', function () {
+        brush.resetBrush();
+
         _this8._changeCursor("default");
 
         brush.setBrushType('default');
         brush.applyBrush();
       });
       document.getElementById('penBrush').addEventListener('click', function () {
+        brush.resetBrush();
+
         _this8._changeCursor("default");
 
         brush.setBrushType('pen');
         brush.applyBrush();
       });
       document.getElementById('radialBrush').addEventListener('click', function () {
+        brush.resetBrush();
+
         _this8._changeCursor("default");
 
         brush.setBrushType('radial');
         brush.applyBrush();
       });
       document.getElementById('eraser').addEventListener('click', function () {
+        brush.resetBrush();
+
         _this8._changeCursor("eraser");
 
         brush.setBrushType('eraser');
         brush.applyBrush();
       });
       document.getElementById('floodfill').addEventListener('click', function () {
+        brush.resetBrush();
+
         _this8._changeCursor("floodfill");
 
         brush.setBrushType('floodfill');
@@ -3857,22 +3858,23 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "nextLayer",
     value: function nextLayer() {
-      // this moves the current layer to the next one if exists
+      this.brush.resetBrush();
       var frame = this.animationProj.getCurrFrame();
 
       if (frame.nextLayer()) {
-        // apply brush
         // TODO: can we figure out a better way to handle brushes?
         this.brush.applyBrush();
         return true;
-      } else {
-        return false;
       }
+
+      this.brush.applyBrush(); // apply brush whether or not layer changed because it was reset initially
+
+      return false;
     }
   }, {
     key: "prevLayer",
     value: function prevLayer() {
-      // this moves the current layer to the previous one if exists
+      this.brush.resetBrush();
       var frame = this.animationProj.getCurrFrame();
 
       if (frame.prevLayer()) {
@@ -3881,6 +3883,7 @@ var Toolbar = /*#__PURE__*/function () {
         return true;
       }
 
+      this.brush.applyBrush();
       return false;
     }
   }, {
@@ -3892,13 +3895,14 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "nextFrame",
     value: function nextFrame() {
+      this.brush.resetBrush();
       var curr = this.animationProj.getCurrFrame();
       var next = this.animationProj.nextFrame();
+      this.brush.applyBrush();
 
       if (next !== null) {
         curr.hide();
         next.show();
-        this.brush.applyBrush();
         return true;
       }
 
@@ -3907,13 +3911,14 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "prevFrame",
     value: function prevFrame() {
+      this.brush.resetBrush();
       var curr = this.animationProj.getCurrFrame();
       var prev = this.animationProj.prevFrame();
+      this.brush.applyBrush();
 
       if (prev !== null) {
         curr.hide();
         prev.show();
-        this.brush.applyBrush();
         return true;
       }
 

@@ -54,7 +54,7 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_timelineMarkerSetup(){
-		let timelineCanvas = document.getElementById('animationTimelineCanvas');
+		const timelineCanvas = document.getElementById('animationTimelineCanvas');
 		
 		// make sure pixel width of canvas is the same as the timeline element
 		timelineCanvas.width = document.getElementById('animationTimeline').clientWidth;
@@ -62,15 +62,15 @@ class PresentationWrapper extends React.Component {
 		
 		timelineCanvas.addEventListener('mousemove', (event) => {
 			
-			let context = timelineCanvas.getContext('2d');
+			const context = timelineCanvas.getContext('2d');
 			// clear canvas first
 			context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
 			// get canvas coordinates
 			
-			let coords = this._getCoordinates(timelineCanvas, event);
-			let x = coords.x;
-			let y = coords.y;
-			let rect = coords.rect;
+			const coords = this._getCoordinates(timelineCanvas, event);
+			const x = coords.x;
+			const y = coords.y;
+			const rect = coords.rect;
 			
 			context.beginPath();
 			context.moveTo(x, 0);
@@ -85,24 +85,24 @@ class PresentationWrapper extends React.Component {
 		});
 		
 		timelineCanvas.addEventListener('mouseleave', (event) => {
-			let context = timelineCanvas.getContext('2d');
+			const context = timelineCanvas.getContext('2d');
 			context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
 		});
 		
 		timelineCanvas.addEventListener('click', (event) => {
 			
 			// also take into account horizontal scroll distance, if any
-			let scrollDistance = document.getElementById('animationTimeline').scrollLeft;
+			const scrollDistance = document.getElementById('animationTimeline').scrollLeft;
 			
-			let coords = this._getCoordinates(timelineCanvas, event);
-			let x = coords.x + scrollDistance;
-			let y = coords.y;
+			const coords = this._getCoordinates(timelineCanvas, event);
+			const x = coords.x + scrollDistance;
+			const y = coords.y;
 			
 			// which frame does this coordinate match to?
 			if(this.state.timelineFrames.length > 0){
 	
-				let width = 123; // don't hardcode this? it should be based on img width in the timeline
-				let frameGuess = Math.floor(x/width) + 1;
+				const width = 123; // don't hardcode this? it should be based on img width in the timeline
+				const frameGuess = Math.floor(x/width) + 1;
 				
 				if(frameGuess <= this.state.timelineFrames.length){
 				
@@ -117,8 +117,12 @@ class PresentationWrapper extends React.Component {
 						'frame': this.state.timelineFrames[frameGuess-1] 
 					};
 					
+					this.state.toolbarInstance.goToFrame(frameGuess-1);
+					
 					this.setState({
-						'timelineMarkers': markers
+						'timelineMarkers': markers,
+						'currentFrame': frameGuess,
+						'currentLayer': 1
 					});
 				}
 			}
@@ -752,6 +756,10 @@ class PresentationWrapper extends React.Component {
 			this._timelineMarkerSetup();
 			this._changeCursor(this.state.brushInstance.getBrushType());
 		});
+	}
+	
+	componentDidUpdate(){
+		// make the active canvas shown reflects the state's current frame and layer?
 	}
 	
 	render(){

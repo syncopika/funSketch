@@ -81,6 +81,19 @@ class Toolbar {
         return false;
     }
 	
+    goToFrame(frameIndex){
+		this.brush.resetBrush();
+        let curr = this.animationProj.getCurrFrame();
+        let destFrame = this.animationProj.goToFrame(frameIndex);
+        this.brush.applyBrush();
+		if(destFrame !== null){
+            curr.hide();
+            destFrame.show();
+            return true;
+        }
+        return false;
+    }
+	
     addNewLayer(){
         let canvas = this.animationProj.getCurrFrame();
         canvas.setupNewLayer();

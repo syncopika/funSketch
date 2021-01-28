@@ -505,6 +505,17 @@ var AnimationProject = /*#__PURE__*/function () {
       return this.frameList[this.currentFrameIndex];
     }
   }, {
+    key: "goToFrame",
+    value: function goToFrame(frameIndex) {
+      if (frameIndex > this.frameList.length - 1 || frameIndex < 0) {
+        return null;
+      }
+
+      this.currentFrameIndex = frameIndex;
+      this.updateOnionSkin();
+      return this.frameList[this.currentFrameIndex];
+    }
+  }, {
     key: "updateOnionSkin",
     value: function updateOnionSkin() {
       if (this.currentFrameIndex - 1 < 0) {
@@ -2905,8 +2916,12 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
               'frame': _this2.state.timelineFrames[frameGuess - 1]
             };
 
+            _this2.state.toolbarInstance.goToFrame(frameGuess - 1);
+
             _this2.setState({
-              'timelineMarkers': markers
+              'timelineMarkers': markers,
+              'currentFrame': frameGuess,
+              'currentLayer': 1
             });
           }
         }
@@ -3592,6 +3607,10 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {// make the active canvas shown reflects the state's current frame and layer?
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this12 = this;
@@ -3919,6 +3938,22 @@ var Toolbar = /*#__PURE__*/function () {
       if (prev !== null) {
         curr.hide();
         prev.show();
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "goToFrame",
+    value: function goToFrame(frameIndex) {
+      this.brush.resetBrush();
+      var curr = this.animationProj.getCurrFrame();
+      var destFrame = this.animationProj.goToFrame(frameIndex);
+      this.brush.applyBrush();
+
+      if (destFrame !== null) {
+        curr.hide();
+        destFrame.show();
         return true;
       }
 

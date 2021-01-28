@@ -339,6 +339,15 @@ class AnimationProject {
         return this.frameList[this.currentFrameIndex];
     }
 	
+	goToFrame(frameIndex){
+		if(frameIndex > this.frameList.length - 1 || frameIndex < 0){
+			return null;
+		}
+		this.currentFrameIndex = frameIndex;
+		this.updateOnionSkin();
+		return this.frameList[this.currentFrameIndex];
+	}
+	
     updateOnionSkin(){
         if(this.currentFrameIndex - 1 < 0){
 			// no onionskin for very first frame 

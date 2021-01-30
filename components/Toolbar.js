@@ -29,29 +29,22 @@ class Toolbar {
     nextLayer(){
 		this.brush.resetBrush();
         let frame = this.animationProj.getCurrFrame();
-		if(frame.nextLayer()){
-			// TODO: can we figure out a better way to handle brushes?
-            this.brush.applyBrush();
-			return true;
-		}
-		this.brush.applyBrush(); // apply brush whether or not layer changed because it was reset initially
-		return false;
+		let result = frame.nextLayer();
+		// TODO: can we figure out a better way to handle brushes?
+        this.brush.applyBrush(); // apply brush whether or not layer changed because it was reset initially
+		return result;
     }
 	
     prevLayer(){
 		this.brush.resetBrush();
         let frame = this.animationProj.getCurrFrame();
-        if(frame.prevLayer()){			
-            // apply brush
-            this.brush.applyBrush();
-            return true;
-        }
+        let result = frame.prevLayer();
 		this.brush.applyBrush();
-        return false;
+        return result;
     }
 	
 	setCurrLayer(layerIndex){
-		// true to show onion skin of prev layer
+		// true to show onion skin of prev layer (when would we not?)
 		this.animationProj.getCurrFrame().setToLayer(layerIndex, true);
 	}
 	
@@ -113,8 +106,6 @@ class Toolbar {
         insert a new layer after the current layer
     ***/
     insertLayer(elementId){
-        // not sure if better idea to add the container the layers go in as an instance letiable 
-        // or pass in elementId here? 
         document.getElementById(elementId).addEventListener('click', () => {
             this.insertNewLayer();
         });

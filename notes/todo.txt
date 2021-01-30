@@ -1,15 +1,11 @@
 buggy stuff / refactor
 ---------
-- some methods in Toolbar like nextFrame and prevFrame do stuff that AnimationProject should be able to do.
-
+- break out more components from PresentationWrapper
 - need to refactor some Toolbar and Brush methods
-
 - fix undo
   - going to a different frame and clicking undo overwrites the current layer with whatever layer the undo was for
-
 - rotate image needs fixing
-
-- need more unit tests
+- need more tests
 
 short-term
 ----------
@@ -18,9 +14,6 @@ short-term
 	- i.e. besides being able to change the frame rate, set start/end points?
 - eraser cursor that can also adjust size based on eraser size.
 - stop animation, play reverse?
-- rethink brush implementations
-  - use a Brush class? some basic inheritance?
-- when clicking on a frame in the animation timeline, also set current frame to that frame
 
 long-term
 ---------

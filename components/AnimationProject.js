@@ -348,6 +348,9 @@ class AnimationProject {
 		return this.frameList[this.currentFrameIndex];
 	}
 	
+	// this method takes all the layers of a frame, merges them, and places the resulting image
+	// on a specific 'onionskin' canvas. when moving from one frame to another, the 'onionskin' of the
+	// previous frame will be visible.
     updateOnionSkin(){
         if(this.currentFrameIndex - 1 < 0){
 			// no onionskin for very first frame 

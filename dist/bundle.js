@@ -514,7 +514,10 @@ var AnimationProject = /*#__PURE__*/function () {
       this.currentFrameIndex = frameIndex;
       this.updateOnionSkin();
       return this.frameList[this.currentFrameIndex];
-    }
+    } // this method takes all the layers of a frame, merges them, and places the resulting image
+    // on a specific 'onionskin' canvas. when moving from one frame to another, the 'onionskin' of the
+    // previous frame will be visible.
+
   }, {
     key: "updateOnionSkin",
     value: function updateOnionSkin() {
@@ -2796,36 +2799,25 @@ var Toolbar = /*#__PURE__*/function () {
     value: function nextLayer() {
       this.brush.resetBrush();
       var frame = this.animationProj.getCurrFrame();
-
-      if (frame.nextLayer()) {
-        // TODO: can we figure out a better way to handle brushes?
-        this.brush.applyBrush();
-        return true;
-      }
+      var result = frame.nextLayer(); // TODO: can we figure out a better way to handle brushes?
 
       this.brush.applyBrush(); // apply brush whether or not layer changed because it was reset initially
 
-      return false;
+      return result;
     }
   }, {
     key: "prevLayer",
     value: function prevLayer() {
       this.brush.resetBrush();
       var frame = this.animationProj.getCurrFrame();
-
-      if (frame.prevLayer()) {
-        // apply brush
-        this.brush.applyBrush();
-        return true;
-      }
-
+      var result = frame.prevLayer();
       this.brush.applyBrush();
-      return false;
+      return result;
     }
   }, {
     key: "setCurrLayer",
     value: function setCurrLayer(layerIndex) {
-      // true to show onion skin of prev layer
+      // true to show onion skin of prev layer (when would we not?)
       this.animationProj.getCurrFrame().setToLayer(layerIndex, true);
     }
   }, {
@@ -2902,8 +2894,6 @@ var Toolbar = /*#__PURE__*/function () {
     value: function insertLayer(elementId) {
       var _this = this;
 
-      // not sure if better idea to add the container the layers go in as an instance letiable 
-      // or pass in elementId here? 
       document.getElementById(elementId).addEventListener('click', function () {
         _this.insertNewLayer();
       });
@@ -4152,9 +4142,7 @@ var Fisheye = /*#__PURE__*/function (_FilterTemplate) {
 
           pixelCounter++;
         }
-      } //yPos and xPos are the coordinates of the center of the area of interest
-      //curContext.putImageData(imgData, xPos - rad, yPos - rad);
-
+      }
 
       return imgData;
     }

@@ -5,10 +5,11 @@ class FilterTemplate {
 		this.params = params;
 	}
 	
-	filter(){
-		// all filters should have a filter method, which does the thing
+	filter(imageData){
+		// all filters should have a filter method that returns imageData
 		console.log("unimplemented filter");
-	};
+		return imageData;
+	}
 }
 
 export {

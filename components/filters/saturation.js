@@ -1,4 +1,7 @@
-// saturation filter
+/***
+	SATURATION FILTER
+	source: http://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
+***/
 import { FilterTemplate } from './FilterTemplate.js';
 
 class Saturation extends FilterTemplate {
@@ -41,9 +44,9 @@ class Saturation extends FilterTemplate {
 		let lumB = this.params.blueLuminance.value;
 		
 		//one of these equations per r,g,b
-		let r1 = (1 - saturationValue) * lumR + saturationValue.value;
-		let g1 = (1 - saturationValue) * lumG + saturationValue.value;
-		let b1 = (1 - saturationValue) * lumB + saturationValue.value;
+		let r1 = (1 - saturationValue) * lumR + saturationValue;
+		let g1 = (1 - saturationValue) * lumG + saturationValue;
+		let b1 = (1 - saturationValue) * lumB + saturationValue;
 		
 		//then one of these for each
 		let r2 = (1 - saturationValue) * lumR;

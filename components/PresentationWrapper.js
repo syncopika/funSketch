@@ -435,17 +435,11 @@ class PresentationWrapper extends React.Component {
 			let newFilterElement = document.createElement('li');
 			newFilterElement.id = name;
 			newFilterElement.textContent = name;
+
+			newFilterElement.addEventListener('click', () => {
+				filterInstance.filterCanvasOption(name);
+			});
 			
-			if(name === "defaultFisheye" || name === "outline"){
-				// these filters work a bit differently
-				newFilterElement.addEventListener('click', () => {
-					filterInstance[name]();
-				});
-			}else{
-				newFilterElement.addEventListener('click', () => {
-					filterInstance.filterCanvasOption(name);
-				});
-			}
 			filterChoices.appendChild(newFilterElement);
 		});
 		

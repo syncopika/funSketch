@@ -5,6 +5,9 @@ import { EdgeDetection } from './filters/edgedetection.js';
 import { Invert } from './filters/invert.js';
 import { Mosaic } from './filters/mosaic.js';
 import { Blur } from './filters/blur.js';
+import { Outline } from './filters/outline.js';
+import { Voronoi } from './filters/voronoi.js';
+import { Fisheye } from './filters/fisheye.js';
 
 class FilterManager {
 
@@ -20,6 +23,9 @@ class FilterManager {
 			"invert": new Invert(),
 			"mosaic": new Mosaic(),
 			"blur": new Blur(),
+			"outline": new Outline(),
+			"voronoi": new Voronoi(),
+			"fisheye": new Fisheye(),
 		};
 		
 		this.tempImage = null; // only push current image to snapshots if a tempImage exists already.
@@ -39,17 +45,16 @@ class FilterManager {
         if(this.tempImage){
             this.brush.currentCanvasSnapshots.push(this.tempImage);
         }
-        filter(imgData);
-        context.putImageData(imgData, 0, 0);
+        let filteredImageData = filter(imgData);
+        context.putImageData(filteredImageData, 0, 0);
         this.tempImage = imgData;
     }
 	
     // use this for select/option elements when picking a filter
     filterCanvasOption(option){
-        this.filterCanvas((this.filtersMap[option]).filter);
+		const selectedFilter = this.filtersMap[option];
+        this.filterCanvas((selectedFilter).filter.bind(selectedFilter)); // make sure 'this' context is correct for the filtering function
     }
-
-
 
 }
 

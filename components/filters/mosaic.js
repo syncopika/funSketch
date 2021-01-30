@@ -30,8 +30,8 @@ class Mosaic extends FilterTemplate {
         let height = pixels.height;
 		
         // change sampling size here. lower for higher detail preservation, higher for less detail (because larger chunks)
-        let chunkWidth = this.params.chunkWidth;
-        let chunkHeight = this.params.chunkHeight;
+        let chunkWidth = this.params.chunkWidth.value;
+        let chunkHeight = this.params.chunkHeight.value;
 		
         // make sure chunkWidth can completely divide the image width * 4 
         while (width % chunkWidth != 0) {

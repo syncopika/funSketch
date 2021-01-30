@@ -1487,6 +1487,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./filters/invert.js */ "./components/filters/invert.js");
 /* harmony import */ var _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./filters/mosaic.js */ "./components/filters/mosaic.js");
 /* harmony import */ var _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./filters/blur.js */ "./components/filters/blur.js");
+/* harmony import */ var _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./filters/outline.js */ "./components/filters/outline.js");
+/* harmony import */ var _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./filters/voronoi.js */ "./components/filters/voronoi.js");
+/* harmony import */ var _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./filters/fisheye.js */ "./components/filters/fisheye.js");
+
+
+
 
 
 
@@ -1510,7 +1516,10 @@ var FilterManager = /*#__PURE__*/function () {
       "edge_detection": new _filters_edgedetection_js__WEBPACK_IMPORTED_MODULE_5__["EdgeDetection"](),
       "invert": new _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__["Invert"](),
       "mosaic": new _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__["Mosaic"](),
-      "blur": new _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__["Blur"]()
+      "blur": new _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__["Blur"](),
+      "outline": new _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__["Outline"](),
+      "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__["Voronoi"](),
+      "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__["Fisheye"]()
     };
     this.tempImage = null; // only push current image to snapshots if a tempImage exists already.
     // this way when undo is called the image being looked at by the user won't already be saved in snapshots,
@@ -1531,15 +1540,16 @@ var FilterManager = /*#__PURE__*/function () {
         this.brush.currentCanvasSnapshots.push(this.tempImage);
       }
 
-      filter(imgData);
-      context.putImageData(imgData, 0, 0);
+      var filteredImageData = filter(imgData);
+      context.putImageData(filteredImageData, 0, 0);
       this.tempImage = imgData;
     } // use this for select/option elements when picking a filter
 
   }, {
     key: "filterCanvasOption",
     value: function filterCanvasOption(option) {
-      this.filterCanvas(this.filtersMap[option].filter);
+      var selectedFilter = this.filtersMap[option];
+      this.filterCanvas(selectedFilter.filter.bind(selectedFilter)); // make sure 'this' context is correct for the filtering function
     }
   }]);
 
@@ -2181,18 +2191,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         var newFilterElement = document.createElement('li');
         newFilterElement.id = name;
         newFilterElement.textContent = name;
-
-        if (name === "defaultFisheye" || name === "outline") {
-          // these filters work a bit differently
-          newFilterElement.addEventListener('click', function () {
-            filterInstance[name]();
-          });
-        } else {
-          newFilterElement.addEventListener('click', function () {
-            filterInstance.filterCanvasOption(name);
-          });
-        }
-
+        newFilterElement.addEventListener('click', function () {
+          filterInstance.filterCanvasOption(name);
+        });
         filterChoices.appendChild(newFilterElement);
       });
       var resetOption = document.createElement('li');
@@ -3651,9 +3652,10 @@ var FilterTemplate = /*#__PURE__*/function () {
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(FilterTemplate, [{
     key: "filter",
-    value: function filter() {
-      // all filters should have a filter method, which does the thing
+    value: function filter(imageData) {
+      // all filters should have a filter method that returns imageData
       console.log("unimplemented filter");
+      return imageData;
     }
   }]);
 
@@ -3891,7 +3893,13 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
-// blur filter
+/***
+	BLUR FILTER
+	this function causes a blurring effect. It takes the pixel itself and
+	its left, right, above and below neighbors (if it has them)
+	and calculates the average of their total R, G, B, and A channels respectively.
+	http://blog.ivank.net/fastest-gaussian-blur.html
+***/
 
 
 var Blur = /*#__PURE__*/function (_FilterTemplate) {
@@ -3913,7 +3921,6 @@ var Blur = /*#__PURE__*/function (_FilterTemplate) {
       var maximum = 4 * width;
 
       for (var i = 0; i < d.length; i += 4) {
-        //if these conditions are not undefined, then that pixel must exist.
         //right pixel (check if 4 pixel radius ok)
         var cond1 = d[i + 4] == undefined; //left pixel
 
@@ -3925,9 +3932,9 @@ var Blur = /*#__PURE__*/function (_FilterTemplate) {
 
         if (!cond1 && !cond2 && !cond3 && !cond4) {
           var newR = d[i + 4] * .2 + d[i - 4] * .2 + d[i + maximum] * .2 + d[i - maximum] * .2 + d[i] * .2;
-          var newG = d[i + 5] * .2 + d[i - 3] * .2 + d[i + maximum + 1] * .2 + d[i - maximum - 1] * .2 + d[i + 1] * .2;
-          var newB = d[i + 6] * .2 + d[i - 2] * .2 + d[i + maximum + 2] * .2 + d[i - maximum - 2] * .2 + d[i + 2] * .2;
-          var newA = d[i + 7] * .2 + d[i - 1] * .2 + d[i + maximum + 3] * .2 + d[i - maximum - 3] * .2 + d[i + 3] * .2;
+          var newG = d[i + 5] * .2 + d[i - 3] * .2 + d[i + (maximum + 1)] * .2 + d[i - (maximum - 1)] * .2 + d[i + 1] * .2;
+          var newB = d[i + 6] * .2 + d[i - 2] * .2 + d[i + (maximum + 2)] * .2 + d[i - (maximum - 2)] * .2 + d[i + 2] * .2;
+          var newA = d[i + 7] * .2 + d[i - 1] * .2 + d[i + (maximum + 3)] * .2 + d[i - (maximum - 3)] * .2 + d[i + 3] * .2;
           d[i] = newR;
           d[i + 1] = newG;
           d[i + 2] = newB;
@@ -4003,7 +4010,7 @@ var EdgeDetection = /*#__PURE__*/function (_FilterTemplate) {
       var data = pixels.data;
       var sourceImageCopy = new Uint8ClampedArray(data); // need to grayscale the image here :/
 
-      pixels = this.grayscale(pixels);
+      this.grayscale(pixels);
       var xKernel = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
       var yKernel = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
 
@@ -4036,6 +4043,131 @@ var EdgeDetection = /*#__PURE__*/function (_FilterTemplate) {
   }]);
 
   return EdgeDetection;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./components/filters/fisheye.js":
+/*!***************************************!*\
+  !*** ./components/filters/fisheye.js ***!
+  \***************************************/
+/*! exports provided: Fisheye */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Fisheye", function() { return Fisheye; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+	FISHEYE DISTORTION FILTER
+	this function creates fisheye distortion!
+	source: http://popscan.blogspot.com/2012/04/fisheye-lens-equation-simple-fisheye.html
+	http://paulbourke.net/dome/fisheye/
+***/
+
+
+var Fisheye = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Fisheye, _FilterTemplate);
+
+  var _super = _createSuper(Fisheye);
+
+  function Fisheye() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Fisheye);
+
+    return _super.call(this, null);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Fisheye, [{
+    key: "fisheye",
+    value: function fisheye(imgData, xPos, yPos, rad, width, height) {
+      var data = imgData.data;
+      var oldData = new Uint8ClampedArray(data);
+      var pixelCounter = 0; //rows
+
+      for (var y = 0; y < height; y++) {
+        //normalize y coordinate to -1...+1
+        var normY = 2 * y / height - 1; //calculate normY squared
+
+        var normY2 = normY * normY; //columns
+
+        for (var x = 0; x < width; x++) {
+          //this counter will make sure that 
+          //the right index for each pixel's color is
+          //being looked at 
+          var start = pixelCounter * 4; //normalize x coordinate to -1...+1
+
+          var normX = 2 * x / width - 1; //calculate normX squared
+
+          var normX2 = normX * normX; //calculate distance from center (the center is always 0,0)
+
+          var dist = Math.sqrt(normX2 + normY2); //only alter pixels inside of radius
+          //changing the dist range affects the scope of the lens. i.e. less range (.5 => .6) gives you a 'telescoping' lens. 
+          //a larger range (0 => 1) gives you a full circle.
+
+          if (0 <= dist && dist <= 1) {
+            var newR = Math.sqrt(1 - dist * dist); //new distance between 0 and 1
+
+            newR = (dist + (1 - newR)) / 2; //discard any radius greater than 1
+
+            if (newR <= 1) {
+              //calculate angle for polar coordinates
+              var theta = Math.atan2(normY, normX); //calculate new X position with new distance in same angle
+
+              var newX = newR * Math.cos(theta); //calculate new Y position with new distance in same angle
+
+              var newY = newR * Math.sin(theta); //get the location of where the pixels should be moved FROM.
+
+              var x2 = Math.floor((newX + 1) * width / 2);
+              var y2 = Math.floor((newY + 1) * height / 2);
+              var srcPos = width * y2 + x2;
+              srcPos *= 4;
+              data[start] = oldData[srcPos];
+              data[start + 1] = oldData[srcPos + 1];
+              data[start + 2] = oldData[srcPos + 2];
+              data[start + 3] = oldData[srcPos + 3];
+            }
+          }
+
+          pixelCounter++;
+        }
+      } //yPos and xPos are the coordinates of the center of the area of interest
+      //curContext.putImageData(imgData, xPos - rad, yPos - rad);
+
+
+      return imgData;
+    }
+  }, {
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height;
+      return this.fisheye(pixels, 0, 0, 0, width, height);
+    }
+  }]);
+
+  return Fisheye;
 }(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
 
 
@@ -4182,6 +4314,203 @@ var Invert = /*#__PURE__*/function (_FilterTemplate) {
 
 /***/ }),
 
+/***/ "./components/filters/kdtreeutils.js":
+/*!*******************************************!*\
+  !*** ./components/filters/kdtreeutils.js ***!
+  \*******************************************/
+/*! exports provided: Point, Node, getPixelCoords, getDist, getTreeSize, build2dTree, isLeaf, findNearestNeighbor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Point", function() { return Point; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Node", function() { return Node; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPixelCoords", function() { return getPixelCoords; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDist", function() { return getDist; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTreeSize", function() { return getTreeSize; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "build2dTree", function() { return build2dTree; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLeaf", function() { return isLeaf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findNearestNeighbor", function() { return findNearestNeighbor; });
+// kd tree to be used in Voronoi function 
+// https://blog.krum.io/k-d-trees/
+// https://github.com/z2oh/chromatic_confinement/blob/master/src/main.rs
+// https://stackoverflow.com/questions/1627305/nearest-neighbor-k-d-tree-wikipedia-proof/37107030#37107030
+// each node takes Point info (x, y, rgb) and a dimension
+function Point(x, y, r, g, b) {
+  this.x = x;
+  this.y = y;
+  this.r = r;
+  this.g = g;
+  this.b = b;
+}
+
+function Node(point, dim) {
+  this.data = [point.x, point.y];
+  this.point = point;
+  this.dim = dim;
+  this.left = null;
+  this.right = null;
+}
+
+function getPixelCoords(index, width, height) {
+  // assuming index represents the r channel of a pixel 
+  // index therefore represents the index of a pixel, since the pixel data 
+  // is laid out like r,g,b,a,r,g,b,a,... in the image data 
+  // so to figure out the x and y coords, take the index and divide by 4,
+  // which gives us the pixel's number. then we need to know its position 
+  // on the canvas.
+  if (width * 4 * height < index) {
+    // if index is out of bounds 
+    return {};
+  }
+
+  var pixelNum = Math.floor(index / 4);
+  var yCoord = Math.floor(pixelNum / width); // find what row this pixel belongs in
+
+  var xCoord = pixelNum - yCoord * width; // find the difference between the pixel number of the pixel at the start of the row and this pixel 
+
+  return {
+    'x': xCoord,
+    'y': yCoord
+  };
+}
+
+function getDist(x1, x2, y1, y2) {
+  // removing Math.sqrt from the equation seemed to be the fix in producing 
+  // the correct output (with sqrt it looks like you get the wrong neighbor choices for some points going along a diagonal in the image)
+  // not sure why? however, with Math.sqrt it's considerably faster...
+  return Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
+} // in this use case our dimensions will be x and y (since each pixel has an x,y coordinate)
+// so only 2 dimensions 
+
+
+function build2dTree(pointsList, currDim) {
+  var maxDim = 2; // sort the current list in ascending order depending on the current dimension
+
+  var dim = currDim === 0 ? 'x' : 'y';
+  pointsList.sort(function (a, b) {
+    if (a[dim] < b[dim]) {
+      return -1;
+    } else if (a[dim] > b[dim]) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }); // base case: if pointsList is size 0, return null. otherwise if size 1, place the point and return 
+
+  if (pointsList.length === 0) {
+    return null;
+  }
+
+  if (pointsList.length === 1) {
+    return new Node(pointsList[0], currDim);
+  }
+
+  if (pointsList.length === 2) {
+    // since it's a BST, the 2nd element (at index 1) will be larger and thus the parent of 
+    // the 1st element, which will go to the left of the parent
+    var newParent = new Node(pointsList[1], currDim);
+    var newChild = new Node(pointsList[0], (currDim + 1) % maxDim);
+    newParent.left = newChild;
+    return newParent;
+  } // take the median point, place it, and recurse on left and right 
+
+
+  var midIndex = Math.floor((pointsList.length - 1) / 2);
+  var newNode = new Node(pointsList[midIndex], currDim);
+  newNode.left = build2dTree(pointsList.slice(0, midIndex), (currDim + 1) % maxDim);
+  newNode.right = build2dTree(pointsList.slice(midIndex + 1, pointsList.length), (currDim + 1) % maxDim);
+  return newNode;
+}
+
+function getTreeSize(tree) {
+  if (tree === null) {
+    return 0;
+  } else {
+    return 1 + getTreeSize(tree.left) + getTreeSize(tree.right);
+  }
+}
+
+function isLeaf(node) {
+  return node.left === null && node.right === null;
+}
+
+function findNearestNeighborHelper(root, record, x, y) {
+  if (isLeaf(root)) {
+    var dist = getDist(root.data[0], x, root.data[1], y);
+
+    if (dist < record.minDist) {
+      record.nearestNeighbor = root.point;
+      record.minDist = dist;
+    }
+  } else {
+    // compare current dist with min dist 
+    var currDist = getDist(root.data[0], x, root.data[1], y);
+
+    if (currDist < record.minDist) {
+      record.nearestNeighbor = root.point;
+      record.minDist = currDist;
+    }
+
+    if (root.left && !root.right) {
+      // if a node has one child, it will always be the left child 
+      findNearestNeighborHelper(root.left, record, x, y);
+    } else {
+      // find the right direction to go in the tree based on dimension //distance
+      var currDimToCompare = root.dim === 0 ? x : y;
+
+      if (currDimToCompare === x) {
+        // is x greater than the current node's x? if so, we want to go right. else left.
+        if (x > root.data[0]) {
+          findNearestNeighborHelper(root.right, record, x, y); // then, we check if the other subtree might actually have an even closer neighbor!
+
+          if (x - record.minDist < root.data[0]) {
+            findNearestNeighborHelper(root.left, record, x, y);
+          }
+        } else {
+          findNearestNeighborHelper(root.left, record, x, y);
+
+          if (x + record.minDist > root.data[0]) {
+            // x + record.minDist forms a circle. the circle in this case
+            // encompasses this current node's coordinates, so we can get closer to the query node 
+            // by checking the right subtree 
+            findNearestNeighborHelper(root.right, record, x, y);
+          }
+        }
+      } else {
+        if (y > root.data[1]) {
+          findNearestNeighborHelper(root.right, record, x, y);
+
+          if (y - record.minDist < root.data[1]) {
+            findNearestNeighborHelper(root.left, record, x, y);
+          }
+        } else {
+          findNearestNeighborHelper(root.left, record, x, y);
+
+          if (y + record.minDist > root.data[1]) {
+            findNearestNeighborHelper(root.right, record, x, y);
+          }
+        }
+      }
+    }
+  }
+} // find nearest neighbor in 2d tree given a point's x and y coords and the tree's root 
+
+
+function findNearestNeighbor(root, x, y) {
+  var record = {}; // set default values 
+
+  record.nearestNeighbor = root.point;
+  record.minDist = getDist(root.data[0], x, root.data[1], y); // pass record to the recursive nearest-neighbor helper function so that it gets updated
+
+  findNearestNeighborHelper(root, record, x, y);
+  return record.nearestNeighbor;
+}
+
+
+
+/***/ }),
+
 /***/ "./components/filters/mosaic.js":
 /*!**************************************!*\
   !*** ./components/filters/mosaic.js ***!
@@ -4250,8 +4579,8 @@ var Mosaic = /*#__PURE__*/function (_FilterTemplate) {
       var width = pixels.width;
       var height = pixels.height; // change sampling size here. lower for higher detail preservation, higher for less detail (because larger chunks)
 
-      var chunkWidth = this.params.chunkWidth;
-      var chunkHeight = this.params.chunkHeight; // make sure chunkWidth can completely divide the image width * 4 
+      var chunkWidth = this.params.chunkWidth.value;
+      var chunkHeight = this.params.chunkHeight.value; // make sure chunkWidth can completely divide the image width * 4 
 
       while (width % chunkWidth != 0) {
         chunkWidth--;
@@ -4292,6 +4621,141 @@ var Mosaic = /*#__PURE__*/function (_FilterTemplate) {
 
 /***/ }),
 
+/***/ "./components/filters/outline.js":
+/*!***************************************!*\
+  !*** ./components/filters/outline.js ***!
+  \***************************************/
+/*! exports provided: Outline */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Outline", function() { return Outline; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+// outline filter
+
+
+var Outline = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Outline, _FilterTemplate);
+
+  var _super = _createSuper(Outline);
+
+  function Outline() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Outline);
+
+    return _super.call(this, null);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Outline, [{
+    key: "withinRange",
+    value: function withinRange(r, g, b, or, og, ob, rangeVal) {
+      var red = Math.abs(r - or) <= rangeVal;
+      var green = Math.abs(g - og) <= rangeVal;
+      var blue = Math.abs(b - ob) <= rangeVal;
+
+      if (red && green && blue) {
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "makePath",
+    value: function makePath(context, col, row) {
+      context.lineJoin = 'round';
+      context.lineWidth = 5;
+      context.beginPath();
+      context.moveTo(col, row);
+      context.lineTo(col + 2, row + 1);
+      context.closePath();
+      context.strokeStyle = '#000';
+      context.stroke();
+    }
+    /***
+        OUTLINE FILTER
+        gets the 'outline' of the main parts of the picture
+        it finds the pixels whose above neighbor is a different color/
+        then a line is drawn from the location of that pixel to the above pixel,
+        forming a small, slightly angled line. all these lines then make up an outline.
+    ***/
+
+  }, {
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height; // make a temp canvas to draw the result on
+      // then we'll return this temp canvas' image data
+
+      var tempCanvas = document.createElement("canvas");
+      tempCanvas.height = pixels.height;
+      tempCanvas.width = pixels.width;
+      var context = tempCanvas.getContext("2d");
+      context.clearRect(0, 0, width, height);
+      context.fillStyle = "#FFF";
+      context.fillRect(0, 0, width, height);
+      var d = pixels.data;
+      var colCounter = 0;
+      var rowCounter = 0;
+      var maximum = 4 * width;
+
+      for (var i = 0; i < d.length; i += 4) {
+        var r = d[i];
+        var g = d[i + 1];
+        var b = d[i + 2];
+        context.lineJoin = 'round';
+        context.lineWidth = 2;
+        var tnr = d[i - maximum];
+        var tng = d[i - (maximum - 1)];
+        var tnb = d[i - (maximum - 2)];
+
+        if (d[i - maximum] !== undefined && !this.withinRange(r, g, b, tnr, tng, tnb, 5)) {
+          this.makePath(context, colCounter, rowCounter);
+        }
+
+        if (i % maximum == 0) {
+          rowCounter++;
+        }
+
+        if (colCounter >= width) {
+          colCounter = 0;
+        }
+
+        colCounter++;
+      } // return image data of the temp canvas
+
+
+      var imgData = context.getImageData(0, 0, width, height);
+      return imgData;
+    }
+  }]);
+
+  return Outline;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
 /***/ "./components/filters/saturation.js":
 /*!******************************************!*\
   !*** ./components/filters/saturation.js ***!
@@ -4323,7 +4787,10 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
-// saturation filter
+/***
+	SATURATION FILTER
+	source: http://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
+***/
 
 
 var Saturation = /*#__PURE__*/function (_FilterTemplate) {
@@ -4375,9 +4842,9 @@ var Saturation = /*#__PURE__*/function (_FilterTemplate) {
       var lumG = this.params.greenLuminance.value;
       var lumB = this.params.blueLuminance.value; //one of these equations per r,g,b
 
-      var r1 = (1 - saturationValue) * lumR + saturationValue.value;
-      var g1 = (1 - saturationValue) * lumG + saturationValue.value;
-      var b1 = (1 - saturationValue) * lumB + saturationValue.value; //then one of these for each
+      var r1 = (1 - saturationValue) * lumR + saturationValue;
+      var g1 = (1 - saturationValue) * lumG + saturationValue;
+      var b1 = (1 - saturationValue) * lumB + saturationValue; //then one of these for each
 
       var r2 = (1 - saturationValue) * lumR;
       var g2 = (1 - saturationValue) * lumG;
@@ -4398,6 +4865,109 @@ var Saturation = /*#__PURE__*/function (_FilterTemplate) {
 
   return Saturation;
 }(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./components/filters/voronoi.js":
+/*!***************************************!*\
+  !*** ./components/filters/voronoi.js ***!
+  \***************************************/
+/*! exports provided: Voronoi */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Voronoi", function() { return Voronoi; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./kdtreeutils.js */ "./components/filters/kdtreeutils.js");
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+	voronoi filter
+	https://softwarebydefault.com/tag/voronoi-diagrams/
+	https://www.codeproject.com/Articles/882739/Simple-approach-to-Voronoi-diagrams
+	
+	- nearest neighbor automatically creates 'boundaries'.
+	- for each pixel, find the nearest neighbor (a collection of pre-selected pixels)
+	- color that pixel whatever the nearest neighbor's color is
+	- evenly spaced neighbors will yield a mosaic! awesome!
+***/
+
+
+
+var Voronoi = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Voronoi, _FilterTemplate);
+
+  var _super = _createSuper(Voronoi);
+
+  function Voronoi() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Voronoi);
+
+    return _super.call(this, null);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Voronoi, [{
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data; //imgData.data;
+
+      var neighborList = []; // array of Points 
+
+      for (var i = 0; i < data.length; i += 4) {
+        // get neighbors.
+        // add some offset to each neighbor for randomness (we don't really want evenly spaced neighbors)
+        var offset = Math.floor(Math.random() * 10); // to be applied in x or y direction
+
+        var sign = Math.random() > .5 ? 1 : -1;
+        var c1 = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["getPixelCoords"])(i, width, height);
+
+        if (c1.x % Math.floor(width / 30) === 0 && c1.y % Math.floor(height / 30) === 0 && c1.x !== 0) {
+          var x = sign * offset + c1.x;
+          var y = sign * offset + c1.y;
+          var p1 = new _kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["Point"](x, y, data[i], data[i + 1], data[i + 2]);
+          neighborList.push(p1);
+        }
+      }
+
+      var kdtree = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["build2dTree"])(neighborList, 0);
+
+      for (var _i = 0; _i < data.length; _i += 4) {
+        var currCoords = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["getPixelCoords"])(_i, width, height);
+        var nearestNeighbor = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["findNearestNeighbor"])(kdtree, currCoords.x, currCoords.y); // found nearest neighbor. color the current pixel the color of the nearest neighbor. 
+
+        data[_i] = nearestNeighbor.r;
+        data[_i + 1] = nearestNeighbor.g;
+        data[_i + 2] = nearestNeighbor.b;
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return Voronoi;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_6__["FilterTemplate"]);
 
 
 

@@ -19,7 +19,7 @@ class EdgeDetection extends FilterTemplate {
 		let sourceImageCopy = new Uint8ClampedArray(data);
         
 		// need to grayscale the image here :/
-		pixels = this.grayscale(pixels);
+		this.grayscale(pixels);
         
 		let xKernel = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
         let yKernel = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];

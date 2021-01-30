@@ -2,7 +2,8 @@ import React from 'react';
 import { AnimationProject } from './AnimationProject.js';
 import { Toolbar } from './Toolbar.js';
 import { Brush } from './Brush.js';
-import { Filters } from './Filters.js';
+//import { Filters } from './Filters.js';
+import { FilterManager } from './FilterManager.js';
 import { AnimationTimeline } from './AnimationTimeline.js';
 import { LayerOrder } from './LayerOrder.js';
 
@@ -427,7 +428,7 @@ class PresentationWrapper extends React.Component {
 	
 	_setupFilters(){
 		let filterInstance = this.state.filtersInstance;
-		let filterNames = Object.getOwnPropertyNames(filterInstance).filter((name) => name.indexOf('filter') < 0);
+		let filterNames = Array.from(Object.keys(this.state.filtersInstance.filtersMap));//Object.getOwnPropertyNames(filterInstance).filter((name) => name.indexOf('filter') < 0);
 		let filterChoices = document.getElementById("filterChoices");
 		
 		filterNames.forEach((name) => {
@@ -442,7 +443,7 @@ class PresentationWrapper extends React.Component {
 				});
 			}else{
 				newFilterElement.addEventListener('click', () => {
-					filterInstance.filterCanvas(filterInstance[name]);
+					filterInstance.filterCanvasOption(name);
 				});
 			}
 			filterChoices.appendChild(newFilterElement);
@@ -739,7 +740,7 @@ class PresentationWrapper extends React.Component {
 		const newBrush = new Brush(animationProj);
 		newBrush.defaultBrush();
 		
-		const newFilters = new Filters(animationProj.getCurrFrame(), newBrush);
+		const newFilters = new FilterManager(animationProj, newBrush); //new Filters(animationProj.getCurrFrame(), newBrush);
 		const newToolbar = new Toolbar(newBrush, animationProj);
 		
 		this.setState({

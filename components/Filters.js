@@ -297,7 +297,7 @@ function Filters(canvas, brush){
     ***/
     this.blurry = function(pixels){
         let d = pixels.data;
-        let width = canvas.currentCanvas.getAttribute('width');
+        let width = pixels.width;
         let maximum = 4 * width;
         for(let i = 0; i < d.length; i += 4){
             //if these conditions are not undefined, then that pixel must exist.
@@ -498,7 +498,7 @@ function Filters(canvas, brush){
     //the idea is to find an area of pixels that are similarly colored, 
     //and then making that area one solid color
     this.areaColor = function(pixels){
-        let width = canvas.currentCanvas.getAttribute('width');
+        let width = pixels.width;
         let d = pixels.data;
         let copy = new Uint8ClampedArray(d);
         let maximum = 4 * width;

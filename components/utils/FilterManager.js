@@ -1,13 +1,13 @@
-import { Saturation } from './filters/saturation.js';
-import { Grayscale } from './filters/grayscale.js';
-import { AreaColor } from './filters/areacolor.js';
-import { EdgeDetection } from './filters/edgedetection.js';
-import { Invert } from './filters/invert.js';
-import { Mosaic } from './filters/mosaic.js';
-import { Blur } from './filters/blur.js';
-import { Outline } from './filters/outline.js';
-import { Voronoi } from './filters/voronoi.js';
-import { Fisheye } from './filters/fisheye.js';
+import { Saturation } from '../filters/saturation.js';
+import { Grayscale } from '../filters/grayscale.js';
+import { AreaColor } from '../filters/areacolor.js';
+import { EdgeDetection } from '../filters/edgedetection.js';
+import { Invert } from '../filters/invert.js';
+import { Mosaic } from '../filters/mosaic.js';
+import { Blur } from '../filters/blur.js';
+import { Outline } from '../filters/outline.js';
+import { Voronoi } from '../filters/voronoi.js';
+import { Fisheye } from '../filters/fisheye.js';
 
 class FilterManager {
 

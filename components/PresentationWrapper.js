@@ -1,11 +1,11 @@
 import React from 'react';
-import { AnimationProject } from './AnimationProject.js';
-import { Toolbar } from './Toolbar.js';
-import { Brush } from './Brush.js';
-//import { Filters } from './Filters.js';
-import { FilterManager } from './FilterManager.js';
+import { AnimationProject } from './utils/AnimationProject.js';
+import { Toolbar } from './utils/Toolbar.js';
+import { Brush } from './utils/Brush.js';
+import { FilterManager } from './utils/FilterManager.js';
 import { AnimationTimeline } from './AnimationTimeline.js';
 import { LayerOrder } from './LayerOrder.js';
+import { FilterDashboard } from './FilterDashboard.js';
 
 // for displaying current frame and layer number
 // TODO: importing a project won't update the counter display since it's using the Toolbar class functions
@@ -427,6 +427,7 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_setupFilters(){
+		/*
 		let filterInstance = this.state.filtersInstance;
 		let filterNames = Array.from(Object.keys(this.state.filtersInstance.filtersMap));//Object.getOwnPropertyNames(filterInstance).filter((name) => name.indexOf('filter') < 0);
 		let filterChoices = document.getElementById("filterChoices");
@@ -454,7 +455,7 @@ class PresentationWrapper extends React.Component {
 		
 		document.getElementById('filterSelect').addEventListener('click', () => {
 			this._showOptions('filters');
-		});
+		});*/
 	}
 	
 	_setupAnimationControl(){
@@ -727,14 +728,13 @@ class PresentationWrapper extends React.Component {
 	
 
 	componentDidMount(){
-		
 		const animationProj = new AnimationProject('canvasArea');
 		animationProj.addNewFrame(true); 
 		
 		const newBrush = new Brush(animationProj);
 		newBrush.defaultBrush();
 		
-		const newFilters = new FilterManager(animationProj, newBrush); //new Filters(animationProj.getCurrFrame(), newBrush);
+		const newFilters = new FilterManager(animationProj, newBrush);
 		const newToolbar = new Toolbar(newBrush, animationProj);
 		
 		this.setState({
@@ -746,7 +746,7 @@ class PresentationWrapper extends React.Component {
 			this._setupToolbar();
 			this._setupBrushControls();
 			this._linkDemos();
-			this._setupFilters();
+			//this._setupFilters();
 			this._setKeyDown(document); // set key down on the whole document
 			this._timelineMarkerSetup();
 			this._changeCursor(this.state.brushInstance.getBrushType());
@@ -763,7 +763,7 @@ class PresentationWrapper extends React.Component {
 				<div className='row'>
 					<div id='toolbar' className='col-lg-3'>
 						<div id='toolbarArea'>
-							<h3 id='title'> funSketch: draw, edit, and animate! </h3>
+							<h3 id='title'> funSketch: draw and animate! </h3>
 
 							<div id='buttons'>
 							
@@ -787,27 +787,28 @@ class PresentationWrapper extends React.Component {
 								
 								<LayerOrder 
 									changingLayerOrder={this.state.changingLayerOrder}
-									layers={this.state.animationProject ? this.state.animationProject.getCurrFrame().canvasList.map((x, idx) => idx) : []}
+									layers={this.state.animationProject ? this.state.animationProject.getCurrFrame().getLayers().map((x, idx) => idx) : []}
 									updateParentStateFunction={
 										(newLayerOrder) => {
 											// 1. update layer order of current frame
 											// 2. set changingLayerOrder in state to false
 											let newLayerList = [];
 											let currFrame = this.state.animationProject.getCurrFrame();
-											let currLayerIndex = currFrame.currentIndex;
-											let currFrameLayerList = currFrame.canvasList;
+											let currLayerIndex = currFrame.getCurrFrameIndex();
+											let currFrameLayerList = currFrame.getLayers();
 											
-											currFrame.canvasList[currLayerIndex].style.opacity = 0;
-											currFrame.canvasList[currLayerIndex].style.zIndex = 0;
+											currFrame.getCurrCanvas().style.opacity = 0;
+											currFrame.getCurrCanvas().style.zIndex = 0;
 											if(currLayerIndex-1 > 0){
-												currFrame.canvasList[currLayerIndex-1].style.opacity = 0;
-												currFrame.canvasList[currLayerIndex-1].style.zIndex = 0;
+												currFrame.getLayers()[currLayerIndex-1].style.opacity = 0;
+												currFrame.getLayers()[currLayerIndex-1].style.zIndex = 0;
 											}
 										
 											newLayerOrder.forEach((index) => {
 												newLayerList.push(currFrameLayerList[index]);
 											});
-											currFrame.canvasList = newLayerList;
+											
+											currFrame.setLayers(newLayerList);
 											
 											// update the currently shown layer to reflect the re-ordering
 											this.state.toolbarInstance.setCurrLayer(currLayerIndex);
@@ -815,7 +816,6 @@ class PresentationWrapper extends React.Component {
 											this.setState({"changingLayerOrder": false});
 										}
 									}
-									
 								/>
 								
 								<h4> other: </h4>
@@ -858,15 +858,11 @@ class PresentationWrapper extends React.Component {
 							
 							<br />
 							
-							<div id='filters'>
-								<p id='filterSelect'> filters &#9660; </p>
-								<ul id='filterChoices'>
-								</ul>
-							</div>
+							<FilterDashboard filterManager={this.state.filtersInstance} />
 
 							<div id='brushes'>
 								<p id='brushSelect'> brushes &#9660; </p>
-								<ul>
+								<ul id="brushDisplay">
 									<li id='defaultBrush'> default brush </li>
 									<li id='penBrush'> pen brush </li>
 									<li id='radialBrush'> radial gradient brush </li>

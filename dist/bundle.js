@@ -86,522 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./components/AnimationProject.js":
-/*!****************************************!*\
-  !*** ./components/AnimationProject.js ***!
-  \****************************************/
-/*! exports provided: Frame, AnimationProject, createOnionSkinFrame, setCanvas */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Frame", function() { return Frame; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AnimationProject", function() { return AnimationProject; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createOnionSkinFrame", function() { return createOnionSkinFrame; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setCanvas", function() { return setCanvas; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-
-
-// TODO: have an animation mode and a paint mode? in paint mode, you can do all the layering per frame and stuff.
-// in animation mode, we process all the frames and for each one condense all their layers into a single frame.
-// then we can use those frames in an animation.
-// to optimize performance when going into animation mode, maybe cache which frames are 'tainted' from the last time 
-// animation mode was switched to.
-
-/***
-    a class representing a frame, containing a list of canvas elements which represent layers of the frame
-***/
-
-var Frame = /*#__PURE__*/function () {
-  function Frame(containerId, number) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Frame);
-
-    this.currentIndex = 0; // index of currently showing layer
-
-    this.canvasList = []; // keep a list of all canvas instances
-
-    this.currentCanvas; // the current, active canvas being looked at (reference to html element)
-
-    this.containerId = containerId; // this is the html container id to hold all the layers of this frame
-
-    this.number = number; // this frame's number
-
-    this.count = 0; // current number of layers
-
-    this.width = 0;
-    this.height = 0;
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Frame, [{
-    key: "getMetadata",
-    value: function getMetadata() {
-      return {
-        'width': this.width,
-        'height': this.height,
-        'containerId': this.containerId,
-        'currentIndex': this.currentIndex,
-        'number': this.number
-      };
-    }
-  }, {
-    key: "getContainerId",
-    value: function getContainerId() {
-      return this.containerId;
-    }
-  }, {
-    key: "getCurrCanvasIndex",
-    value: function getCurrCanvasIndex() {
-      return this.currentIndex;
-    }
-  }, {
-    key: "getCurrCanvas",
-    value: function getCurrCanvas() {
-      return this.canvasList[this.currentIndex];
-    }
-  }, {
-    key: "getLayers",
-    value: function getLayers() {
-      return this.canvasList;
-    } // canvasList: list of canvas elements
-
-  }, {
-    key: "setLayers",
-    value: function setLayers(canvasList) {
-      this.canvasList = canvasList;
-    }
-  }, {
-    key: "setCurrIndex",
-    value: function setCurrIndex(index) {
-      if (index <= this.canvasList.length - 1 && index >= 0) {
-        this.currentIndex = index;
-        this.currentCanvas = this.canvasList[index];
-      }
-    }
-    /***
-        set up a new canvas element
-        makes the new canvas the current canvas
-    ***/
-
-  }, {
-    key: "setupNewLayer",
-    value: function setupNewLayer() {
-      // create the new canvas element 
-      var newCanvas = document.createElement('canvas');
-      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
-      document.getElementById(this.containerId).appendChild(newCanvas);
-      setCanvas(newCanvas);
-
-      if (this.count === 0) {
-        newCanvas.style.opacity = .97;
-        newCanvas.style.zIndex = 1;
-        this.width = newCanvas.width;
-        this.height = newCanvas.height;
-      } // set new canvas to be the current canvas only initially!
-
-
-      if (this.count === 0) {
-        this.currentCanvas = newCanvas;
-      }
-
-      this.canvasList.push(newCanvas);
-      this.count++;
-    }
-  }, {
-    key: "_showLayer",
-    value: function _showLayer(canvas) {
-      canvas.style.opacity = .97;
-      canvas.style.zIndex = 1;
-    }
-  }, {
-    key: "_hideLayer",
-    value: function _hideLayer(canvas) {
-      canvas.style.opacity = 0;
-      canvas.style.zIndex = 0;
-    } // make current canvas an onion skin
-
-  }, {
-    key: "_makeCurrLayerOnion",
-    value: function _makeCurrLayerOnion(canvas) {
-      canvas.style.opacity = .92; // apply onion skin to current canvas 
-
-      canvas.style.zIndex = 0;
-    }
-  }, {
-    key: "nextLayer",
-    value: function nextLayer() {
-      // this moves the current layer to the next one if exists
-      if (this.currentIndex + 1 < this.canvasList.length) {
-        // move to next canvas and apply onion skin to current canvas
-        var currLayer = this.currentCanvas;
-
-        this._makeCurrLayerOnion(currLayer); // in the special case for when you want to go to the next canvas from the very first one, 
-        // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
-
-
-        if (currLayer.currentIndex > 0) {
-          var prevLayer = this.canvasList[this.currentIndex - 1]; // reset opacity and z-index for previous canvas (because of onionskin)
-
-          this._hideLayer(prevLayer);
-        } // show the next canvas 
-
-
-        var nextLayer = this.canvasList[this.currentIndex + 1];
-
-        this._showLayer(nextLayer);
-
-        this.currentCanvas = nextLayer;
-        this.currentIndex++;
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "prevLayer",
-    value: function prevLayer() {
-      // this moves the current layer to the previous one if exists
-      if (this.currentIndex - 1 >= 0) {
-        var currLayer = this.currentCanvas;
-
-        this._hideLayer(currLayer); // make previous canvas visible 
-
-
-        var prevLayer = this.canvasList[this.currentIndex - 1];
-
-        this._showLayer(prevLayer); // if there is another canvas before the previous one, apply onion skin
-
-
-        if (this.currentIndex - 2 >= 0) {
-          this.canvasList[this.currentIndex - 2].style.opacity = .92;
-        }
-
-        this.currentCanvas = prevLayer;
-        this.currentIndex--;
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "hide",
-    value: function hide() {
-      // makes all layers not visible
-      this.canvasList.forEach(function (canvas) {
-        canvas.style.zIndex = -1;
-        canvas.style.visibility = "hidden";
-      });
-    }
-  }, {
-    key: "show",
-    value: function show() {
-      // makes all layers visible
-      var activeLayerOpacity = .97;
-      this.canvasList.forEach(function (canvas) {
-        if (canvas.style.opacity >= activeLayerOpacity) {
-          canvas.style.zIndex = 1;
-        } else {
-          canvas.style.zIndex = 0;
-        }
-
-        canvas.style.visibility = "";
-      });
-    } // TODO: why have this and setCurrIndex()??
-    // layerIndex (int) = the index of the layer to make active (current layer)
-    // onionSkin (bool) = whether onionskin should be visible 
-
-  }, {
-    key: "setToLayer",
-    value: function setToLayer(layerIndex, onionSkin) {
-      // note that this does not hide the previous layer + previous onion skin before switching to 
-      // the new layer.
-      var newLayer = this.canvasList[layerIndex];
-      newLayer.style.opacity = 0.97;
-      newLayer.style.zIndex = 1;
-      this.currentCanvas = newLayer;
-      this.currentIndex = layerIndex;
-
-      if (onionSkin && layerIndex - 1 > 0) {
-        // apply onionskin
-        var prevLayer = this.canvasList[layerIndex - 1];
-        prevLayer.style.opacity = .92;
-        prevLayer.style.zIndex = 0;
-      }
-    }
-  }, {
-    key: "deleteLayer",
-    value: function deleteLayer(layerIndex) {
-      if (layerIndex + 1 < this.canvasList.length) {
-        // move current canvas to the next one if there is one
-        this.nextLayer(); // then remove the old canvas from the array and the DOM!
-
-        this.canvasList.splice(layerIndex, 1); // adjust the current canvas index after the removal 
-
-        this.currentIndex -= 1;
-      } else if (layerIndex - 1 >= 0) {
-        // if there's a canvas behind the current one (and no more ahead)
-        // move current canvas to the previous one 
-        // note that currentIndex doesn't need to be adjusted because removing the 
-        // next canvas doesn't affect the current canvas' index
-        this.prevLayer();
-        this.canvasList.splice(layerIndex, 1);
-      }
-    }
-    /***
-        clone the current canvas
-    this creates a new layer whose image data is the same as the current canvas.
-    		not sure I'm using this?
-    ***/
-
-  }, {
-    key: "copyCanvas",
-    value: function copyCanvas() {
-      var newCanvas = document.createElement('canvas');
-      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
-      setCanvas(newCanvas, this.width, this.height);
-      newCanvas.style.opacity = 0.97;
-      document.getElementById(this.containerId).appendChild(newCanvas);
-      newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
-      this.canvasList.push(newCanvas);
-      this.count++;
-    }
-  }, {
-    key: "clearCurrentLayer",
-    value: function clearCurrentLayer() {
-      var currLayer = this.getCurrCanvas();
-      var context = currLayer.getContext("2d");
-      context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
-      context.fillStyle = "#FFFFFF";
-      context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
-    }
-  }, {
-    key: "resetFrame",
-    value: function resetFrame() {// TODO: remove all layers except first layer, then clear it
-    }
-  }]);
-
-  return Frame;
-}();
-/***
-    an AnimationProject represents a single project containing one or more frames.
-    it also instantiates an onion skin frame.
-***/
-
-
-var AnimationProject = /*#__PURE__*/function () {
-  function AnimationProject(containerId) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, AnimationProject);
-
-    this.name = "";
-    this.currentFrameIndex = 0; // index of current frame
-
-    this.speed = 100; // 100 ms per frame 
-
-    this.frameList = [];
-    this.onionSkinFrame = createOnionSkinFrame(containerId);
-    this.onionSkinFrame.style.display = 'none'; // hide it initially
-
-    this.containerId = containerId; // id of the html element the frames are displayed in
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(AnimationProject, [{
-    key: "getContainerId",
-    value: function getContainerId() {
-      return this.containerId;
-    }
-  }, {
-    key: "getFrames",
-    value: function getFrames() {
-      return this.frameList;
-    }
-  }, {
-    key: "getCurrFrameIndex",
-    value: function getCurrFrameIndex() {
-      return this.currentFrameIndex;
-    }
-  }, {
-    key: "getCurrFrame",
-    value: function getCurrFrame() {
-      return this.frameList[this.currentFrameIndex];
-    }
-  }, {
-    key: "resetProject",
-    value: function resetProject() {
-      this.frameList.forEach(function (frame, frameIndex) {
-        var parent = document.getElementById(frame.getContainerId()); // just keep the first frame
-
-        frame.canvasList.forEach(function (layer, layerIndex) {
-          if (frameIndex > 0 || frameIndex === 0 && layerIndex > 0) {
-            parent.removeChild(layer);
-          }
-        });
-
-        if (frameIndex === 0) {
-          frame.setLayers([frame.getLayers()[0]]);
-          frame.setCurrIndex(0);
-        }
-      });
-      this.frameList = [this.frameList[0]]; // clear the first layer of the first frame!
-
-      this.frameList[0].clearCurrentLayer();
-      this.currentFrameIndex = 0;
-      this.speed = 100;
-      this.frameList[0].getCurrCanvas().style.visibility = "";
-      this.clearOnionSkin();
-    }
-  }, {
-    key: "addNewFrame",
-    value: function addNewFrame(showFlag) {
-      var newFrame = new Frame(this.containerId, this.frameList.length);
-      newFrame.setupNewLayer();
-      this.frameList.push(newFrame);
-
-      if (!showFlag) {
-        newFrame.hide();
-      }
-    }
-  }, {
-    key: "deleteFrame",
-    value: function deleteFrame(index) {
-      // don't allow removal if only one frame exists
-      if (this.frameList.length === 1 || index < 0 || index > this.frameList.length - 1) {
-        return false;
-      }
-
-      var frame = this.frameList[index]; // remove frame from frameList
-
-      this.frameList.splice(index, 1); // remove all layers
-
-      var parentContainer = document.getElementById(frame.getContainerId());
-      frame.getLayers().forEach(function (layer) {
-        parentContainer.removeChild(layer);
-      });
-      return true;
-    }
-  }, {
-    key: "nextFrame",
-    value: function nextFrame() {
-      if (this.frameList.length <= this.currentFrameIndex + 1) {
-        return null; // no more frames to see
-      }
-
-      this.currentFrameIndex += 1;
-      this.updateOnionSkin();
-      return this.frameList[this.currentFrameIndex];
-    }
-  }, {
-    key: "prevFrame",
-    value: function prevFrame() {
-      if (this.currentFrameIndex - 1 < 0) {
-        return null; // no more frames to see
-      }
-
-      this.currentFrameIndex -= 1;
-      this.updateOnionSkin();
-      return this.frameList[this.currentFrameIndex];
-    }
-  }, {
-    key: "goToFrame",
-    value: function goToFrame(frameIndex) {
-      if (frameIndex > this.frameList.length - 1 || frameIndex < 0) {
-        return null;
-      }
-
-      this.currentFrameIndex = frameIndex;
-      this.updateOnionSkin();
-      return this.frameList[this.currentFrameIndex];
-    } // this method takes all the layers of a frame, merges them, and places the resulting image
-    // on a specific 'onionskin' canvas. when moving from one frame to another, the 'onionskin' of the
-    // previous frame will be visible.
-
-  }, {
-    key: "updateOnionSkin",
-    value: function updateOnionSkin() {
-      if (this.currentFrameIndex - 1 < 0) {
-        // no onionskin for very first frame 
-        this.onionSkinFrame.style.opacity = 0;
-        return;
-      }
-
-      this.onionSkinFrame.style.display = ''; // show onion skin
-
-      var onionSkinCtx = this.onionSkinFrame.getContext("2d");
-      onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // take the previous frame, merge all layers, put into onion skin frame
-      // try this? only draw pixels that are non-white?
-
-      var onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // build the merged image from the first to last
-
-      var prevFrame = this.frameList[this.currentFrameIndex - 1];
-      prevFrame.getLayers().forEach(function (layer) {
-        var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
-
-        for (var i = 0; i < imageData.length; i += 4) {
-          if (imageData[i] === 255 && imageData[i + 1] === 255 && imageData[i + 2] === 255) {
-            continue;
-          } else {
-            // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
-            // we might run into index/length issues...
-            onionSkinImageData.data[i] = imageData[i];
-            onionSkinImageData.data[i + 1] = imageData[i + 1];
-            onionSkinImageData.data[i + 2] = imageData[i + 2];
-            onionSkinImageData.data[i + 3] = 255;
-          }
-        } // apply each layer to the onion skin
-
-
-        onionSkinCtx.putImageData(onionSkinImageData, 0, 0);
-      });
-      this.onionSkinFrame.style.zIndex = 0;
-      this.onionSkinFrame.style.opacity = 0.92;
-    }
-  }, {
-    key: "clearOnionSkin",
-    value: function clearOnionSkin() {
-      var onionSkin = this.onionSkinFrame;
-      var context = this.onionSkinFrame.getContext("2d");
-      context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
-      context.fillStyle = "#FFFFFF";
-      context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
-    }
-  }]);
-
-  return AnimationProject;
-}();
-
-function createOnionSkinFrame(container) {
-  // create the new canvas element 
-  var newCanvas = document.createElement('canvas');
-  newCanvas.id = "onionSkinCanvas";
-  document.getElementById(container).appendChild(newCanvas);
-  setCanvas(newCanvas);
-  newCanvas.style.opacity = .97;
-  newCanvas.style.zIndex = -1; // TODO: come back to this later. make sure it's visible if current frame > 1!
-
-  return newCanvas;
-} // assigns default canvas attributes and styling
-
-
-function setCanvas(canvasElement, width, height) {
-  canvasElement.style.position = "absolute";
-  canvasElement.style.border = '1px #000 solid';
-  canvasElement.style.zIndex = 0;
-  canvasElement.style.opacity = 0;
-  canvasElement.style.width = "100%";
-  canvasElement.style.height = "100%";
-  canvasElement.width = width ? width : canvasElement.offsetWidth;
-  canvasElement.height = height ? height : canvasElement.offsetHeight;
-  canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,255)";
-  canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
-}
-
-
-
-/***/ }),
-
 /***/ "./components/AnimationTimeline.js":
 /*!*****************************************!*\
   !*** ./components/AnimationTimeline.js ***!
@@ -666,898 +150,102 @@ var AnimationTimeline = function AnimationTimeline(props) {
 
 /***/ }),
 
-/***/ "./components/Brush.js":
-/*!*****************************!*\
-  !*** ./components/Brush.js ***!
-  \*****************************/
-/*! exports provided: Brush */
+/***/ "./components/FilterDashboard.js":
+/*!***************************************!*\
+  !*** ./components/FilterDashboard.js ***!
+  \***************************************/
+/*! exports provided: FilterDashboard */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Brush", function() { return Brush; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-/***
-    brush class
-    pass in an instance of the AnimationProject class as an argument
-	
-	the current canvas element will be the target for the brush
-***/
-var Brush = /*#__PURE__*/function () {
-  function Brush(animationProj) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Brush);
-
-    // pass in an animation project, from which you can access the current frame and the current canvas
-    this.animationProject = animationProj;
-    this.previousCanvas = null;
-    this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
-
-    this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
-
-    this.selectedBrush = 'default'; // user-selected brush 
-
-    this.currColor = 'rgb(0,0,0)';
-    this.currColorArray = Uint8Array.from([0, 0, 0, 0]);
-    this.currSize = 2; // keep track of the pixels drawn on by the mouse.
-    // the redraw function uses this data to connect the dots 
-
-    this.clickX = [];
-    this.clickY = [];
-    this.clickDrag = [];
-    this.clickColor = [];
-    this.clickSize = []; // hold the current image after mouseup. 
-    // only put it in the currentCanvasSnapshots after user starts drawing again, creating a new snapshot
-
-    this.tempSnapshot = null;
-  } //collect info where each pixel is to be drawn on canvas
-
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Brush, [{
-    key: "_addClick",
-    value: function _addClick(x, y, color, size, dragging) {
-      this.clickX.push(x);
-      this.clickY.push(y);
-      this.clickDrag.push(dragging);
-      this.clickColor.push(color === null ? this.currColor : color);
-      this.clickSize.push(size === null ? this.currSize : size);
-    }
-  }, {
-    key: "_redraw",
-    value: function _redraw(strokeFunction) {
-      var frame = this.animationProject.getCurrFrame();
-      var context = frame.getCurrCanvas().getContext("2d");
-      context.lineJoin = 'round';
-      strokeFunction(context);
-    }
-  }, {
-    key: "_clearClick",
-    value: function _clearClick() {
-      this.clickX = [];
-      this.clickY = [];
-      this.clickDrag = [];
-      this.clickColor = [];
-      this.clickSize = [];
-    }
-  }, {
-    key: "_handleTouchEvent",
-    value: function _handleTouchEvent(evt) {
-      var rect = evt.target.getBoundingClientRect();
-      var x = evt.touches[0].pageX - rect.left;
-      var y = evt.touches[0].pageY - rect.top - window.pageYOffset;
-      return {
-        'x': x,
-        'y': y
-      };
-    }
-  }, {
-    key: "resetBrush",
-    value: function resetBrush() {
-      // detach any events from mouse actions (reset the events connected with mouse events) from previous layer worked on
-      var frame = this.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-
-      for (var eventType in this.currentEventListeners) {
-        currLayer.removeEventListener(eventType, this.currentEventListeners[eventType]);
-        delete this.currentEventListeners[eventType];
-      }
-    }
-  }, {
-    key: "changeBrushSize",
-    value: function changeBrushSize(size) {
-      this.currSize = size;
-    }
-  }, {
-    key: "getBrushType",
-    value: function getBrushType() {
-      return this.selectedBrush;
-    }
-  }, {
-    key: "setBrushType",
-    value: function setBrushType(brushType) {
-      this.selectedBrush = brushType;
-    }
-  }, {
-    key: "applyBrush",
-    value: function applyBrush() {
-      // pretty hacky but will refactor later...probably
-      var selectedBrush = this.selectedBrush;
-
-      switch (selectedBrush) {
-        case 'default':
-          this.defaultBrush();
-          break;
-
-        case 'pen':
-          this.penBrush();
-          break;
-
-        case 'radial':
-          this.radialGradBrush();
-          break;
-
-        case 'floodfill':
-          this.floodfillBrush();
-          break;
-
-        case 'eraser':
-          this.eraserBrush();
-          break;
-
-        default:
-          console.log("the selected brush does not exist");
-      }
-    }
-    /***
-    	eraser brush
-    ***/
-
-  }, {
-    key: "eraserBrush",
-    value: function eraserBrush() {
-      var _this = this;
-
-      var frame = this.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      var paint;
-
-      var eraserStart = function eraserStart(evt) {
-        evt.preventDefault();
-
-        if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
-          //when left click only
-          // update previousCanvas
-          if (_this.previousCanvas !== currLayer) {
-            _this.previousCanvas = currLayer; // reset the snapshots array
-
-            _this.currentCanvasSnapshots = [];
-          }
-
-          if (_this.tempSnapshot) {
-            _this.currentCanvasSnapshots.push(_this.tempSnapshot);
-          }
-
-          paint = true;
-
-          if (evt.type === 'touchstart') {
-            var newCoords = _this._handleTouchEvent(evt);
-
-            evt.offsetX = newCoords.x;
-            evt.offsetY = newCoords.y;
-            evt.preventDefault();
-          }
-
-          _this._addClick(evt.offsetX, evt.offsetY, "#ffffffff", null, true); // #ffffffff because eraser
-
-
-          _this._redraw(_this._defaultBrushStroke.bind(_this));
-        }
-      };
-
-      currLayer.addEventListener('mousedown', eraserStart);
-      currLayer.addEventListener('touchstart', eraserStart);
-      this.currentEventListeners['mousedown'] = eraserStart;
-      this.currentEventListeners['touchstart'] = eraserStart; // draw the lines as mouse moves
-
-      var eraserMove = function eraserMove(evt) {
-        if (paint) {
-          if (evt.type === 'touchmove') {
-            var newCoords = _this._handleTouchEvent(evt);
-
-            evt.offsetX = newCoords.x;
-            evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-            evt.preventDefault();
-          }
-
-          _this._addClick(evt.offsetX, evt.offsetY, "#ffffffff", null, true);
-
-          _this._redraw(_this._defaultBrushStroke.bind(_this));
-        }
-      };
-
-      currLayer.addEventListener('mousemove', eraserMove);
-      currLayer.addEventListener('touchmove', eraserMove);
-      this.currentEventListeners['mousemove'] = eraserMove;
-      this.currentEventListeners['touchmove'] = eraserMove; // stop drawing
-
-      var eraserStop = function eraserStop(evt) {
-        // see if it's a new canvas or we're still on the same one as before the mousedown
-        if (_this.previousCanvas === currLayer) {
-          // if it is, then log the current image data. this is important for the undo feature
-          var w = currLayer.width;
-          var h = currLayer.height;
-          _this.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
-        }
-
-        _this._clearClick();
-
-        paint = false;
-      };
-
-      currLayer.addEventListener('mouseup', eraserStop);
-      currLayer.addEventListener('touchend', eraserStop);
-      this.currentEventListeners['mouseup'] = eraserStop;
-      this.currentEventListeners['touchend'] = eraserStop; //stop drawing when mouse leaves
-      // TODO: we really shouldn't have multiple instances of this
-
-      currLayer.addEventListener('mouseleave', function (evt) {
-        _this._clearClick();
-
-        paint = false;
-      });
-    }
-    /***
-    	default brush
-    ***/
-
-  }, {
-    key: "defaultBrush",
-    value: function defaultBrush() {
-      var _this2 = this;
-
-      var frame = this.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      var paint;
-
-      var defaultBrushStart = function defaultBrushStart(evt) {
-        evt.preventDefault();
-
-        if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
-          //when left click only
-          // update previousCanvas
-          if (_this2.previousCanvas !== currLayer) {
-            _this2.previousCanvas = currLayer; // reset the snapshots array
-
-            _this2.currentCanvasSnapshots = [];
-          }
-
-          if (_this2.tempSnapshot) {
-            _this2.currentCanvasSnapshots.push(_this2.tempSnapshot);
-          }
-
-          paint = true; // offset will be different with mobile
-          // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
-          // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
-          // using rect seems to work pretty well
-
-          if (evt.type === 'touchstart') {
-            var newCoords = _this2._handleTouchEvent(evt);
-
-            evt.offsetX = newCoords.x;
-            evt.offsetY = newCoords.y;
-            evt.preventDefault();
-          }
-
-          _this2._addClick(evt.offsetX, evt.offsetY, null, null, true);
-
-          _this2._redraw(_this2._defaultBrushStroke.bind(_this2));
-        }
-      };
-
-      currLayer.addEventListener('mousedown', defaultBrushStart);
-      currLayer.addEventListener('touchstart', defaultBrushStart);
-      this.currentEventListeners['mousedown'] = defaultBrushStart;
-      this.currentEventListeners['touchstart'] = defaultBrushStart; // draw the lines as mouse moves
-
-      var defaultBrushMove = function defaultBrushMove(evt) {
-        if (paint) {
-          if (evt.type === 'touchmove') {
-            var newCoords = _this2._handleTouchEvent(evt);
-
-            evt.offsetX = newCoords.x;
-            evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-            evt.preventDefault();
-          }
-
-          _this2._addClick(evt.offsetX, evt.offsetY, null, null, true);
-
-          _this2._redraw(_this2._defaultBrushStroke.bind(_this2));
-        }
-      };
-
-      currLayer.addEventListener('mousemove', defaultBrushMove);
-      currLayer.addEventListener('touchmove', defaultBrushMove);
-      this.currentEventListeners['mousemove'] = defaultBrushMove;
-      this.currentEventListeners['touchmove'] = defaultBrushMove; // stop drawing
-
-      var defaultBrushStop = function defaultBrushStop(evt) {
-        // see if it's a new canvas or we're still on the same one as before the mousedown
-        if (_this2.previousCanvas === currLayer) {
-          // if it is, then log the current image data. this is important for the undo feature
-          var w = currLayer.width;
-          var h = currLayer.height;
-          _this2.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
-        }
-
-        _this2._clearClick();
-
-        paint = false;
-      };
-
-      currLayer.addEventListener('mouseup', defaultBrushStop);
-      currLayer.addEventListener('touchend', defaultBrushStop);
-      this.currentEventListeners['mouseup'] = defaultBrushStop;
-      this.currentEventListeners['touchend'] = defaultBrushStop; //stop drawing when mouse leaves
-      // TODO: we really shouldn't have multiple instances of this
-
-      currLayer.addEventListener('mouseleave', function (evt) {
-        _this2._clearClick();
-
-        paint = false;
-      });
-    }
-  }, {
-    key: "_defaultBrushStroke",
-    value: function _defaultBrushStroke(context) {
-      for (var i = 0; i < this.clickX.length; i++) {
-        context.beginPath(); //this helps generate a solid line, rather than a line of dots. 
-        //the subtracting of 1 from i means that the point at i is being connected
-        //with the previous point
-
-        if (this.clickDrag[i] && i) {
-          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
-        } else {
-          //the adding of 1 allows you to make a dot on click
-          context.moveTo(this.clickX[i], this.clickY[i] + 1);
-        }
-
-        context.lineTo(this.clickX[i], this.clickY[i]);
-        context.closePath();
-        context.strokeStyle = this.clickColor[i];
-        context.lineWidth = this.clickSize[i];
-        context.stroke();
-      }
-    }
-    /***
-        radial gradient brush
-    ***/
-
-  }, {
-    key: "radialGradBrush",
-    value: function radialGradBrush() {
-      var _this3 = this;
-
-      var frame = this.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      var context = currLayer.getContext("2d");
-      context.lineJoin = context.lineCap = 'round';
-      var paint;
-
-      var radGradBrushStart = function radGradBrushStart(evt) {
-        if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
-          // update previousCanvas
-          if (_this3.previousCanvas !== currLayer) {
-            _this3.previousCanvas = currLayer; // reset the snapshots array
-
-            _this3.currentCanvasSnapshots = [];
-          }
-
-          if (_this3.tempSnapshot) {
-            _this3.currentCanvasSnapshots.push(_this3.tempSnapshot);
-          }
-
-          paint = true;
-
-          if (evt.type === 'touchstart') {
-            var newCoords = _this3._handleTouchEvent(evt);
-
-            evt.offsetX = newCoords.x;
-            evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-            evt.preventDefault();
-          }
-
-          _this3._radialGrad(evt.offsetX, evt.offsetY);
-
-          _this3._addClick(evt.offsetX, evt.offsetY, null, null, true);
-
-          _this3._redraw(_this3._defaultBrushStroke.bind(_this3));
-        }
-      };
-
-      currLayer.addEventListener('mousedown', radGradBrushStart);
-      currLayer.addEventListener('touchstart', radGradBrushStart);
-      this.currentEventListeners['mousedown'] = radGradBrushStart;
-      this.currentEventListeners['touchstart'] = radGradBrushStart;
-
-      var radGradBrushMove = function radGradBrushMove(evt) {
-        if (paint) {
-          if (evt.type === 'touchmove') {
-            var newCoords = _this3._handleTouchEvent(evt);
-
-            evt.offsetX = newCoords.x;
-            evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-            evt.preventDefault();
-          }
-
-          _this3._radialGrad(evt.offsetX, evt.offsetY);
-
-          _this3._addClick(evt.offsetX, evt.offsetY, null, null, true);
-
-          _this3._redraw(_this3._defaultBrushStroke.bind(_this3));
-        }
-      };
-
-      currLayer.addEventListener('mousemove', radGradBrushMove);
-      currLayer.addEventListener('touchmove', radGradBrushMove);
-      this.currentEventListeners['mousemove'] = radGradBrushMove;
-      this.currentEventListeners['touchmove'] = radGradBrushMove; // this function seems to be shared among all brushes for stopping. TODO: just have one of these functions
-
-      var radGradBrushStop = function radGradBrushStop(evt) {
-        if (_this3.previousCanvas === currLayer) {
-          // if it is, then log the current image data. this is important for the undo feature
-          var w = currLayer.width;
-          var h = currLayer.height;
-
-          _this3.currentCanvasSnapshots.push(currLayer.getContext("2d").getImageData(0, 0, w, h));
-        }
-
-        _this3._clearClick();
-
-        paint = false;
-      };
-
-      currLayer.addEventListener('mouseup', radGradBrushStop);
-      currLayer.addEventListener('touchend', radGradBrushStop);
-      this.currentEventListeners['mouseup'] = radGradBrushStop;
-      this.currentEventListeners['touchend'] = radGradBrushStop; //stop drawing when mouse leaves
-
-      currLayer.addEventListener('mouseleave', function (evt) {
-        _this3._clearClick();
-
-        paint = false;
-      });
-    }
-  }, {
-    key: "_radialGrad",
-    value: function _radialGrad(x, y) {
-      var frame = this.animationProject.getCurrFrame();
-      var context = frame.getCurrCanvas().getContext("2d");
-      var radGrad = context.createRadialGradient(x, y, this.currSize, x, y, this.currSize * 1.5);
-      var colorPicked = this.currColorArray;
-      radGrad.addColorStop(0, this.currColor);
-
-      if (colorPicked !== undefined) {
-        radGrad.addColorStop(.5, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',.5)');
-        radGrad.addColorStop(1, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',0)');
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FilterDashboard", function() { return FilterDashboard; });
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+
+var FilterDashboard = function FilterDashboard(props) {
+  var filterManager = props.filterManager;
+
+  if (!filterManager) {
+    // running into filterManager being null initially
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null);
+  }
+
+  var filters = filterManager.filtersMap;
+  var filterNames = Object.keys(filters);
+  var style = {
+    "textAlign": "center"
+  };
+  var elementStyle = {
+    "margin": "2px auto",
+    "textAlign": "center",
+    "border": "1px solid #000"
+  }; // use a hook to be able to keep track of selected filter
+
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(""),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
+      selectedFilter = _useState2[0],
+      setSelectedFilter = _useState2[1];
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: elementStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
+    id: "filterSelect",
+    onClick: function onClick() {
+      var el = document.getElementById("filtersDisplay");
+
+      if (el.style.display !== "block") {
+        el.style.display = "block";
       } else {
-        radGrad.addColorStop(.5, 'rgba(0,0,0,.5)');
-        radGrad.addColorStop(1, 'rgba(0,0,0,0)');
-      }
-
-      context.fillStyle = radGrad;
-      context.fillRect(x - 20, y - 20, 40, 40);
-    }
-    /***
-    	pen-like brush 
-    	thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/sketchy.js
-    ***/
-
-  }, {
-    key: "penBrush",
-    value: function penBrush() {
-      var _this4 = this;
-
-      var frame = this.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      var paint;
-
-      var penBrushStart = function penBrushStart(evt) {
-        if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
-          //when left click only
-          // update previousCanvas
-          if (_this4.previousCanvas !== currLayer) {
-            _this4.previousCanvas = currLayer; // reset the snapshots array
-
-            _this4.currentCanvasSnapshots = [];
-          }
-
-          if (_this4.tempSnapshot) {
-            _this4.currentCanvasSnapshots.push(_this4.tempSnapshot);
-          }
-
-          paint = true;
-
-          if (evt.type === 'touchstart') {
-            var newCoords = _this4._handleTouchEvent(evt);
-
-            evt.offsetX = newCoords.x;
-            evt.offsetY = newCoords.y;
-            evt.preventDefault();
-          }
-
-          _this4._addClick(evt.offsetX, evt.offsetY, null, null, true);
-
-          _this4._redraw(_this4._penBrushStroke.bind(_this4));
-        }
-      };
-
-      currLayer.addEventListener("mousedown", penBrushStart);
-      currLayer.addEventListener("touchstart", penBrushStart);
-      this.currentEventListeners['mousedown'] = penBrushStart;
-      this.currentEventListeners['touchstart'] = penBrushStart; //draw the lines as mouse moves
-
-      var penBrushMove = function penBrushMove(evt) {
-        if (paint) {
-          if (evt.type === 'touchmove') {
-            var newCoords = _this4._handleTouchEvent(evt);
-
-            evt.offsetX = newCoords.x;
-            evt.offsetY = newCoords.y;
-            evt.preventDefault();
-          }
-
-          _this4._addClick(evt.offsetX, evt.offsetY, null, null, true);
-
-          _this4._redraw(_this4._penBrushStroke.bind(_this4));
-        }
-      };
-
-      currLayer.addEventListener('mousemove', penBrushMove);
-      currLayer.addEventListener('touchmove', penBrushMove);
-      this.currentEventListeners['mousemove'] = penBrushMove;
-      this.currentEventListeners['touchmove'] = penBrushMove; //stop drawing
-
-      var penBrushStop = function penBrushStop(evt) {
-        // see if it's a new canvas or we're still on the same one as before the mousedown
-        if (_this4.previousCanvas === currLayer) {
-          // if it is, then log the current image data. this is important for the undo feature
-          var w = currLayer.width;
-          var h = currLayer.height;
-          _this4.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
-        }
-
-        _this4._clearClick();
-
-        paint = false;
-      };
-
-      currLayer.addEventListener('mouseup', penBrushStop);
-      currLayer.addEventListener('touchend', penBrushStop);
-      this.currentEventListeners['mouseup'] = penBrushStop;
-      this.currentEventListeners['touchend'] = penBrushStop; //stop drawing when mouse leaves
-
-      currLayer.addEventListener('mouseleave', function (evt) {
-        _this4._clearClick();
-
-        paint = false;
-      });
-    }
-  }, {
-    key: "_penBrushStroke",
-    value: function _penBrushStroke(context) {
-      var clickX = this.clickX;
-      var clickY = this.clickY;
-      var clickColor = this.clickColor;
-      var clickSize = this.clickSize; // connect current dot with previous dot
-
-      context.beginPath();
-      context.moveTo(clickX[clickX.length - 1], clickY[clickY.length - 1]);
-
-      if (clickX.length > 1) {
-        context.lineTo(clickX[clickX.length - 2], clickY[clickY.length - 2]);
-      }
-
-      context.closePath();
-      context.strokeStyle = clickColor[clickColor.length - 1];
-      context.lineWidth = clickSize[clickSize.length - 1];
-      context.stroke(); // then add some extra strokes
-
-      for (var i = 0; i < clickX.length; i++) {
-        var dx = clickX[i] - clickX[clickX.length - 1];
-        var dy = clickY[i] - clickY[clickY.length - 1];
-        var d = dx * dx + dy * dy;
-
-        if (d < 2000 && Math.random() > d / 1000) {
-          context.beginPath();
-          context.moveTo(clickX[clickX.length - 1] + dx * 0.3, clickY[clickY.length - 1] + dy * 0.3);
-          context.lineTo(clickX[clickX.length - 1] - dx * 0.3, clickY[clickY.length - 1] - dy * 0.3);
-          context.closePath();
-          context.stroke();
-        }
+        el.style.display = "none";
       }
     }
-    /***
-    	floodfill brush
-    	
-    	not really a brush, but should be considered a separate brush so its mousedown action 
-    	won't conflict with the other brushes (i.e. no painting at the same time of a floodfill)
-    ***/
-
-  }, {
-    key: "floodfillBrush",
-    value: function floodfillBrush() {
-      var _this5 = this;
-
-      var frame = this.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-
-      var floodfillEvt = function floodfillEvt(evt) {
-        if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
-          //when left click only
-          // update previousCanvas
-          if (_this5.previousCanvas !== currLayer) {
-            _this5.previousCanvas = currLayer; // reset the snapshots array
-
-            _this5.currentCanvasSnapshots = [];
-          }
-
-          if (_this5.tempSnapshot) {
-            _this5.currentCanvasSnapshots.push(_this5.tempSnapshot);
-          }
-
-          if (evt.type === 'touchstart') {
-            var newCoords = _this5._handleTouchEvent(evt);
-
-            evt.offsetX = newCoords.x;
-            evt.offsetY = newCoords.y;
-            evt.preventDefault();
-          } // do floodfill
-          // need to parse the currColor because right now it looks like "rgb(x,y,z)". 
-          // I want it to look like [x, y, z]
-
-
-          var currColor = _this5.currColor;
-          var currColorArray = currColor.substring(currColor.indexOf('(') + 1, currColor.length - 1).split(',');
-          currColorArray = currColorArray.map(function (a) {
-            return parseInt(a);
-          });
-          var x = evt.offsetX;
-          var y = evt.offsetY;
-          var colorData = document.getElementById(frame.currentCanvas.id).getContext("2d").getImageData(x, y, 1, 1).data;
-          var color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')'; // create an object with the pixel data
-
-          var pixel = {
-            'x': Math.floor(x),
-            'y': Math.floor(y),
-            'color': color
-          };
-
-          _this5.floodfill(currLayer, currColorArray, pixel);
-        }
-      };
-
-      currLayer.addEventListener('mousedown', floodfillEvt);
-      currLayer.addEventListener('touchstart', floodfillEvt);
-      this.currentEventListeners['mousedown'] = floodfillEvt;
-      this.currentEventListeners['touchstart'] = floodfillEvt;
-    } // the actual floodfill function 
-
-  }, {
-    key: "floodfill",
-    value: function floodfill(currentCanvas, newColor, pixelSelected) {
-      // create a stack 
-      var stack = []; // create visited set 
-      // the format of these entries will be like: {'xCoord,yCoord': 1}
-
-      var visited = new Set(); // the selectedPixel will have the color that needs to be targeted by floodfill 
-
-      var targetColor = pixelSelected.color; // current canvas context 
-
-      var ctx = document.getElementById(currentCanvas.id).getContext('2d'); // get the image data of the entire canvas 
-      // do the floodfill, then put the edited image data back 
-
-      var imageData = ctx.getImageData(0, 0, currentCanvas.width, currentCanvas.height);
-      var data = imageData.data;
-      var originalData = new Uint8ClampedArray(imageData.data);
-      stack.push(pixelSelected);
-
-      while (stack.length !== 0) {
-        // get a pixel
-        var currPixel = stack.pop(); // add to visited set 
-
-        visited.add(currPixel.x + ',' + currPixel.y); // get left, right, top and bottom neighbors 
-
-        var leftNeighborX = currPixel.x - 1;
-        var rightNeighborX = currPixel.x + 1;
-        var topNeighborY = currPixel.y - 1;
-        var bottomNeighborY = currPixel.y + 1;
-        var r = void 0,
-            g = void 0,
-            b = void 0; // top neighbor
-
-        if (topNeighborY >= 0 && !visited.has(currPixel.x + ',' + topNeighborY)) {
-          // index of r, g and b colors in imageData.data
-          r = topNeighborY * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
-          g = r + 1;
-          b = g + 1;
-
-          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
-            // if the neighbor's color is the same as the targetColor, add it to the stack
-            stack.push({
-              'x': currPixel.x,
-              'y': topNeighborY,
-              'color': currPixel.color
-            });
-          }
-        } // right neighbor 
-
-
-        if (rightNeighborX < currentCanvas.width && !visited.has(rightNeighborX + ',' + currPixel.y)) {
-          r = currPixel.y * currentCanvas.width * 4 + (rightNeighborX + 1) * 4;
-          g = r + 1;
-          b = g + 1;
-
-          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
-            // if the neighbor's color is the same as the targetColor, add it to the stack
-            stack.push({
-              'x': rightNeighborX,
-              'y': currPixel.y,
-              'color': currPixel.color
-            });
-          }
-        } // bottom neighbor
-
-
-        if (bottomNeighborY < currentCanvas.height && !visited.has(currPixel.x + ',' + bottomNeighborY)) {
-          r = bottomNeighborY * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
-          g = r + 1;
-          b = g + 1;
-
-          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
-            // if the neighbor's color is the same as the targetColor, add it to the stack
-            stack.push({
-              'x': currPixel.x,
-              'y': bottomNeighborY,
-              'color': currPixel.color
-            });
-          }
-        } // left neighbor
-
-
-        if (leftNeighborX >= 0 && !visited.has(leftNeighborX + ',' + currPixel.y)) {
-          r = currPixel.y * currentCanvas.width * 4 + (leftNeighborX + 1) * 4;
-          g = r + 1;
-          b = g + 1;
-
-          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
-            // if the neighbor's color is the same as the targetColor, add it to the stack
-            stack.push({
-              'x': leftNeighborX,
-              'y': currPixel.y,
-              'color': currPixel.color
-            });
-          }
-        } // finally, update the color of the current pixel 
-
-
-        r = currPixel.y * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
-        g = r + 1;
-        b = g + 1;
-        data[r] = newColor[0];
-        data[g] = newColor[1];
-        data[b] = newColor[2];
-      } // put new edited image back on canvas
-
-
-      ctx.putImageData(imageData, 0, 0);
+  }, " filters \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "filtersDisplay",
+    style: {
+      "display": "none"
     }
-  }]);
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
+    id: "filterChoices",
+    style: {
+      "margin": "0 auto",
+      "padding": "0"
+    }
+  }, filterNames.map(function (filterName, index) {
+    var selected = null;
 
-  return Brush;
-}();
+    if (selectedFilter === filterName) {
+      var _selected = JSON.parse(JSON.stringify(style));
 
+      _selected["backgroundColor"] = "#20b2aa";
+    }
 
-
-/***/ }),
-
-/***/ "./components/FilterManager.js":
-/*!*************************************!*\
-  !*** ./components/FilterManager.js ***!
-  \*************************************/
-/*! exports provided: FilterManager */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FilterManager", function() { return FilterManager; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _filters_saturation_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./filters/saturation.js */ "./components/filters/saturation.js");
-/* harmony import */ var _filters_grayscale_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filters/grayscale.js */ "./components/filters/grayscale.js");
-/* harmony import */ var _filters_areacolor_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./filters/areacolor.js */ "./components/filters/areacolor.js");
-/* harmony import */ var _filters_edgedetection_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./filters/edgedetection.js */ "./components/filters/edgedetection.js");
-/* harmony import */ var _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./filters/invert.js */ "./components/filters/invert.js");
-/* harmony import */ var _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./filters/mosaic.js */ "./components/filters/mosaic.js");
-/* harmony import */ var _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./filters/blur.js */ "./components/filters/blur.js");
-/* harmony import */ var _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./filters/outline.js */ "./components/filters/outline.js");
-/* harmony import */ var _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./filters/voronoi.js */ "./components/filters/voronoi.js");
-/* harmony import */ var _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./filters/fisheye.js */ "./components/filters/fisheye.js");
-
-
-
-
-
-
-
-
-
-
-
-
-
-var FilterManager = /*#__PURE__*/function () {
-  function FilterManager(animationProject, brush) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, FilterManager);
-
-    this.animationProject = animationProject;
-    this.brush = brush;
-    this.filtersMap = {
-      "saturation": new _filters_saturation_js__WEBPACK_IMPORTED_MODULE_2__["Saturation"](),
-      "grayscale": new _filters_grayscale_js__WEBPACK_IMPORTED_MODULE_3__["Grayscale"](),
-      "area_color": new _filters_areacolor_js__WEBPACK_IMPORTED_MODULE_4__["AreaColor"](),
-      "edge_detection": new _filters_edgedetection_js__WEBPACK_IMPORTED_MODULE_5__["EdgeDetection"](),
-      "invert": new _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__["Invert"](),
-      "mosaic": new _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__["Mosaic"](),
-      "blur": new _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__["Blur"](),
-      "outline": new _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__["Outline"](),
-      "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__["Voronoi"](),
-      "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__["Fisheye"]()
-    };
-    this.tempImage = null; // only push current image to snapshots if a tempImage exists already.
-    // this way when undo is called the image being looked at by the user won't already be saved in snapshots,
-    // and so undo wouldn't need to be clicked twice to see the last saved image. a bit confusing. :/
-  } // general filtering function. pass any kind of filter through this function.
-
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(FilterManager, [{
-    key: "filterCanvas",
-    value: function filterCanvas(filter) {
-      var currCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
-      var context = currCanvas.getContext("2d");
-      var width = currCanvas.getAttribute('width');
-      var height = currCanvas.getAttribute('height');
-      var imgData = context.getImageData(0, 0, width, height); // save current image to snapshots stack
-
-      if (this.tempImage) {
-        this.brush.currentCanvasSnapshots.push(this.tempImage);
+    var s = selected !== null ? selected : style;
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+      style: s,
+      key: "filter_".concat(index),
+      id: "".concat(filterName, "_").concat(index),
+      onClick: function onClick(evt) {
+        // show that the filter is selected (colored background? colored text?)
+        setSelectedFilter(filterName);
       }
-
-      var filteredImageData = filter(imgData);
-      context.putImageData(filteredImageData, 0, 0);
-      this.tempImage = imgData;
-    } // use this for select/option elements when picking a filter
-
-  }, {
-    key: "filterCanvasOption",
-    value: function filterCanvasOption(option) {
-      var selectedFilter = this.filtersMap[option];
-      this.filterCanvas(selectedFilter.filter.bind(selectedFilter)); // make sure 'this' context is correct for the filtering function
+    }, filterName);
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
+    id: "applyFilter",
+    onClick: function onClick() {
+      // TODO:
+      // collect current param values if applicable and update filter with params
+      filterManager.filterCanvasOption(selectedFilter);
     }
-  }]);
-
-  return FilterManager;
-}();
+  }, " apply filter "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "filterParameters"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", null, "// TODO: list parameters for the selected filter"))));
+};
 
 
 
@@ -1697,12 +385,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./AnimationProject.js */ "./components/AnimationProject.js");
-/* harmony import */ var _Toolbar_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Toolbar.js */ "./components/Toolbar.js");
-/* harmony import */ var _Brush_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Brush.js */ "./components/Brush.js");
-/* harmony import */ var _FilterManager_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./FilterManager.js */ "./components/FilterManager.js");
+/* harmony import */ var _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/AnimationProject.js */ "./components/utils/AnimationProject.js");
+/* harmony import */ var _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/Toolbar.js */ "./components/utils/Toolbar.js");
+/* harmony import */ var _utils_Brush_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils/Brush.js */ "./components/utils/Brush.js");
+/* harmony import */ var _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./utils/FilterManager.js */ "./components/utils/FilterManager.js");
 /* harmony import */ var _AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./AnimationTimeline.js */ "./components/AnimationTimeline.js");
 /* harmony import */ var _LayerOrder_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./LayerOrder.js */ "./components/LayerOrder.js");
+/* harmony import */ var _FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./FilterDashboard.js */ "./components/FilterDashboard.js");
 
 
 
@@ -1717,7 +406,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 
 
- //import { Filters } from './Filters.js';
+
 
 
 
@@ -2184,49 +873,52 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_setupFilters",
     value: function _setupFilters() {
-      var _this5 = this;
-
-      var filterInstance = this.state.filtersInstance;
-      var filterNames = Array.from(Object.keys(this.state.filtersInstance.filtersMap)); //Object.getOwnPropertyNames(filterInstance).filter((name) => name.indexOf('filter') < 0);
-
-      var filterChoices = document.getElementById("filterChoices");
-      filterNames.forEach(function (name) {
-        var newFilterElement = document.createElement('li');
-        newFilterElement.id = name;
-        newFilterElement.textContent = name;
-        newFilterElement.addEventListener('click', function () {
-          filterInstance.filterCanvasOption(name);
-        });
-        filterChoices.appendChild(newFilterElement);
+      /*
+      let filterInstance = this.state.filtersInstance;
+      let filterNames = Array.from(Object.keys(this.state.filtersInstance.filtersMap));//Object.getOwnPropertyNames(filterInstance).filter((name) => name.indexOf('filter') < 0);
+      let filterChoices = document.getElementById("filterChoices");
+      
+      filterNames.forEach((name) => {
+      	let newFilterElement = document.createElement('li');
+      	newFilterElement.id = name;
+      	newFilterElement.textContent = name;
+      			newFilterElement.addEventListener('click', () => {
+      		filterInstance.filterCanvasOption(name);
+      	});
+      	
+      	filterChoices.appendChild(newFilterElement);
       });
-      var resetOption = document.createElement('li');
+      
+      let resetOption = document.createElement('li');
       resetOption.style.color = "#ff3232";
       resetOption.textContent = "reset";
-      resetOption.addEventListener('click', function () {
-        _this5.state.toolbarInstance.resetImage();
+      resetOption.addEventListener('click', () => {
+      	this.state.toolbarInstance.resetImage();
       });
+      
       filterChoices.appendChild(resetOption);
-      document.getElementById('filterSelect').addEventListener('click', function () {
-        _this5._showOptions('filters');
-      });
+      
+      document.getElementById('filterSelect').addEventListener('click', () => {
+      	this._showOptions('filters');
+      });*/
     }
   }, {
     key: "_setupAnimationControl",
     value: function _setupAnimationControl() {
-      var _this6 = this;
+      var _this5 = this;
 
       document.getElementById('timePerFrame').addEventListener('onchange', function (evt) {
-        _this6.state.toolbarInstance.timePerFrame = parseInt(evt.target.selectedOptions[0].value);
+        _this5.state.toolbarInstance.timePerFrame = parseInt(evt.target.selectedOptions[0].value);
       });
     }
   }, {
     key: "_linkDemos",
     value: function _linkDemos() {
-      var _this7 = this;
+      var _this6 = this;
 
       var demoSelect = document.getElementById("chooseDemo");
       demoSelect.addEventListener("change", function (evt) {
-        _this7._getDemo(evt.target.selectedOptions[0].value);
+        _this6._getDemo(evt.target.selectedOptions[0].value);
       });
     }
   }, {
@@ -2252,16 +944,16 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_setupBrushControls",
     value: function _setupBrushControls() {
-      var _this8 = this;
+      var _this7 = this;
 
       var brush = this.state.brushInstance;
       document.getElementById('brushSelect').addEventListener('click', function () {
-        _this8._showOptions('brushes');
+        _this7._showOptions('brushes');
       });
       document.getElementById('defaultBrush').addEventListener('click', function () {
         brush.resetBrush();
 
-        _this8._changeCursor("default");
+        _this7._changeCursor("default");
 
         brush.setBrushType('default');
         brush.applyBrush();
@@ -2269,7 +961,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       document.getElementById('penBrush').addEventListener('click', function () {
         brush.resetBrush();
 
-        _this8._changeCursor("default");
+        _this7._changeCursor("default");
 
         brush.setBrushType('pen');
         brush.applyBrush();
@@ -2277,7 +969,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       document.getElementById('radialBrush').addEventListener('click', function () {
         brush.resetBrush();
 
-        _this8._changeCursor("default");
+        _this7._changeCursor("default");
 
         brush.setBrushType('radial');
         brush.applyBrush();
@@ -2285,7 +977,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       document.getElementById('eraser').addEventListener('click', function () {
         brush.resetBrush();
 
-        _this8._changeCursor("eraser");
+        _this7._changeCursor("eraser");
 
         brush.setBrushType('eraser');
         brush.applyBrush();
@@ -2293,7 +985,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       document.getElementById('floodfill').addEventListener('click', function () {
         brush.resetBrush();
 
-        _this8._changeCursor("floodfill");
+        _this7._changeCursor("floodfill");
 
         brush.setBrushType('floodfill');
         brush.applyBrush();
@@ -2303,7 +995,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       document.getElementById('brushSize').addEventListener('input', function () {
         brush.changeBrushSize(document.getElementById('brushSize').value);
 
-        _this8._showSize();
+        _this7._showSize();
       });
     }
   }, {
@@ -2327,7 +1019,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_playAnimation",
     value: function _playAnimation() {
-      var _this9 = this;
+      var _this8 = this;
 
       var timelineFrames = this.state.timelineFrames;
 
@@ -2352,8 +1044,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var totalElapsedTime = 0;
       var lastSpeed = this.state.toolbarInstance.timePerFrame;
       timelineFrames.forEach(function (frame, index) {
-        if (_this9.state.timelineMarkers[index + 1]) {
-          lastSpeed = parseInt(_this9.state.timelineMarkers[index + 1].speed);
+        if (_this8.state.timelineMarkers[index + 1]) {
+          lastSpeed = parseInt(_this8.state.timelineMarkers[index + 1].speed);
         }
 
         setTimeout(function () {
@@ -2382,7 +1074,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDemo",
     value: function _getDemo(selected) {
-      var _this10 = this;
+      var _this9 = this;
 
       // case for the blank option 
       if (selected === "") {
@@ -2402,9 +1094,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       httpRequest.open("GET", selectedDemo); // what to do when data comes back
 
       httpRequest.onload = function () {
-        var toolbar = _this10.state.toolbarInstance;
-        var project = _this10.state.animationProject;
-        var self = _this10; // parse the JSON using JSON.parse 
+        var toolbar = _this9.state.toolbarInstance;
+        var project = _this9.state.animationProject;
+        var self = _this9; // parse the JSON using JSON.parse 
 
         var data = JSON.parse(httpRequest.responseText);
 
@@ -2495,35 +1187,33 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this11 = this;
+      var _this10 = this;
 
-      var animationProj = new _AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__["AnimationProject"]('canvasArea');
+      var animationProj = new _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__["AnimationProject"]('canvasArea');
       animationProj.addNewFrame(true);
-      var newBrush = new _Brush_js__WEBPACK_IMPORTED_MODULE_9__["Brush"](animationProj);
+      var newBrush = new _utils_Brush_js__WEBPACK_IMPORTED_MODULE_9__["Brush"](animationProj);
       newBrush.defaultBrush();
-      var newFilters = new _FilterManager_js__WEBPACK_IMPORTED_MODULE_10__["FilterManager"](animationProj, newBrush); //new Filters(animationProj.getCurrFrame(), newBrush);
-
-      var newToolbar = new _Toolbar_js__WEBPACK_IMPORTED_MODULE_8__["Toolbar"](newBrush, animationProj);
+      var newFilters = new _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_10__["FilterManager"](animationProj, newBrush);
+      var newToolbar = new _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__["Toolbar"](newBrush, animationProj);
       this.setState({
         'animationProject': animationProj,
         'brushInstance': newBrush,
         'toolbarInstance': newToolbar,
         'filtersInstance': newFilters
       }, function () {
-        _this11._setupToolbar();
+        _this10._setupToolbar();
 
-        _this11._setupBrushControls();
+        _this10._setupBrushControls();
 
-        _this11._linkDemos();
-
-        _this11._setupFilters();
-
-        _this11._setKeyDown(document); // set key down on the whole document
+        _this10._linkDemos(); //this._setupFilters();
 
 
-        _this11._timelineMarkerSetup();
+        _this10._setKeyDown(document); // set key down on the whole document
 
-        _this11._changeCursor(_this11.state.brushInstance.getBrushType());
+
+        _this10._timelineMarkerSetup();
+
+        _this10._changeCursor(_this10.state.brushInstance.getBrushType());
       });
     }
   }, {
@@ -2533,7 +1223,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this12 = this;
+      var _this11 = this;
 
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         className: "container-fluid"
@@ -2546,7 +1236,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "toolbarArea"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
         id: "title"
-      }, " funSketch: draw, edit, and animate! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, " funSketch: draw and animate! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "buttons"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
@@ -2576,7 +1266,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "downloadFrame"
       }, "download current frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_LayerOrder_js__WEBPACK_IMPORTED_MODULE_12__["LayerOrder"], {
         changingLayerOrder: this.state.changingLayerOrder,
-        layers: this.state.animationProject ? this.state.animationProject.getCurrFrame().canvasList.map(function (x, idx) {
+        layers: this.state.animationProject ? this.state.animationProject.getCurrFrame().getLayers().map(function (x, idx) {
           return idx;
         }) : [],
         updateParentStateFunction: function updateParentStateFunction(newLayerOrder) {
@@ -2584,26 +1274,26 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           // 2. set changingLayerOrder in state to false
           var newLayerList = [];
 
-          var currFrame = _this12.state.animationProject.getCurrFrame();
+          var currFrame = _this11.state.animationProject.getCurrFrame();
 
-          var currLayerIndex = currFrame.currentIndex;
-          var currFrameLayerList = currFrame.canvasList;
-          currFrame.canvasList[currLayerIndex].style.opacity = 0;
-          currFrame.canvasList[currLayerIndex].style.zIndex = 0;
+          var currLayerIndex = currFrame.getCurrFrameIndex();
+          var currFrameLayerList = currFrame.getLayers();
+          currFrame.getCurrCanvas().style.opacity = 0;
+          currFrame.getCurrCanvas().style.zIndex = 0;
 
           if (currLayerIndex - 1 > 0) {
-            currFrame.canvasList[currLayerIndex - 1].style.opacity = 0;
-            currFrame.canvasList[currLayerIndex - 1].style.zIndex = 0;
+            currFrame.getLayers()[currLayerIndex - 1].style.opacity = 0;
+            currFrame.getLayers()[currLayerIndex - 1].style.zIndex = 0;
           }
 
           newLayerOrder.forEach(function (index) {
             newLayerList.push(currFrameLayerList[index]);
           });
-          currFrame.canvasList = newLayerList; // update the currently shown layer to reflect the re-ordering
+          currFrame.setLayers(newLayerList); // update the currently shown layer to reflect the re-ordering
 
-          _this12.state.toolbarInstance.setCurrLayer(currLayerIndex);
+          _this11.state.toolbarInstance.setCurrLayer(currLayerIndex);
 
-          _this12.setState({
+          _this11.setState({
             "changingLayerOrder": false
           });
         }
@@ -2629,7 +1319,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         name: "timePerFrame",
         id: "timePerFrame",
         onChange: function onChange(evt) {
-          _this12.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+          _this11.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
         }
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
         value: "100"
@@ -2643,23 +1333,21 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         value: "1000"
       }, "1000"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         onClick: function onClick() {
-          _this12._playAnimation();
+          _this11._playAnimation();
         }
       }, " play animation "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "generateGif"
       }, " generate gif! ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         id: "loadingScreen"
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "filters"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
-        id: "filterSelect"
-      }, " filters \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", {
-        id: "filterChoices"
-      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__["FilterDashboard"], {
+        filterManager: this.state.filtersInstance
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "brushes"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         id: "brushSelect"
-      }, " brushes \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+      }, " brushes \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", {
+        id: "brushDisplay"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "defaultBrush"
       }, " default brush "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "penBrush"
@@ -2719,7 +1407,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           'display': 'block'
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
-        var marker = _this12.state.timelineMarkers[markerKey];
+        var marker = _this11.state.timelineMarkers[markerKey];
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
           htmlFor: 'marker' + marker.frameNumber + 'Select'
         }, "marker for frame ", marker.frameNumber, ": \xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
@@ -2734,7 +1422,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             'color': 'red'
           },
           onClick: function onClick() {
-            return _this12._timelineMarkerDelete(marker.frameNumber);
+            return _this11._timelineMarkerDelete(marker.frameNumber);
           }
         }, " \xA0delete "));
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null)))));
@@ -2743,872 +1431,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
   return PresentationWrapper;
 }(react__WEBPACK_IMPORTED_MODULE_6___default.a.Component);
-
-
-
-/***/ }),
-
-/***/ "./components/Toolbar.js":
-/*!*******************************!*\
-  !*** ./components/Toolbar.js ***!
-  \*******************************/
-/*! exports provided: Toolbar */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Toolbar", function() { return Toolbar; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-// toolbar class
-// assemble the common functions for the toolbar
-// remove canvas param since you have animationProj
-var Toolbar = /*#__PURE__*/function () {
-  function Toolbar(brush, animationProj) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Toolbar);
-
-    // use this for storing the most recent imported image
-    // can be useful for resetting image
-    this.recentImage = null; // used as a flag for the animation playback features
-
-    this.play = null; // used to hold user-indicated time (ms) per frame for animation playback and gif
-
-    this.timePerFrame = 200; // set to 200 be default
-    // should the keyboard keys be affecting the layer or the frame? 2 options only
-    // this is useful for the arrow keys and space bar
-
-    this.layerMode = true;
-    this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
-
-    this.brush = brush;
-    this.animationProj = animationProj;
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Toolbar, [{
-    key: "setCounter",
-    value: function setCounter(elementId) {
-      this.htmlCounter = document.getElementById(elementId);
-    }
-  }, {
-    key: "nextLayer",
-    value: function nextLayer() {
-      this.brush.resetBrush();
-      var frame = this.animationProj.getCurrFrame();
-      var result = frame.nextLayer(); // TODO: can we figure out a better way to handle brushes?
-
-      this.brush.applyBrush(); // apply brush whether or not layer changed because it was reset initially
-
-      return result;
-    }
-  }, {
-    key: "prevLayer",
-    value: function prevLayer() {
-      this.brush.resetBrush();
-      var frame = this.animationProj.getCurrFrame();
-      var result = frame.prevLayer();
-      this.brush.applyBrush();
-      return result;
-    }
-  }, {
-    key: "setCurrLayer",
-    value: function setCurrLayer(layerIndex) {
-      // true to show onion skin of prev layer (when would we not?)
-      this.animationProj.getCurrFrame().setToLayer(layerIndex, true);
-    }
-  }, {
-    key: "nextFrame",
-    value: function nextFrame() {
-      this.brush.resetBrush();
-      var curr = this.animationProj.getCurrFrame();
-      var next = this.animationProj.nextFrame();
-      this.brush.applyBrush();
-
-      if (next !== null) {
-        curr.hide();
-        next.show();
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "prevFrame",
-    value: function prevFrame() {
-      this.brush.resetBrush();
-      var curr = this.animationProj.getCurrFrame();
-      var prev = this.animationProj.prevFrame();
-      this.brush.applyBrush();
-
-      if (prev !== null) {
-        curr.hide();
-        prev.show();
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "goToFrame",
-    value: function goToFrame(frameIndex) {
-      this.brush.resetBrush();
-      var curr = this.animationProj.getCurrFrame();
-      var destFrame = this.animationProj.goToFrame(frameIndex);
-      this.brush.applyBrush();
-
-      if (destFrame !== null) {
-        curr.hide();
-        destFrame.show();
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "addNewLayer",
-    value: function addNewLayer() {
-      var canvas = this.animationProj.getCurrFrame();
-      canvas.setupNewLayer();
-    }
-  }, {
-    key: "insertNewLayer",
-    value: function insertNewLayer() {
-      var canvas = this.animationProj.getCurrFrame(); // add a new canvas first 
-
-      canvas.setupNewLayer(); // then move it after the current canvas 
-
-      var newestCanvas = canvas.canvasList.pop();
-      canvas.canvasList.splice(canvas.currentIndex + 1, 0, newestCanvas);
-      return newestCanvas;
-    }
-    /***
-        insert a new layer after the current layer
-    ***/
-
-  }, {
-    key: "insertLayer",
-    value: function insertLayer(elementId) {
-      var _this = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        _this.insertNewLayer();
-      });
-    }
-    /***
-    	duplicate the current layer
-    	note: the next layer after the current will have identitcal image data
-    ***/
-
-  }, {
-    key: "duplicateLayer",
-    value: function duplicateLayer(elementId) {
-      var _this2 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        var currentCanvas = _this2.animationProj.getCurrFrame().currentCanvas;
-
-        var newLayer = _this2.insertNewLayer();
-
-        newLayer.getContext('2d').drawImage(currentCanvas, 0, 0);
-      });
-    }
-    /***
-    add a new frame
-    ***/
-
-  }, {
-    key: "addNewFrameButton",
-    value: function addNewFrameButton(elementId) {
-      var _this3 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        _this3.animationProj.addNewFrame();
-      });
-    }
-    /***
-        delete current layer
-        shifts the current layer to the next one if there is one.
-        otherwise, the previous layer will become the current one.
-        if there isn't a previous one either, then the layer will just be made blank.
-    ***/
-
-  }, {
-    key: "deleteLayer",
-    value: function deleteLayer(elementId, setStateFunction) {
-      var _this4 = this;
-
-      // elementId here refers to the display that shows current frame and layer
-      document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this4.animationProj.getCurrFrame();
-
-        var oldLayerIndex = frame.getCurrCanvasIndex();
-        var oldLayer = frame.getCurrCanvas();
-        var parentNode = document.getElementById(oldLayer.id).parentNode;
-        var layerList = frame.getLayers();
-
-        if (oldLayerIndex + 1 < layerList.length || oldLayerIndex - 1 >= 0) {
-          frame.deleteLayer(oldLayerIndex);
-          parentNode.removeChild(oldLayer);
-
-          _this4.brush.applyBrush();
-        } else {
-          // otherwise, just blank the canvas 
-          var context = oldLayer.getContext("2d");
-          context.clearRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
-          context.fillStyle = "#fff";
-          context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
-        }
-
-        setStateFunction(frame.getCurrCanvasIndex());
-      });
-    }
-    /***
-    	delete current frame
-    ***/
-
-  }, {
-    key: "deleteCurrentFrameButton",
-    value: function deleteCurrentFrameButton(elementId, setStateFunction) {
-      var _this5 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        var currFrameIdx = _this5.animationProj.getCurrFrameIndex(); // move to another frame first before deleting
-
-
-        if (currFrameIdx - 1 >= 0) {
-          _this5.prevFrame();
-        } else {
-          // go forward a frame
-          _this5.nextFrame();
-        }
-
-        if (_this5.animationProj.deleteFrame(currFrameIdx)) {
-          setStateFunction(currFrameIdx); // the index of the frame we deleted
-        }
-      });
-    }
-    /***
-    	change layer order for current frame on button press
-    ***/
-
-  }, {
-    key: "changeCurrentFrameLayerOrder",
-    value: function changeCurrentFrameLayerOrder(elementId, setStateFunction) {
-      document.getElementById(elementId).addEventListener('click', function () {
-        // I'm not sure why right now but something weird happens after calling 
-        // changeCurrentFrameLayerOrder for the first time.
-        // it acts as expected but also I get an error saying setStateFunction is undefined 
-        // in the console. :/ so for now check if setStateFunction is not undefined?
-        if (setStateFunction) {
-          setStateFunction(null);
-        }
-      });
-    }
-    /***
-        color wheel functions
-    ***/
-    // pass in the elementId of the div where the color wheel should be 
-    // pass in the size of the canvas of the color wheel 
-
-  }, {
-    key: "createColorWheel",
-    value: function createColorWheel(elementId, size) {
-      var _this6 = this;
-
-      var location = document.getElementById(elementId);
-      var colorWheel = document.createElement('canvas');
-      colorWheel.id = "colorWheel";
-      colorWheel.setAttribute('width', size);
-      colorWheel.setAttribute('height', size);
-      var colorWheelContext = colorWheel.getContext('2d');
-      var x = colorWheel.width / 2;
-      var y = colorWheel.height / 2;
-      var radius = 90; // why 5600??
-
-      for (var angle = 0; angle <= 5600; angle++) {
-        var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
-
-        var endAngle = angle * Math.PI / 180;
-        colorWheelContext.beginPath();
-        colorWheelContext.moveTo(x, y); //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
-
-        colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
-        colorWheelContext.closePath(); //use .createRadialGradient to get a different color for each angle
-        //createRadialGradient(x0, y0, r0, x1, y1, r1)
-
-        var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
-        gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
-        gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
-        colorWheelContext.fillStyle = gradient;
-        colorWheelContext.fill();
-      } // make black a pickable color 
-
-
-      colorWheelContext.fillStyle = "#000";
-      colorWheelContext.beginPath();
-      colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
-      colorWheelContext.fill(); // make white pickable too
-      // black outline
-
-      colorWheelContext.beginPath();
-      colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 
-
-      colorWheelContext.stroke(); // make sure circle is filled with #fff
-
-      colorWheelContext.fillStyle = "#fff";
-      colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
-      colorWheelContext.fill();
-      location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
-
-      var showColor = document.createElement('p'); // this element will show the color picked 
-
-      showColor.style.textAlign = 'center';
-      showColor.id = 'colorPicked';
-      showColor.textContent = "pick a color! :)";
-      location.appendChild(showColor);
-      document.getElementById(colorWheel.id).addEventListener('mousedown', function (evt) {
-        var x = evt.offsetX;
-        var y = evt.offsetY;
-        var colorPicked = document.getElementById(colorWheel.id).getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
-
-        var colorPickedText = document.getElementById(showColor.id);
-
-        if (colorPicked[0] > 10 && colorPicked[1] > 200) {
-          colorPickedText.style.color = "#000";
-        } else {
-          colorPickedText.style.color = "#FFF";
-        }
-
-        colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
-        colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
-
-        _this6.brush.currColorArray = colorPicked;
-        _this6.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
-      });
-    }
-    /***
-        rotate image
-        pass in an element id that will rotate the current canvas image on click
-        
-        currently buggy! after rotation, image becomes blurred. also, when attempting to draw on same canvas,
-        coordinates get altered so on mousedown the drawing gets offset
-    ***/
-
-  }, {
-    key: "rotateImage",
-    value: function rotateImage(elementId) {
-      var _this7 = this;
-
-      //rotate image
-      document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this7.animationProj.getCurrFrame(); //using a promise to convert the initial image to a bitmap
-
-
-        var width = canvas.currentCanvas.getAttribute("width");
-        var height = canvas.currentCanvas.getAttribute("height");
-        var context = canvas.currentCanvas.getContext("2d");
-        Promise.all([createImageBitmap(canvas.currentCanvas, 0, 0, width, height)]).then(function (bitmap) {
-          context.clearRect(0, 0, width, height);
-          context.translate(width / 2, height / 2);
-          context.rotate(Math.PI / 180);
-          context.translate(-width / 2, -height / 2); //the returned bitmap is an array
-
-          context.drawImage(bitmap[0], 0, 0);
-        });
-      });
-    }
-    /***
-        clear the current canvas
-        pass in an element id that will execute clear canvas onclick
-    ***/
-
-  }, {
-    key: "setClearCanvas",
-    value: function setClearCanvas(elementId) {
-      var _this8 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this8.animationProj.getCurrFrame();
-
-        var context = canvas.currentCanvas.getContext("2d");
-        context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
-        context.fillStyle = "#FFFFFF";
-        context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
-      });
-    }
-    /***
-        undo a previous drawing operation on the current canvas.
-        still a little incorrect? - TODO: needs work
-    - problem: undo affects all layers and is not specific to one canvas (which it should)
-    maybe the frame class should store layer info for undo
-    ***/
-
-  }, {
-    key: "undo",
-    value: function undo(elementId) {
-      var _this9 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this9.animationProj.getCurrFrame();
-
-        var context = canvas.currentCanvas.getContext("2d");
-        var width = canvas.currentCanvas.getAttribute("width");
-        var height = canvas.currentCanvas.getAttribute("height"); // unshift to add to front of stack of snapshots. 
-
-        _this9.brush.currentCanvasSnapshots.unshift(context.getImageData(0, 0, width, height)); // clear first
-
-
-        context.clearRect(0, 0, width, height); // then put back last image (ignore the one that had just been drawn)
-        // snapshots is a variable that only holds all the images up to the 2nd to last image drawn. 
-        // if you keep up to the last image drawn, then you have to click undo twice initially to get to the previous frame.
-
-        if (_this9.brush.currentCanvasSnapshots.length >= 1) {
-          var mostRecentImage = _this9.brush.currentCanvasSnapshots.pop();
-
-          context.putImageData(mostRecentImage, 0, 0);
-        }
-      });
-    }
-    /***
-        import an image
-    ***/
-
-  }, {
-    key: "importImage",
-    value: function importImage(elementId) {
-      var _this10 = this;
-
-      var self = this;
-      document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this10.animationProj.getCurrFrame(); // call fileHandler here
-
-
-        fileHandler(); // define fileHandler 
-
-        function fileHandler() {
-          //initiate file choosing after button click
-          var input = document.createElement('input');
-          input.type = 'file';
-          input.addEventListener('change', getFile, false);
-          input.click();
-        }
-
-        function getFile(e) {
-          var img = new Image();
-          var reader = new FileReader();
-          var file = e.target.files[0];
-
-          if (!file.type.match(/image.*/)) {
-            console.log("not a valid image");
-            return;
-          } //when the image loads, put it on the canvas.
-
-
-          img.onload = function () {
-            // change current canvas' width and height according to imported picture
-            var currentCanvas = canvas.currentCanvas;
-            var context = currentCanvas.getContext("2d");
-            var height = img.height;
-            var width = img.width; // default value in super canvas object
-
-            height = canvas.height;
-            width = canvas.width;
-            currentCanvas.setAttribute('height', height);
-            currentCanvas.setAttribute('width', width);
-            context.drawImage(img, 0, 0, width, height); // assign recentImage the image 
-
-            self.recentImage = img; // add the current image to snapshots 
-
-            self.brush.currentCanvasSnapshots.push(context.getImageData(0, 0, width, height));
-          }; //after reader has loaded file, put the data in the image object.
-
-
-          reader.onloadend = function () {
-            img.src = reader.result;
-          }; //read the file as a URL
-
-
-          reader.readAsDataURL(file);
-        }
-      });
-    }
-    /***
-        reset the canvas to most recent imported image
-    ***/
-
-  }, {
-    key: "resetImage",
-    value: function resetImage() {
-      if (this.recentImage) {
-        var _canvas = this.animationProj.getCurrFrame();
-
-        var context = _canvas.currentCanvas.getContext("2d");
-
-        var height = _canvas.currentCanvas.getAttribute("height");
-
-        var width = _canvas.currentCanvas.getAttribute("width");
-
-        context.drawImage(this.recentImage, 0, 0, width, height);
-      }
-    }
-    /***
-        download a png file of the current layer
-    ***/
-
-  }, {
-    key: "downloadLayer",
-    value: function downloadLayer(elementId) {
-      var _this11 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        // get image data from current canvas as blob
-        var canvas = _this11.animationProj.getCurrFrame();
-
-        var data = document.getElementById(canvas.currentCanvas.id).toBlob(function (blob) {
-          var url = URL.createObjectURL(blob);
-          var link = document.createElement('a');
-          link.href = url;
-          var name = prompt("please enter a name for the file");
-
-          if (name === null) {
-            return;
-          } else {
-            link.download = name; //simulate a click on the blob's url to download it 
-
-            link.click();
-          }
-        });
-      });
-    }
-    /***
-    	download a png file of the current frame
-    ***/
-
-  }, {
-    key: "downloadFrame",
-    value: function downloadFrame(elementId) {
-      var _this12 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this12.animationProj.getCurrFrame();
-
-        var mergedLayers = _this12.mergeFrameLayers(frame);
-
-        var data = mergedLayers.toBlob(function (blob) {
-          var url = URL.createObjectURL(blob);
-          var link = document.createElement('a');
-          link.href = url;
-          var name = prompt("please enter a name for the file");
-
-          if (name === null) {
-            return;
-          } else {
-            link.download = name;
-            link.click();
-          }
-        });
-      });
-    }
-    /********
-    
-        this section controls the animation playback features
-        
-        note that I specifically added my page counter element to the
-        functions so that they change with the call to up() and down()
-          this will need to be applied for FRAMES, not LAYERS of a frame.
-    
-    *********/
-    //let toolbar = this;
-
-  }, {
-    key: "playFor",
-    value: function playFor() {
-      if (this.nextFrame()) {
-        if (this.htmlCounter) {
-          var counterText = this.htmlCounter;
-          counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-        }
-      }
-    }
-  }, {
-    key: "playBack",
-    value: function playBack() {
-      if (this.prevFrame()) {
-        if (this.htmlCounter) {
-          var counterText = this.htmlCounter;
-          counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-        }
-      }
-    }
-  }, {
-    key: "playForward",
-    value: function playForward() {
-      clearInterval(this.play);
-      this.play = null;
-      this.play = setInterval(this.playFor, this.timePerFrame);
-    }
-  }, {
-    key: "playBackward",
-    value: function playBackward() {
-      clearInterval(this.play);
-      this.play = null;
-      this.play = setInterval(this.playBack, this.timePerFrame);
-    }
-  }, {
-    key: "stop",
-    value: function stop() {
-      clearInterval(this.play);
-      this.play = null;
-    }
-  }, {
-    key: "mergeFrameLayers",
-    value: function mergeFrameLayers(frame) {
-      var tempCanvas = document.createElement('canvas');
-      var tempCtx = tempCanvas.getContext("2d");
-      tempCanvas.width = frame.width;
-      tempCanvas.height = frame.height;
-      tempCtx.fillStyle = "white";
-      tempCtx.fillRect(0, 0, frame.width, frame.height);
-      var tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-
-      for (var j = 0; j < frame.canvasList.length; j++) {
-        var layer = frame.canvasList[j]; // possible issue: this assumes that all layers within a frame share the same dimensions (but it should be that way, right?)
-
-        var imageData = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height).data;
-
-        for (var k = 0; k < imageData.length; k += 4) {
-          if (imageData[k] === 255 && imageData[k + 1] === 255 && imageData[k + 2] === 255) {
-            continue;
-          } else {
-            // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
-            // we might run into index/length issues...
-            tempImageData.data[k] = imageData[k];
-            tempImageData.data[k + 1] = imageData[k + 1];
-            tempImageData.data[k + 2] = imageData[k + 2];
-            tempImageData.data[k + 3] = 255;
-          }
-        } // apply each layer to the onion skin
-
-
-        tempCtx.putImageData(tempImageData, 0, 0);
-      }
-
-      return tempCanvas;
-    }
-    /***
-    
-        create a gif from the frames.
-        using gif.js - https://github.com/jnordberg/gif.js
-    
-        elementId is for the loading message,
-        i.e. a <p> element that says "now loading..."
-        
-        this will need to be applied for FRAMES, not LAYERS of a frame.
-    
-    timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), i.e.
-    {
-    1: 100, // frame 1
-    2: 1000 // frame 2
-    }
-    ***/
-
-  }, {
-    key: "getGif",
-    value: function getGif(elementId, timelineMarkers) {
-      if (elementId) {
-        document.getElementById(elementId).textContent = "now loading...";
-      }
-
-      var gif = new GIF({
-        workers: 2,
-        quality: 10
-      }); // add frames + take into account frame rate given by timelineMarkers
-
-      for (var i = 0; i < this.animationProj.frameList.length; i++) {
-        var tempCanvas = this.mergeFrameLayers(this.animationProj.frameList[i]);
-        var frameTime = timelineMarkers[i + 1] ? timelineMarkers[i + 1] : this.timePerFrame;
-        gif.addFrame(tempCanvas, {
-          delay: frameTime
-        });
-      }
-
-      gif.on('finished', function (blob) {
-        document.getElementById(elementId).textContent = "";
-        var newGif = URL.createObjectURL(blob);
-        window.open(newGif);
-      });
-      gif.render();
-    }
-    /***
-    
-        save/export & import functions
-        check this out: https://stackoverflow.com/questions/22329481/compressing-base64-data-uri-images
-        
-        don't think this is going to work for large projects without some sort of better compression. simply drawing a few lines on
-        a canvas produces a very large base64 string spanning many lines. not very practical for exporting a project
-        that has several frames, especially if you take into account different colors and more detail
-        
-    ***/
-
-  }, {
-    key: "save",
-    value: function save(elementId) {
-      var _this13 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        // prompt the user to name the file 
-        var name = prompt("name of file: ");
-
-        if (name === "") {
-          name = "funSketch_saveFile";
-        } else if (name === null) {
-          return;
-        }
-
-        var savedData = [];
-
-        _this13.animationProj.frameList.forEach(function (frame) {
-          // get frame metadata
-          var newFrame = frame.getMetadata();
-          newFrame['layers'] = []; // list of objects
-
-          frame.canvasList.forEach(function (layer) {
-            // get layer metadata
-            var newLayer = {
-              'id': layer.id,
-              'width': layer.getAttribute("width"),
-              'height': layer.getAttribute("height"),
-              'zIndex': layer.style.zIndex,
-              'opacity': layer.style.opacity
-            }; // add layer image data
-
-            newLayer['imageData'] = layer.toDataURL();
-            newFrame.layers.push(newLayer);
-          });
-          savedData.push(JSON.stringify(newFrame));
-        });
-
-        var json = "[\n";
-        json += savedData.join(",\n"); // put a line break between each new object, which represents a frame
-
-        json += "\n]"; // make a blob so it can be downloaded 
-
-        var blob = new Blob([json], {
-          type: "application/json"
-        });
-        var url = URL.createObjectURL(blob);
-        var link = document.createElement('a');
-        link.href = url;
-        link.download = name + ".json";
-        link.click();
-      });
-    }
-  }, {
-    key: "importProject",
-    value: function importProject(elementId, updateStateFunction) {
-      var self = this;
-      document.getElementById(elementId).addEventListener('click', function () {
-        fileHandler(); //import project json file
-
-        function fileHandler() {
-          var input = document.createElement('input');
-          input.type = 'file';
-          input.addEventListener('change', getFile, false);
-          input.click();
-        }
-
-        function getFile(e) {
-          var reader = new FileReader();
-          var file = e.target.files[0]; //when the file loads, put it on the canvas.
-
-          reader.onload = function (theFile) {
-            return function (e) {
-              // parse the JSON using JSON.parse 
-              // check if it can be parsed though first!
-              var data;
-
-              try {
-                data = JSON.parse(e.target.result);
-              } catch (e) {
-                // not valid json file 
-                return;
-              } // do some validation
-              // if there is no canvas
-              // or it's a valid json object but no fields correspond to a canvas, quit
-
-
-              if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
-                console.log("it appears to not be a valid project! :<");
-                return;
-              } // clear existing project
-
-
-              self.animationProj.resetProject(); // load saved project
-
-              data.forEach(function (frame, index) {
-                if (index > 0) {
-                  // add a new frame
-                  self.animationProj.addNewFrame();
-                } // overwrite existing frame
-                // TODO: implement an updateFrame method 
-                // something like: animationProj.updateFrame(0, frame);
-
-
-                var currFrame = self.animationProj.getFrames()[index];
-                var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-
-                var currFrameLayersFromCurrPrj = currFrame.getLayers();
-                currFrameLayersFromImport.forEach(function (layer, layerIndex) {
-                  if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
-                    // add new layer to curr project as needed based on import
-                    currFrame.setupNewLayer();
-                  }
-
-                  var currLayer = self.animationProj.getFrames()[index].getLayers()[layerIndex]; // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
-
-                  currLayer.style.opacity = layer.opacity;
-                  currLayer.style.zIndex = layer.zIndex; // add the image data 
-
-                  var newCtx = currLayer.getContext("2d");
-                  var img = new Image();
-
-                  (function (context, image) {
-                    image.onload = function () {
-                      context.drawImage(image, 0, 0);
-
-                      if (index === data.length - 1 && updateStateFunction) {
-                        updateStateFunction();
-                      }
-                    };
-
-                    image.src = layer.imageData;
-                  })(newCtx, img); // make sure to update this frame's current canvas so it matches currentIndex
-                  // another thing to refactor later (i.e. since we have currentIndex, we really shouldn't have another variable
-                  // to keep track of whose value could be known with currentIndex)
-
-
-                  if (layerIndex === currFrame.currentIndex) {
-                    currFrame.currentCanvas = currLayer;
-                  }
-                });
-                currFrame.setCurrIndex(frame.currentIndex);
-              });
-            };
-          }(file);
-
-          reader.readAsText(file);
-        }
-      });
-    }
-  }]);
-
-  return Toolbar;
-}(); // end of Toolbar 
-
 
 
 
@@ -3990,7 +1812,7 @@ var EdgeDetection = /*#__PURE__*/function (_FilterTemplate) {
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(EdgeDetection, [{
     key: "grayscale",
-    value: function grayscale() {// TODO
+    value: function grayscale() {// TODO or not TODO? do we actually need this
     }
   }, {
     key: "filter",
@@ -4956,6 +2778,2277 @@ var Voronoi = /*#__PURE__*/function (_FilterTemplate) {
 
   return Voronoi;
 }(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_6__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./components/utils/AnimationProject.js":
+/*!**********************************************!*\
+  !*** ./components/utils/AnimationProject.js ***!
+  \**********************************************/
+/*! exports provided: Frame, AnimationProject, createOnionSkinFrame, setCanvas */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Frame", function() { return Frame; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AnimationProject", function() { return AnimationProject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createOnionSkinFrame", function() { return createOnionSkinFrame; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setCanvas", function() { return setCanvas; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+/***
+    a class representing a frame, containing a list of canvas elements which represent layers of the frame
+***/
+var Frame = /*#__PURE__*/function () {
+  function Frame(containerId, number) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Frame);
+
+    this.currentIndex = 0; // index of currently showing layer
+
+    this.canvasList = []; // keep a list of all canvas instances
+
+    this.currentCanvas; // the current, active canvas being looked at (reference to html element)
+
+    this.containerId = containerId; // this is the html container id to hold all the layers of this frame
+
+    this.number = number; // this frame's number
+
+    this.count = 0; // current number of layers
+
+    this.width = 0;
+    this.height = 0;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Frame, [{
+    key: "getMetadata",
+    value: function getMetadata() {
+      return {
+        'width': this.width,
+        'height': this.height,
+        'containerId': this.containerId,
+        'currentIndex': this.currentIndex,
+        'number': this.number
+      };
+    }
+  }, {
+    key: "getContainerId",
+    value: function getContainerId() {
+      return this.containerId;
+    }
+  }, {
+    key: "getCurrCanvasIndex",
+    value: function getCurrCanvasIndex() {
+      return this.currentIndex;
+    }
+  }, {
+    key: "getCurrCanvas",
+    value: function getCurrCanvas() {
+      return this.canvasList[this.currentIndex];
+    }
+  }, {
+    key: "getLayers",
+    value: function getLayers() {
+      return this.canvasList;
+    } // canvasList: list of canvas elements
+
+  }, {
+    key: "setLayers",
+    value: function setLayers(canvasList) {
+      this.canvasList = canvasList;
+    }
+  }, {
+    key: "setCurrIndex",
+    value: function setCurrIndex(index) {
+      if (index <= this.canvasList.length - 1 && index >= 0) {
+        this.currentIndex = index;
+        this.currentCanvas = this.canvasList[index];
+      }
+    }
+    /***
+        set up a new canvas element
+        makes the new canvas the current canvas
+    ***/
+
+  }, {
+    key: "setupNewLayer",
+    value: function setupNewLayer() {
+      // create the new canvas element 
+      var newCanvas = document.createElement('canvas');
+      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
+      document.getElementById(this.containerId).appendChild(newCanvas);
+      setCanvas(newCanvas);
+
+      if (this.count === 0) {
+        newCanvas.style.opacity = .97;
+        newCanvas.style.zIndex = 1;
+        this.width = newCanvas.width;
+        this.height = newCanvas.height;
+      } // set new canvas to be the current canvas only initially!
+
+
+      if (this.count === 0) {
+        this.currentCanvas = newCanvas;
+      }
+
+      this.canvasList.push(newCanvas);
+      this.count++;
+    }
+  }, {
+    key: "_showLayer",
+    value: function _showLayer(canvas) {
+      canvas.style.opacity = .97;
+      canvas.style.zIndex = 1;
+    }
+  }, {
+    key: "_hideLayer",
+    value: function _hideLayer(canvas) {
+      canvas.style.opacity = 0;
+      canvas.style.zIndex = 0;
+    } // make current canvas an onion skin
+
+  }, {
+    key: "_makeCurrLayerOnion",
+    value: function _makeCurrLayerOnion(canvas) {
+      canvas.style.opacity = .92; // apply onion skin to current canvas 
+
+      canvas.style.zIndex = 0;
+    }
+  }, {
+    key: "nextLayer",
+    value: function nextLayer() {
+      // this moves the current layer to the next one if exists
+      if (this.currentIndex + 1 < this.canvasList.length) {
+        // move to next canvas and apply onion skin to current canvas
+        var currLayer = this.currentCanvas;
+
+        this._makeCurrLayerOnion(currLayer); // in the special case for when you want to go to the next canvas from the very first one, 
+        // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
+
+
+        if (currLayer.currentIndex > 0) {
+          var prevLayer = this.canvasList[this.currentIndex - 1]; // reset opacity and z-index for previous canvas (because of onionskin)
+
+          this._hideLayer(prevLayer);
+        } // show the next canvas 
+
+
+        var nextLayer = this.canvasList[this.currentIndex + 1];
+
+        this._showLayer(nextLayer);
+
+        this.currentCanvas = nextLayer;
+        this.currentIndex++;
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "prevLayer",
+    value: function prevLayer() {
+      // this moves the current layer to the previous one if exists
+      if (this.currentIndex - 1 >= 0) {
+        var currLayer = this.currentCanvas;
+
+        this._hideLayer(currLayer); // make previous canvas visible 
+
+
+        var prevLayer = this.canvasList[this.currentIndex - 1];
+
+        this._showLayer(prevLayer); // if there is another canvas before the previous one, apply onion skin
+
+
+        if (this.currentIndex - 2 >= 0) {
+          this.canvasList[this.currentIndex - 2].style.opacity = .92;
+        }
+
+        this.currentCanvas = prevLayer;
+        this.currentIndex--;
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      // makes all layers not visible
+      this.canvasList.forEach(function (canvas) {
+        canvas.style.zIndex = -1;
+        canvas.style.visibility = "hidden";
+      });
+    }
+  }, {
+    key: "show",
+    value: function show() {
+      // makes all layers visible
+      var activeLayerOpacity = .97;
+      this.canvasList.forEach(function (canvas) {
+        if (canvas.style.opacity >= activeLayerOpacity) {
+          canvas.style.zIndex = 1;
+        } else {
+          canvas.style.zIndex = 0;
+        }
+
+        canvas.style.visibility = "";
+      });
+    } // TODO: why have this and setCurrIndex()??
+    // layerIndex (int) = the index of the layer to make active (current layer)
+    // onionSkin (bool) = whether onionskin should be visible 
+
+  }, {
+    key: "setToLayer",
+    value: function setToLayer(layerIndex, onionSkin) {
+      // note that this does not hide the previous layer + previous onion skin before switching to 
+      // the new layer.
+      var newLayer = this.canvasList[layerIndex];
+      newLayer.style.opacity = 0.97;
+      newLayer.style.zIndex = 1;
+      this.currentCanvas = newLayer;
+      this.currentIndex = layerIndex;
+
+      if (onionSkin && layerIndex - 1 > 0) {
+        // apply onionskin
+        var prevLayer = this.canvasList[layerIndex - 1];
+        prevLayer.style.opacity = .92;
+        prevLayer.style.zIndex = 0;
+      }
+    }
+  }, {
+    key: "deleteLayer",
+    value: function deleteLayer(layerIndex) {
+      if (layerIndex + 1 < this.canvasList.length) {
+        // move current canvas to the next one if there is one
+        this.nextLayer(); // then remove the old canvas from the array and the DOM!
+
+        this.canvasList.splice(layerIndex, 1); // adjust the current canvas index after the removal 
+
+        this.currentIndex -= 1;
+      } else if (layerIndex - 1 >= 0) {
+        // if there's a canvas behind the current one (and no more ahead)
+        // move current canvas to the previous one 
+        // note that currentIndex doesn't need to be adjusted because removing the 
+        // next canvas doesn't affect the current canvas' index
+        this.prevLayer();
+        this.canvasList.splice(layerIndex, 1);
+      }
+    }
+    /***
+        clone the current canvas
+    this creates a new layer whose image data is the same as the current canvas.
+    		not sure I'm using this?
+    ***/
+
+  }, {
+    key: "copyCanvas",
+    value: function copyCanvas() {
+      var newCanvas = document.createElement('canvas');
+      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
+      setCanvas(newCanvas, this.width, this.height);
+      newCanvas.style.opacity = 0.97;
+      document.getElementById(this.containerId).appendChild(newCanvas);
+      newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
+      this.canvasList.push(newCanvas);
+      this.count++;
+    }
+  }, {
+    key: "clearCurrentLayer",
+    value: function clearCurrentLayer() {
+      var currLayer = this.getCurrCanvas();
+      var context = currLayer.getContext("2d");
+      context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
+      context.fillStyle = "#FFFFFF";
+      context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
+    }
+  }, {
+    key: "resetFrame",
+    value: function resetFrame() {// TODO: remove all layers except first layer, then clear it
+    }
+  }]);
+
+  return Frame;
+}();
+/***
+    an AnimationProject represents a single project containing one or more frames.
+    it also instantiates an onion skin frame.
+***/
+
+
+var AnimationProject = /*#__PURE__*/function () {
+  function AnimationProject(containerId) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, AnimationProject);
+
+    this.name = "";
+    this.currentFrameIndex = 0; // index of current frame
+
+    this.speed = 100; // 100 ms per frame 
+
+    this.frameList = [];
+    this.onionSkinFrame = createOnionSkinFrame(containerId);
+    this.onionSkinFrame.style.display = 'none'; // hide it initially
+
+    this.containerId = containerId; // id of the html element the frames are displayed in
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(AnimationProject, [{
+    key: "getContainerId",
+    value: function getContainerId() {
+      return this.containerId;
+    }
+  }, {
+    key: "getFrames",
+    value: function getFrames() {
+      return this.frameList;
+    }
+  }, {
+    key: "getCurrFrameIndex",
+    value: function getCurrFrameIndex() {
+      return this.currentFrameIndex;
+    }
+  }, {
+    key: "getCurrFrame",
+    value: function getCurrFrame() {
+      return this.frameList[this.currentFrameIndex];
+    }
+  }, {
+    key: "resetProject",
+    value: function resetProject() {
+      this.frameList.forEach(function (frame, frameIndex) {
+        var parent = document.getElementById(frame.getContainerId()); // just keep the first frame
+
+        frame.canvasList.forEach(function (layer, layerIndex) {
+          if (frameIndex > 0 || frameIndex === 0 && layerIndex > 0) {
+            parent.removeChild(layer);
+          }
+        });
+
+        if (frameIndex === 0) {
+          frame.setLayers([frame.getLayers()[0]]);
+          frame.setCurrIndex(0);
+        }
+      });
+      this.frameList = [this.frameList[0]]; // clear the first layer of the first frame!
+
+      this.frameList[0].clearCurrentLayer();
+      this.currentFrameIndex = 0;
+      this.speed = 100;
+      this.frameList[0].getCurrCanvas().style.visibility = "";
+      this.clearOnionSkin();
+    }
+  }, {
+    key: "addNewFrame",
+    value: function addNewFrame(showFlag) {
+      var newFrame = new Frame(this.containerId, this.frameList.length);
+      newFrame.setupNewLayer();
+      this.frameList.push(newFrame);
+
+      if (!showFlag) {
+        newFrame.hide();
+      }
+    }
+  }, {
+    key: "deleteFrame",
+    value: function deleteFrame(index) {
+      // don't allow removal if only one frame exists
+      if (this.frameList.length === 1 || index < 0 || index > this.frameList.length - 1) {
+        return false;
+      }
+
+      var frame = this.frameList[index]; // remove frame from frameList
+
+      this.frameList.splice(index, 1); // remove all layers
+
+      var parentContainer = document.getElementById(frame.getContainerId());
+      frame.getLayers().forEach(function (layer) {
+        parentContainer.removeChild(layer);
+      });
+      return true;
+    }
+  }, {
+    key: "nextFrame",
+    value: function nextFrame() {
+      if (this.frameList.length <= this.currentFrameIndex + 1) {
+        return null; // no more frames to see
+      }
+
+      this.currentFrameIndex += 1;
+      this.updateOnionSkin();
+      return this.frameList[this.currentFrameIndex];
+    }
+  }, {
+    key: "prevFrame",
+    value: function prevFrame() {
+      if (this.currentFrameIndex - 1 < 0) {
+        return null; // no more frames to see
+      }
+
+      this.currentFrameIndex -= 1;
+      this.updateOnionSkin();
+      return this.frameList[this.currentFrameIndex];
+    }
+  }, {
+    key: "goToFrame",
+    value: function goToFrame(frameIndex) {
+      if (frameIndex > this.frameList.length - 1 || frameIndex < 0) {
+        return null;
+      }
+
+      this.currentFrameIndex = frameIndex;
+      this.updateOnionSkin();
+      return this.frameList[this.currentFrameIndex];
+    } // this method takes all the layers of a frame, merges them, and places the resulting image
+    // on a specific 'onionskin' canvas. when moving from one frame to another, the 'onionskin' of the
+    // previous frame will be visible.
+
+  }, {
+    key: "updateOnionSkin",
+    value: function updateOnionSkin() {
+      if (this.currentFrameIndex - 1 < 0) {
+        // no onionskin for very first frame 
+        this.onionSkinFrame.style.opacity = 0;
+        return;
+      }
+
+      this.onionSkinFrame.style.display = ''; // show onion skin
+
+      var onionSkinCtx = this.onionSkinFrame.getContext("2d");
+      onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // take the previous frame, merge all layers, put into onion skin frame
+      // try this? only draw pixels that are non-white?
+
+      var onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // build the merged image from the first to last
+
+      var prevFrame = this.frameList[this.currentFrameIndex - 1];
+      prevFrame.getLayers().forEach(function (layer) {
+        var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
+
+        for (var i = 0; i < imageData.length; i += 4) {
+          if (imageData[i] === 255 && imageData[i + 1] === 255 && imageData[i + 2] === 255) {
+            continue;
+          } else {
+            // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
+            // we might run into index/length issues...
+            onionSkinImageData.data[i] = imageData[i];
+            onionSkinImageData.data[i + 1] = imageData[i + 1];
+            onionSkinImageData.data[i + 2] = imageData[i + 2];
+            onionSkinImageData.data[i + 3] = 255;
+          }
+        } // apply each layer to the onion skin
+
+
+        onionSkinCtx.putImageData(onionSkinImageData, 0, 0);
+      });
+      this.onionSkinFrame.style.zIndex = 0;
+      this.onionSkinFrame.style.opacity = 0.92;
+    }
+  }, {
+    key: "clearOnionSkin",
+    value: function clearOnionSkin() {
+      var onionSkin = this.onionSkinFrame;
+      var context = this.onionSkinFrame.getContext("2d");
+      context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
+      context.fillStyle = "#FFFFFF";
+      context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
+    }
+  }]);
+
+  return AnimationProject;
+}();
+
+function createOnionSkinFrame(container) {
+  // create the new canvas element 
+  var newCanvas = document.createElement('canvas');
+  newCanvas.id = "onionSkinCanvas";
+  document.getElementById(container).appendChild(newCanvas);
+  setCanvas(newCanvas);
+  newCanvas.style.opacity = .97;
+  newCanvas.style.zIndex = -1; // TODO: come back to this later. make sure it's visible if current frame > 1!
+
+  return newCanvas;
+} // assigns default canvas attributes and styling
+
+
+function setCanvas(canvasElement, width, height) {
+  canvasElement.style.position = "absolute";
+  canvasElement.style.border = '1px #000 solid';
+  canvasElement.style.zIndex = 0;
+  canvasElement.style.opacity = 0;
+  canvasElement.style.width = "100%";
+  canvasElement.style.height = "100%";
+  canvasElement.width = width ? width : canvasElement.offsetWidth;
+  canvasElement.height = height ? height : canvasElement.offsetHeight;
+  canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,255)";
+  canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+}
+
+
+
+/***/ }),
+
+/***/ "./components/utils/Brush.js":
+/*!***********************************!*\
+  !*** ./components/utils/Brush.js ***!
+  \***********************************/
+/*! exports provided: Brush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Brush", function() { return Brush; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+/***
+    brush class
+    pass in an instance of the AnimationProject class as an argument
+	
+	the current canvas element will be the target for the brush
+***/
+var Brush = /*#__PURE__*/function () {
+  function Brush(animationProj) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Brush);
+
+    // pass in an animation project, from which you can access the current frame and the current canvas
+    this.animationProject = animationProj;
+    this.previousCanvas = null;
+    this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
+
+    this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
+
+    this.selectedBrush = 'default'; // user-selected brush 
+
+    this.currColor = 'rgb(0,0,0)';
+    this.currColorArray = Uint8Array.from([0, 0, 0, 0]);
+    this.currSize = 2; // keep track of the pixels drawn on by the mouse.
+    // the redraw function uses this data to connect the dots 
+
+    this.clickX = [];
+    this.clickY = [];
+    this.clickDrag = [];
+    this.clickColor = [];
+    this.clickSize = []; // hold the current image after mouseup. 
+    // only put it in the currentCanvasSnapshots after user starts drawing again, creating a new snapshot
+
+    this.tempSnapshot = null;
+  } //collect info where each pixel is to be drawn on canvas
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Brush, [{
+    key: "_addClick",
+    value: function _addClick(x, y, color, size, dragging) {
+      this.clickX.push(x);
+      this.clickY.push(y);
+      this.clickDrag.push(dragging);
+      this.clickColor.push(color === null ? this.currColor : color);
+      this.clickSize.push(size === null ? this.currSize : size);
+    }
+  }, {
+    key: "_redraw",
+    value: function _redraw(strokeFunction) {
+      var frame = this.animationProject.getCurrFrame();
+      var context = frame.getCurrCanvas().getContext("2d");
+      context.lineJoin = 'round';
+      strokeFunction(context);
+    }
+  }, {
+    key: "_clearClick",
+    value: function _clearClick() {
+      this.clickX = [];
+      this.clickY = [];
+      this.clickDrag = [];
+      this.clickColor = [];
+      this.clickSize = [];
+    }
+  }, {
+    key: "_handleTouchEvent",
+    value: function _handleTouchEvent(evt) {
+      var rect = evt.target.getBoundingClientRect();
+      var x = evt.touches[0].pageX - rect.left;
+      var y = evt.touches[0].pageY - rect.top - window.pageYOffset;
+      return {
+        'x': x,
+        'y': y
+      };
+    }
+  }, {
+    key: "resetBrush",
+    value: function resetBrush() {
+      // detach any events from mouse actions (reset the events connected with mouse events) from previous layer worked on
+      var frame = this.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      for (var eventType in this.currentEventListeners) {
+        currLayer.removeEventListener(eventType, this.currentEventListeners[eventType]);
+        delete this.currentEventListeners[eventType];
+      }
+    }
+  }, {
+    key: "changeBrushSize",
+    value: function changeBrushSize(size) {
+      this.currSize = size;
+    }
+  }, {
+    key: "getBrushType",
+    value: function getBrushType() {
+      return this.selectedBrush;
+    }
+  }, {
+    key: "setBrushType",
+    value: function setBrushType(brushType) {
+      this.selectedBrush = brushType;
+    }
+  }, {
+    key: "applyBrush",
+    value: function applyBrush() {
+      // pretty hacky but will refactor later...probably
+      var selectedBrush = this.selectedBrush;
+
+      switch (selectedBrush) {
+        case 'default':
+          this.defaultBrush();
+          break;
+
+        case 'pen':
+          this.penBrush();
+          break;
+
+        case 'radial':
+          this.radialGradBrush();
+          break;
+
+        case 'floodfill':
+          this.floodfillBrush();
+          break;
+
+        case 'eraser':
+          this.eraserBrush();
+          break;
+
+        default:
+          console.log("the selected brush does not exist");
+      }
+    }
+    /***
+    	eraser brush
+    ***/
+
+  }, {
+    key: "eraserBrush",
+    value: function eraserBrush() {
+      var _this = this;
+
+      var frame = this.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      var paint;
+
+      var eraserStart = function eraserStart(evt) {
+        evt.preventDefault();
+
+        if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
+          //when left click only
+          // update previousCanvas
+          if (_this.previousCanvas !== currLayer) {
+            _this.previousCanvas = currLayer; // reset the snapshots array
+
+            _this.currentCanvasSnapshots = [];
+          }
+
+          if (_this.tempSnapshot) {
+            _this.currentCanvasSnapshots.push(_this.tempSnapshot);
+          }
+
+          paint = true;
+
+          if (evt.type === 'touchstart') {
+            var newCoords = _this._handleTouchEvent(evt);
+
+            evt.offsetX = newCoords.x;
+            evt.offsetY = newCoords.y;
+            evt.preventDefault();
+          }
+
+          _this._addClick(evt.offsetX, evt.offsetY, "#ffffffff", null, true); // #ffffffff because eraser
+
+
+          _this._redraw(_this._defaultBrushStroke.bind(_this));
+        }
+      };
+
+      currLayer.addEventListener('mousedown', eraserStart);
+      currLayer.addEventListener('touchstart', eraserStart);
+      this.currentEventListeners['mousedown'] = eraserStart;
+      this.currentEventListeners['touchstart'] = eraserStart; // draw the lines as mouse moves
+
+      var eraserMove = function eraserMove(evt) {
+        if (paint) {
+          if (evt.type === 'touchmove') {
+            var newCoords = _this._handleTouchEvent(evt);
+
+            evt.offsetX = newCoords.x;
+            evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+            evt.preventDefault();
+          }
+
+          _this._addClick(evt.offsetX, evt.offsetY, "#ffffffff", null, true);
+
+          _this._redraw(_this._defaultBrushStroke.bind(_this));
+        }
+      };
+
+      currLayer.addEventListener('mousemove', eraserMove);
+      currLayer.addEventListener('touchmove', eraserMove);
+      this.currentEventListeners['mousemove'] = eraserMove;
+      this.currentEventListeners['touchmove'] = eraserMove; // stop drawing
+
+      var eraserStop = function eraserStop(evt) {
+        // see if it's a new canvas or we're still on the same one as before the mousedown
+        if (_this.previousCanvas === currLayer) {
+          // if it is, then log the current image data. this is important for the undo feature
+          var w = currLayer.width;
+          var h = currLayer.height;
+          _this.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
+        }
+
+        _this._clearClick();
+
+        paint = false;
+      };
+
+      currLayer.addEventListener('mouseup', eraserStop);
+      currLayer.addEventListener('touchend', eraserStop);
+      this.currentEventListeners['mouseup'] = eraserStop;
+      this.currentEventListeners['touchend'] = eraserStop; //stop drawing when mouse leaves
+      // TODO: we really shouldn't have multiple instances of this
+
+      currLayer.addEventListener('mouseleave', function (evt) {
+        _this._clearClick();
+
+        paint = false;
+      });
+    }
+    /***
+    	default brush
+    ***/
+
+  }, {
+    key: "defaultBrush",
+    value: function defaultBrush() {
+      var _this2 = this;
+
+      var frame = this.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      var paint;
+
+      var defaultBrushStart = function defaultBrushStart(evt) {
+        evt.preventDefault();
+
+        if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
+          //when left click only
+          // update previousCanvas
+          if (_this2.previousCanvas !== currLayer) {
+            _this2.previousCanvas = currLayer; // reset the snapshots array
+
+            _this2.currentCanvasSnapshots = [];
+          }
+
+          if (_this2.tempSnapshot) {
+            _this2.currentCanvasSnapshots.push(_this2.tempSnapshot);
+          }
+
+          paint = true; // offset will be different with mobile
+          // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
+          // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
+          // using rect seems to work pretty well
+
+          if (evt.type === 'touchstart') {
+            var newCoords = _this2._handleTouchEvent(evt);
+
+            evt.offsetX = newCoords.x;
+            evt.offsetY = newCoords.y;
+            evt.preventDefault();
+          }
+
+          _this2._addClick(evt.offsetX, evt.offsetY, null, null, true);
+
+          _this2._redraw(_this2._defaultBrushStroke.bind(_this2));
+        }
+      };
+
+      currLayer.addEventListener('mousedown', defaultBrushStart);
+      currLayer.addEventListener('touchstart', defaultBrushStart);
+      this.currentEventListeners['mousedown'] = defaultBrushStart;
+      this.currentEventListeners['touchstart'] = defaultBrushStart; // draw the lines as mouse moves
+
+      var defaultBrushMove = function defaultBrushMove(evt) {
+        if (paint) {
+          if (evt.type === 'touchmove') {
+            var newCoords = _this2._handleTouchEvent(evt);
+
+            evt.offsetX = newCoords.x;
+            evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+            evt.preventDefault();
+          }
+
+          _this2._addClick(evt.offsetX, evt.offsetY, null, null, true);
+
+          _this2._redraw(_this2._defaultBrushStroke.bind(_this2));
+        }
+      };
+
+      currLayer.addEventListener('mousemove', defaultBrushMove);
+      currLayer.addEventListener('touchmove', defaultBrushMove);
+      this.currentEventListeners['mousemove'] = defaultBrushMove;
+      this.currentEventListeners['touchmove'] = defaultBrushMove; // stop drawing
+
+      var defaultBrushStop = function defaultBrushStop(evt) {
+        // see if it's a new canvas or we're still on the same one as before the mousedown
+        if (_this2.previousCanvas === currLayer) {
+          // if it is, then log the current image data. this is important for the undo feature
+          var w = currLayer.width;
+          var h = currLayer.height;
+          _this2.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
+        }
+
+        _this2._clearClick();
+
+        paint = false;
+      };
+
+      currLayer.addEventListener('mouseup', defaultBrushStop);
+      currLayer.addEventListener('touchend', defaultBrushStop);
+      this.currentEventListeners['mouseup'] = defaultBrushStop;
+      this.currentEventListeners['touchend'] = defaultBrushStop; //stop drawing when mouse leaves
+      // TODO: we really shouldn't have multiple instances of this
+
+      currLayer.addEventListener('mouseleave', function (evt) {
+        _this2._clearClick();
+
+        paint = false;
+      });
+    }
+  }, {
+    key: "_defaultBrushStroke",
+    value: function _defaultBrushStroke(context) {
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.beginPath(); //this helps generate a solid line, rather than a line of dots. 
+        //the subtracting of 1 from i means that the point at i is being connected
+        //with the previous point
+
+        if (this.clickDrag[i] && i) {
+          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+        } else {
+          //the adding of 1 allows you to make a dot on click
+          context.moveTo(this.clickX[i], this.clickY[i] + 1);
+        }
+
+        context.lineTo(this.clickX[i], this.clickY[i]);
+        context.closePath();
+        context.strokeStyle = this.clickColor[i];
+        context.lineWidth = this.clickSize[i];
+        context.stroke();
+      }
+    }
+    /***
+        radial gradient brush
+    ***/
+
+  }, {
+    key: "radialGradBrush",
+    value: function radialGradBrush() {
+      var _this3 = this;
+
+      var frame = this.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      var context = currLayer.getContext("2d");
+      context.lineJoin = context.lineCap = 'round';
+      var paint;
+
+      var radGradBrushStart = function radGradBrushStart(evt) {
+        if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
+          // update previousCanvas
+          if (_this3.previousCanvas !== currLayer) {
+            _this3.previousCanvas = currLayer; // reset the snapshots array
+
+            _this3.currentCanvasSnapshots = [];
+          }
+
+          if (_this3.tempSnapshot) {
+            _this3.currentCanvasSnapshots.push(_this3.tempSnapshot);
+          }
+
+          paint = true;
+
+          if (evt.type === 'touchstart') {
+            var newCoords = _this3._handleTouchEvent(evt);
+
+            evt.offsetX = newCoords.x;
+            evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+            evt.preventDefault();
+          }
+
+          _this3._radialGrad(evt.offsetX, evt.offsetY);
+
+          _this3._addClick(evt.offsetX, evt.offsetY, null, null, true);
+
+          _this3._redraw(_this3._defaultBrushStroke.bind(_this3));
+        }
+      };
+
+      currLayer.addEventListener('mousedown', radGradBrushStart);
+      currLayer.addEventListener('touchstart', radGradBrushStart);
+      this.currentEventListeners['mousedown'] = radGradBrushStart;
+      this.currentEventListeners['touchstart'] = radGradBrushStart;
+
+      var radGradBrushMove = function radGradBrushMove(evt) {
+        if (paint) {
+          if (evt.type === 'touchmove') {
+            var newCoords = _this3._handleTouchEvent(evt);
+
+            evt.offsetX = newCoords.x;
+            evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+            evt.preventDefault();
+          }
+
+          _this3._radialGrad(evt.offsetX, evt.offsetY);
+
+          _this3._addClick(evt.offsetX, evt.offsetY, null, null, true);
+
+          _this3._redraw(_this3._defaultBrushStroke.bind(_this3));
+        }
+      };
+
+      currLayer.addEventListener('mousemove', radGradBrushMove);
+      currLayer.addEventListener('touchmove', radGradBrushMove);
+      this.currentEventListeners['mousemove'] = radGradBrushMove;
+      this.currentEventListeners['touchmove'] = radGradBrushMove; // this function seems to be shared among all brushes for stopping. TODO: just have one of these functions
+
+      var radGradBrushStop = function radGradBrushStop(evt) {
+        if (_this3.previousCanvas === currLayer) {
+          // if it is, then log the current image data. this is important for the undo feature
+          var w = currLayer.width;
+          var h = currLayer.height;
+
+          _this3.currentCanvasSnapshots.push(currLayer.getContext("2d").getImageData(0, 0, w, h));
+        }
+
+        _this3._clearClick();
+
+        paint = false;
+      };
+
+      currLayer.addEventListener('mouseup', radGradBrushStop);
+      currLayer.addEventListener('touchend', radGradBrushStop);
+      this.currentEventListeners['mouseup'] = radGradBrushStop;
+      this.currentEventListeners['touchend'] = radGradBrushStop; //stop drawing when mouse leaves
+
+      currLayer.addEventListener('mouseleave', function (evt) {
+        _this3._clearClick();
+
+        paint = false;
+      });
+    }
+  }, {
+    key: "_radialGrad",
+    value: function _radialGrad(x, y) {
+      var frame = this.animationProject.getCurrFrame();
+      var context = frame.getCurrCanvas().getContext("2d");
+      var radGrad = context.createRadialGradient(x, y, this.currSize, x, y, this.currSize * 1.5);
+      var colorPicked = this.currColorArray;
+      radGrad.addColorStop(0, this.currColor);
+
+      if (colorPicked !== undefined) {
+        radGrad.addColorStop(.5, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',.5)');
+        radGrad.addColorStop(1, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',0)');
+      } else {
+        radGrad.addColorStop(.5, 'rgba(0,0,0,.5)');
+        radGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      }
+
+      context.fillStyle = radGrad;
+      context.fillRect(x - 20, y - 20, 40, 40);
+    }
+    /***
+    	pen-like brush 
+    	thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/sketchy.js
+    ***/
+
+  }, {
+    key: "penBrush",
+    value: function penBrush() {
+      var _this4 = this;
+
+      var frame = this.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      var paint;
+
+      var penBrushStart = function penBrushStart(evt) {
+        if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
+          //when left click only
+          // update previousCanvas
+          if (_this4.previousCanvas !== currLayer) {
+            _this4.previousCanvas = currLayer; // reset the snapshots array
+
+            _this4.currentCanvasSnapshots = [];
+          }
+
+          if (_this4.tempSnapshot) {
+            _this4.currentCanvasSnapshots.push(_this4.tempSnapshot);
+          }
+
+          paint = true;
+
+          if (evt.type === 'touchstart') {
+            var newCoords = _this4._handleTouchEvent(evt);
+
+            evt.offsetX = newCoords.x;
+            evt.offsetY = newCoords.y;
+            evt.preventDefault();
+          }
+
+          _this4._addClick(evt.offsetX, evt.offsetY, null, null, true);
+
+          _this4._redraw(_this4._penBrushStroke.bind(_this4));
+        }
+      };
+
+      currLayer.addEventListener("mousedown", penBrushStart);
+      currLayer.addEventListener("touchstart", penBrushStart);
+      this.currentEventListeners['mousedown'] = penBrushStart;
+      this.currentEventListeners['touchstart'] = penBrushStart; //draw the lines as mouse moves
+
+      var penBrushMove = function penBrushMove(evt) {
+        if (paint) {
+          if (evt.type === 'touchmove') {
+            var newCoords = _this4._handleTouchEvent(evt);
+
+            evt.offsetX = newCoords.x;
+            evt.offsetY = newCoords.y;
+            evt.preventDefault();
+          }
+
+          _this4._addClick(evt.offsetX, evt.offsetY, null, null, true);
+
+          _this4._redraw(_this4._penBrushStroke.bind(_this4));
+        }
+      };
+
+      currLayer.addEventListener('mousemove', penBrushMove);
+      currLayer.addEventListener('touchmove', penBrushMove);
+      this.currentEventListeners['mousemove'] = penBrushMove;
+      this.currentEventListeners['touchmove'] = penBrushMove; //stop drawing
+
+      var penBrushStop = function penBrushStop(evt) {
+        // see if it's a new canvas or we're still on the same one as before the mousedown
+        if (_this4.previousCanvas === currLayer) {
+          // if it is, then log the current image data. this is important for the undo feature
+          var w = currLayer.width;
+          var h = currLayer.height;
+          _this4.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
+        }
+
+        _this4._clearClick();
+
+        paint = false;
+      };
+
+      currLayer.addEventListener('mouseup', penBrushStop);
+      currLayer.addEventListener('touchend', penBrushStop);
+      this.currentEventListeners['mouseup'] = penBrushStop;
+      this.currentEventListeners['touchend'] = penBrushStop; //stop drawing when mouse leaves
+
+      currLayer.addEventListener('mouseleave', function (evt) {
+        _this4._clearClick();
+
+        paint = false;
+      });
+    }
+  }, {
+    key: "_penBrushStroke",
+    value: function _penBrushStroke(context) {
+      var clickX = this.clickX;
+      var clickY = this.clickY;
+      var clickColor = this.clickColor;
+      var clickSize = this.clickSize; // connect current dot with previous dot
+
+      context.beginPath();
+      context.moveTo(clickX[clickX.length - 1], clickY[clickY.length - 1]);
+
+      if (clickX.length > 1) {
+        context.lineTo(clickX[clickX.length - 2], clickY[clickY.length - 2]);
+      }
+
+      context.closePath();
+      context.strokeStyle = clickColor[clickColor.length - 1];
+      context.lineWidth = clickSize[clickSize.length - 1];
+      context.stroke(); // then add some extra strokes
+
+      for (var i = 0; i < clickX.length; i++) {
+        var dx = clickX[i] - clickX[clickX.length - 1];
+        var dy = clickY[i] - clickY[clickY.length - 1];
+        var d = dx * dx + dy * dy;
+
+        if (d < 4000 && Math.random() > d / 1000) {
+          context.beginPath();
+          context.moveTo(clickX[clickX.length - 1] + dx * 0.3, clickY[clickY.length - 1] + dy * 0.3);
+          context.lineTo(clickX[i] - dx * 0.3, clickY[i] - dy * 0.3);
+          context.closePath();
+          context.stroke();
+        }
+      }
+    }
+    /***
+    	floodfill brush
+    	
+    	not really a brush, but should be considered a separate brush so its mousedown action 
+    	won't conflict with the other brushes (i.e. no painting at the same time of a floodfill)
+    ***/
+
+  }, {
+    key: "floodfillBrush",
+    value: function floodfillBrush() {
+      var _this5 = this;
+
+      var frame = this.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      var floodfillEvt = function floodfillEvt(evt) {
+        if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
+          //when left click only
+          // update previousCanvas
+          if (_this5.previousCanvas !== currLayer) {
+            _this5.previousCanvas = currLayer; // reset the snapshots array
+
+            _this5.currentCanvasSnapshots = [];
+          }
+
+          if (_this5.tempSnapshot) {
+            _this5.currentCanvasSnapshots.push(_this5.tempSnapshot);
+          }
+
+          if (evt.type === 'touchstart') {
+            var newCoords = _this5._handleTouchEvent(evt);
+
+            evt.offsetX = newCoords.x;
+            evt.offsetY = newCoords.y;
+            evt.preventDefault();
+          } // do floodfill
+          // need to parse the currColor because right now it looks like "rgb(x,y,z)". 
+          // I want it to look like [x, y, z]
+
+
+          var currColor = _this5.currColor;
+          var currColorArray = currColor.substring(currColor.indexOf('(') + 1, currColor.length - 1).split(',');
+          currColorArray = currColorArray.map(function (a) {
+            return parseInt(a);
+          });
+          var x = evt.offsetX;
+          var y = evt.offsetY;
+          var colorData = document.getElementById(frame.currentCanvas.id).getContext("2d").getImageData(x, y, 1, 1).data;
+          var color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')'; // create an object with the pixel data
+
+          var pixel = {
+            'x': Math.floor(x),
+            'y': Math.floor(y),
+            'color': color
+          };
+
+          _this5.floodfill(currLayer, currColorArray, pixel);
+        }
+      };
+
+      currLayer.addEventListener('mousedown', floodfillEvt);
+      currLayer.addEventListener('touchstart', floodfillEvt);
+      this.currentEventListeners['mousedown'] = floodfillEvt;
+      this.currentEventListeners['touchstart'] = floodfillEvt;
+    } // the actual floodfill function 
+
+  }, {
+    key: "floodfill",
+    value: function floodfill(currentCanvas, newColor, pixelSelected) {
+      // create a stack 
+      var stack = []; // create visited set 
+      // the format of these entries will be like: {'xCoord,yCoord': 1}
+
+      var visited = new Set(); // the selectedPixel will have the color that needs to be targeted by floodfill 
+
+      var targetColor = pixelSelected.color; // current canvas context 
+
+      var ctx = document.getElementById(currentCanvas.id).getContext('2d'); // get the image data of the entire canvas 
+      // do the floodfill, then put the edited image data back 
+
+      var imageData = ctx.getImageData(0, 0, currentCanvas.width, currentCanvas.height);
+      var data = imageData.data;
+      var originalData = new Uint8ClampedArray(imageData.data);
+      stack.push(pixelSelected);
+
+      while (stack.length !== 0) {
+        // get a pixel
+        var currPixel = stack.pop(); // add to visited set 
+
+        visited.add(currPixel.x + ',' + currPixel.y); // get left, right, top and bottom neighbors 
+
+        var leftNeighborX = currPixel.x - 1;
+        var rightNeighborX = currPixel.x + 1;
+        var topNeighborY = currPixel.y - 1;
+        var bottomNeighborY = currPixel.y + 1;
+        var r = void 0,
+            g = void 0,
+            b = void 0; // top neighbor
+
+        if (topNeighborY >= 0 && !visited.has(currPixel.x + ',' + topNeighborY)) {
+          // index of r, g and b colors in imageData.data
+          r = topNeighborY * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
+          g = r + 1;
+          b = g + 1;
+
+          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
+            // if the neighbor's color is the same as the targetColor, add it to the stack
+            stack.push({
+              'x': currPixel.x,
+              'y': topNeighborY,
+              'color': currPixel.color
+            });
+          }
+        } // right neighbor 
+
+
+        if (rightNeighborX < currentCanvas.width && !visited.has(rightNeighborX + ',' + currPixel.y)) {
+          r = currPixel.y * currentCanvas.width * 4 + (rightNeighborX + 1) * 4;
+          g = r + 1;
+          b = g + 1;
+
+          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
+            // if the neighbor's color is the same as the targetColor, add it to the stack
+            stack.push({
+              'x': rightNeighborX,
+              'y': currPixel.y,
+              'color': currPixel.color
+            });
+          }
+        } // bottom neighbor
+
+
+        if (bottomNeighborY < currentCanvas.height && !visited.has(currPixel.x + ',' + bottomNeighborY)) {
+          r = bottomNeighborY * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
+          g = r + 1;
+          b = g + 1;
+
+          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
+            // if the neighbor's color is the same as the targetColor, add it to the stack
+            stack.push({
+              'x': currPixel.x,
+              'y': bottomNeighborY,
+              'color': currPixel.color
+            });
+          }
+        } // left neighbor
+
+
+        if (leftNeighborX >= 0 && !visited.has(leftNeighborX + ',' + currPixel.y)) {
+          r = currPixel.y * currentCanvas.width * 4 + (leftNeighborX + 1) * 4;
+          g = r + 1;
+          b = g + 1;
+
+          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
+            // if the neighbor's color is the same as the targetColor, add it to the stack
+            stack.push({
+              'x': leftNeighborX,
+              'y': currPixel.y,
+              'color': currPixel.color
+            });
+          }
+        } // finally, update the color of the current pixel 
+
+
+        r = currPixel.y * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
+        g = r + 1;
+        b = g + 1;
+        data[r] = newColor[0];
+        data[g] = newColor[1];
+        data[b] = newColor[2];
+      } // put new edited image back on canvas
+
+
+      ctx.putImageData(imageData, 0, 0);
+    }
+  }]);
+
+  return Brush;
+}();
+
+
+
+/***/ }),
+
+/***/ "./components/utils/FilterManager.js":
+/*!*******************************************!*\
+  !*** ./components/utils/FilterManager.js ***!
+  \*******************************************/
+/*! exports provided: FilterManager */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FilterManager", function() { return FilterManager; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _filters_saturation_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../filters/saturation.js */ "./components/filters/saturation.js");
+/* harmony import */ var _filters_grayscale_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../filters/grayscale.js */ "./components/filters/grayscale.js");
+/* harmony import */ var _filters_areacolor_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../filters/areacolor.js */ "./components/filters/areacolor.js");
+/* harmony import */ var _filters_edgedetection_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../filters/edgedetection.js */ "./components/filters/edgedetection.js");
+/* harmony import */ var _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../filters/invert.js */ "./components/filters/invert.js");
+/* harmony import */ var _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../filters/mosaic.js */ "./components/filters/mosaic.js");
+/* harmony import */ var _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../filters/blur.js */ "./components/filters/blur.js");
+/* harmony import */ var _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../filters/outline.js */ "./components/filters/outline.js");
+/* harmony import */ var _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../filters/voronoi.js */ "./components/filters/voronoi.js");
+/* harmony import */ var _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../filters/fisheye.js */ "./components/filters/fisheye.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+var FilterManager = /*#__PURE__*/function () {
+  function FilterManager(animationProject, brush) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, FilterManager);
+
+    this.animationProject = animationProject;
+    this.brush = brush;
+    this.filtersMap = {
+      "saturation": new _filters_saturation_js__WEBPACK_IMPORTED_MODULE_2__["Saturation"](),
+      "grayscale": new _filters_grayscale_js__WEBPACK_IMPORTED_MODULE_3__["Grayscale"](),
+      "area_color": new _filters_areacolor_js__WEBPACK_IMPORTED_MODULE_4__["AreaColor"](),
+      "edge_detection": new _filters_edgedetection_js__WEBPACK_IMPORTED_MODULE_5__["EdgeDetection"](),
+      "invert": new _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__["Invert"](),
+      "mosaic": new _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__["Mosaic"](),
+      "blur": new _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__["Blur"](),
+      "outline": new _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__["Outline"](),
+      "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__["Voronoi"](),
+      "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__["Fisheye"]()
+    };
+    this.tempImage = null; // only push current image to snapshots if a tempImage exists already.
+    // this way when undo is called the image being looked at by the user won't already be saved in snapshots,
+    // and so undo wouldn't need to be clicked twice to see the last saved image. a bit confusing. :/
+  } // general filtering function. pass any kind of filter through this function.
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(FilterManager, [{
+    key: "filterCanvas",
+    value: function filterCanvas(filter) {
+      var currCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
+      var context = currCanvas.getContext("2d");
+      var width = currCanvas.getAttribute('width');
+      var height = currCanvas.getAttribute('height');
+      var imgData = context.getImageData(0, 0, width, height); // save current image to snapshots stack
+
+      if (this.tempImage) {
+        this.brush.currentCanvasSnapshots.push(this.tempImage);
+      }
+
+      var filteredImageData = filter(imgData);
+      context.putImageData(filteredImageData, 0, 0);
+      this.tempImage = imgData;
+    } // use this for select/option elements when picking a filter
+
+  }, {
+    key: "filterCanvasOption",
+    value: function filterCanvasOption(option) {
+      var selectedFilter = this.filtersMap[option];
+      this.filterCanvas(selectedFilter.filter.bind(selectedFilter)); // make sure 'this' context is correct for the filtering function
+    }
+  }]);
+
+  return FilterManager;
+}();
+
+
+
+/***/ }),
+
+/***/ "./components/utils/Toolbar.js":
+/*!*************************************!*\
+  !*** ./components/utils/Toolbar.js ***!
+  \*************************************/
+/*! exports provided: Toolbar */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Toolbar", function() { return Toolbar; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+// toolbar class
+// assemble the common functions for the toolbar
+// remove canvas param since you have animationProj
+var Toolbar = /*#__PURE__*/function () {
+  function Toolbar(brush, animationProj) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Toolbar);
+
+    // use this for storing the most recent imported image
+    // can be useful for resetting image
+    this.recentImage = null; // used as a flag for the animation playback features
+
+    this.play = null; // used to hold user-indicated time (ms) per frame for animation playback and gif
+
+    this.timePerFrame = 200; // set to 200 be default
+    // should the keyboard keys be affecting the layer or the frame? 2 options only
+    // this is useful for the arrow keys and space bar
+
+    this.layerMode = true;
+    this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
+
+    this.brush = brush;
+    this.animationProj = animationProj;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Toolbar, [{
+    key: "setCounter",
+    value: function setCounter(elementId) {
+      this.htmlCounter = document.getElementById(elementId);
+    }
+  }, {
+    key: "nextLayer",
+    value: function nextLayer() {
+      this.brush.resetBrush();
+      var frame = this.animationProj.getCurrFrame();
+      var result = frame.nextLayer(); // TODO: can we figure out a better way to handle brushes?
+
+      this.brush.applyBrush(); // apply brush whether or not layer changed because it was reset initially
+
+      return result;
+    }
+  }, {
+    key: "prevLayer",
+    value: function prevLayer() {
+      this.brush.resetBrush();
+      var frame = this.animationProj.getCurrFrame();
+      var result = frame.prevLayer();
+      this.brush.applyBrush();
+      return result;
+    }
+  }, {
+    key: "setCurrLayer",
+    value: function setCurrLayer(layerIndex) {
+      // true to show onion skin of prev layer (when would we not?)
+      this.animationProj.getCurrFrame().setToLayer(layerIndex, true);
+    }
+  }, {
+    key: "nextFrame",
+    value: function nextFrame() {
+      this.brush.resetBrush();
+      var curr = this.animationProj.getCurrFrame();
+      var next = this.animationProj.nextFrame();
+      this.brush.applyBrush();
+
+      if (next !== null) {
+        curr.hide();
+        next.show();
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "prevFrame",
+    value: function prevFrame() {
+      this.brush.resetBrush();
+      var curr = this.animationProj.getCurrFrame();
+      var prev = this.animationProj.prevFrame();
+      this.brush.applyBrush();
+
+      if (prev !== null) {
+        curr.hide();
+        prev.show();
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "goToFrame",
+    value: function goToFrame(frameIndex) {
+      this.brush.resetBrush();
+      var curr = this.animationProj.getCurrFrame();
+      var destFrame = this.animationProj.goToFrame(frameIndex);
+      this.brush.applyBrush();
+
+      if (destFrame !== null) {
+        curr.hide();
+        destFrame.show();
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "addNewLayer",
+    value: function addNewLayer() {
+      var canvas = this.animationProj.getCurrFrame();
+      canvas.setupNewLayer();
+    }
+  }, {
+    key: "insertNewLayer",
+    value: function insertNewLayer() {
+      var canvas = this.animationProj.getCurrFrame(); // add a new canvas first 
+
+      canvas.setupNewLayer(); // then move it after the current canvas 
+
+      var newestCanvas = canvas.canvasList.pop();
+      canvas.canvasList.splice(canvas.currentIndex + 1, 0, newestCanvas);
+      return newestCanvas;
+    }
+    /***
+        insert a new layer after the current layer
+    ***/
+
+  }, {
+    key: "insertLayer",
+    value: function insertLayer(elementId) {
+      var _this = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        _this.insertNewLayer();
+      });
+    }
+    /***
+    	duplicate the current layer
+    	note: the next layer after the current will have identitcal image data
+    ***/
+
+  }, {
+    key: "duplicateLayer",
+    value: function duplicateLayer(elementId) {
+      var _this2 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        var currentCanvas = _this2.animationProj.getCurrFrame().currentCanvas;
+
+        var newLayer = _this2.insertNewLayer();
+
+        newLayer.getContext('2d').drawImage(currentCanvas, 0, 0);
+      });
+    }
+    /***
+    add a new frame
+    ***/
+
+  }, {
+    key: "addNewFrameButton",
+    value: function addNewFrameButton(elementId) {
+      var _this3 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        _this3.animationProj.addNewFrame();
+      });
+    }
+    /***
+        delete current layer
+        shifts the current layer to the next one if there is one.
+        otherwise, the previous layer will become the current one.
+        if there isn't a previous one either, then the layer will just be made blank.
+    ***/
+
+  }, {
+    key: "deleteLayer",
+    value: function deleteLayer(elementId, setStateFunction) {
+      var _this4 = this;
+
+      // elementId here refers to the display that shows current frame and layer
+      document.getElementById(elementId).addEventListener('click', function () {
+        var frame = _this4.animationProj.getCurrFrame();
+
+        var oldLayerIndex = frame.getCurrCanvasIndex();
+        var oldLayer = frame.getCurrCanvas();
+        var parentNode = document.getElementById(oldLayer.id).parentNode;
+        var layerList = frame.getLayers();
+
+        if (oldLayerIndex + 1 < layerList.length || oldLayerIndex - 1 >= 0) {
+          frame.deleteLayer(oldLayerIndex);
+          parentNode.removeChild(oldLayer);
+
+          _this4.brush.applyBrush();
+        } else {
+          // otherwise, just blank the canvas 
+          var context = oldLayer.getContext("2d");
+          context.clearRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
+          context.fillStyle = "#fff";
+          context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
+        }
+
+        setStateFunction(frame.getCurrCanvasIndex());
+      });
+    }
+    /***
+    	delete current frame
+    ***/
+
+  }, {
+    key: "deleteCurrentFrameButton",
+    value: function deleteCurrentFrameButton(elementId, setStateFunction) {
+      var _this5 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        var currFrameIdx = _this5.animationProj.getCurrFrameIndex(); // move to another frame first before deleting
+
+
+        if (currFrameIdx - 1 >= 0) {
+          _this5.prevFrame();
+        } else {
+          // go forward a frame
+          _this5.nextFrame();
+        }
+
+        if (_this5.animationProj.deleteFrame(currFrameIdx)) {
+          setStateFunction(currFrameIdx); // the index of the frame we deleted
+        }
+      });
+    }
+    /***
+    	change layer order for current frame on button press
+    ***/
+
+  }, {
+    key: "changeCurrentFrameLayerOrder",
+    value: function changeCurrentFrameLayerOrder(elementId, setStateFunction) {
+      document.getElementById(elementId).addEventListener('click', function () {
+        // I'm not sure why right now but something weird happens after calling 
+        // changeCurrentFrameLayerOrder for the first time.
+        // it acts as expected but also I get an error saying setStateFunction is undefined 
+        // in the console. :/ so for now check if setStateFunction is not undefined?
+        if (setStateFunction) {
+          setStateFunction(null);
+        }
+      });
+    }
+    /***
+        color wheel functions
+    ***/
+    // pass in the elementId of the div where the color wheel should be 
+    // pass in the size of the canvas of the color wheel 
+
+  }, {
+    key: "createColorWheel",
+    value: function createColorWheel(elementId, size) {
+      var _this6 = this;
+
+      var location = document.getElementById(elementId);
+      var colorWheel = document.createElement('canvas');
+      colorWheel.id = "colorWheel";
+      colorWheel.setAttribute('width', size);
+      colorWheel.setAttribute('height', size);
+      var colorWheelContext = colorWheel.getContext('2d');
+      var x = colorWheel.width / 2;
+      var y = colorWheel.height / 2;
+      var radius = 90; // why 5600??
+
+      for (var angle = 0; angle <= 5600; angle++) {
+        var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
+
+        var endAngle = angle * Math.PI / 180;
+        colorWheelContext.beginPath();
+        colorWheelContext.moveTo(x, y); //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+
+        colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
+        colorWheelContext.closePath(); //use .createRadialGradient to get a different color for each angle
+        //createRadialGradient(x0, y0, r0, x1, y1, r1)
+
+        var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
+        gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
+        gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
+        colorWheelContext.fillStyle = gradient;
+        colorWheelContext.fill();
+      } // make black a pickable color 
+
+
+      colorWheelContext.fillStyle = "#000";
+      colorWheelContext.beginPath();
+      colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
+      colorWheelContext.fill(); // make white pickable too
+      // black outline
+
+      colorWheelContext.beginPath();
+      colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 
+
+      colorWheelContext.stroke(); // make sure circle is filled with #fff
+
+      colorWheelContext.fillStyle = "#fff";
+      colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
+      colorWheelContext.fill();
+      location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
+
+      var showColor = document.createElement('p'); // this element will show the color picked 
+
+      showColor.style.textAlign = 'center';
+      showColor.id = 'colorPicked';
+      showColor.textContent = "pick a color! :)";
+      location.appendChild(showColor);
+      document.getElementById(colorWheel.id).addEventListener('mousedown', function (evt) {
+        var x = evt.offsetX;
+        var y = evt.offsetY;
+        var colorPicked = document.getElementById(colorWheel.id).getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
+
+        var colorPickedText = document.getElementById(showColor.id);
+
+        if (colorPicked[0] > 10 && colorPicked[1] > 200) {
+          colorPickedText.style.color = "#000";
+        } else {
+          colorPickedText.style.color = "#FFF";
+        }
+
+        colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
+        colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
+
+        _this6.brush.currColorArray = colorPicked;
+        _this6.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
+      });
+    }
+    /***
+        rotate image
+        pass in an element id that will rotate the current canvas image on click
+        
+        currently buggy! after rotation, image becomes blurred. also, when attempting to draw on same canvas,
+        coordinates get altered so on mousedown the drawing gets offset
+    ***/
+
+  }, {
+    key: "rotateImage",
+    value: function rotateImage(elementId) {
+      var _this7 = this;
+
+      //rotate image
+      document.getElementById(elementId).addEventListener('click', function () {
+        var canvas = _this7.animationProj.getCurrFrame(); //using a promise to convert the initial image to a bitmap
+
+
+        var width = canvas.currentCanvas.getAttribute("width");
+        var height = canvas.currentCanvas.getAttribute("height");
+        var context = canvas.currentCanvas.getContext("2d");
+        Promise.all([createImageBitmap(canvas.currentCanvas, 0, 0, width, height)]).then(function (bitmap) {
+          context.clearRect(0, 0, width, height);
+          context.translate(width / 2, height / 2);
+          context.rotate(Math.PI / 180);
+          context.translate(-width / 2, -height / 2); //the returned bitmap is an array
+
+          context.drawImage(bitmap[0], 0, 0);
+        });
+      });
+    }
+    /***
+        clear the current canvas
+        pass in an element id that will execute clear canvas onclick
+    ***/
+
+  }, {
+    key: "setClearCanvas",
+    value: function setClearCanvas(elementId) {
+      var _this8 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        var canvas = _this8.animationProj.getCurrFrame();
+
+        var context = canvas.currentCanvas.getContext("2d");
+        context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+        context.fillStyle = "#FFFFFF";
+        context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+      });
+    }
+    /***
+        undo a previous drawing operation on the current canvas.
+        still a little incorrect? - TODO: needs work
+    - problem: undo affects all layers and is not specific to one canvas (which it should)
+    maybe the frame class should store layer info for undo
+    ***/
+
+  }, {
+    key: "undo",
+    value: function undo(elementId) {
+      var _this9 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        var canvas = _this9.animationProj.getCurrFrame();
+
+        var context = canvas.currentCanvas.getContext("2d");
+        var width = canvas.currentCanvas.getAttribute("width");
+        var height = canvas.currentCanvas.getAttribute("height"); // unshift to add to front of stack of snapshots. 
+
+        _this9.brush.currentCanvasSnapshots.unshift(context.getImageData(0, 0, width, height)); // clear first
+
+
+        context.clearRect(0, 0, width, height); // then put back last image (ignore the one that had just been drawn)
+        // snapshots is a variable that only holds all the images up to the 2nd to last image drawn. 
+        // if you keep up to the last image drawn, then you have to click undo twice initially to get to the previous frame.
+
+        if (_this9.brush.currentCanvasSnapshots.length >= 1) {
+          var mostRecentImage = _this9.brush.currentCanvasSnapshots.pop();
+
+          context.putImageData(mostRecentImage, 0, 0);
+        }
+      });
+    }
+    /***
+        import an image
+    ***/
+
+  }, {
+    key: "importImage",
+    value: function importImage(elementId) {
+      var _this10 = this;
+
+      var self = this;
+      document.getElementById(elementId).addEventListener('click', function () {
+        var canvas = _this10.animationProj.getCurrFrame(); // call fileHandler here
+
+
+        fileHandler(); // define fileHandler 
+
+        function fileHandler() {
+          //initiate file choosing after button click
+          var input = document.createElement('input');
+          input.type = 'file';
+          input.addEventListener('change', getFile, false);
+          input.click();
+        }
+
+        function getFile(e) {
+          var img = new Image();
+          var reader = new FileReader();
+          var file = e.target.files[0];
+
+          if (!file.type.match(/image.*/)) {
+            console.log("not a valid image");
+            return;
+          } //when the image loads, put it on the canvas.
+
+
+          img.onload = function () {
+            // change current canvas' width and height according to imported picture
+            var currentCanvas = canvas.currentCanvas;
+            var context = currentCanvas.getContext("2d");
+            var height = img.height;
+            var width = img.width; // default value in super canvas object
+
+            height = canvas.height;
+            width = canvas.width;
+            currentCanvas.setAttribute('height', height);
+            currentCanvas.setAttribute('width', width);
+            context.drawImage(img, 0, 0, width, height); // assign recentImage the image 
+
+            self.recentImage = img; // add the current image to snapshots 
+
+            self.brush.currentCanvasSnapshots.push(context.getImageData(0, 0, width, height));
+          }; //after reader has loaded file, put the data in the image object.
+
+
+          reader.onloadend = function () {
+            img.src = reader.result;
+          }; //read the file as a URL
+
+
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+    /***
+        reset the canvas to most recent imported image
+    ***/
+
+  }, {
+    key: "resetImage",
+    value: function resetImage() {
+      if (this.recentImage) {
+        var _canvas = this.animationProj.getCurrFrame();
+
+        var context = _canvas.currentCanvas.getContext("2d");
+
+        var height = _canvas.currentCanvas.getAttribute("height");
+
+        var width = _canvas.currentCanvas.getAttribute("width");
+
+        context.drawImage(this.recentImage, 0, 0, width, height);
+      }
+    }
+    /***
+        download a png file of the current layer
+    ***/
+
+  }, {
+    key: "downloadLayer",
+    value: function downloadLayer(elementId) {
+      var _this11 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        // get image data from current canvas as blob
+        var canvas = _this11.animationProj.getCurrFrame();
+
+        var data = document.getElementById(canvas.currentCanvas.id).toBlob(function (blob) {
+          var url = URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = url;
+          var name = prompt("please enter a name for the file");
+
+          if (name === null) {
+            return;
+          } else {
+            link.download = name; //simulate a click on the blob's url to download it 
+
+            link.click();
+          }
+        });
+      });
+    }
+    /***
+    	download a png file of the current frame
+    ***/
+
+  }, {
+    key: "downloadFrame",
+    value: function downloadFrame(elementId) {
+      var _this12 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        var frame = _this12.animationProj.getCurrFrame();
+
+        var mergedLayers = _this12.mergeFrameLayers(frame);
+
+        var data = mergedLayers.toBlob(function (blob) {
+          var url = URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = url;
+          var name = prompt("please enter a name for the file");
+
+          if (name === null) {
+            return;
+          } else {
+            link.download = name;
+            link.click();
+          }
+        });
+      });
+    }
+    /********
+    
+        this section controls the animation playback features
+        
+        note that I specifically added my page counter element to the
+        functions so that they change with the call to up() and down()
+          this will need to be applied for FRAMES, not LAYERS of a frame.
+    
+    *********/
+    //let toolbar = this;
+
+  }, {
+    key: "playFor",
+    value: function playFor() {
+      if (this.nextFrame()) {
+        if (this.htmlCounter) {
+          var counterText = this.htmlCounter;
+          counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
+        }
+      }
+    }
+  }, {
+    key: "playBack",
+    value: function playBack() {
+      if (this.prevFrame()) {
+        if (this.htmlCounter) {
+          var counterText = this.htmlCounter;
+          counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
+        }
+      }
+    }
+  }, {
+    key: "playForward",
+    value: function playForward() {
+      clearInterval(this.play);
+      this.play = null;
+      this.play = setInterval(this.playFor, this.timePerFrame);
+    }
+  }, {
+    key: "playBackward",
+    value: function playBackward() {
+      clearInterval(this.play);
+      this.play = null;
+      this.play = setInterval(this.playBack, this.timePerFrame);
+    }
+  }, {
+    key: "stop",
+    value: function stop() {
+      clearInterval(this.play);
+      this.play = null;
+    }
+  }, {
+    key: "mergeFrameLayers",
+    value: function mergeFrameLayers(frame) {
+      var tempCanvas = document.createElement('canvas');
+      var tempCtx = tempCanvas.getContext("2d");
+      tempCanvas.width = frame.width;
+      tempCanvas.height = frame.height;
+      tempCtx.fillStyle = "white";
+      tempCtx.fillRect(0, 0, frame.width, frame.height);
+      var tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+
+      for (var j = 0; j < frame.canvasList.length; j++) {
+        var layer = frame.canvasList[j]; // possible issue: this assumes that all layers within a frame share the same dimensions (but it should be that way, right?)
+
+        var imageData = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height).data;
+
+        for (var k = 0; k < imageData.length; k += 4) {
+          if (imageData[k] === 255 && imageData[k + 1] === 255 && imageData[k + 2] === 255) {
+            continue;
+          } else {
+            // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
+            // we might run into index/length issues...
+            tempImageData.data[k] = imageData[k];
+            tempImageData.data[k + 1] = imageData[k + 1];
+            tempImageData.data[k + 2] = imageData[k + 2];
+            tempImageData.data[k + 3] = 255;
+          }
+        } // apply each layer to the onion skin
+
+
+        tempCtx.putImageData(tempImageData, 0, 0);
+      }
+
+      return tempCanvas;
+    }
+    /***
+    
+        create a gif from the frames.
+        using gif.js - https://github.com/jnordberg/gif.js
+    
+        elementId is for the loading message,
+        i.e. a <p> element that says "now loading..."
+        
+        this will need to be applied for FRAMES, not LAYERS of a frame.
+    
+    timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), i.e.
+    {
+    1: 100, // frame 1
+    2: 1000 // frame 2
+    }
+    ***/
+
+  }, {
+    key: "getGif",
+    value: function getGif(elementId, timelineMarkers) {
+      if (elementId) {
+        document.getElementById(elementId).textContent = "now loading...";
+      }
+
+      var gif = new GIF({
+        workers: 2,
+        quality: 10
+      }); // add frames + take into account frame rate given by timelineMarkers
+
+      for (var i = 0; i < this.animationProj.frameList.length; i++) {
+        var tempCanvas = this.mergeFrameLayers(this.animationProj.frameList[i]);
+        var frameTime = timelineMarkers[i + 1] ? timelineMarkers[i + 1] : this.timePerFrame;
+        gif.addFrame(tempCanvas, {
+          delay: frameTime
+        });
+      }
+
+      gif.on('finished', function (blob) {
+        document.getElementById(elementId).textContent = "";
+        var newGif = URL.createObjectURL(blob);
+        window.open(newGif);
+      });
+      gif.render();
+    }
+    /***
+    
+        save/export & import functions
+        check this out: https://stackoverflow.com/questions/22329481/compressing-base64-data-uri-images
+        
+        don't think this is going to work for large projects without some sort of better compression. simply drawing a few lines on
+        a canvas produces a very large base64 string spanning many lines. not very practical for exporting a project
+        that has several frames, especially if you take into account different colors and more detail
+        
+    ***/
+
+  }, {
+    key: "save",
+    value: function save(elementId) {
+      var _this13 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        // prompt the user to name the file 
+        var name = prompt("name of file: ");
+
+        if (name === "") {
+          name = "funSketch_saveFile";
+        } else if (name === null) {
+          return;
+        }
+
+        var savedData = [];
+
+        _this13.animationProj.frameList.forEach(function (frame) {
+          // get frame metadata
+          var newFrame = frame.getMetadata();
+          newFrame['layers'] = []; // list of objects
+
+          frame.canvasList.forEach(function (layer) {
+            // get layer metadata
+            var newLayer = {
+              'id': layer.id,
+              'width': layer.getAttribute("width"),
+              'height': layer.getAttribute("height"),
+              'zIndex': layer.style.zIndex,
+              'opacity': layer.style.opacity
+            }; // add layer image data
+
+            newLayer['imageData'] = layer.toDataURL();
+            newFrame.layers.push(newLayer);
+          });
+          savedData.push(JSON.stringify(newFrame));
+        });
+
+        var json = "[\n";
+        json += savedData.join(",\n"); // put a line break between each new object, which represents a frame
+
+        json += "\n]"; // make a blob so it can be downloaded 
+
+        var blob = new Blob([json], {
+          type: "application/json"
+        });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = name + ".json";
+        link.click();
+      });
+    }
+  }, {
+    key: "importProject",
+    value: function importProject(elementId, updateStateFunction) {
+      var self = this;
+      document.getElementById(elementId).addEventListener('click', function () {
+        fileHandler(); //import project json file
+
+        function fileHandler() {
+          var input = document.createElement('input');
+          input.type = 'file';
+          input.addEventListener('change', getFile, false);
+          input.click();
+        }
+
+        function getFile(e) {
+          var reader = new FileReader();
+          var file = e.target.files[0]; //when the file loads, put it on the canvas.
+
+          reader.onload = function (theFile) {
+            return function (e) {
+              // parse the JSON using JSON.parse 
+              // check if it can be parsed though first!
+              var data;
+
+              try {
+                data = JSON.parse(e.target.result);
+              } catch (e) {
+                // not valid json file 
+                return;
+              } // do some validation
+              // if there is no canvas
+              // or it's a valid json object but no fields correspond to a canvas, quit
+
+
+              if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
+                console.log("it appears to not be a valid project! :<");
+                return;
+              } // clear existing project
+
+
+              self.animationProj.resetProject(); // load saved project
+
+              data.forEach(function (frame, index) {
+                if (index > 0) {
+                  // add a new frame
+                  self.animationProj.addNewFrame();
+                } // overwrite existing frame
+                // TODO: implement an updateFrame method 
+                // something like: animationProj.updateFrame(0, frame);
+
+
+                var currFrame = self.animationProj.getFrames()[index];
+                var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+
+                var currFrameLayersFromCurrPrj = currFrame.getLayers();
+                currFrameLayersFromImport.forEach(function (layer, layerIndex) {
+                  if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
+                    // add new layer to curr project as needed based on import
+                    currFrame.setupNewLayer();
+                  }
+
+                  var currLayer = self.animationProj.getFrames()[index].getLayers()[layerIndex]; // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
+
+                  currLayer.style.opacity = layer.opacity;
+                  currLayer.style.zIndex = layer.zIndex; // add the image data 
+
+                  var newCtx = currLayer.getContext("2d");
+                  var img = new Image();
+
+                  (function (context, image) {
+                    image.onload = function () {
+                      context.drawImage(image, 0, 0);
+
+                      if (index === data.length - 1 && updateStateFunction) {
+                        updateStateFunction();
+                      }
+                    };
+
+                    image.src = layer.imageData;
+                  })(newCtx, img); // make sure to update this frame's current canvas so it matches currentIndex
+                  // another thing to refactor later (i.e. since we have currentIndex, we really shouldn't have another variable
+                  // to keep track of whose value could be known with currentIndex)
+
+
+                  if (layerIndex === currFrame.currentIndex) {
+                    currFrame.currentCanvas = currLayer;
+                  }
+                });
+                currFrame.setCurrIndex(frame.currentIndex);
+              });
+            };
+          }(file);
+
+          reader.readAsText(file);
+        }
+      });
+    }
+  }]);
+
+  return Toolbar;
+}(); // end of Toolbar 
+
 
 
 

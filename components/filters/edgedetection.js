@@ -8,7 +8,7 @@ class EdgeDetection extends FilterTemplate {
 	}
 	
 	grayscale(){
-		// TODO
+		// TODO or not TODO? do we actually need this
 	}
 	
 	filter(pixels){

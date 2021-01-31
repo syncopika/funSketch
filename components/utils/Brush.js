@@ -505,10 +505,10 @@ class Brush {
 			const dy = clickY[i] - clickY[clickY.length - 1];
 			const d = dx*dx + dy*dy;
 			
-			if(d < 2000 && Math.random() > (d / 1000)){
+			if(d < 4000 && Math.random() > (d / 1000)){
 				context.beginPath();
 				context.moveTo(clickX[clickX.length-1] + (dx * 0.3), clickY[clickY.length-1] + (dy * 0.3));
-				context.lineTo(clickX[clickX.length-1] - (dx * 0.3), clickY[clickY.length-1] - (dy * 0.3));
+				context.lineTo(clickX[i] - (dx * 0.3), clickY[i] - (dy * 0.3));
 				context.closePath();
 				context.stroke();
 			}

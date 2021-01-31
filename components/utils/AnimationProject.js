@@ -1,10 +1,3 @@
-// TODO: have an animation mode and a paint mode? in paint mode, you can do all the layering per frame and stuff.
-// in animation mode, we process all the frames and for each one condense all their layers into a single frame.
-// then we can use those frames in an animation.
-// to optimize performance when going into animation mode, maybe cache which frames are 'tainted' from the last time 
-// animation mode was switched to.
-import React from 'react';
-
 /***
     a class representing a frame, containing a list of canvas elements which represent layers of the frame
 ***/

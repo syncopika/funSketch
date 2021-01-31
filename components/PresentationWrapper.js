@@ -426,38 +426,6 @@ class PresentationWrapper extends React.Component {
 		});
 	}
 	
-	_setupFilters(){
-		/*
-		let filterInstance = this.state.filtersInstance;
-		let filterNames = Array.from(Object.keys(this.state.filtersInstance.filtersMap));//Object.getOwnPropertyNames(filterInstance).filter((name) => name.indexOf('filter') < 0);
-		let filterChoices = document.getElementById("filterChoices");
-		
-		filterNames.forEach((name) => {
-			let newFilterElement = document.createElement('li');
-			newFilterElement.id = name;
-			newFilterElement.textContent = name;
-
-			newFilterElement.addEventListener('click', () => {
-				filterInstance.filterCanvasOption(name);
-			});
-			
-			filterChoices.appendChild(newFilterElement);
-		});
-		
-		let resetOption = document.createElement('li');
-		resetOption.style.color = "#ff3232";
-		resetOption.textContent = "reset";
-		resetOption.addEventListener('click', () => {
-			this.state.toolbarInstance.resetImage();
-		});
-		
-		filterChoices.appendChild(resetOption);
-		
-		document.getElementById('filterSelect').addEventListener('click', () => {
-			this._showOptions('filters');
-		});*/
-	}
-	
 	_setupAnimationControl(){
 		document.getElementById('timePerFrame').addEventListener('onchange', (evt) => {
 			this.state.toolbarInstance.timePerFrame = parseInt(evt.target.selectedOptions[0].value);
@@ -746,7 +714,6 @@ class PresentationWrapper extends React.Component {
 			this._setupToolbar();
 			this._setupBrushControls();
 			this._linkDemos();
-			//this._setupFilters();
 			this._setKeyDown(document); // set key down on the whole document
 			this._timelineMarkerSetup();
 			this._changeCursor(this.state.brushInstance.getBrushType());
@@ -755,6 +722,18 @@ class PresentationWrapper extends React.Component {
 	
 	componentDidUpdate(){
 		// make the active canvas shown reflects the state's current frame and layer?
+	}
+	
+	_clickCaret(evt){
+		let id = evt.target.id;
+		let target = document.getElementById("display" + id);
+		if(target.style.display !== "none"){
+			target.style.display = "none";
+			evt.target.innerHTML = "&#9656;";
+		}else{
+			target.style.display = "block";
+			evt.target.innerHTML = "&#9662;";
+		}
 	}
 	
 	render(){
@@ -772,18 +751,21 @@ class PresentationWrapper extends React.Component {
 								<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
 								<button id='toggleInstructions'>hide instructions</button>
 							
-								<h4> layer: </h4>
-								<button id='insertCanvas'>add new layer after</button>
-								<button id='deleteCanvas'>delete current layer</button>
-								<button id='duplicateCanvas'>duplicate layer</button>
-								<button id='clearCanvas'>clear layer</button>
-								<button id='downloadLayer'>download current layer</button>
+								<h4> layer <span className="caret2" id="LayerStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+								<div id="displayLayerStuff">
+									<button id='insertCanvas'>add new layer after</button>
+									<button id='deleteCanvas'>delete current layer</button>
+									<button id='duplicateCanvas'>duplicate layer</button>
+									<button id='clearCanvas'>clear layer</button>
+									<button id='downloadLayer'>download current layer</button>
+								</div>
 								
-								<h4> frame: </h4>
-								<button id='addNewFrame'>add new frame</button>
-								<button id='deleteCurrFrame'>delete current frame</button>
-								<button id='changeLayerOrder'>change layer order</button>
-								<button id='downloadFrame'>download current frame</button>
+								<h4> frame <span className="caret2" id="FrameStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+								<div id="displayFrameStuff">
+									<button id='addNewFrame'>add new frame</button>
+									<button id='deleteCurrFrame'>delete current frame</button>
+									<button id='changeLayerOrder'>change layer order</button>
+									<button id='downloadFrame'>download current frame</button>
 								
 								<LayerOrder 
 									changingLayerOrder={this.state.changingLayerOrder}
@@ -794,7 +776,7 @@ class PresentationWrapper extends React.Component {
 											// 2. set changingLayerOrder in state to false
 											let newLayerList = [];
 											let currFrame = this.state.animationProject.getCurrFrame();
-											let currLayerIndex = currFrame.getCurrFrameIndex();
+											let currLayerIndex = currFrame.getCurrCanvasIndex();
 											let currFrameLayerList = currFrame.getLayers();
 											
 											currFrame.getCurrCanvas().style.opacity = 0;
@@ -817,43 +799,45 @@ class PresentationWrapper extends React.Component {
 										}
 									}
 								/>
-								
-								<h4> other: </h4>
-								<button id='importImage'> import image </button>
-								<button id='rotateCanvasImage'>rotate image</button>
-								<button id='undo'>undo</button>
-								<button id='saveWork'>save project (.json)</button> 
-								<button id='importProject'>import project </button> 
-								<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
-								
-								<div id='animationControl'>
-									<br />
-									<h4> animation control: </h4>
-									<ul id='timeOptions'>
-										<label htmlFor='timePerFrame'>time per frame (ms):</label>
-										<select name='timePerFrame' id='timePerFrame' onChange={
-											(evt) => {
-												this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
-											}
-										}>
-											<option value='100'>100</option>
-											<option value='200'>200</option>
-											<option value='500'>500</option>
-											<option value='700'>700</option>
-											<option value='1000'>1000</option>
-										</select>
-									</ul>
-									<button onClick={
-										() => {
-											this._playAnimation();
-										}
-									}> play animation </button>
-									<button id='generateGif'> generate gif! </button>
 								</div>
-								<p id='loadingScreen'></p>
+								
+								<h4> other <span className="caret2" id="OtherStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+								<div id="displayOtherStuff">
+									<button id='importImage'> import image </button>
+									<button id='rotateCanvasImage'>rotate image</button>
+									<button id='undo'>undo</button>
+									<button id='saveWork'>save project (.json)</button> 
+									<button id='importProject'>import project </button> 
+									<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
+									
+									<div id='animationControl'>
+										<br />
+										<h4> animation control: </h4>
+										<ul id='timeOptions'>
+											<label htmlFor='timePerFrame'>time per frame (ms):</label>
+											<select name='timePerFrame' id='timePerFrame' onChange={
+												(evt) => {
+													this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+												}
+											}>
+												<option value='100'>100</option>
+												<option value='200'>200</option>
+												<option value='500'>500</option>
+												<option value='700'>700</option>
+												<option value='1000'>1000</option>
+											</select>
+										</ul>
+										<button onClick={
+											() => {
+												this._playAnimation();
+											}
+										}> play animation </button>
+										<button id='generateGif'> generate gif! </button>
+									</div>
+									<p id='loadingScreen'></p>
+								</div>
 							
 								<br />
-							
 							</div>
 							
 							<br />

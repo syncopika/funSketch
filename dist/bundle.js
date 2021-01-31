@@ -168,20 +168,37 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+function constructSlider(name, params) {
+  var id = "slider_" + name;
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
+    type: "range",
+    name: name,
+    id: id,
+    max: params.max,
+    min: params.min,
+    step: params.step,
+    defaultValue: params.value,
+    onChange: function onChange(evt) {
+      var newVal = evt.target.value; // update reference to the filter's parameter object value field,
+      // which is used when applying the filter
+
+      params.value = parseInt(newVal);
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", {
+    htmlFor: name
+  }, name));
+}
+
 var FilterDashboard = function FilterDashboard(props) {
   var filterManager = props.filterManager;
+  var filters = filterManager ? filterManager.filtersMap : {}; // props.filterManager can be null initially
 
-  if (!filterManager) {
-    // running into filterManager being null initially
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null);
-  }
-
-  var filters = filterManager.filtersMap;
   var filterNames = Object.keys(filters);
   var style = {
     "textAlign": "center"
   };
   var elementStyle = {
+    "width": "80%",
     "margin": "2px auto",
     "textAlign": "center",
     "border": "1px solid #000"
@@ -191,6 +208,16 @@ var FilterDashboard = function FilterDashboard(props) {
       _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
       selectedFilter = _useState2[0],
       setSelectedFilter = _useState2[1];
+
+  var parameterSliders = [];
+
+  if (filters[selectedFilter] && filters[selectedFilter].params) {
+    // need to set up sliders for each editable parameter for the selected filter
+    for (var paramName in filters[selectedFilter].params) {
+      var newSlider = constructSlider(paramName, filters[selectedFilter].params[paramName]);
+      parameterSliders.push(newSlider);
+    }
+  }
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     style: elementStyle
@@ -217,15 +244,14 @@ var FilterDashboard = function FilterDashboard(props) {
       "padding": "0"
     }
   }, filterNames.map(function (filterName, index) {
-    var selected = null;
+    var selectedStyle = null;
 
     if (selectedFilter === filterName) {
-      var _selected = JSON.parse(JSON.stringify(style));
-
-      _selected["backgroundColor"] = "#20b2aa";
+      selectedStyle = JSON.parse(JSON.stringify(style));
+      selectedStyle["backgroundColor"] = "#5f9ea0";
     }
 
-    var s = selected !== null ? selected : style;
+    var s = selectedStyle !== null ? selectedStyle : style;
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
       style: s,
       key: "filter_".concat(index),
@@ -235,16 +261,24 @@ var FilterDashboard = function FilterDashboard(props) {
         setSelectedFilter(filterName);
       }
     }, filterName);
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
     id: "applyFilter",
     onClick: function onClick() {
-      // TODO:
-      // collect current param values if applicable and update filter with params
+      // TODO: collect current param values if applicable and update filter with params
       filterManager.filterCanvasOption(selectedFilter);
     }
   }, " apply filter "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     id: "filterParameters"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", null, "// TODO: list parameters for the selected filter"))));
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
+    style: {
+      "margin": "0 auto",
+      "padding": "0"
+    }
+  }, parameterSliders.map(function (slider, index) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+      key: "filter_param_".concat(index)
+    }, slider);
+  })))));
 };
 
 
@@ -871,38 +905,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
-    key: "_setupFilters",
-    value: function _setupFilters() {
-      /*
-      let filterInstance = this.state.filtersInstance;
-      let filterNames = Array.from(Object.keys(this.state.filtersInstance.filtersMap));//Object.getOwnPropertyNames(filterInstance).filter((name) => name.indexOf('filter') < 0);
-      let filterChoices = document.getElementById("filterChoices");
-      
-      filterNames.forEach((name) => {
-      	let newFilterElement = document.createElement('li');
-      	newFilterElement.id = name;
-      	newFilterElement.textContent = name;
-      			newFilterElement.addEventListener('click', () => {
-      		filterInstance.filterCanvasOption(name);
-      	});
-      	
-      	filterChoices.appendChild(newFilterElement);
-      });
-      
-      let resetOption = document.createElement('li');
-      resetOption.style.color = "#ff3232";
-      resetOption.textContent = "reset";
-      resetOption.addEventListener('click', () => {
-      	this.state.toolbarInstance.resetImage();
-      });
-      
-      filterChoices.appendChild(resetOption);
-      
-      document.getElementById('filterSelect').addEventListener('click', () => {
-      	this._showOptions('filters');
-      });*/
-    }
-  }, {
     key: "_setupAnimationControl",
     value: function _setupAnimationControl() {
       var _this5 = this;
@@ -1205,8 +1207,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
         _this10._setupBrushControls();
 
-        _this10._linkDemos(); //this._setupFilters();
-
+        _this10._linkDemos();
 
         _this10._setKeyDown(document); // set key down on the whole document
 
@@ -1219,6 +1220,20 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate() {// make the active canvas shown reflects the state's current frame and layer?
+    }
+  }, {
+    key: "_clickCaret",
+    value: function _clickCaret(evt) {
+      var id = evt.target.id;
+      var target = document.getElementById("display" + id);
+
+      if (target.style.display !== "none") {
+        target.style.display = "none";
+        evt.target.innerHTML = "&#9656;";
+      } else {
+        target.style.display = "block";
+        evt.target.innerHTML = "&#9662;";
+      }
     }
   }, {
     key: "render",
@@ -1246,7 +1261,13 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "instructions"
       }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "toggleInstructions"
-      }, "hide instructions"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " layer: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+      }, "hide instructions"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " layer ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
+        className: "caret2",
+        id: "LayerStuff",
+        onClick: this._clickCaret
+      }, "\u25BE"), " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "displayLayerStuff"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "insertCanvas"
       }, "add new layer after"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "deleteCanvas"
@@ -1256,7 +1277,13 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "clearCanvas"
       }, "clear layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "downloadLayer"
-      }, "download current layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " frame: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+      }, "download current layer")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " frame ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
+        className: "caret2",
+        id: "FrameStuff",
+        onClick: this._clickCaret
+      }, "\u25BE"), " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "displayFrameStuff"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "addNewFrame"
       }, "add new frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "deleteCurrFrame"
@@ -1276,7 +1303,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
           var currFrame = _this11.state.animationProject.getCurrFrame();
 
-          var currLayerIndex = currFrame.getCurrFrameIndex();
+          var currLayerIndex = currFrame.getCurrCanvasIndex();
           var currFrameLayerList = currFrame.getLayers();
           currFrame.getCurrCanvas().style.opacity = 0;
           currFrame.getCurrCanvas().style.zIndex = 0;
@@ -1297,7 +1324,13 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             "changingLayerOrder": false
           });
         }
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " other: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " other ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
+        className: "caret2",
+        id: "OtherStuff",
+        onClick: this._clickCaret
+      }, "\u25BE"), " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "displayOtherStuff"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "importImage"
       }, " import image "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "rotateCanvasImage"
@@ -1339,7 +1372,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "generateGif"
       }, " generate gif! ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         id: "loadingScreen"
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__["FilterDashboard"], {
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__["FilterDashboard"], {
         filterManager: this.state.filtersInstance
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "brushes"

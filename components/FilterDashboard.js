@@ -1,15 +1,36 @@
 import React from 'react';
 import {useState} from 'react';
 
+function constructSlider(name, params){
+	let id = "slider_" + name;
+	return (
+		<div>
+			<input 
+				type="range" 
+				name={name} 
+				id={id} 
+				max={params.max} 
+				min={params.min} 
+				step={params.step} 
+				defaultValue={params.value}
+				onChange={
+					function(evt){
+						let newVal = evt.target.value;
+						
+						// update reference to the filter's parameter object value field,
+						// which is used when applying the filter
+						params.value = parseInt(newVal);
+					}
+				}
+			></input>
+			<label htmlFor={name}>{name}</label>
+		</div>
+	);
+}
+
 const FilterDashboard = (props) => {
 	const filterManager = props.filterManager;
-	
-	if(!filterManager){
-		// running into filterManager being null initially
-		return <div></div>;
-	}
-	
-	const filters = filterManager.filtersMap;
+	const filters = (filterManager) ? filterManager.filtersMap : {}; // props.filterManager can be null initially
 	const filterNames = Object.keys(filters);
 	
 	const style = {
@@ -17,6 +38,7 @@ const FilterDashboard = (props) => {
 	};
 	
 	const elementStyle = {
+		"width": "80%",
 		"margin": "2px auto",
 		"textAlign": "center",
 		"border": "1px solid #000",
@@ -24,6 +46,15 @@ const FilterDashboard = (props) => {
 	
 	// use a hook to be able to keep track of selected filter
 	const [selectedFilter, setSelectedFilter] = useState("");
+	
+	const parameterSliders = [];
+	if(filters[selectedFilter] && filters[selectedFilter].params){
+		// need to set up sliders for each editable parameter for the selected filter
+		for(let paramName in filters[selectedFilter].params){
+			let newSlider = constructSlider(paramName, filters[selectedFilter].params[paramName]);
+			parameterSliders.push(newSlider);
+		}
+	}
 	
 	return (
 		<div style={elementStyle}>
@@ -50,12 +81,12 @@ const FilterDashboard = (props) => {
 				>
 				{
 					filterNames.map((filterName, index) => {
-						let selected = null;
+						let selectedStyle = null;
 						if(selectedFilter === filterName){
-							let selected = JSON.parse(JSON.stringify(style));
-							selected["backgroundColor"] = "#20b2aa";
+							selectedStyle = JSON.parse(JSON.stringify(style));
+							selectedStyle["backgroundColor"] = "#5f9ea0";
 						}
-						let s = (selected !== null) ? selected : style;
+						let s = (selectedStyle !== null) ? selectedStyle : style;
 						return <li 
 							style={s}
 							key={(`filter_${index}`)}
@@ -70,22 +101,26 @@ const FilterDashboard = (props) => {
 					})
 				}
 				</ul>
+				<br />
 				<button
 					id={"applyFilter"}
 					onClick={
 						function(){
-							// TODO:
-							// collect current param values if applicable and update filter with params
+							// TODO: collect current param values if applicable and update filter with params
 							filterManager.filterCanvasOption(selectedFilter);
 						}
 					}
 				> apply filter </button>
 				
-				< hr />
+				<hr />
 				
 				<div id='filterParameters'>
-					<ul>
-						// TODO: list parameters for the selected filter
+					<ul style={{"margin": "0 auto", "padding": "0"}}>
+					{
+						parameterSliders.map((slider, index) => {
+							return <li key={(`filter_param_${index}`)}>{slider}</li>
+						})
+					}
 					</ul>
 				</div>
 			</div>

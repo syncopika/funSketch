@@ -1,6 +1,7 @@
 import { BrushTemplate } from './BrushTemplate.js';
 
-class DefaultBrush extends BrushTemplate {
+// basically the only difference between this and default brush is that #fff is mandatory lol
+class EraserBrush extends BrushTemplate {
 	
 	constructor(brushManager){
 		super(brushManager);
@@ -34,7 +35,7 @@ class DefaultBrush extends BrushTemplate {
 				evt.offsetY = newCoords.y;
 				evt.preventDefault();
 			}
-			this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+			this._addClick(evt.offsetX, evt.offsetY, "#ffffffff", null, true); // #ffffffff because eraser
 			this._redraw(this.brushStroke.bind(this));
 		}			
 	}
@@ -49,7 +50,7 @@ class DefaultBrush extends BrushTemplate {
 				// prevent page scrolling when drawing 
 				evt.preventDefault();
 			}
-			this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+			this._addClick(evt.offsetX, evt.offsetY, "#ffffffff", null, true); // #ffffffff because eraser
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}
@@ -131,5 +132,5 @@ class DefaultBrush extends BrushTemplate {
 
 
 export {
-	DefaultBrush
+	EraserBrush
 };

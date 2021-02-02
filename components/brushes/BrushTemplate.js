@@ -5,9 +5,6 @@ class BrushTemplate {
 		this.brushManager = brushManager; // a brush will need to use some things the brush manager has
 		this.paint = false; // boolean for knowing when brush is active or not
 		
-		this.currColor = brushManager.currColor; //'rgb(0,0,0)';
-		this.currColorArray = brushManager.currColorArray; //Uint8Array.from([0, 0, 0, 0]);
-		
 		// keep track of the pixels drawn on by the mouse.
 		// the redraw function uses this data to connect the dots 
 		this.clickX = [];
@@ -19,11 +16,14 @@ class BrushTemplate {
 	
 	//collect info where each pixel is to be drawn on canvas
     _addClick(x, y, color, size, dragging){
+		const currColor = this.brushManager.currColor; //'rgb(0,0,0)';
+		const currSize = this.brushManager.currSize;
+		
         this.clickX.push(x);
         this.clickY.push(y);
         this.clickDrag.push(dragging);
-        this.clickColor.push((color === null ? this.currColor : color));
-        this.clickSize.push((size === null ? this.currSize : size));
+        this.clickColor.push((color === null ? currColor : color));
+        this.clickSize.push((size === null ? currSize : size));
     }
 	
 	
@@ -61,6 +61,10 @@ class BrushTemplate {
 	brushStop(evt){
 		evt.preventDefault();
 	}
+	
+	brushLeave(evt){
+		evt.preventDefault();
+	};
 	
 	// this is for determining what the brush stroke looks like
 	brushStroke(){

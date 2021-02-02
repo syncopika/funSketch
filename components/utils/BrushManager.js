@@ -5,6 +5,7 @@
 	the current canvas element will be the target for the brush
 ***/
 import { DefaultBrush } from '../brushes/defaultBrush.js';
+import { EraserBrush } from '../brushes/eraserBrush.js';
 
 class BrushManager {
 	constructor(animationProj){
@@ -33,6 +34,7 @@ class BrushManager {
 		// brushes map
 		this.brushesMap = {};
 		this.brushesMap["default"] = new DefaultBrush(this);
+		this.brushesMap["eraser"] = new EraserBrush(this);
 	}
 	
     //collect info where each pixel is to be drawn on canvas
@@ -95,7 +97,6 @@ class BrushManager {
 		const selectedBrush = this.selectedBrush;
 		switch(selectedBrush){
 			case 'default':
-				//this.defaultBrush();
 				this.brushesMap[selectedBrush].attachBrush();
 				break;
 			case 'pen':
@@ -108,95 +109,13 @@ class BrushManager {
 				this.floodfillBrush();
 				break;
 			case 'eraser':
-				this.eraserBrush();
+				this.brushesMap[selectedBrush].attachBrush();
 				break;
 			default:
 				console.log("the selected brush does not exist");
 		}
 	}
 
-	/***
-		eraser brush
-	***/
-    eraserBrush(){
-        const frame = this.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		let paint;
-		
-		let eraserStart = (evt) => {
-			evt.preventDefault();
-			if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart') { //when left click only
-				// update previousCanvas
-				if(this.previousCanvas !== currLayer){
-					this.previousCanvas = currLayer;
-					// reset the snapshots array
-					this.currentCanvasSnapshots = [];
-				}
-				
-				if(this.tempSnapshot){
-					this.currentCanvasSnapshots.push(this.tempSnapshot);
-				}
-				
-				paint = true;
-				if(evt.type === 'touchstart'){
-					const newCoords = this._handleTouchEvent(evt);
-					evt.offsetX = newCoords.x;
-					evt.offsetY = newCoords.y;
-					evt.preventDefault();
-				}
-				this._addClick(evt.offsetX, evt.offsetY, "#ffffffff", null, true); // #ffffffff because eraser
-				this._redraw(this._defaultBrushStroke.bind(this));
-			}
-		};
-		currLayer.addEventListener('mousedown', eraserStart);
-		currLayer.addEventListener('touchstart', eraserStart);
-		this.currentEventListeners['mousedown'] = eraserStart;
-		this.currentEventListeners['touchstart'] = eraserStart;
-		
-        // draw the lines as mouse moves
-		let eraserMove = (evt) => {
-			if(paint){
-                if(evt.type === 'touchmove'){
-                    const newCoords = this._handleTouchEvent(evt);
-                    evt.offsetX = newCoords.x;
-                    evt.offsetY = newCoords.y;
-                    // prevent page scrolling when drawing 
-                    evt.preventDefault();
-                }
-                this._addClick(evt.offsetX, evt.offsetY, "#ffffffff", null, true);
-                this._redraw(this._defaultBrushStroke.bind(this));
-            }
-		};
-		currLayer.addEventListener('mousemove', eraserMove);
-		currLayer.addEventListener('touchmove', eraserMove);
-		this.currentEventListeners['mousemove'] = eraserMove;
-		this.currentEventListeners['touchmove'] = eraserMove;
-		
-        // stop drawing
-		let eraserStop = (evt) => {
-			// see if it's a new canvas or we're still on the same one as before the mousedown
-			if(this.previousCanvas === currLayer){
-				// if it is, then log the current image data. this is important for the undo feature
-				const w = currLayer.width;
-				const h = currLayer.height;
-				this.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
-			}
-			this._clearClick();
-			paint = false;
-		}
-		currLayer.addEventListener('mouseup', eraserStop);
-		currLayer.addEventListener('touchend', eraserStop);
-		this.currentEventListeners['mouseup'] = eraserStop;
-		this.currentEventListeners['touchend'] = eraserStop;
-		
-        //stop drawing when mouse leaves
-		// TODO: we really shouldn't have multiple instances of this
-        currLayer.addEventListener('mouseleave', (evt) => {
-			this._clearClick();
-            paint = false;
-        });
-    }
-	
     /***
         radial gradient brush
     ***/

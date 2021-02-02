@@ -1,11 +1,12 @@
 /***
-    brush class
+    brush manager class
     pass in an instance of the AnimationProject class as an argument
 	
 	the current canvas element will be the target for the brush
 ***/
-	
-class Brush {
+import { DefaultBrush } from '../brushes/defaultBrush.js';
+
+class BrushManager {
 	constructor(animationProj){
 		// pass in an animation project, from which you can access the current frame and the current canvas
 		this.animationProject = animationProj;
@@ -28,6 +29,10 @@ class Brush {
 		// hold the current image after mouseup. 
 		// only put it in the currentCanvasSnapshots after user starts drawing again, creating a new snapshot
 		this.tempSnapshot = null;
+		
+		// brushes map
+		this.brushesMap = {};
+		this.brushesMap["default"] = new DefaultBrush(this);
 	}
 	
     //collect info where each pixel is to be drawn on canvas
@@ -90,7 +95,8 @@ class Brush {
 		const selectedBrush = this.selectedBrush;
 		switch(selectedBrush){
 			case 'default':
-				this.defaultBrush();
+				//this.defaultBrush();
+				this.brushesMap[selectedBrush].attachBrush();
 				break;
 			case 'pen':
 				this.penBrush();
@@ -190,112 +196,6 @@ class Brush {
             paint = false;
         });
     }
-	
-	/***
-		default brush
-	***/
-    defaultBrush(){
-        const frame = this.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		let paint;
-		
-		let defaultBrushStart = (evt) => {
-			evt.preventDefault();
-			if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart') { //when left click only
-				// update previousCanvas
-				if(this.previousCanvas !== currLayer){
-					this.previousCanvas = currLayer;
-					// reset the snapshots array
-					this.currentCanvasSnapshots = [];
-				}
-				
-				if(this.tempSnapshot){
-					this.currentCanvasSnapshots.push(this.tempSnapshot);
-				}
-				
-				paint = true;
-				// offset will be different with mobile
-				// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
-				// https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
-				// using rect seems to work pretty well
-				if(evt.type === 'touchstart'){
-					const newCoords = this._handleTouchEvent(evt);
-					evt.offsetX = newCoords.x;
-					evt.offsetY = newCoords.y;
-					evt.preventDefault();
-				}
-				this._addClick(evt.offsetX, evt.offsetY, null, null, true);
-				this._redraw(this._defaultBrushStroke.bind(this));
-			}
-		};
-		currLayer.addEventListener('mousedown', defaultBrushStart);
-		currLayer.addEventListener('touchstart', defaultBrushStart);
-		this.currentEventListeners['mousedown'] = defaultBrushStart;
-		this.currentEventListeners['touchstart'] = defaultBrushStart;
-		
-        // draw the lines as mouse moves
-		let defaultBrushMove = (evt) => {
-			if(paint){
-                if(evt.type === 'touchmove'){
-                    const newCoords = this._handleTouchEvent(evt);
-                    evt.offsetX = newCoords.x;
-                    evt.offsetY = newCoords.y;
-                    // prevent page scrolling when drawing 
-                    evt.preventDefault();
-                }
-                this._addClick(evt.offsetX, evt.offsetY, null, null, true);
-                this._redraw(this._defaultBrushStroke.bind(this));
-            }
-		};
-		currLayer.addEventListener('mousemove', defaultBrushMove);
-		currLayer.addEventListener('touchmove', defaultBrushMove);
-		this.currentEventListeners['mousemove'] = defaultBrushMove;
-		this.currentEventListeners['touchmove'] = defaultBrushMove;
-		
-        // stop drawing
-		let defaultBrushStop = (evt) => {
-			// see if it's a new canvas or we're still on the same one as before the mousedown
-			if(this.previousCanvas === currLayer){
-				// if it is, then log the current image data. this is important for the undo feature
-				const w = currLayer.width;
-				const h = currLayer.height;
-				this.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
-			}
-			this._clearClick();
-			paint = false;
-		};
-		currLayer.addEventListener('mouseup', defaultBrushStop);
-		currLayer.addEventListener('touchend', defaultBrushStop);
-		this.currentEventListeners['mouseup'] = defaultBrushStop;
-		this.currentEventListeners['touchend'] = defaultBrushStop;
-		
-        //stop drawing when mouse leaves
-		// TODO: we really shouldn't have multiple instances of this
-        currLayer.addEventListener('mouseleave', (evt) => {
-			this._clearClick();
-            paint = false;
-        });
-    }
-	
-	_defaultBrushStroke(context){
-		for(let i = 0; i < this.clickX.length; i++){
-            context.beginPath();
-            //this helps generate a solid line, rather than a line of dots. 
-            //the subtracting of 1 from i means that the point at i is being connected
-            //with the previous point
-            if(this.clickDrag[i] && i){
-                context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
-            }else{
-                //the adding of 1 allows you to make a dot on click
-                context.moveTo(this.clickX[i], this.clickY[i] + 1);
-            }
-            context.lineTo(this.clickX[i], this.clickY[i]);
-            context.closePath();
-            context.strokeStyle = this.clickColor[i];
-            context.lineWidth = this.clickSize[i];
-            context.stroke();
-        }
-	}
 	
     /***
         radial gradient brush
@@ -653,5 +553,5 @@ class Brush {
 }
 
 export {
-	Brush
+	BrushManager
 };

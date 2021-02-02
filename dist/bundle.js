@@ -421,7 +421,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/AnimationProject.js */ "./components/utils/AnimationProject.js");
 /* harmony import */ var _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/Toolbar.js */ "./components/utils/Toolbar.js");
-/* harmony import */ var _utils_Brush_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils/Brush.js */ "./components/utils/Brush.js");
+/* harmony import */ var _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils/BrushManager.js */ "./components/utils/BrushManager.js");
 /* harmony import */ var _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./utils/FilterManager.js */ "./components/utils/FilterManager.js");
 /* harmony import */ var _AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./AnimationTimeline.js */ "./components/AnimationTimeline.js");
 /* harmony import */ var _LayerOrder_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./LayerOrder.js */ "./components/LayerOrder.js");
@@ -1193,8 +1193,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
       var animationProj = new _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__["AnimationProject"]('canvasArea');
       animationProj.addNewFrame(true);
-      var newBrush = new _utils_Brush_js__WEBPACK_IMPORTED_MODULE_9__["Brush"](animationProj);
-      newBrush.defaultBrush();
+      var newBrush = new _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_9__["BrushManager"](animationProj);
+      newBrush.brushesMap["default"].attachBrush();
       var newFilters = new _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_10__["FilterManager"](animationProj, newBrush);
       var newToolbar = new _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__["Toolbar"](newBrush, animationProj);
       this.setState({
@@ -1464,6 +1464,300 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
   return PresentationWrapper;
 }(react__WEBPACK_IMPORTED_MODULE_6___default.a.Component);
+
+
+
+/***/ }),
+
+/***/ "./components/brushes/BrushTemplate.js":
+/*!*********************************************!*\
+  !*** ./components/brushes/BrushTemplate.js ***!
+  \*********************************************/
+/*! exports provided: BrushTemplate */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrushTemplate", function() { return BrushTemplate; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+// template for brushes
+var BrushTemplate = /*#__PURE__*/function () {
+  function BrushTemplate(brushManager) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, BrushTemplate);
+
+    this.brushManager = brushManager; // a brush will need to use some things the brush manager has
+
+    this.paint = false; // boolean for knowing when brush is active or not
+
+    this.currColor = brushManager.currColor; //'rgb(0,0,0)';
+
+    this.currColorArray = brushManager.currColorArray; //Uint8Array.from([0, 0, 0, 0]);
+    // keep track of the pixels drawn on by the mouse.
+    // the redraw function uses this data to connect the dots 
+
+    this.clickX = [];
+    this.clickY = [];
+    this.clickDrag = [];
+    this.clickColor = [];
+    this.clickSize = [];
+  } //collect info where each pixel is to be drawn on canvas
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BrushTemplate, [{
+    key: "_addClick",
+    value: function _addClick(x, y, color, size, dragging) {
+      this.clickX.push(x);
+      this.clickY.push(y);
+      this.clickDrag.push(dragging);
+      this.clickColor.push(color === null ? this.currColor : color);
+      this.clickSize.push(size === null ? this.currSize : size);
+    }
+  }, {
+    key: "_redraw",
+    value: function _redraw(strokeFunction) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var context = frame.getCurrCanvas().getContext("2d");
+      context.lineJoin = 'round';
+      strokeFunction(context);
+    }
+  }, {
+    key: "_clearClick",
+    value: function _clearClick() {
+      this.clickX = [];
+      this.clickY = [];
+      this.clickDrag = [];
+      this.clickColor = [];
+      this.clickSize = [];
+    }
+  }, {
+    key: "_handleTouchEvent",
+    value: function _handleTouchEvent(evt) {
+      var rect = evt.target.getBoundingClientRect();
+      var x = evt.touches[0].pageX - rect.left;
+      var y = evt.touches[0].pageY - rect.top - window.pageYOffset;
+      return {
+        'x': x,
+        'y': y
+      };
+    } // event listener functions
+
+  }, {
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+    }
+  }, {
+    key: "brushMove",
+    value: function brushMove(evt) {
+      evt.preventDefault();
+    }
+  }, {
+    key: "brushStop",
+    value: function brushStop(evt) {
+      evt.preventDefault();
+    } // this is for determining what the brush stroke looks like
+
+  }, {
+    key: "brushStroke",
+    value: function brushStroke() {} // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {}
+  }]);
+
+  return BrushTemplate;
+}();
+
+
+
+/***/ }),
+
+/***/ "./components/brushes/defaultBrush.js":
+/*!********************************************!*\
+  !*** ./components/brushes/defaultBrush.js ***!
+  \********************************************/
+/*! exports provided: DefaultBrush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DefaultBrush", function() { return DefaultBrush; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./components/brushes/BrushTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+
+
+var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(DefaultBrush, _BrushTemplate);
+
+  var _super = _createSuper(DefaultBrush);
+
+  function DefaultBrush(brushManager) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, DefaultBrush);
+
+    return _super.call(this, brushManager);
+  } // event listener functions
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(DefaultBrush, [{
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
+        //when left click only
+        // TODO: refactor this so that we can just call a method from brushManager to do this stuff? this is to support undo functionality
+        // update previousCanvas
+        if (this.brushManager.previousCanvas !== currLayer) {
+          this.brushManager.previousCanvas = currLayer; // reset the snapshots array
+
+          this.brushManager.currentCanvasSnapshots = [];
+        }
+
+        if (this.brushManager.tempSnapshot) {
+          this.brushManager.currentCanvasSnapshots.push(this.tempSnapshot);
+        }
+
+        this.paint = true; // offset will be different with mobile
+        // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
+        // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
+
+        if (evt.type === 'touchstart') {
+          var newCoords = this.brushManager._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
+          evt.preventDefault();
+        }
+
+        this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushMove",
+    value: function brushMove(evt) {
+      evt.preventDefault();
+
+      if (this.paint) {
+        if (evt.type === 'touchmove') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+          evt.preventDefault();
+        }
+
+        this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushStop",
+    value: function brushStop(evt) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      evt.preventDefault(); // see if it's a new canvas or we're still on the same one as before the mousedown
+
+      if (this.brushManager.previousCanvas === currLayer) {
+        // if it is, then log the current image data. this is important for the undo feature
+        var w = currLayer.width;
+        var h = currLayer.height;
+        this.brushManager.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
+      }
+
+      this._clearClick();
+
+      this.paint = false;
+    } // this is for determining what the brush stroke looks like
+
+  }, {
+    key: "brushStroke",
+    value: function brushStroke() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      var context = currLayer.getContext("2d");
+
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.beginPath(); //this helps generate a solid line, rather than a line of dots. 
+        //the subtracting of 1 from i means that the point at i is being connected
+        //with the previous point
+
+        if (this.clickDrag[i] && i) {
+          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+        } else {
+          //the adding of 1 allows you to make a dot on click
+          context.moveTo(this.clickX[i], this.clickY[i] + 1);
+        }
+
+        context.lineTo(this.clickX[i], this.clickY[i]);
+        context.closePath();
+        context.strokeStyle = this.clickColor[i];
+        context.lineWidth = this.clickSize[i];
+        context.stroke();
+      }
+    } // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {
+      var _this = this;
+
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas(); // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+
+      currLayer.addEventListener('mousedown', this.brushStart.bind(this));
+      currLayer.addEventListener('touchstart', this.brushStart.bind(this));
+      this.brushManager.currentEventListeners['mousedown'] = this.brushStart.bind(this);
+      this.brushManager.currentEventListeners['touchstart'] = this.brushStart.bind(this);
+      currLayer.addEventListener('mousemove', this.brushMove.bind(this));
+      currLayer.addEventListener('touchmove', this.brushMove.bind(this));
+      this.brushManager.currentEventListeners['mousemove'] = this.brushMove.bind(this);
+      this.brushManager.currentEventListeners['touchmove'] = this.brushMove.bind(this);
+      currLayer.addEventListener('mouseup', this.brushStop.bind(this));
+      currLayer.addEventListener('touchend', this.brushStop.bind(this));
+      this.brushManager.currentEventListeners['mouseup'] = this.brushStop.bind(this);
+      this.brushManager.currentEventListeners['touchend'] = this.brushStop.bind(this);
+      currLayer.addEventListener('mouseleave', function (evt) {
+        _this._clearClick();
+
+        _this.paint = false;
+      });
+    }
+  }]);
+
+  return DefaultBrush;
+}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
 
 
 
@@ -3324,32 +3618,35 @@ function setCanvas(canvasElement, width, height) {
 
 /***/ }),
 
-/***/ "./components/utils/Brush.js":
-/*!***********************************!*\
-  !*** ./components/utils/Brush.js ***!
-  \***********************************/
-/*! exports provided: Brush */
+/***/ "./components/utils/BrushManager.js":
+/*!******************************************!*\
+  !*** ./components/utils/BrushManager.js ***!
+  \******************************************/
+/*! exports provided: BrushManager */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Brush", function() { return Brush; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrushManager", function() { return BrushManager; });
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../brushes/defaultBrush.js */ "./components/brushes/defaultBrush.js");
 
 
 
 /***
-    brush class
+    brush manager class
     pass in an instance of the AnimationProject class as an argument
 	
 	the current canvas element will be the target for the brush
 ***/
-var Brush = /*#__PURE__*/function () {
-  function Brush(animationProj) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Brush);
+
+
+var BrushManager = /*#__PURE__*/function () {
+  function BrushManager(animationProj) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, BrushManager);
 
     // pass in an animation project, from which you can access the current frame and the current canvas
     this.animationProject = animationProj;
@@ -3372,11 +3669,14 @@ var Brush = /*#__PURE__*/function () {
     this.clickSize = []; // hold the current image after mouseup. 
     // only put it in the currentCanvasSnapshots after user starts drawing again, creating a new snapshot
 
-    this.tempSnapshot = null;
+    this.tempSnapshot = null; // brushes map
+
+    this.brushesMap = {};
+    this.brushesMap["default"] = new _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_2__["DefaultBrush"](this);
   } //collect info where each pixel is to be drawn on canvas
 
 
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Brush, [{
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BrushManager, [{
     key: "_addClick",
     value: function _addClick(x, y, color, size, dragging) {
       this.clickX.push(x);
@@ -3448,7 +3748,8 @@ var Brush = /*#__PURE__*/function () {
 
       switch (selectedBrush) {
         case 'default':
-          this.defaultBrush();
+          //this.defaultBrush();
+          this.brushesMap[selectedBrush].attachBrush();
           break;
 
         case 'pen':
@@ -3571,23 +3872,22 @@ var Brush = /*#__PURE__*/function () {
       });
     }
     /***
-    	default brush
+        radial gradient brush
     ***/
 
   }, {
-    key: "defaultBrush",
-    value: function defaultBrush() {
+    key: "radialGradBrush",
+    value: function radialGradBrush() {
       var _this2 = this;
 
       var frame = this.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
+      var context = currLayer.getContext("2d");
+      context.lineJoin = context.lineCap = 'round';
       var paint;
 
-      var defaultBrushStart = function defaultBrushStart(evt) {
-        evt.preventDefault();
-
+      var radGradBrushStart = function radGradBrushStart(evt) {
         if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
-          //when left click only
           // update previousCanvas
           if (_this2.previousCanvas !== currLayer) {
             _this2.previousCanvas = currLayer; // reset the snapshots array
@@ -3599,132 +3899,10 @@ var Brush = /*#__PURE__*/function () {
             _this2.currentCanvasSnapshots.push(_this2.tempSnapshot);
           }
 
-          paint = true; // offset will be different with mobile
-          // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
-          // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
-          // using rect seems to work pretty well
-
-          if (evt.type === 'touchstart') {
-            var newCoords = _this2._handleTouchEvent(evt);
-
-            evt.offsetX = newCoords.x;
-            evt.offsetY = newCoords.y;
-            evt.preventDefault();
-          }
-
-          _this2._addClick(evt.offsetX, evt.offsetY, null, null, true);
-
-          _this2._redraw(_this2._defaultBrushStroke.bind(_this2));
-        }
-      };
-
-      currLayer.addEventListener('mousedown', defaultBrushStart);
-      currLayer.addEventListener('touchstart', defaultBrushStart);
-      this.currentEventListeners['mousedown'] = defaultBrushStart;
-      this.currentEventListeners['touchstart'] = defaultBrushStart; // draw the lines as mouse moves
-
-      var defaultBrushMove = function defaultBrushMove(evt) {
-        if (paint) {
-          if (evt.type === 'touchmove') {
-            var newCoords = _this2._handleTouchEvent(evt);
-
-            evt.offsetX = newCoords.x;
-            evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-            evt.preventDefault();
-          }
-
-          _this2._addClick(evt.offsetX, evt.offsetY, null, null, true);
-
-          _this2._redraw(_this2._defaultBrushStroke.bind(_this2));
-        }
-      };
-
-      currLayer.addEventListener('mousemove', defaultBrushMove);
-      currLayer.addEventListener('touchmove', defaultBrushMove);
-      this.currentEventListeners['mousemove'] = defaultBrushMove;
-      this.currentEventListeners['touchmove'] = defaultBrushMove; // stop drawing
-
-      var defaultBrushStop = function defaultBrushStop(evt) {
-        // see if it's a new canvas or we're still on the same one as before the mousedown
-        if (_this2.previousCanvas === currLayer) {
-          // if it is, then log the current image data. this is important for the undo feature
-          var w = currLayer.width;
-          var h = currLayer.height;
-          _this2.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
-        }
-
-        _this2._clearClick();
-
-        paint = false;
-      };
-
-      currLayer.addEventListener('mouseup', defaultBrushStop);
-      currLayer.addEventListener('touchend', defaultBrushStop);
-      this.currentEventListeners['mouseup'] = defaultBrushStop;
-      this.currentEventListeners['touchend'] = defaultBrushStop; //stop drawing when mouse leaves
-      // TODO: we really shouldn't have multiple instances of this
-
-      currLayer.addEventListener('mouseleave', function (evt) {
-        _this2._clearClick();
-
-        paint = false;
-      });
-    }
-  }, {
-    key: "_defaultBrushStroke",
-    value: function _defaultBrushStroke(context) {
-      for (var i = 0; i < this.clickX.length; i++) {
-        context.beginPath(); //this helps generate a solid line, rather than a line of dots. 
-        //the subtracting of 1 from i means that the point at i is being connected
-        //with the previous point
-
-        if (this.clickDrag[i] && i) {
-          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
-        } else {
-          //the adding of 1 allows you to make a dot on click
-          context.moveTo(this.clickX[i], this.clickY[i] + 1);
-        }
-
-        context.lineTo(this.clickX[i], this.clickY[i]);
-        context.closePath();
-        context.strokeStyle = this.clickColor[i];
-        context.lineWidth = this.clickSize[i];
-        context.stroke();
-      }
-    }
-    /***
-        radial gradient brush
-    ***/
-
-  }, {
-    key: "radialGradBrush",
-    value: function radialGradBrush() {
-      var _this3 = this;
-
-      var frame = this.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      var context = currLayer.getContext("2d");
-      context.lineJoin = context.lineCap = 'round';
-      var paint;
-
-      var radGradBrushStart = function radGradBrushStart(evt) {
-        if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
-          // update previousCanvas
-          if (_this3.previousCanvas !== currLayer) {
-            _this3.previousCanvas = currLayer; // reset the snapshots array
-
-            _this3.currentCanvasSnapshots = [];
-          }
-
-          if (_this3.tempSnapshot) {
-            _this3.currentCanvasSnapshots.push(_this3.tempSnapshot);
-          }
-
           paint = true;
 
           if (evt.type === 'touchstart') {
-            var newCoords = _this3._handleTouchEvent(evt);
+            var newCoords = _this2._handleTouchEvent(evt);
 
             evt.offsetX = newCoords.x;
             evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
@@ -3732,11 +3910,11 @@ var Brush = /*#__PURE__*/function () {
             evt.preventDefault();
           }
 
-          _this3._radialGrad(evt.offsetX, evt.offsetY);
+          _this2._radialGrad(evt.offsetX, evt.offsetY);
 
-          _this3._addClick(evt.offsetX, evt.offsetY, null, null, true);
+          _this2._addClick(evt.offsetX, evt.offsetY, null, null, true);
 
-          _this3._redraw(_this3._defaultBrushStroke.bind(_this3));
+          _this2._redraw(_this2._defaultBrushStroke.bind(_this2));
         }
       };
 
@@ -3748,7 +3926,7 @@ var Brush = /*#__PURE__*/function () {
       var radGradBrushMove = function radGradBrushMove(evt) {
         if (paint) {
           if (evt.type === 'touchmove') {
-            var newCoords = _this3._handleTouchEvent(evt);
+            var newCoords = _this2._handleTouchEvent(evt);
 
             evt.offsetX = newCoords.x;
             evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
@@ -3756,11 +3934,11 @@ var Brush = /*#__PURE__*/function () {
             evt.preventDefault();
           }
 
-          _this3._radialGrad(evt.offsetX, evt.offsetY);
+          _this2._radialGrad(evt.offsetX, evt.offsetY);
 
-          _this3._addClick(evt.offsetX, evt.offsetY, null, null, true);
+          _this2._addClick(evt.offsetX, evt.offsetY, null, null, true);
 
-          _this3._redraw(_this3._defaultBrushStroke.bind(_this3));
+          _this2._redraw(_this2._defaultBrushStroke.bind(_this2));
         }
       };
 
@@ -3770,15 +3948,15 @@ var Brush = /*#__PURE__*/function () {
       this.currentEventListeners['touchmove'] = radGradBrushMove; // this function seems to be shared among all brushes for stopping. TODO: just have one of these functions
 
       var radGradBrushStop = function radGradBrushStop(evt) {
-        if (_this3.previousCanvas === currLayer) {
+        if (_this2.previousCanvas === currLayer) {
           // if it is, then log the current image data. this is important for the undo feature
           var w = currLayer.width;
           var h = currLayer.height;
 
-          _this3.currentCanvasSnapshots.push(currLayer.getContext("2d").getImageData(0, 0, w, h));
+          _this2.currentCanvasSnapshots.push(currLayer.getContext("2d").getImageData(0, 0, w, h));
         }
 
-        _this3._clearClick();
+        _this2._clearClick();
 
         paint = false;
       };
@@ -3789,7 +3967,7 @@ var Brush = /*#__PURE__*/function () {
       this.currentEventListeners['touchend'] = radGradBrushStop; //stop drawing when mouse leaves
 
       currLayer.addEventListener('mouseleave', function (evt) {
-        _this3._clearClick();
+        _this2._clearClick();
 
         paint = false;
       });
@@ -3822,7 +4000,7 @@ var Brush = /*#__PURE__*/function () {
   }, {
     key: "penBrush",
     value: function penBrush() {
-      var _this4 = this;
+      var _this3 = this;
 
       var frame = this.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
@@ -3832,29 +4010,29 @@ var Brush = /*#__PURE__*/function () {
         if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
           //when left click only
           // update previousCanvas
-          if (_this4.previousCanvas !== currLayer) {
-            _this4.previousCanvas = currLayer; // reset the snapshots array
+          if (_this3.previousCanvas !== currLayer) {
+            _this3.previousCanvas = currLayer; // reset the snapshots array
 
-            _this4.currentCanvasSnapshots = [];
+            _this3.currentCanvasSnapshots = [];
           }
 
-          if (_this4.tempSnapshot) {
-            _this4.currentCanvasSnapshots.push(_this4.tempSnapshot);
+          if (_this3.tempSnapshot) {
+            _this3.currentCanvasSnapshots.push(_this3.tempSnapshot);
           }
 
           paint = true;
 
           if (evt.type === 'touchstart') {
-            var newCoords = _this4._handleTouchEvent(evt);
+            var newCoords = _this3._handleTouchEvent(evt);
 
             evt.offsetX = newCoords.x;
             evt.offsetY = newCoords.y;
             evt.preventDefault();
           }
 
-          _this4._addClick(evt.offsetX, evt.offsetY, null, null, true);
+          _this3._addClick(evt.offsetX, evt.offsetY, null, null, true);
 
-          _this4._redraw(_this4._penBrushStroke.bind(_this4));
+          _this3._redraw(_this3._penBrushStroke.bind(_this3));
         }
       };
 
@@ -3866,16 +4044,16 @@ var Brush = /*#__PURE__*/function () {
       var penBrushMove = function penBrushMove(evt) {
         if (paint) {
           if (evt.type === 'touchmove') {
-            var newCoords = _this4._handleTouchEvent(evt);
+            var newCoords = _this3._handleTouchEvent(evt);
 
             evt.offsetX = newCoords.x;
             evt.offsetY = newCoords.y;
             evt.preventDefault();
           }
 
-          _this4._addClick(evt.offsetX, evt.offsetY, null, null, true);
+          _this3._addClick(evt.offsetX, evt.offsetY, null, null, true);
 
-          _this4._redraw(_this4._penBrushStroke.bind(_this4));
+          _this3._redraw(_this3._penBrushStroke.bind(_this3));
         }
       };
 
@@ -3886,14 +4064,14 @@ var Brush = /*#__PURE__*/function () {
 
       var penBrushStop = function penBrushStop(evt) {
         // see if it's a new canvas or we're still on the same one as before the mousedown
-        if (_this4.previousCanvas === currLayer) {
+        if (_this3.previousCanvas === currLayer) {
           // if it is, then log the current image data. this is important for the undo feature
           var w = currLayer.width;
           var h = currLayer.height;
-          _this4.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
+          _this3.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
         }
 
-        _this4._clearClick();
+        _this3._clearClick();
 
         paint = false;
       };
@@ -3904,7 +4082,7 @@ var Brush = /*#__PURE__*/function () {
       this.currentEventListeners['touchend'] = penBrushStop; //stop drawing when mouse leaves
 
       currLayer.addEventListener('mouseleave', function (evt) {
-        _this4._clearClick();
+        _this3._clearClick();
 
         paint = false;
       });
@@ -3953,7 +4131,7 @@ var Brush = /*#__PURE__*/function () {
   }, {
     key: "floodfillBrush",
     value: function floodfillBrush() {
-      var _this5 = this;
+      var _this4 = this;
 
       var frame = this.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
@@ -3962,18 +4140,18 @@ var Brush = /*#__PURE__*/function () {
         if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
           //when left click only
           // update previousCanvas
-          if (_this5.previousCanvas !== currLayer) {
-            _this5.previousCanvas = currLayer; // reset the snapshots array
+          if (_this4.previousCanvas !== currLayer) {
+            _this4.previousCanvas = currLayer; // reset the snapshots array
 
-            _this5.currentCanvasSnapshots = [];
+            _this4.currentCanvasSnapshots = [];
           }
 
-          if (_this5.tempSnapshot) {
-            _this5.currentCanvasSnapshots.push(_this5.tempSnapshot);
+          if (_this4.tempSnapshot) {
+            _this4.currentCanvasSnapshots.push(_this4.tempSnapshot);
           }
 
           if (evt.type === 'touchstart') {
-            var newCoords = _this5._handleTouchEvent(evt);
+            var newCoords = _this4._handleTouchEvent(evt);
 
             evt.offsetX = newCoords.x;
             evt.offsetY = newCoords.y;
@@ -3983,7 +4161,7 @@ var Brush = /*#__PURE__*/function () {
           // I want it to look like [x, y, z]
 
 
-          var currColor = _this5.currColor;
+          var currColor = _this4.currColor;
           var currColorArray = currColor.substring(currColor.indexOf('(') + 1, currColor.length - 1).split(',');
           currColorArray = currColorArray.map(function (a) {
             return parseInt(a);
@@ -3999,7 +4177,7 @@ var Brush = /*#__PURE__*/function () {
             'color': color
           };
 
-          _this5.floodfill(currLayer, currColorArray, pixel);
+          _this4.floodfill(currLayer, currColorArray, pixel);
         }
       };
 
@@ -4120,7 +4298,7 @@ var Brush = /*#__PURE__*/function () {
     }
   }]);
 
-  return Brush;
+  return BrushManager;
 }();
 
 

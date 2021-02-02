@@ -1,7 +1,7 @@
 import React from 'react';
 import { AnimationProject } from './utils/AnimationProject.js';
 import { Toolbar } from './utils/Toolbar.js';
-import { Brush } from './utils/Brush.js';
+import { BrushManager } from './utils/BrushManager.js';
 import { FilterManager } from './utils/FilterManager.js';
 import { AnimationTimeline } from './AnimationTimeline.js';
 import { LayerOrder } from './LayerOrder.js';
@@ -699,8 +699,8 @@ class PresentationWrapper extends React.Component {
 		const animationProj = new AnimationProject('canvasArea');
 		animationProj.addNewFrame(true); 
 		
-		const newBrush = new Brush(animationProj);
-		newBrush.defaultBrush();
+		const newBrush = new BrushManager(animationProj);
+		newBrush.brushesMap["default"].attachBrush();
 		
 		const newFilters = new FilterManager(animationProj, newBrush);
 		const newToolbar = new Toolbar(newBrush, animationProj);

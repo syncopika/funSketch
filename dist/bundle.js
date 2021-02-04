@@ -150,6 +150,104 @@ var AnimationTimeline = function AnimationTimeline(props) {
 
 /***/ }),
 
+/***/ "./components/BrushDashboard.js":
+/*!**************************************!*\
+  !*** ./components/BrushDashboard.js ***!
+  \**************************************/
+/*! exports provided: BrushDashboard */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrushDashboard", function() { return BrushDashboard; });
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+
+var BrushDashboard = function BrushDashboard(props) {
+  var brushManager = props.brushManager;
+  var brushes = brushManager ? brushManager.brushesMap : {}; // can be null initially
+
+  var brushNames = Object.keys(brushes);
+  var style = {
+    "textAlign": "center"
+  };
+  var elementStyle = {
+    "width": "80%",
+    "margin": "2px auto",
+    "textAlign": "center",
+    "border": "1px solid #000"
+  }; // use a hook to be able to keep track of selected brush
+
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(""),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
+      selectedBrush = _useState2[0],
+      setSelectedBrush = _useState2[1];
+
+  function equipBrush(brushManager, brushName) {
+    return function (evt) {
+      setSelectedBrush(brushName);
+
+      if (brushManager) {
+        // equip brush
+        brushManager.resetBrush(); //TODO: need to also change cursor accordingly
+
+        brushManager.setBrushType(brushName);
+        brushManager.applyBrush();
+      }
+    };
+  }
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: elementStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
+    id: "brushSelect",
+    onClick: function onClick() {
+      var el = document.getElementById("brushDisplay");
+
+      if (el.style.display !== "block") {
+        el.style.display = "block";
+      } else {
+        el.style.display = "none";
+      }
+    }
+  }, " brushes \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "brushDisplay",
+    style: {
+      "display": "none"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
+    id: "brushChoices",
+    style: {
+      "margin": "0 auto",
+      "padding": "0"
+    }
+  }, brushNames.map(function (brushName, index) {
+    var selectedStyle = null;
+
+    if (selectedBrush === brushName) {
+      selectedStyle = JSON.parse(JSON.stringify(style));
+      selectedStyle["backgroundColor"] = "#5f9ea0";
+    }
+
+    var s = selectedStyle !== null ? selectedStyle : style;
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+      style: s,
+      key: "brush_".concat(index),
+      id: "".concat(brushName, "_").concat(index),
+      onClick: equipBrush(brushManager, brushName)
+    }, brushName);
+  }))));
+};
+
+
+
+/***/ }),
+
 /***/ "./components/FilterDashboard.js":
 /*!***************************************!*\
   !*** ./components/FilterDashboard.js ***!
@@ -257,14 +355,13 @@ var FilterDashboard = function FilterDashboard(props) {
       key: "filter_".concat(index),
       id: "".concat(filterName, "_").concat(index),
       onClick: function onClick(evt) {
-        // show that the filter is selected (colored background? colored text?)
+        // show that the filter is selected
         setSelectedFilter(filterName);
       }
     }, filterName);
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
     id: "applyFilter",
     onClick: function onClick() {
-      // TODO: collect current param values if applicable and update filter with params
       filterManager.filterCanvasOption(selectedFilter);
     }
   }, " apply filter "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
@@ -426,6 +523,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./AnimationTimeline.js */ "./components/AnimationTimeline.js");
 /* harmony import */ var _LayerOrder_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./LayerOrder.js */ "./components/LayerOrder.js");
 /* harmony import */ var _FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./FilterDashboard.js */ "./components/FilterDashboard.js");
+/* harmony import */ var _BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./BrushDashboard.js */ "./components/BrushDashboard.js");
 
 
 
@@ -436,6 +534,7 @@ __webpack_require__.r(__webpack_exports__);
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default()(this, result); }; }
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
 
 
 
@@ -949,49 +1048,47 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var _this7 = this;
 
       var brush = this.state.brushInstance;
-      document.getElementById('brushSelect').addEventListener('click', function () {
-        _this7._showOptions('brushes');
+      /*
+      
+      document.getElementById('brushSelect').addEventListener('click', () => { 
+      	this._showOptions('brushes');
       });
-      document.getElementById('defaultBrush').addEventListener('click', function () {
-        brush.resetBrush();
-
-        _this7._changeCursor("default");
-
-        brush.setBrushType('default');
-        brush.applyBrush();
+      
+      document.getElementById('defaultBrush').addEventListener('click', () => {
+      	brush.resetBrush();
+      	this._changeCursor("default");
+      	brush.setBrushType('default');
+      	brush.applyBrush();
       });
-      document.getElementById('penBrush').addEventListener('click', function () {
-        brush.resetBrush();
-
-        _this7._changeCursor("default");
-
-        brush.setBrushType('pen');
-        brush.applyBrush();
+      
+      document.getElementById('penBrush').addEventListener('click', () => {
+      	brush.resetBrush();
+      	this._changeCursor("default");
+      	brush.setBrushType('pen');
+      	brush.applyBrush();
       });
-      document.getElementById('radialBrush').addEventListener('click', function () {
-        brush.resetBrush();
-
-        _this7._changeCursor("default");
-
-        brush.setBrushType('radial');
-        brush.applyBrush();
+      
+      document.getElementById('radialBrush').addEventListener('click', () => {
+      	brush.resetBrush();
+      	this._changeCursor("default");
+      	brush.setBrushType('radial');
+      	brush.applyBrush();
       });
-      document.getElementById('eraser').addEventListener('click', function () {
-        brush.resetBrush();
-
-        _this7._changeCursor("eraser");
-
-        brush.setBrushType('eraser');
-        brush.applyBrush();
+      
+      document.getElementById('eraser').addEventListener('click', () => {
+      	brush.resetBrush();
+      	this._changeCursor("eraser");
+      	brush.setBrushType('eraser');
+      	brush.applyBrush();
       });
-      document.getElementById('floodfill').addEventListener('click', function () {
-        brush.resetBrush();
-
-        _this7._changeCursor("floodfill");
-
-        brush.setBrushType('floodfill');
-        brush.applyBrush();
-      }); //<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
+      
+      document.getElementById('floodfill').addEventListener('click', () => {
+      	brush.resetBrush();
+      	this._changeCursor("floodfill");
+      	brush.setBrushType('floodfill');
+      	brush.applyBrush();
+      });*/
+      //<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
       // make a function component for the brush? but then need to maintain state of brush size...
 
       document.getElementById('brushSize').addEventListener('input', function () {
@@ -1374,23 +1471,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "loadingScreen"
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__["FilterDashboard"], {
         filterManager: this.state.filtersInstance
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__["BrushDashboard"], {
+        brushManager: this.state.brushInstance
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "brushes"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
-        id: "brushSelect"
-      }, " brushes \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", {
-        id: "brushDisplay"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "defaultBrush"
-      }, " default brush "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "penBrush"
-      }, " pen brush "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "radialBrush"
-      }, " radial gradient brush "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "floodfill"
-      }, " floodfill "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "eraser"
-      }, " eraser "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "adjustBrushSize"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "text-info"

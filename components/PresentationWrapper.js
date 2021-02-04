@@ -6,6 +6,7 @@ import { FilterManager } from './utils/FilterManager.js';
 import { AnimationTimeline } from './AnimationTimeline.js';
 import { LayerOrder } from './LayerOrder.js';
 import { FilterDashboard } from './FilterDashboard.js';
+import { BrushDashboard } from './BrushDashboard.js';
 
 // for displaying current frame and layer number
 // TODO: importing a project won't update the counter display since it's using the Toolbar class functions
@@ -458,50 +459,8 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_setupBrushControls(){
-
 		let brush = this.state.brushInstance;
-		
-		document.getElementById('brushSelect').addEventListener('click', () => { 
-			this._showOptions('brushes');
-		});
-		
-		document.getElementById('defaultBrush').addEventListener('click', () => {
-			brush.resetBrush();
-			this._changeCursor("default");
-			brush.setBrushType('default');
-			brush.applyBrush();
-		});
-		
-		document.getElementById('penBrush').addEventListener('click', () => {
-			brush.resetBrush();
-			this._changeCursor("default");
-			brush.setBrushType('pen');
-			brush.applyBrush();
-		});
-		
-		document.getElementById('radialBrush').addEventListener('click', () => {
-			brush.resetBrush();
-			this._changeCursor("default");
-			brush.setBrushType('radial');
-			brush.applyBrush();
-		});
-		
-		document.getElementById('eraser').addEventListener('click', () => {
-			brush.resetBrush();
-			this._changeCursor("eraser");
-			brush.setBrushType('eraser');
-			brush.applyBrush();
-		});
-		
-		document.getElementById('floodfill').addEventListener('click', () => {
-			brush.resetBrush();
-			this._changeCursor("floodfill");
-			brush.setBrushType('floodfill');
-			brush.applyBrush();
-		});
-		
-		//<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
-		// make a function component for the brush? but then need to maintain state of brush size...
+
 		document.getElementById('brushSize').addEventListener('input', () => {
 			brush.changeBrushSize(document.getElementById('brushSize').value); 
 			this._showSize();
@@ -843,17 +802,10 @@ class PresentationWrapper extends React.Component {
 							<br />
 							
 							<FilterDashboard filterManager={this.state.filtersInstance} />
+							
+							<br />
 
-							<div id='brushes'>
-								<p id='brushSelect'> brushes &#9660; </p>
-								<ul id="brushDisplay">
-									<li id='defaultBrush'> default brush </li>
-									<li id='penBrush'> pen brush </li>
-									<li id='radialBrush'> radial gradient brush </li>
-									<li id='floodfill'> floodfill </li>
-									<li id='eraser'> eraser </li>
-								</ul>
-							</div>
+							<BrushDashboard brushManager={this.state.brushInstance} />
 							
 							<div id='adjustBrushSize'>
 								<br />

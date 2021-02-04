@@ -93,7 +93,7 @@ const FilterDashboard = (props) => {
 							id={(`${filterName}_${index}`)}
 							onClick={
 								(evt) => {
-									// show that the filter is selected (colored background? colored text?)
+									// show that the filter is selected
 									setSelectedFilter(filterName);
 								}
 							}
@@ -106,7 +106,6 @@ const FilterDashboard = (props) => {
 					id={"applyFilter"}
 					onClick={
 						function(){
-							// TODO: collect current param values if applicable and update filter with params
 							filterManager.filterCanvasOption(selectedFilter);
 						}
 					}

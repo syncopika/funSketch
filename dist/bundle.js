@@ -183,7 +183,7 @@ var BrushDashboard = function BrushDashboard(props) {
     "border": "1px solid #000"
   }; // use a hook to be able to keep track of selected brush
 
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(""),
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])("default"),
       _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
       selectedBrush = _useState2[0],
       setSelectedBrush = _useState2[1];
@@ -194,8 +194,7 @@ var BrushDashboard = function BrushDashboard(props) {
 
       if (brushManager) {
         // equip brush
-        brushManager.resetBrush(); //TODO: need to also change cursor accordingly
-
+        brushManager.resetBrush();
         brushManager.setBrushType(brushName);
         brushManager.applyBrush();
       }
@@ -206,6 +205,9 @@ var BrushDashboard = function BrushDashboard(props) {
     style: elementStyle
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
     id: "brushSelect",
+    style: {
+      "margin": "0"
+    },
     onClick: function onClick() {
       var el = document.getElementById("brushDisplay");
 
@@ -227,10 +229,9 @@ var BrushDashboard = function BrushDashboard(props) {
       "padding": "0"
     }
   }, brushNames.map(function (brushName, index) {
-    var selectedStyle = null;
+    var selectedStyle = JSON.parse(JSON.stringify(style));
 
     if (selectedBrush === brushName) {
-      selectedStyle = JSON.parse(JSON.stringify(style));
       selectedStyle["backgroundColor"] = "#5f9ea0";
     }
 
@@ -239,7 +240,13 @@ var BrushDashboard = function BrushDashboard(props) {
       style: s,
       key: "brush_".concat(index),
       id: "".concat(brushName, "_").concat(index),
-      onClick: equipBrush(brushManager, brushName)
+      onClick: equipBrush(brushManager, brushName),
+      onMouseOver: function onMouseOver(evt) {
+        evt.target.style.color = "#99b5d1";
+      },
+      onMouseOut: function onMouseOut(evt) {
+        evt.target.style.color = "#000";
+      }
     }, brushName);
   }))));
 };
@@ -321,6 +328,9 @@ var FilterDashboard = function FilterDashboard(props) {
     style: elementStyle
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
     id: "filterSelect",
+    style: {
+      "margin": "0"
+    },
     onClick: function onClick() {
       var el = document.getElementById("filtersDisplay");
 
@@ -357,6 +367,12 @@ var FilterDashboard = function FilterDashboard(props) {
       onClick: function onClick(evt) {
         // show that the filter is selected
         setSelectedFilter(filterName);
+      },
+      onMouseOver: function onMouseOver(evt) {
+        evt.target.style.color = "#99b5d1";
+      },
+      onMouseOut: function onMouseOut(evt) {
+        evt.target.style.color = "#000";
       }
     }, filterName);
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
@@ -723,14 +739,10 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
       if (direction === "prev") {
         if (toolbar.prevFrame()) {
-          this._changeCursor(this.state.brushInstance.getBrushType());
-
           return true;
         }
       } else {
         if (toolbar.nextFrame()) {
-          this._changeCursor(this.state.brushInstance.getBrushType());
-
           return true;
         }
       }
@@ -799,8 +811,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         evt.preventDefault();
 
         if (updateStateFlag) {
-          self._changeCursor(self.state.brushInstance.getBrushType());
-
           self.setState({
             'currentFrame': animationProj.getCurrFrameIndex() + 1,
             'currentLayer': frame.getCurrCanvasIndex() + 1
@@ -915,8 +925,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         if (newToolbar.prevLayer()) {
           var curr = project.getCurrFrame();
 
-          _this3._changeCursor(_this3.state.brushInstance.getBrushType());
-
           _this3.setState({
             'currentFrame': project.getCurrFrameIndex() + 1,
             'currentLayer': curr.getCurrCanvasIndex() + 1
@@ -926,8 +934,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       document.getElementById('goRight').addEventListener('click', function () {
         if (newToolbar.nextLayer()) {
           var curr = project.getCurrFrame();
-
-          _this3._changeCursor(_this3.state.brushInstance.getBrushType());
 
           _this3.setState({
             'currentFrame': project.getCurrFrameIndex() + 1,
@@ -1023,74 +1029,11 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
-    key: "_changeCursor",
-    value: function _changeCursor(brushType) {
-      // pass in a string representing a cursor type to use for the current frame
-      var currFrame = this.state.animationProject.getCurrFrame();
-
-      if (brushType === "floodfill") {
-        currFrame.getLayers().forEach(function (layer) {
-          layer.style.cursor = "url(" + "\"paintbucket.png\"" + "), auto";
-        });
-      } else if (brushType === "eraser") {
-        currFrame.getLayers().forEach(function (layer) {
-          layer.style.cursor = "url(" + "\"eraser_cursor1.png\"" + ") 5 5, auto";
-        });
-      } else {
-        currFrame.getLayers().forEach(function (layer) {
-          layer.style.cursor = "crosshair";
-        });
-      }
-    }
-  }, {
     key: "_setupBrushControls",
     value: function _setupBrushControls() {
       var _this7 = this;
 
       var brush = this.state.brushInstance;
-      /*
-      
-      document.getElementById('brushSelect').addEventListener('click', () => { 
-      	this._showOptions('brushes');
-      });
-      
-      document.getElementById('defaultBrush').addEventListener('click', () => {
-      	brush.resetBrush();
-      	this._changeCursor("default");
-      	brush.setBrushType('default');
-      	brush.applyBrush();
-      });
-      
-      document.getElementById('penBrush').addEventListener('click', () => {
-      	brush.resetBrush();
-      	this._changeCursor("default");
-      	brush.setBrushType('pen');
-      	brush.applyBrush();
-      });
-      
-      document.getElementById('radialBrush').addEventListener('click', () => {
-      	brush.resetBrush();
-      	this._changeCursor("default");
-      	brush.setBrushType('radial');
-      	brush.applyBrush();
-      });
-      
-      document.getElementById('eraser').addEventListener('click', () => {
-      	brush.resetBrush();
-      	this._changeCursor("eraser");
-      	brush.setBrushType('eraser');
-      	brush.applyBrush();
-      });
-      
-      document.getElementById('floodfill').addEventListener('click', () => {
-      	brush.resetBrush();
-      	this._changeCursor("floodfill");
-      	brush.setBrushType('floodfill');
-      	brush.applyBrush();
-      });*/
-      //<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
-      // make a function component for the brush? but then need to maintain state of brush size...
-
       document.getElementById('brushSize').addEventListener('input', function () {
         brush.changeBrushSize(document.getElementById('brushSize').value);
 
@@ -1310,8 +1253,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
 
         _this10._timelineMarkerSetup();
-
-        _this10._changeCursor(_this10.state.brushInstance.getBrushType());
       });
     }
   }, {
@@ -1584,7 +1525,9 @@ var BrushTemplate = /*#__PURE__*/function () {
     this.clickY = [];
     this.clickDrag = [];
     this.clickColor = [];
-    this.clickSize = [];
+    this.clickSize = []; // cursor type
+
+    this.cursorType = "crosshair";
   } //collect info where each pixel is to be drawn on canvas
 
 
@@ -1826,7 +1769,8 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
     key: "attachBrush",
     value: function attachBrush() {
       var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas(); // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 
       var start = this.brushStart.bind(this);
       currLayer.addEventListener('mousedown', start);
@@ -1895,9 +1839,13 @@ var EraserBrush = /*#__PURE__*/function (_BrushTemplate) {
   var _super = _createSuper(EraserBrush);
 
   function EraserBrush(brushManager) {
+    var _this;
+
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, EraserBrush);
 
-    return _super.call(this, brushManager);
+    _this = _super.call(this, brushManager);
+    _this.cursorType = "url(" + "\"eraser_cursor1.png\"" + ") 5 5, auto";
+    return _this;
   } // event listener functions
 
 
@@ -2018,7 +1966,8 @@ var EraserBrush = /*#__PURE__*/function (_BrushTemplate) {
     key: "attachBrush",
     value: function attachBrush() {
       var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas(); // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 
       var start = this.brushStart.bind(this);
       currLayer.addEventListener('mousedown', start);
@@ -2087,9 +2036,13 @@ var FloodfillBrush = /*#__PURE__*/function (_BrushTemplate) {
   var _super = _createSuper(FloodfillBrush);
 
   function FloodfillBrush(brushManager) {
+    var _this;
+
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, FloodfillBrush);
 
-    return _super.call(this, brushManager);
+    _this = _super.call(this, brushManager);
+    _this.cursorType = "url(" + "\"paintbucket.png\"" + "), auto";
+    return _this;
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(FloodfillBrush, [{
@@ -2256,7 +2209,8 @@ var FloodfillBrush = /*#__PURE__*/function (_BrushTemplate) {
     key: "attachBrush",
     value: function attachBrush() {
       var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas(); // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 
       var start = this.brushStart.bind(this);
       currLayer.addEventListener('mousedown', start);
@@ -2441,7 +2395,8 @@ var PenBrush = /*#__PURE__*/function (_BrushTemplate) {
     key: "attachBrush",
     value: function attachBrush() {
       var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas(); // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 
       var start = this.brushStart.bind(this);
       currLayer.addEventListener('mousedown', start);
@@ -2659,7 +2614,8 @@ var RadialBrush = /*#__PURE__*/function (_BrushTemplate) {
     key: "attachBrush",
     value: function attachBrush() {
       var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas(); // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 
       var start = this.brushStart.bind(this);
       currLayer.addEventListener('mousedown', start);

@@ -12,6 +12,9 @@ class BrushTemplate {
 		this.clickDrag = [];
 		this.clickColor = [];
 		this.clickSize = [];
+		
+		// cursor type
+		this.cursorType = "crosshair";
 	}
 	
 	//collect info where each pixel is to be drawn on canvas

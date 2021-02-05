@@ -170,12 +170,10 @@ class PresentationWrapper extends React.Component {
 		
 		if(direction === "prev"){
 			if(toolbar.prevFrame()){
-				this._changeCursor(this.state.brushInstance.getBrushType());
 				return true;
 			}
 		}else{
 			if(toolbar.nextFrame()){
-				this._changeCursor(this.state.brushInstance.getBrushType());
 				return true;
 			}
 		}
@@ -228,7 +226,6 @@ class PresentationWrapper extends React.Component {
 			}
 			evt.preventDefault();
 			if(updateStateFlag){
-				self._changeCursor(self.state.brushInstance.getBrushType());
 				self.setState({
 					'currentFrame': animationProj.getCurrFrameIndex() + 1,
 					'currentLayer': frame.getCurrCanvasIndex() + 1
@@ -342,7 +339,6 @@ class PresentationWrapper extends React.Component {
 		document.getElementById('goLeft').addEventListener('click', () => {
 			if(newToolbar.prevLayer()){
 				let curr = project.getCurrFrame();
-				this._changeCursor(this.state.brushInstance.getBrushType());
 				this.setState({
 					'currentFrame': project.getCurrFrameIndex() + 1,
 					'currentLayer': curr.getCurrCanvasIndex() + 1
@@ -353,7 +349,6 @@ class PresentationWrapper extends React.Component {
 		document.getElementById('goRight').addEventListener('click', () => {
 			if(newToolbar.nextLayer()){
 				let curr = project.getCurrFrame();
-				this._changeCursor(this.state.brushInstance.getBrushType());
 				this.setState({
 					'currentFrame': project.getCurrFrameIndex() + 1,
 					'currentLayer': curr.getCurrCanvasIndex() + 1
@@ -438,24 +433,6 @@ class PresentationWrapper extends React.Component {
 		demoSelect.addEventListener("change", (evt) => {
 			this._getDemo(evt.target.selectedOptions[0].value);
 		});
-	}
-	
-	_changeCursor(brushType){
-		// pass in a string representing a cursor type to use for the current frame
-		let currFrame = this.state.animationProject.getCurrFrame();
-		if(brushType === "floodfill"){
-			currFrame.getLayers().forEach((layer) => {
-				layer.style.cursor = "url(" + "\"paintbucket.png\"" + "), auto";
-			});
-		}else if(brushType === "eraser"){
-			currFrame.getLayers().forEach((layer) => {
-				layer.style.cursor = "url(" + "\"eraser_cursor1.png\"" + ") 5 5, auto";
-			});
-		}else{
-			currFrame.getLayers().forEach((layer) => {
-				layer.style.cursor = "crosshair";
-			});
-		}
 	}
 	
 	_setupBrushControls(){
@@ -675,7 +652,6 @@ class PresentationWrapper extends React.Component {
 			this._linkDemos();
 			this._setKeyDown(document); // set key down on the whole document
 			this._timelineMarkerSetup();
-			this._changeCursor(this.state.brushInstance.getBrushType());
 		});
 	}
 	

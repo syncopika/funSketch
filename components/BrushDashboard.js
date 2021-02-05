@@ -18,7 +18,7 @@ const BrushDashboard = (props) => {
 	};
 	
 	// use a hook to be able to keep track of selected brush
-	const [selectedBrush, setSelectedBrush] = useState("");
+	const [selectedBrush, setSelectedBrush] = useState("default");
 	
 	function equipBrush(brushManager, brushName){
 		return function(evt){
@@ -26,7 +26,6 @@ const BrushDashboard = (props) => {
 			if(brushManager){
 				// equip brush
 				brushManager.resetBrush();
-				//TODO: need to also change cursor accordingly
 				brushManager.setBrushType(brushName);
 				brushManager.applyBrush();
 			}
@@ -37,6 +36,7 @@ const BrushDashboard = (props) => {
 		<div style={elementStyle}>
 			<p 
 				id='brushSelect'
+				style={{"margin": "0"}}
 				onClick={
 					function(){
 						let el = document.getElementById("brushDisplay");
@@ -58,9 +58,8 @@ const BrushDashboard = (props) => {
 				>
 				{
 					brushNames.map((brushName, index) => {
-						let selectedStyle = null;
+						let selectedStyle = JSON.parse(JSON.stringify(style));
 						if(selectedBrush === brushName){
-							selectedStyle = JSON.parse(JSON.stringify(style));
 							selectedStyle["backgroundColor"] = "#5f9ea0";
 						}
 						let s = (selectedStyle !== null) ? selectedStyle : style;
@@ -69,6 +68,8 @@ const BrushDashboard = (props) => {
 							key={(`brush_${index}`)}
 							id={(`${brushName}_${index}`)}
 							onClick={equipBrush(brushManager, brushName)}
+							onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}}
+							onMouseOut={(evt) => {evt.target.style.color = "#000"}}
 						>{brushName}</li>
 					})
 				}

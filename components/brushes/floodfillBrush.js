@@ -4,6 +4,8 @@ class FloodfillBrush extends BrushTemplate {
 	
 	constructor(brushManager){
 		super(brushManager);
+		
+		this.cursorType = "url(" + "\"paintbucket.png\"" + "), auto";
 	}
 	
     floodfill(currentCanvas, newColor, pixelSelected){
@@ -135,6 +137,7 @@ class FloodfillBrush extends BrushTemplate {
 	attachBrush(){
 		const frame = this.brushManager.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
+		currLayer.style.cursor = this.cursorType;
 
 		// TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 		let start = this.brushStart.bind(this);

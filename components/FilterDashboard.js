@@ -60,6 +60,7 @@ const FilterDashboard = (props) => {
 		<div style={elementStyle}>
 			<p 
 				id='filterSelect'
+				style={{"margin": "0"}}
 				onClick={
 					function(){
 						let el = document.getElementById("filtersDisplay");
@@ -97,6 +98,8 @@ const FilterDashboard = (props) => {
 									setSelectedFilter(filterName);
 								}
 							}
+							onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}}
+							onMouseOut={(evt) => {evt.target.style.color = "#000"}}
 						>{filterName}</li>
 					})
 				}

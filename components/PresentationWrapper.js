@@ -40,10 +40,6 @@ class PresentationWrapper extends React.Component {
 		};
 		
 		this.timelineFramesSet = new Set(); // keep track of what frames have been added to timeline so we don't duplicate - 0-indexed!
-		
-		// I think PresentationWrapper should be responsible for taking care of AnimationTimeline's state.
-		// all AnimationTimeline needs to do is show the timelineFrames and a couple other things
-		// like where the speed between frames change; showing which frames belong to which scene
 	}
 	
 	_getCoordinates(canvas, event){
@@ -92,7 +88,6 @@ class PresentationWrapper extends React.Component {
 		});
 		
 		timelineCanvas.addEventListener('click', (event) => {
-			
 			// also take into account horizontal scroll distance, if any
 			const scrollDistance = document.getElementById('animationTimeline').scrollLeft;
 			
@@ -102,7 +97,6 @@ class PresentationWrapper extends React.Component {
 			
 			// which frame does this coordinate match to?
 			if(this.state.timelineFrames.length > 0){
-	
 				const width = 123; // don't hardcode this? it should be based on img width in the timeline
 				const frameGuess = Math.floor(x/width) + 1;
 				
@@ -331,7 +325,6 @@ class PresentationWrapper extends React.Component {
 				'currentLayer': visibleLayerIndex + 1,
 				'timelineFrames': newFrames
 			});
-			
 		});
 		
 		// make the goLeft and goRight arrows clickable FOR LAYERS
@@ -435,15 +428,6 @@ class PresentationWrapper extends React.Component {
 		});
 	}
 	
-	_setupBrushControls(){
-		let brush = this.state.brushInstance;
-
-		document.getElementById('brushSize').addEventListener('input', () => {
-			brush.changeBrushSize(document.getElementById('brushSize').value); 
-			this._showSize();
-		});
-	}
-	
 	_showOptions(category){
 		let el = document.getElementById(category);
 		let child = el.children[1]; // skip the p element and get the ul element
@@ -455,12 +439,7 @@ class PresentationWrapper extends React.Component {
 		}
 	}
 	
-	_showSize(){
-		document.getElementById('brushSizeValue').textContent = document.getElementById('brushSize').value;
-	}
-	
 	_playAnimation(){
-
 		let timelineFrames = this.state.timelineFrames;
 		if(Object.keys(timelineFrames).length === 0){
 			return;
@@ -648,7 +627,6 @@ class PresentationWrapper extends React.Component {
 			'filtersInstance': newFilters
 		}, () => {
 			this._setupToolbar();
-			this._setupBrushControls();
 			this._linkDemos();
 			this._setKeyDown(document); // set key down on the whole document
 			this._timelineMarkerSetup();
@@ -656,7 +634,7 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	componentDidUpdate(){
-		// make the active canvas shown reflects the state's current frame and layer?
+		// make the active canvas shown reflect the state's current frame and layer? instead of toggling it in different places
 	}
 	
 	_clickCaret(evt){
@@ -782,13 +760,6 @@ class PresentationWrapper extends React.Component {
 							<br />
 
 							<BrushDashboard brushManager={this.state.brushInstance} />
-							
-							<div id='adjustBrushSize'>
-								<br />
-								<p className="text-info">change brush size</p>
-									<input id='brushSize' type='range' min='1' max='15' step='.5' defaultValue='2' />
-								<span id='brushSizeValue'> 2 </span>
-							</div>
 							
 							<div id='colorPicker'>
 							</div>

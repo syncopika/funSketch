@@ -188,6 +188,13 @@ var BrushDashboard = function BrushDashboard(props) {
       selectedBrush = _useState2[0],
       setSelectedBrush = _useState2[1];
 
+  var brushSize = brushManager ? "".concat(brushManager.currSize) : "2";
+
+  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(brushSize),
+      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState3, 2),
+      currBrushSize = _useState4[0],
+      setBrushSize = _useState4[1];
+
   function equipBrush(brushManager, brushName) {
     return function (evt) {
       setSelectedBrush(brushName);
@@ -248,7 +255,24 @@ var BrushDashboard = function BrushDashboard(props) {
         evt.target.style.color = "#000";
       }
     }, brushName);
-  }))));
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "adjustBrushSize"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
+    className: "text-info"
+  }, "change brush size"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
+    id: "brushSize",
+    type: "range",
+    min: "1",
+    max: "20",
+    step: ".5",
+    defaultValue: currBrushSize,
+    onChange: function onChange(evt) {
+      brushManager.changeBrushSize(evt.target.value);
+      setBrushSize(evt.target.value);
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
+    id: "brushSizeValue"
+  }, currBrushSize))));
 };
 
 
@@ -603,9 +627,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       'changingLayerOrder': false
     };
     _this.timelineFramesSet = new Set(); // keep track of what frames have been added to timeline so we don't duplicate - 0-indexed!
-    // I think PresentationWrapper should be responsible for taking care of AnimationTimeline's state.
-    // all AnimationTimeline needs to do is show the timelineFrames and a couple other things
-    // like where the speed between frames change; showing which frames belong to which scene
 
     return _this;
   }
@@ -1029,18 +1050,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
-    key: "_setupBrushControls",
-    value: function _setupBrushControls() {
-      var _this7 = this;
-
-      var brush = this.state.brushInstance;
-      document.getElementById('brushSize').addEventListener('input', function () {
-        brush.changeBrushSize(document.getElementById('brushSize').value);
-
-        _this7._showSize();
-      });
-    }
-  }, {
     key: "_showOptions",
     value: function _showOptions(category) {
       var el = document.getElementById(category);
@@ -1054,14 +1063,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }
     }
   }, {
-    key: "_showSize",
-    value: function _showSize() {
-      document.getElementById('brushSizeValue').textContent = document.getElementById('brushSize').value;
-    }
-  }, {
     key: "_playAnimation",
     value: function _playAnimation() {
-      var _this8 = this;
+      var _this7 = this;
 
       var timelineFrames = this.state.timelineFrames;
 
@@ -1086,8 +1090,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var totalElapsedTime = 0;
       var lastSpeed = this.state.toolbarInstance.timePerFrame;
       timelineFrames.forEach(function (frame, index) {
-        if (_this8.state.timelineMarkers[index + 1]) {
-          lastSpeed = parseInt(_this8.state.timelineMarkers[index + 1].speed);
+        if (_this7.state.timelineMarkers[index + 1]) {
+          lastSpeed = parseInt(_this7.state.timelineMarkers[index + 1].speed);
         }
 
         setTimeout(function () {
@@ -1116,7 +1120,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDemo",
     value: function _getDemo(selected) {
-      var _this9 = this;
+      var _this8 = this;
 
       // case for the blank option 
       if (selected === "") {
@@ -1136,9 +1140,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       httpRequest.open("GET", selectedDemo); // what to do when data comes back
 
       httpRequest.onload = function () {
-        var toolbar = _this9.state.toolbarInstance;
-        var project = _this9.state.animationProject;
-        var self = _this9; // parse the JSON using JSON.parse 
+        var toolbar = _this8.state.toolbarInstance;
+        var project = _this8.state.animationProject;
+        var self = _this8; // parse the JSON using JSON.parse 
 
         var data = JSON.parse(httpRequest.responseText);
 
@@ -1229,7 +1233,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this10 = this;
+      var _this9 = this;
 
       var animationProj = new _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__["AnimationProject"]('canvasArea');
       animationProj.addNewFrame(true);
@@ -1243,21 +1247,19 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         'toolbarInstance': newToolbar,
         'filtersInstance': newFilters
       }, function () {
-        _this10._setupToolbar();
+        _this9._setupToolbar();
 
-        _this10._setupBrushControls();
+        _this9._linkDemos();
 
-        _this10._linkDemos();
-
-        _this10._setKeyDown(document); // set key down on the whole document
+        _this9._setKeyDown(document); // set key down on the whole document
 
 
-        _this10._timelineMarkerSetup();
+        _this9._timelineMarkerSetup();
       });
     }
   }, {
     key: "componentDidUpdate",
-    value: function componentDidUpdate() {// make the active canvas shown reflects the state's current frame and layer?
+    value: function componentDidUpdate() {// make the active canvas shown reflect the state's current frame and layer? instead of toggling it in different places
     }
   }, {
     key: "_clickCaret",
@@ -1276,7 +1278,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this11 = this;
+      var _this10 = this;
 
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         className: "container-fluid"
@@ -1339,7 +1341,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           // 2. set changingLayerOrder in state to false
           var newLayerList = [];
 
-          var currFrame = _this11.state.animationProject.getCurrFrame();
+          var currFrame = _this10.state.animationProject.getCurrFrame();
 
           var currLayerIndex = currFrame.getCurrCanvasIndex();
           var currFrameLayerList = currFrame.getLayers();
@@ -1356,9 +1358,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           });
           currFrame.setLayers(newLayerList); // update the currently shown layer to reflect the re-ordering
 
-          _this11.state.toolbarInstance.setCurrLayer(currLayerIndex);
+          _this10.state.toolbarInstance.setCurrLayer(currLayerIndex);
 
-          _this11.setState({
+          _this10.setState({
             "changingLayerOrder": false
           });
         }
@@ -1390,7 +1392,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         name: "timePerFrame",
         id: "timePerFrame",
         onChange: function onChange(evt) {
-          _this11.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+          _this10.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
         }
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
         value: "100"
@@ -1404,7 +1406,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         value: "1000"
       }, "1000"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         onClick: function onClick() {
-          _this11._playAnimation();
+          _this10._playAnimation();
         }
       }, " play animation "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "generateGif"
@@ -1415,19 +1417,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__["BrushDashboard"], {
         brushManager: this.state.brushInstance
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "adjustBrushSize"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
-        className: "text-info"
-      }, "change brush size"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("input", {
-        id: "brushSize",
-        type: "range",
-        min: "1",
-        max: "15",
-        step: ".5",
-        defaultValue: "2"
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        id: "brushSizeValue"
-      }, " 2 ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "colorPicker"
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "showDemos"
@@ -1464,7 +1453,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           'display': 'block'
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
-        var marker = _this11.state.timelineMarkers[markerKey];
+        var marker = _this10.state.timelineMarkers[markerKey];
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
           htmlFor: 'marker' + marker.frameNumber + 'Select'
         }, "marker for frame ", marker.frameNumber, ": \xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
@@ -1479,7 +1468,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             'color': 'red'
           },
           onClick: function onClick() {
-            return _this11._timelineMarkerDelete(marker.frameNumber);
+            return _this10._timelineMarkerDelete(marker.frameNumber);
           }
         }, " \xA0delete "));
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null)))));

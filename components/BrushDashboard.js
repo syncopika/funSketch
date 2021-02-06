@@ -20,6 +20,9 @@ const BrushDashboard = (props) => {
 	// use a hook to be able to keep track of selected brush
 	const [selectedBrush, setSelectedBrush] = useState("default");
 	
+	let brushSize = brushManager ? `${brushManager.currSize}` : "2";
+	const [currBrushSize, setBrushSize] = useState(brushSize);
+	
 	function equipBrush(brushManager, brushName){
 		return function(evt){
 			setSelectedBrush(brushName);
@@ -74,6 +77,27 @@ const BrushDashboard = (props) => {
 					})
 				}
 				</ul>
+				
+				<hr />
+				
+				<div id='adjustBrushSize'>
+					<p className="text-info">change brush size</p>
+						<input
+							id='brushSize' 
+							type='range' 
+							min='1' 
+							max='20' 
+							step='.5'
+							defaultValue={currBrushSize}
+							onChange={
+								function(evt){
+									brushManager.changeBrushSize(evt.target.value);
+									setBrushSize(evt.target.value);
+								}
+							}
+						/>
+					<span id='brushSizeValue'>{currBrushSize}</span>
+				</div>
 
 			</div>
 		</div>

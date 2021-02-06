@@ -15,7 +15,6 @@ class BrushManager {
 		// pass in an animation project, from which you can access the current frame and the current canvas
 		this.animationProject = animationProj;
 		this.previousCanvas = null;
-		this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
 		this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
 		this.selectedBrush = 'default'; // user-selected brush 
 		this.currColor = 'rgb(0,0,0)';
@@ -31,7 +30,7 @@ class BrushManager {
 		this.clickSize = [];
 		
 		// hold the current image after mouseup. 
-		// only put it in the currentCanvasSnapshots after user starts drawing again, creating a new snapshot
+		// only put it in the currentCanvasSnapshots (in AnimationProject) after user starts drawing again, creating a new snapshot
 		this.tempSnapshot = null;
 		
 		// brushes map
@@ -51,7 +50,6 @@ class BrushManager {
         this.clickColor.push((color === null ? this.currColor : color));
         this.clickSize.push((size === null ? this.currSize : size));
     }
-	
 	
     _redraw(strokeFunction){
         let frame = this.animationProject.getCurrFrame();

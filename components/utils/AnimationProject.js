@@ -6,6 +6,7 @@ class Frame {
 		this.currentIndex = 0; // index of currently showing layer
 		this.canvasList = []; // keep a list of all canvas instances
 		this.currentCanvas; // the current, active canvas being looked at (reference to html element)
+		this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
 		this.containerId = containerId; // this is the html container id to hold all the layers of this frame
 		this.number = number; // this frame's number
 		this.count = 0; // current number of layers
@@ -37,6 +38,18 @@ class Frame {
 	
 	getLayers(){
 		return this.canvasList;
+	}
+	
+	addSnapshot(snapshot){
+		this.currentCanvasSnapshots.push(snapshot);
+	}
+	
+	getSnapshots(){
+		return this.currentCanvasSnapshots;
+	}
+	
+	clearSnapshots(){
+		this.currentCanvasSnapshots = [];
 	}
 	
 	// canvasList: list of canvas elements
@@ -111,6 +124,7 @@ class Frame {
 			
             this.currentCanvas = nextLayer;
             this.currentIndex++;
+			this.currentCanvasSnapshots = [];
 			
             return true;
         }
@@ -133,6 +147,7 @@ class Frame {
             }
             this.currentCanvas = prevLayer;
             this.currentIndex--;
+			this.currentCanvasSnapshots = [];
 			
             return true;
         }
@@ -318,6 +333,7 @@ class AnimationProject {
         if(this.frameList.length <= this.currentFrameIndex + 1){
             return null; // no more frames to see
         }
+		this.getCurrFrame().clearSnapshots();
         this.currentFrameIndex += 1;
 		this.updateOnionSkin();
         return this.frameList[this.currentFrameIndex];
@@ -327,6 +343,7 @@ class AnimationProject {
         if(this.currentFrameIndex - 1 < 0){
             return null; // no more frames to see
         }
+		this.getCurrFrame().clearSnapshots();
         this.currentFrameIndex -= 1;
 		this.updateOnionSkin();
         return this.frameList[this.currentFrameIndex];

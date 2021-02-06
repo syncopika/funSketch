@@ -12,18 +12,6 @@ class DefaultBrush extends BrushTemplate {
 		const frame = this.brushManager.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
 		if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart') { //when left click only
-		
-			// TODO: refactor this so that we can just call a method from brushManager to do this stuff? this is to support undo functionality
-			// update previousCanvas
-			if(this.brushManager.previousCanvas !== currLayer){
-				this.brushManager.previousCanvas = currLayer;
-				// reset the snapshots array
-				this.brushManager.currentCanvasSnapshots = [];
-			}
-			if(this.brushManager.tempSnapshot){
-				this.brushManager.currentCanvasSnapshots.push(this.tempSnapshot);
-			}
-			
 			this.paint = true;
 			// offset will be different with mobile
 			// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
@@ -58,14 +46,11 @@ class DefaultBrush extends BrushTemplate {
         const frame = this.brushManager.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
 		evt.preventDefault();
+
+		const w = currLayer.width;
+		const h = currLayer.height;
+		frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
 		
-		// see if it's a new canvas or we're still on the same one as before the mousedown
-		if(this.brushManager.previousCanvas === currLayer){
-			// if it is, then log the current image data. this is important for the undo feature
-			const w = currLayer.width;
-			const h = currLayer.height;
-			this.brushManager.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
-		}
 		this._clearClick();
 		this.paint = false;
 	}

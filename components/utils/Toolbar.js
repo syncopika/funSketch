@@ -318,11 +318,13 @@ class Toolbar {
     ***/
     setClearCanvas(elementId){
         document.getElementById(elementId).addEventListener('click', () => {
-            let canvas = this.animationProj.getCurrFrame();
-            let context = canvas.currentCanvas.getContext("2d");
-            context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+            const frame = this.animationProj.getCurrFrame();
+            const context = frame.currentCanvas.getContext("2d");
+            const width = frame.currentCanvas.getAttribute("width");
+            const height = frame.currentCanvas.getAttribute("height");
+            context.clearRect(0, 0, width, height);
             context.fillStyle = "#FFFFFF";
-            context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+            context.fillRect(0, 0, width, height);
         });
     }
 	
@@ -334,19 +336,23 @@ class Toolbar {
     ***/
     undo(elementId){
         document.getElementById(elementId).addEventListener('click', () => {
-            let canvas = this.animationProj.getCurrFrame();
-            let context = canvas.currentCanvas.getContext("2d");
-            let width = canvas.currentCanvas.getAttribute("width");
-            let height = canvas.currentCanvas.getAttribute("height");
-            // unshift to add to front of stack of snapshots. 
-            this.brush.currentCanvasSnapshots.unshift(context.getImageData(0, 0, width, height));
+            const frame = this.animationProj.getCurrFrame();
+			const currLayer = frame.getCurrCanvas();
+            const context = currLayer.getContext("2d");
+            const width = currLayer.getAttribute("width");
+            const height = currLayer.getAttribute("height");
+			const currLayerSnapshots = frame.getSnapshots();
+			
+            //currLayerSnapshots.unshift(context.getImageData(0, 0, width, height));
+			
             // clear first
             context.clearRect(0, 0, width, height);
+			
             // then put back last image (ignore the one that had just been drawn)
             // snapshots is a variable that only holds all the images up to the 2nd to last image drawn. 
             // if you keep up to the last image drawn, then you have to click undo twice initially to get to the previous frame.
-            if(this.brush.currentCanvasSnapshots.length >= 1){
-                let mostRecentImage = this.brush.currentCanvasSnapshots.pop();
+            if(currLayerSnapshots.length >= 1){
+                const mostRecentImage = currLayerSnapshots.pop();
                 context.putImageData(mostRecentImage, 0, 0);
             }
         });
@@ -398,8 +404,8 @@ class Toolbar {
                     context.drawImage(img, 0, 0, width, height);
                     // assign recentImage the image 
                     self.recentImage = img;
-                    // add the current image to snapshots 
-                    self.brush.currentCanvasSnapshots.push(context.getImageData(0, 0, width, height));
+                    // add the current image to snapshots for undo
+                    canvas.addSnapshot(context.getImageData(0, 0, width, height));
                 };
                 //after reader has loaded file, put the data in the image object.
                 reader.onloadend = function(){ 

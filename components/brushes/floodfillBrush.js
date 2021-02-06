@@ -95,17 +95,6 @@ class FloodfillBrush extends BrushTemplate {
 		const currLayer = frame.getCurrCanvas();
 		
 		if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart'){ //when left click only
-			// update previousCanvas
-			if(this.previousCanvas !== currLayer){
-				this.previousCanvas = currLayer;
-				// reset the snapshots array
-				this.currentCanvasSnapshots = [];
-			}
-			
-			if(this.tempSnapshot){
-				this.currentCanvasSnapshots.push(this.tempSnapshot);
-			}
-
 			if(evt.type === 'touchstart'){
 				const newCoords = this._handleTouchEvent(evt);
 				evt.offsetX = newCoords.x;
@@ -130,6 +119,10 @@ class FloodfillBrush extends BrushTemplate {
 			const pixel = {'x': Math.floor(x), 'y': Math.floor(y), 'color': color};
 
 			this.floodfill(currLayer, currColorArray, pixel);
+			
+			const w = currLayer.width;
+			const h = currLayer.height;
+			frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
 		}
 	}
 	

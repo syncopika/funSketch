@@ -27,27 +27,22 @@ class FilterManager {
 			"voronoi": new Voronoi(),
 			"fisheye": new Fisheye(),
 		};
-		
-		this.tempImage = null; // only push current image to snapshots if a tempImage exists already.
-		// this way when undo is called the image being looked at by the user won't already be saved in snapshots,
-		// and so undo wouldn't need to be clicked twice to see the last saved image. a bit confusing. :/
 	}
 
     // general filtering function. pass any kind of filter through this function.
     filterCanvas(filter){
-		let currCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
-        let context = currCanvas.getContext("2d");
-        let width = currCanvas.getAttribute('width');
-        let height = currCanvas.getAttribute('height');
-        let imgData = context.getImageData(0, 0, width, height);
-		
-        // save current image to snapshots stack
-        if(this.tempImage){
-            this.brush.currentCanvasSnapshots.push(this.tempImage);
-        }
-        let filteredImageData = filter(imgData);
+		const currFrame = this.animationProject.getCurrFrame();
+		const currLayer = currFrame.getCurrCanvas();
+        const context = currLayer.getContext("2d");
+        const width = currLayer.getAttribute('width');
+        const height = currLayer.getAttribute('height');
+        const imgData = context.getImageData(0, 0, width, height);
+
+        const filteredImageData = filter(imgData);
         context.putImageData(filteredImageData, 0, 0);
-        this.tempImage = imgData;
+		
+		// save current image to snapshots stack for undo
+        currFrame.addSnapshot(imgData);
     }
 	
     // use this for select/option elements when picking a filter

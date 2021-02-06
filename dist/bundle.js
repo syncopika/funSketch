@@ -1652,18 +1652,6 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
 
       if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
         //when left click only
-        // TODO: refactor this so that we can just call a method from brushManager to do this stuff? this is to support undo functionality
-        // update previousCanvas
-        if (this.brushManager.previousCanvas !== currLayer) {
-          this.brushManager.previousCanvas = currLayer; // reset the snapshots array
-
-          this.brushManager.currentCanvasSnapshots = [];
-        }
-
-        if (this.brushManager.tempSnapshot) {
-          this.brushManager.currentCanvasSnapshots.push(this.tempSnapshot);
-        }
-
         this.paint = true; // offset will be different with mobile
         // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
         // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
@@ -1706,14 +1694,10 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
     value: function brushStop(evt) {
       var frame = this.brushManager.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
-      evt.preventDefault(); // see if it's a new canvas or we're still on the same one as before the mousedown
-
-      if (this.brushManager.previousCanvas === currLayer) {
-        // if it is, then log the current image data. this is important for the undo feature
-        var w = currLayer.width;
-        var h = currLayer.height;
-        this.brushManager.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
-      }
+      evt.preventDefault();
+      var w = currLayer.width;
+      var h = currLayer.height;
+      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
 
       this._clearClick();
 
@@ -1846,19 +1830,7 @@ var EraserBrush = /*#__PURE__*/function (_BrushTemplate) {
       var currLayer = frame.getCurrCanvas();
 
       if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
-        //when left click only
-        // TODO: refactor this so that we can just call a method from brushManager to do this stuff? this is to support undo functionality
-        // update previousCanvas
-        if (this.brushManager.previousCanvas !== currLayer) {
-          this.brushManager.previousCanvas = currLayer; // reset the snapshots array
-
-          this.brushManager.currentCanvasSnapshots = [];
-        }
-
-        if (this.brushManager.tempSnapshot) {
-          this.brushManager.currentCanvasSnapshots.push(this.tempSnapshot);
-        }
-
+        //when left click only		
         this.paint = true; // offset will be different with mobile
         // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
         // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
@@ -1903,14 +1875,11 @@ var EraserBrush = /*#__PURE__*/function (_BrushTemplate) {
     value: function brushStop(evt) {
       var frame = this.brushManager.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
-      evt.preventDefault(); // see if it's a new canvas or we're still on the same one as before the mousedown
+      evt.preventDefault(); // this is important for the undo feature
 
-      if (this.brushManager.previousCanvas === currLayer) {
-        // if it is, then log the current image data. this is important for the undo feature
-        var w = currLayer.width;
-        var h = currLayer.height;
-        this.brushManager.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
-      }
+      var w = currLayer.width;
+      var h = currLayer.height;
+      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
 
       this._clearClick();
 
@@ -2153,17 +2122,6 @@ var FloodfillBrush = /*#__PURE__*/function (_BrushTemplate) {
 
       if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
         //when left click only
-        // update previousCanvas
-        if (this.previousCanvas !== currLayer) {
-          this.previousCanvas = currLayer; // reset the snapshots array
-
-          this.currentCanvasSnapshots = [];
-        }
-
-        if (this.tempSnapshot) {
-          this.currentCanvasSnapshots.push(this.tempSnapshot);
-        }
-
         if (evt.type === 'touchstart') {
           var newCoords = this._handleTouchEvent(evt);
 
@@ -2191,6 +2149,9 @@ var FloodfillBrush = /*#__PURE__*/function (_BrushTemplate) {
           'color': color
         };
         this.floodfill(currLayer, currColorArray, pixel);
+        var w = currLayer.width;
+        var h = currLayer.height;
+        frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
       }
     } // equip the brush and set up the current canvas for using the brush
 
@@ -2274,17 +2235,6 @@ var PenBrush = /*#__PURE__*/function (_BrushTemplate) {
 
       if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
         //when left click only
-        // update previousCanvas
-        if (this.previousCanvas !== currLayer) {
-          this.previousCanvas = currLayer; // reset the snapshots array
-
-          this.currentCanvasSnapshots = [];
-        }
-
-        if (this.tempSnapshot) {
-          this.currentCanvasSnapshots.push(this.tempSnapshot);
-        }
-
         this.paint = true;
 
         if (evt.type === 'touchstart') {
@@ -2325,14 +2275,10 @@ var PenBrush = /*#__PURE__*/function (_BrushTemplate) {
     value: function brushStop(evt) {
       var frame = this.brushManager.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
-      evt.preventDefault(); // see if it's a new canvas or we're still on the same one as before the mousedown
-
-      if (this.brushManager.previousCanvas === currLayer) {
-        // if it is, then log the current image data. this is important for the undo feature
-        var w = currLayer.width;
-        var h = currLayer.height;
-        this.brushManager.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
-      }
+      evt.preventDefault();
+      var w = currLayer.width;
+      var h = currLayer.height;
+      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
 
       this._clearClick();
 
@@ -2468,19 +2414,7 @@ var RadialBrush = /*#__PURE__*/function (_BrushTemplate) {
       var currLayer = frame.getCurrCanvas();
 
       if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
-        //when left click only
-        // TODO: refactor this so that we can just call a method from brushManager to do this stuff? this is to support undo functionality
-        // update previousCanvas
-        if (this.brushManager.previousCanvas !== currLayer) {
-          this.brushManager.previousCanvas = currLayer; // reset the snapshots array
-
-          this.brushManager.currentCanvasSnapshots = [];
-        }
-
-        if (this.brushManager.tempSnapshot) {
-          this.brushManager.currentCanvasSnapshots.push(this.tempSnapshot);
-        }
-
+        //when left click only			
         this.paint = true; // offset will be different with mobile
         // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
         // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
@@ -2527,14 +2461,10 @@ var RadialBrush = /*#__PURE__*/function (_BrushTemplate) {
     value: function brushStop(evt) {
       var frame = this.brushManager.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
-      evt.preventDefault(); // see if it's a new canvas or we're still on the same one as before the mousedown
-
-      if (this.brushManager.previousCanvas === currLayer) {
-        // if it is, then log the current image data. this is important for the undo feature
-        var w = currLayer.width;
-        var h = currLayer.height;
-        this.brushManager.tempSnapshot = currLayer.getContext("2d").getImageData(0, 0, w, h);
-      }
+      evt.preventDefault();
+      var w = currLayer.width;
+      var h = currLayer.height;
+      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
 
       this._clearClick();
 
@@ -4014,6 +3944,8 @@ var Frame = /*#__PURE__*/function () {
 
     this.currentCanvas; // the current, active canvas being looked at (reference to html element)
 
+    this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
+
     this.containerId = containerId; // this is the html container id to hold all the layers of this frame
 
     this.number = number; // this frame's number
@@ -4054,6 +3986,21 @@ var Frame = /*#__PURE__*/function () {
     key: "getLayers",
     value: function getLayers() {
       return this.canvasList;
+    }
+  }, {
+    key: "addSnapshot",
+    value: function addSnapshot(snapshot) {
+      this.currentCanvasSnapshots.push(snapshot);
+    }
+  }, {
+    key: "getSnapshots",
+    value: function getSnapshots() {
+      return this.currentCanvasSnapshots;
+    }
+  }, {
+    key: "clearSnapshots",
+    value: function clearSnapshots() {
+      this.currentCanvasSnapshots = [];
     } // canvasList: list of canvas elements
 
   }, {
@@ -4143,6 +4090,7 @@ var Frame = /*#__PURE__*/function () {
 
         this.currentCanvas = nextLayer;
         this.currentIndex++;
+        this.currentCanvasSnapshots = [];
         return true;
       }
 
@@ -4169,6 +4117,7 @@ var Frame = /*#__PURE__*/function () {
 
         this.currentCanvas = prevLayer;
         this.currentIndex--;
+        this.currentCanvasSnapshots = [];
         return true;
       }
 
@@ -4376,6 +4325,7 @@ var AnimationProject = /*#__PURE__*/function () {
         return null; // no more frames to see
       }
 
+      this.getCurrFrame().clearSnapshots();
       this.currentFrameIndex += 1;
       this.updateOnionSkin();
       return this.frameList[this.currentFrameIndex];
@@ -4387,6 +4337,7 @@ var AnimationProject = /*#__PURE__*/function () {
         return null; // no more frames to see
       }
 
+      this.getCurrFrame().clearSnapshots();
       this.currentFrameIndex -= 1;
       this.updateOnionSkin();
       return this.frameList[this.currentFrameIndex];
@@ -4530,8 +4481,6 @@ var BrushManager = /*#__PURE__*/function () {
     // pass in an animation project, from which you can access the current frame and the current canvas
     this.animationProject = animationProj;
     this.previousCanvas = null;
-    this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
-
     this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
 
     this.selectedBrush = 'default'; // user-selected brush 
@@ -4546,7 +4495,7 @@ var BrushManager = /*#__PURE__*/function () {
     this.clickDrag = [];
     this.clickColor = [];
     this.clickSize = []; // hold the current image after mouseup. 
-    // only put it in the currentCanvasSnapshots after user starts drawing again, creating a new snapshot
+    // only put it in the currentCanvasSnapshots (in AnimationProject) after user starts drawing again, creating a new snapshot
 
     this.tempSnapshot = null; // brushes map
 
@@ -4692,28 +4641,22 @@ var FilterManager = /*#__PURE__*/function () {
       "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__["Voronoi"](),
       "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__["Fisheye"]()
     };
-    this.tempImage = null; // only push current image to snapshots if a tempImage exists already.
-    // this way when undo is called the image being looked at by the user won't already be saved in snapshots,
-    // and so undo wouldn't need to be clicked twice to see the last saved image. a bit confusing. :/
   } // general filtering function. pass any kind of filter through this function.
 
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(FilterManager, [{
     key: "filterCanvas",
     value: function filterCanvas(filter) {
-      var currCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
-      var context = currCanvas.getContext("2d");
-      var width = currCanvas.getAttribute('width');
-      var height = currCanvas.getAttribute('height');
-      var imgData = context.getImageData(0, 0, width, height); // save current image to snapshots stack
-
-      if (this.tempImage) {
-        this.brush.currentCanvasSnapshots.push(this.tempImage);
-      }
-
+      var currFrame = this.animationProject.getCurrFrame();
+      var currLayer = currFrame.getCurrCanvas();
+      var context = currLayer.getContext("2d");
+      var width = currLayer.getAttribute('width');
+      var height = currLayer.getAttribute('height');
+      var imgData = context.getImageData(0, 0, width, height);
       var filteredImageData = filter(imgData);
-      context.putImageData(filteredImageData, 0, 0);
-      this.tempImage = imgData;
+      context.putImageData(filteredImageData, 0, 0); // save current image to snapshots stack for undo
+
+      currFrame.addSnapshot(imgData);
     } // use this for select/option elements when picking a filter
 
   }, {
@@ -5115,12 +5058,14 @@ var Toolbar = /*#__PURE__*/function () {
       var _this8 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this8.animationProj.getCurrFrame();
+        var frame = _this8.animationProj.getCurrFrame();
 
-        var context = canvas.currentCanvas.getContext("2d");
-        context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+        var context = frame.currentCanvas.getContext("2d");
+        var width = frame.currentCanvas.getAttribute("width");
+        var height = frame.currentCanvas.getAttribute("height");
+        context.clearRect(0, 0, width, height);
         context.fillStyle = "#FFFFFF";
-        context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+        context.fillRect(0, 0, width, height);
       });
     }
     /***
@@ -5136,22 +5081,21 @@ var Toolbar = /*#__PURE__*/function () {
       var _this9 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this9.animationProj.getCurrFrame();
+        var frame = _this9.animationProj.getCurrFrame();
 
-        var context = canvas.currentCanvas.getContext("2d");
-        var width = canvas.currentCanvas.getAttribute("width");
-        var height = canvas.currentCanvas.getAttribute("height"); // unshift to add to front of stack of snapshots. 
-
-        _this9.brush.currentCanvasSnapshots.unshift(context.getImageData(0, 0, width, height)); // clear first
-
+        var currLayer = frame.getCurrCanvas();
+        var context = currLayer.getContext("2d");
+        var width = currLayer.getAttribute("width");
+        var height = currLayer.getAttribute("height");
+        var currLayerSnapshots = frame.getSnapshots(); //currLayerSnapshots.unshift(context.getImageData(0, 0, width, height));
+        // clear first
 
         context.clearRect(0, 0, width, height); // then put back last image (ignore the one that had just been drawn)
         // snapshots is a variable that only holds all the images up to the 2nd to last image drawn. 
         // if you keep up to the last image drawn, then you have to click undo twice initially to get to the previous frame.
 
-        if (_this9.brush.currentCanvasSnapshots.length >= 1) {
-          var mostRecentImage = _this9.brush.currentCanvasSnapshots.pop();
-
+        if (currLayerSnapshots.length >= 1) {
+          var mostRecentImage = currLayerSnapshots.pop();
           context.putImageData(mostRecentImage, 0, 0);
         }
       });
@@ -5204,9 +5148,9 @@ var Toolbar = /*#__PURE__*/function () {
             currentCanvas.setAttribute('width', width);
             context.drawImage(img, 0, 0, width, height); // assign recentImage the image 
 
-            self.recentImage = img; // add the current image to snapshots 
+            self.recentImage = img; // add the current image to snapshots for undo
 
-            self.brush.currentCanvasSnapshots.push(context.getImageData(0, 0, width, height));
+            canvas.addSnapshot(context.getImageData(0, 0, width, height));
           }; //after reader has loaded file, put the data in the image object.
 
 

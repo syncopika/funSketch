@@ -4160,6 +4160,7 @@ var Frame = /*#__PURE__*/function () {
       newLayer.style.zIndex = 1;
       this.currentCanvas = newLayer;
       this.currentIndex = layerIndex;
+      this.currentCanvasSnapshots = [];
 
       if (onionSkin && layerIndex - 1 > 0) {
         // apply onionskin
@@ -4350,6 +4351,7 @@ var AnimationProject = /*#__PURE__*/function () {
       }
 
       this.currentFrameIndex = frameIndex;
+      this.getCurrFrame().clearSnapshots();
       this.updateOnionSkin();
       return this.frameList[this.currentFrameIndex];
     } // this method takes all the layers of a frame, merges them, and places the resulting image
@@ -4480,7 +4482,6 @@ var BrushManager = /*#__PURE__*/function () {
 
     // pass in an animation project, from which you can access the current frame and the current canvas
     this.animationProject = animationProj;
-    this.previousCanvas = null;
     this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
 
     this.selectedBrush = 'default'; // user-selected brush 
@@ -4494,10 +4495,7 @@ var BrushManager = /*#__PURE__*/function () {
     this.clickY = [];
     this.clickDrag = [];
     this.clickColor = [];
-    this.clickSize = []; // hold the current image after mouseup. 
-    // only put it in the currentCanvasSnapshots (in AnimationProject) after user starts drawing again, creating a new snapshot
-
-    this.tempSnapshot = null; // brushes map
+    this.clickSize = []; // brushes map
 
     this.brushesMap = {};
     this.brushesMap["default"] = new _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_2__["DefaultBrush"](this);
@@ -4652,11 +4650,11 @@ var FilterManager = /*#__PURE__*/function () {
       var context = currLayer.getContext("2d");
       var width = currLayer.getAttribute('width');
       var height = currLayer.getAttribute('height');
-      var imgData = context.getImageData(0, 0, width, height);
-      var filteredImageData = filter(imgData);
-      context.putImageData(filteredImageData, 0, 0); // save current image to snapshots stack for undo
+      var imgData = context.getImageData(0, 0, width, height); // save current image to snapshots stack for undo
 
       currFrame.addSnapshot(imgData);
+      var filteredImageData = filter(imgData);
+      context.putImageData(filteredImageData, 0, 0);
     } // use this for select/option elements when picking a filter
 
   }, {
@@ -5087,16 +5085,18 @@ var Toolbar = /*#__PURE__*/function () {
         var context = currLayer.getContext("2d");
         var width = currLayer.getAttribute("width");
         var height = currLayer.getAttribute("height");
-        var currLayerSnapshots = frame.getSnapshots(); //currLayerSnapshots.unshift(context.getImageData(0, 0, width, height));
-        // clear first
-
-        context.clearRect(0, 0, width, height); // then put back last image (ignore the one that had just been drawn)
+        var currLayerSnapshots = frame.getSnapshots(); //console.log(currLayerSnapshots);
+        //currLayerSnapshots.unshift(context.getImageData(0, 0, width, height));
+        // then put back last image (ignore the one that had just been drawn)
         // snapshots is a variable that only holds all the images up to the 2nd to last image drawn. 
         // if you keep up to the last image drawn, then you have to click undo twice initially to get to the previous frame.
 
-        if (currLayerSnapshots.length >= 1) {
+        if (currLayerSnapshots.length > 1) {
+          context.clearRect(0, 0, width, height);
           var mostRecentImage = currLayerSnapshots.pop();
           context.putImageData(mostRecentImage, 0, 0);
+        } else if (currLayerSnapshots.length === 1) {
+          context.putImageData(currLayerSnapshots[0], 0, 0);
         }
       });
     }
@@ -5140,17 +5140,14 @@ var Toolbar = /*#__PURE__*/function () {
             var currentCanvas = canvas.currentCanvas;
             var context = currentCanvas.getContext("2d");
             var height = img.height;
-            var width = img.width; // default value in super canvas object
-
+            var width = img.width;
             height = canvas.height;
             width = canvas.width;
             currentCanvas.setAttribute('height', height);
             currentCanvas.setAttribute('width', width);
-            context.drawImage(img, 0, 0, width, height); // assign recentImage the image 
-
-            self.recentImage = img; // add the current image to snapshots for undo
-
-            canvas.addSnapshot(context.getImageData(0, 0, width, height));
+            context.drawImage(img, 0, 0, width, height);
+            currFrame.addSnapshot(currentCanvas.getContext("2d").getImageData(0, 0, width, height)); // assign recentImage the image 
+            //self.recentImage = img;
           }; //after reader has loaded file, put the data in the image object.
 
 

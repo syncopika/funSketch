@@ -343,18 +343,14 @@ class Toolbar {
             const height = currLayer.getAttribute("height");
 			const currLayerSnapshots = frame.getSnapshots();
 			
-            //currLayerSnapshots.unshift(context.getImageData(0, 0, width, height));
-			
-            // clear first
-            context.clearRect(0, 0, width, height);
-			
             // then put back last image (ignore the one that had just been drawn)
-            // snapshots is a variable that only holds all the images up to the 2nd to last image drawn. 
-            // if you keep up to the last image drawn, then you have to click undo twice initially to get to the previous frame.
-            if(currLayerSnapshots.length >= 1){
+            if(currLayerSnapshots.length > 1){
+				context.clearRect(0, 0, width, height);
                 const mostRecentImage = currLayerSnapshots.pop();
                 context.putImageData(mostRecentImage, 0, 0);
-            }
+            }else if(currLayerSnapshots.length === 1){
+				context.putImageData(currLayerSnapshots[0], 0, 0);
+			}
         });
     }
 	
@@ -395,17 +391,17 @@ class Toolbar {
                     let height = img.height;
                     let width = img.width;
 
-					// default value in super canvas object
 					height = canvas.height;
 					width = canvas.width;
 					currentCanvas.setAttribute('height', height);
 					currentCanvas.setAttribute('width', width);
                     
                     context.drawImage(img, 0, 0, width, height);
+					
+					currFrame.addSnapshot(currentCanvas.getContext("2d").getImageData(0, 0, width, height));
+					
                     // assign recentImage the image 
-                    self.recentImage = img;
-                    // add the current image to snapshots for undo
-                    canvas.addSnapshot(context.getImageData(0, 0, width, height));
+                    //self.recentImage = img;
                 };
                 //after reader has loaded file, put the data in the image object.
                 reader.onloadend = function(){ 

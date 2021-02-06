@@ -38,11 +38,11 @@ class FilterManager {
         const height = currLayer.getAttribute('height');
         const imgData = context.getImageData(0, 0, width, height);
 
-        const filteredImageData = filter(imgData);
-        context.putImageData(filteredImageData, 0, 0);
-		
 		// save current image to snapshots stack for undo
         currFrame.addSnapshot(imgData);
+
+        const filteredImageData = filter(imgData);
+        context.putImageData(filteredImageData, 0, 0);
     }
 	
     // use this for select/option elements when picking a filter

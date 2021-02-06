@@ -187,6 +187,7 @@ class Frame {
 		
 		this.currentCanvas = newLayer;
 		this.currentIndex = layerIndex;
+		this.currentCanvasSnapshots = [];
 		
 		if(onionSkin && (layerIndex-1 > 0)){
 			// apply onionskin
@@ -354,6 +355,7 @@ class AnimationProject {
 			return null;
 		}
 		this.currentFrameIndex = frameIndex;
+		this.getCurrFrame().clearSnapshots();
 		this.updateOnionSkin();
 		return this.frameList[this.currentFrameIndex];
 	}

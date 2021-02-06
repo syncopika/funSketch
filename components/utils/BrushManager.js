@@ -14,7 +14,6 @@ class BrushManager {
 	constructor(animationProj){
 		// pass in an animation project, from which you can access the current frame and the current canvas
 		this.animationProject = animationProj;
-		this.previousCanvas = null;
 		this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
 		this.selectedBrush = 'default'; // user-selected brush 
 		this.currColor = 'rgb(0,0,0)';
@@ -28,10 +27,6 @@ class BrushManager {
 		this.clickDrag = [];
 		this.clickColor = [];
 		this.clickSize = [];
-		
-		// hold the current image after mouseup. 
-		// only put it in the currentCanvasSnapshots (in AnimationProject) after user starts drawing again, creating a new snapshot
-		this.tempSnapshot = null;
 		
 		// brushes map
 		this.brushesMap = {};

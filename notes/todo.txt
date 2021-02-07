@@ -1,9 +1,5 @@
 buggy stuff / refactor
 ---------
-- break out more components from PresentationWrapper
-- need to refactor some Toolbar and Brush methods
-- fix undo
-  - going to a different frame and clicking undo overwrites the current layer with whatever layer the undo was for
 - rotate image needs fixing
 - need more tests
 

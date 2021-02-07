@@ -1,13 +1,6 @@
-// toolbar class
 
-// assemble the common functions for the toolbar
-// remove canvas param since you have animationProj
 class Toolbar {
 	constructor(brush, animationProj){
-		// use this for storing the most recent imported image
-		// can be useful for resetting image
-		this.recentImage = null;
-
 		// used as a flag for the animation playback features
 		this.play = null;
 
@@ -345,9 +338,26 @@ class Toolbar {
 			
             // then put back last image (ignore the one that had just been drawn)
             if(currLayerSnapshots.length > 1){
+                let mostRecentImage = currLayerSnapshots.pop();
+				
+				// unfortunately, we might need to pop again b/c if we just finished drawing and want to undo,
+				// the first one on the stack is the image we just finished drawing
+				// but this operation seems fast enough
+				const currImgData = context.getImageData(0, 0, width, height).data;
+				let isSameImage = true;
+				for(let i = 0; i < currImgData.length; i++){
+					if(currImgData[i] !== mostRecentImage.data[i]){
+						isSameImage = false;
+						break;
+					}
+				}
+				if(isSameImage){
+					mostRecentImage = currLayerSnapshots.pop();
+				}
+				
 				context.clearRect(0, 0, width, height);
-                const mostRecentImage = currLayerSnapshots.pop();
                 context.putImageData(mostRecentImage, 0, 0);
+				
             }else if(currLayerSnapshots.length === 1){
 				context.putImageData(currLayerSnapshots[0], 0, 0);
 			}
@@ -398,10 +408,7 @@ class Toolbar {
                     
                     context.drawImage(img, 0, 0, width, height);
 					
-					currFrame.addSnapshot(currentCanvas.getContext("2d").getImageData(0, 0, width, height));
-					
-                    // assign recentImage the image 
-                    //self.recentImage = img;
+					canvas.addSnapshot(currentCanvas.getContext("2d").getImageData(0, 0, width, height));
                 };
                 //after reader has loaded file, put the data in the image object.
                 reader.onloadend = function(){ 

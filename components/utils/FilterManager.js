@@ -41,7 +41,8 @@ class FilterManager {
 		// save current image to snapshots stack for undo
         currFrame.addSnapshot(imgData);
 
-        const filteredImageData = filter(imgData);
+		// grab a new copy of image data so we don't mess with the snapshot data we just stored
+        const filteredImageData = filter(context.getImageData(0, 0, width, height));
         context.putImageData(filteredImageData, 0, 0);
     }
 	

@@ -4499,10 +4499,10 @@ var BrushManager = /*#__PURE__*/function () {
 
     this.brushesMap = {};
     this.brushesMap["default"] = new _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_2__["DefaultBrush"](this);
-    this.brushesMap["eraser"] = new _brushes_eraserBrush_js__WEBPACK_IMPORTED_MODULE_3__["EraserBrush"](this);
     this.brushesMap["radial"] = new _brushes_radialBrush_js__WEBPACK_IMPORTED_MODULE_4__["RadialBrush"](this);
     this.brushesMap["pen"] = new _brushes_penBrush_js__WEBPACK_IMPORTED_MODULE_5__["PenBrush"](this);
     this.brushesMap["floodfill"] = new _brushes_floodfillBrush_js__WEBPACK_IMPORTED_MODULE_6__["FloodfillBrush"](this);
+    this.brushesMap["eraser"] = new _brushes_eraserBrush_js__WEBPACK_IMPORTED_MODULE_3__["EraserBrush"](this);
   } //collect info where each pixel is to be drawn on canvas
 
 
@@ -4652,8 +4652,9 @@ var FilterManager = /*#__PURE__*/function () {
       var height = currLayer.getAttribute('height');
       var imgData = context.getImageData(0, 0, width, height); // save current image to snapshots stack for undo
 
-      currFrame.addSnapshot(imgData);
-      var filteredImageData = filter(imgData);
+      currFrame.addSnapshot(imgData); // grab a new copy of image data so we don't mess with the snapshot data we just stored
+
+      var filteredImageData = filter(context.getImageData(0, 0, width, height));
       context.putImageData(filteredImageData, 0, 0);
     } // use this for select/option elements when picking a filter
 
@@ -4689,17 +4690,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// toolbar class
-// assemble the common functions for the toolbar
-// remove canvas param since you have animationProj
 var Toolbar = /*#__PURE__*/function () {
   function Toolbar(brush, animationProj) {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Toolbar);
 
-    // use this for storing the most recent imported image
-    // can be useful for resetting image
-    this.recentImage = null; // used as a flag for the animation playback features
-
+    // used as a flag for the animation playback features
     this.play = null; // used to hold user-indicated time (ms) per frame for animation playback and gif
 
     this.timePerFrame = 200; // set to 200 be default
@@ -5085,15 +5080,28 @@ var Toolbar = /*#__PURE__*/function () {
         var context = currLayer.getContext("2d");
         var width = currLayer.getAttribute("width");
         var height = currLayer.getAttribute("height");
-        var currLayerSnapshots = frame.getSnapshots(); //console.log(currLayerSnapshots);
-        //currLayerSnapshots.unshift(context.getImageData(0, 0, width, height));
-        // then put back last image (ignore the one that had just been drawn)
-        // snapshots is a variable that only holds all the images up to the 2nd to last image drawn. 
-        // if you keep up to the last image drawn, then you have to click undo twice initially to get to the previous frame.
+        var currLayerSnapshots = frame.getSnapshots(); // then put back last image (ignore the one that had just been drawn)
 
         if (currLayerSnapshots.length > 1) {
+          var mostRecentImage = currLayerSnapshots.pop(); // unfortunately, we might need to pop again b/c if we just finished drawing and want to undo,
+          // the first one on the stack is the image we just finished drawing
+          // but this operation seems fast enough
+
+          var currImgData = context.getImageData(0, 0, width, height).data;
+          var isSameImage = true;
+
+          for (var i = 0; i < currImgData.length; i++) {
+            if (currImgData[i] !== mostRecentImage.data[i]) {
+              isSameImage = false;
+              break;
+            }
+          }
+
+          if (isSameImage) {
+            mostRecentImage = currLayerSnapshots.pop();
+          }
+
           context.clearRect(0, 0, width, height);
-          var mostRecentImage = currLayerSnapshots.pop();
           context.putImageData(mostRecentImage, 0, 0);
         } else if (currLayerSnapshots.length === 1) {
           context.putImageData(currLayerSnapshots[0], 0, 0);
@@ -5146,8 +5154,7 @@ var Toolbar = /*#__PURE__*/function () {
             currentCanvas.setAttribute('height', height);
             currentCanvas.setAttribute('width', width);
             context.drawImage(img, 0, 0, width, height);
-            currFrame.addSnapshot(currentCanvas.getContext("2d").getImageData(0, 0, width, height)); // assign recentImage the image 
-            //self.recentImage = img;
+            canvas.addSnapshot(currentCanvas.getContext("2d").getImageData(0, 0, width, height));
           }; //after reader has loaded file, put the data in the image object.
 
 

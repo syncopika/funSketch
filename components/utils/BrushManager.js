@@ -31,10 +31,10 @@ class BrushManager {
 		// brushes map
 		this.brushesMap = {};
 		this.brushesMap["default"] = new DefaultBrush(this);
-		this.brushesMap["eraser"] = new EraserBrush(this);
 		this.brushesMap["radial"] = new RadialBrush(this);
 		this.brushesMap["pen"] = new PenBrush(this);
 		this.brushesMap["floodfill"] = new FloodfillBrush(this);
+		this.brushesMap["eraser"] = new EraserBrush(this);
 	}
 	
     //collect info where each pixel is to be drawn on canvas

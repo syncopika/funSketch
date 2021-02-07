@@ -10,6 +10,8 @@ https://stackoverflow.com/questions/21339924/drop-event-not-firing-in-chrome
 https://stackoverflow.com/questions/6787899/combining-two-or-more-canvas-elements-with-some-sort-of-blending
 https://stackoverflow.com/questions/2837057/what-has-bigger-priority-opacity-or-z-index-in-browsers
 https://stackoverflow.com/questions/18639734/z-index-not-behaving-as-expected-with-absolute-positioning-inside-a-fixed-positi
+https://stackoverflow.com/questions/19560878/css-change-custom-cursor-image-origin-hotspot-to-center
+https://stackoverflow.com/questions/40477245/is-it-possible-to-use-if-else-statement-in-react-render-function
 
 // testing stuff
 https://www.robinwieruch.de/react-testing-jest

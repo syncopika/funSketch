@@ -1,28 +1,15 @@
 buggy stuff / refactor
 ---------
-
-- keep floodfill cursor on when switching frames and also highlight current brush being used in dropdown?
- - need to figure out how to keep cursor consistent (i.e. when using floodfill) when switching between layers and frames
-
-- need to refactor some Toolbar and Brush methods
-
-- fix undo
-  - going to a different frame and clicking undo overwrites the current layer with whatever layer the undo was for
-
 - rotate image needs fixing
-
-- need more unit tests
+- need more tests
 
 short-term
 ----------
 - when saving a project, make sure to include any timeline markers!
 - maybe add a context menu for the animation timeline?
 	- i.e. besides being able to change the frame rate, set start/end points?
-- ERASER!
-    - kinda hard? need a cursor that can also adjust size based on eraser size.
+- adjust eraser cursor image size?
 - stop animation, play reverse?
-- rethink brush implementations
-  - use a Brush class? some basic inheritance? 	
 
 long-term
 ---------

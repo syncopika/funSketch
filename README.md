@@ -9,12 +9,7 @@ animation demo:
 ![animation demo](notes/animation_demo.gif)    
     
 try it here: https://syncopika.github.io/funSketch/    
-also, I tried out the floodfill feature using web workers <a href='https://syncopika.github.io/funSketch/floodfillExperiment/floodfillExperiment.html'>here</a>! It looks like they definitely help speed up performance.     
-    
-### problems to fix / things to do:        
-- when rotating, the coordinates where the paintbrush strikes when mousedown get changed.        
-    
-- adjustable canvas    
+also, I tried out the floodfill feature using web workers <a href='https://syncopika.github.io/funSketch/floodfillExperiment/floodfillExperiment.html'>here</a>! It looks like they generally help speed up performance.     
     
 ### acknowledgements:    
 thanks to Johan Nordberg's gif.js library (https://jnordberg.github.io/gif.js/), which I use to generate the output for an animation.    

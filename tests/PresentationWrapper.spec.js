@@ -2,8 +2,9 @@ import React from 'react';
 import 'jest-canvas-mock';
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { AnimationProject } from '../components/AnimationProject.js';
-import { Toolbar } from '../components/Toolbar.js';
+import { AnimationProject } from '../components/utils/AnimationProject.js';
+import { Toolbar } from '../components/utils/Toolbar.js';
+import { BrushManager } from '../components/utils/BrushManager.js';
 import { PresentationWrapper, FrameCounterDisplay } from '../components/PresentationWrapper.js';
 
 describe("testing PresentationWrapper component", () => {
@@ -70,6 +71,32 @@ describe("testing PresentationWrapper component", () => {
 		fireEvent.click(screen.getByRole('button', {name: 'add new layer after'}), leftClick);
 		
 		expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(2);
+	});
+	
+	it("making sure brush-related event listeners get removed from canvas when switching canvases", () => {
+		const brushReset = jest.spyOn(BrushManager.prototype, "resetBrush");
+		const presentation = render(<PresentationWrapper />);
+		
+		// add a new layer
+		const leftClick = {button: 0};
+		fireEvent.click(screen.getByRole('button', {name: 'add new layer after'}), leftClick);
+		
+		// move to the next layer
+		fireEvent.click(screen.getByRole('heading', {name: '>'}), leftClick);
+		expect(brushReset).toHaveBeenCalledTimes(1);
+	});
+	
+	it("testing deleting the initial layer (no key down)", () => {
+		const presentation = render(<PresentationWrapper />);
+		
+		const leftClick = {button: 0};
+		
+		// delete the layer (nothing should happen since there's only one layer)
+		const initialLayerNum = 1;
+		fireEvent.click(screen.getByRole('button', {name: 'delete current layer'}), leftClick);
+		
+		expect(screen.getByText(new RegExp("layer: " + initialLayerNum))).toBeInTheDocument();
+		expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(1);
 	});
 	
 	it("testing adding a layer and then deleting (no key down)", () => {

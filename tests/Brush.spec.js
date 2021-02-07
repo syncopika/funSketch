@@ -1,6 +1,6 @@
 import 'jest-canvas-mock';
-import { Brush } from '../components/Brush.js';
-import { AnimationProject } from '../components/AnimationProject.js';
+import { BrushManager } from '../components/utils/BrushManager.js';
+import { AnimationProject } from '../components/utils/AnimationProject.js';
 
 describe("test Brush class", () => {
 	
@@ -16,13 +16,13 @@ describe("test Brush class", () => {
 	
 	it("test brush object creation", () => {
 		const animProj = new AnimationProject(containerId);
-		const brush = new Brush(animProj);
+		const brush = new BrushManager(animProj);
 		expect(brush.animationProject).toEqual(animProj);
 	});
 	
 	it("test _addClick and _clearClick", () => {
 		const animProj = new AnimationProject(containerId);
-		const brush = new Brush(animProj);
+		const brush = new BrushManager(animProj);
 		brush._addClick(1, 5, "color", 5, true);
 		expect(brush.clickX.length).toEqual(1);
 		expect(brush.clickY.length).toEqual(1);
@@ -50,7 +50,7 @@ describe("test Brush class", () => {
 	
 	it("test change brush size", () => {
 		const animProj = new AnimationProject(containerId);
-		const brush = new Brush(animProj);
+		const brush = new BrushManager(animProj);
 		expect(brush.currSize).toEqual(2);
 		brush.changeBrushSize(10);
 		expect(brush.currSize).toEqual(10);
@@ -58,7 +58,7 @@ describe("test Brush class", () => {
 	
 	it("test change brush type", () => {
 		const animProj = new AnimationProject(containerId);
-		const brush = new Brush(animProj);
+		const brush = new BrushManager(animProj);
 		expect(brush.selectedBrush).toEqual("default");
 		brush.setBrushType("radial");
 		expect(brush.selectedBrush).toEqual("radial");

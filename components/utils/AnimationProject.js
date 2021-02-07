@@ -1,10 +1,3 @@
-// TODO: have an animation mode and a paint mode? in paint mode, you can do all the layering per frame and stuff.
-// in animation mode, we process all the frames and for each one condense all their layers into a single frame.
-// then we can use those frames in an animation.
-// to optimize performance when going into animation mode, maybe cache which frames are 'tainted' from the last time 
-// animation mode was switched to.
-import React from 'react';
-
 /***
     a class representing a frame, containing a list of canvas elements which represent layers of the frame
 ***/
@@ -13,6 +6,7 @@ class Frame {
 		this.currentIndex = 0; // index of currently showing layer
 		this.canvasList = []; // keep a list of all canvas instances
 		this.currentCanvas; // the current, active canvas being looked at (reference to html element)
+		this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
 		this.containerId = containerId; // this is the html container id to hold all the layers of this frame
 		this.number = number; // this frame's number
 		this.count = 0; // current number of layers
@@ -46,6 +40,18 @@ class Frame {
 		return this.canvasList;
 	}
 	
+	addSnapshot(snapshot){
+		this.currentCanvasSnapshots.push(snapshot);
+	}
+	
+	getSnapshots(){
+		return this.currentCanvasSnapshots;
+	}
+	
+	clearSnapshots(){
+		this.currentCanvasSnapshots = [];
+	}
+	
 	// canvasList: list of canvas elements
 	setLayers(canvasList){
 		this.canvasList = canvasList;
@@ -71,7 +77,6 @@ class Frame {
         if(this.count === 0){
             newCanvas.style.opacity = .97;
             newCanvas.style.zIndex = 1;
-			newCanvas.style.cursor = "crosshair";
 			this.width = newCanvas.width;
 			this.height = newCanvas.height;
         }
@@ -86,20 +91,17 @@ class Frame {
 	_showLayer(canvas){
 		canvas.style.opacity = .97;
 		canvas.style.zIndex = 1;
-		canvas.style.cursor = "crosshair";
 	}
 
 	_hideLayer(canvas){
 		canvas.style.opacity = 0;
 		canvas.style.zIndex = 0;
-		canvas.style.cursor = "";
 	}
 	
 	// make current canvas an onion skin
 	_makeCurrLayerOnion(canvas){
 		canvas.style.opacity = .92; // apply onion skin to current canvas 
 		canvas.style.zIndex = 0;
-		canvas.style.cursor = "";
 	}
 	
     nextLayer(){
@@ -122,6 +124,7 @@ class Frame {
 			
             this.currentCanvas = nextLayer;
             this.currentIndex++;
+			this.currentCanvasSnapshots = [];
 			
             return true;
         }
@@ -144,6 +147,7 @@ class Frame {
             }
             this.currentCanvas = prevLayer;
             this.currentIndex--;
+			this.currentCanvasSnapshots = [];
 			
             return true;
         }
@@ -155,7 +159,6 @@ class Frame {
         this.canvasList.forEach((canvas) => {
 			canvas.style.zIndex = -1;
 			canvas.style.visibility = "hidden";
-			canvas.style.cursor = "";
         });
     }
 	
@@ -168,8 +171,7 @@ class Frame {
 			}else{
 				canvas.style.zIndex = 0;
 			}
-			canvas.style.visibility = "";
-			canvas.style.cursor = "crosshair";		
+			canvas.style.visibility = "";		
         });
     }
 	
@@ -185,6 +187,7 @@ class Frame {
 		
 		this.currentCanvas = newLayer;
 		this.currentIndex = layerIndex;
+		this.currentCanvasSnapshots = [];
 		
 		if(onionSkin && (layerIndex-1 > 0)){
 			// apply onionskin
@@ -331,6 +334,7 @@ class AnimationProject {
         if(this.frameList.length <= this.currentFrameIndex + 1){
             return null; // no more frames to see
         }
+		this.getCurrFrame().clearSnapshots();
         this.currentFrameIndex += 1;
 		this.updateOnionSkin();
         return this.frameList[this.currentFrameIndex];
@@ -340,11 +344,25 @@ class AnimationProject {
         if(this.currentFrameIndex - 1 < 0){
             return null; // no more frames to see
         }
+		this.getCurrFrame().clearSnapshots();
         this.currentFrameIndex -= 1;
 		this.updateOnionSkin();
         return this.frameList[this.currentFrameIndex];
     }
 	
+	goToFrame(frameIndex){
+		if(frameIndex > this.frameList.length - 1 || frameIndex < 0){
+			return null;
+		}
+		this.currentFrameIndex = frameIndex;
+		this.getCurrFrame().clearSnapshots();
+		this.updateOnionSkin();
+		return this.frameList[this.currentFrameIndex];
+	}
+	
+	// this method takes all the layers of a frame, merges them, and places the resulting image
+	// on a specific 'onionskin' canvas. when moving from one frame to another, the 'onionskin' of the
+	// previous frame will be visible.
     updateOnionSkin(){
         if(this.currentFrameIndex - 1 < 0){
 			// no onionskin for very first frame 

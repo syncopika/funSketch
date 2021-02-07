@@ -55,13 +55,6 @@
 		margin-left: 20px;
 	}
 	
-	#filters, #brushes{
-		width: 150px;
-		text-align: center;
-		border: 1px solid #000;
-		display: inline-block;
-	}
-	
 	#colorPicker{
 		margin-top: 10%;
 		margin-bottom: 15%;
@@ -72,17 +65,8 @@
 		padding: 2px;
 	}
 	
-	ul:not(#timeOptions){
-		display: none;
-		padding: 0;
-	}
-	
 	a{
 		text-decoration: none;
-	}
-	
-	li:hover{
-		color: #99b5d1;
 	}
 	
 	#timeOptions{
@@ -95,10 +79,6 @@
 	
 	#animationControl{
 		text-align: center;
-	}
-	
-	#filterSelect, #brushSelect{
-		margin-bottom: 0;
 	}
 	
 	/* accomodate smaller screens */
@@ -180,7 +160,7 @@
 </body>
 
 <script type="text/javascript" src="gif.worker.js"></script>
-<script type="text/javascript" src="components/gif.js"></script>
+<script type="text/javascript" src="components/external-lib/gif.js"></script>
 <script src="https://unpkg.com/react@16.4.1/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@16.4.1/umd/react-dom.production.min.js"></script>
 <script type="text/javascript" src="dist/bundle.js"></script>

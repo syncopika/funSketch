@@ -1,10 +1,12 @@
 import React from 'react';
-import { AnimationProject } from './AnimationProject.js';
-import { Toolbar } from './Toolbar.js';
-import { Brush } from './Brush.js';
-import { Filters } from './Filters.js';
+import { AnimationProject } from './utils/AnimationProject.js';
+import { Toolbar } from './utils/Toolbar.js';
+import { BrushManager } from './utils/BrushManager.js';
+import { FilterManager } from './utils/FilterManager.js';
 import { AnimationTimeline } from './AnimationTimeline.js';
 import { LayerOrder } from './LayerOrder.js';
+import { FilterDashboard } from './FilterDashboard.js';
+import { BrushDashboard } from './BrushDashboard.js';
 
 // for displaying current frame and layer number
 // TODO: importing a project won't update the counter display since it's using the Toolbar class functions
@@ -38,10 +40,6 @@ class PresentationWrapper extends React.Component {
 		};
 		
 		this.timelineFramesSet = new Set(); // keep track of what frames have been added to timeline so we don't duplicate - 0-indexed!
-		
-		// I think PresentationWrapper should be responsible for taking care of AnimationTimeline's state.
-		// all AnimationTimeline needs to do is show the timelineFrames and a couple other things
-		// like where the speed between frames change; showing which frames belong to which scene
 	}
 	
 	_getCoordinates(canvas, event){
@@ -54,7 +52,7 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_timelineMarkerSetup(){
-		let timelineCanvas = document.getElementById('animationTimelineCanvas');
+		const timelineCanvas = document.getElementById('animationTimelineCanvas');
 		
 		// make sure pixel width of canvas is the same as the timeline element
 		timelineCanvas.width = document.getElementById('animationTimeline').clientWidth;
@@ -62,15 +60,15 @@ class PresentationWrapper extends React.Component {
 		
 		timelineCanvas.addEventListener('mousemove', (event) => {
 			
-			let context = timelineCanvas.getContext('2d');
+			const context = timelineCanvas.getContext('2d');
 			// clear canvas first
 			context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
 			// get canvas coordinates
 			
-			let coords = this._getCoordinates(timelineCanvas, event);
-			let x = coords.x;
-			let y = coords.y;
-			let rect = coords.rect;
+			const coords = this._getCoordinates(timelineCanvas, event);
+			const x = coords.x;
+			const y = coords.y;
+			const rect = coords.rect;
 			
 			context.beginPath();
 			context.moveTo(x, 0);
@@ -85,24 +83,22 @@ class PresentationWrapper extends React.Component {
 		});
 		
 		timelineCanvas.addEventListener('mouseleave', (event) => {
-			let context = timelineCanvas.getContext('2d');
+			const context = timelineCanvas.getContext('2d');
 			context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
 		});
 		
 		timelineCanvas.addEventListener('click', (event) => {
-			
 			// also take into account horizontal scroll distance, if any
-			let scrollDistance = document.getElementById('animationTimeline').scrollLeft;
+			const scrollDistance = document.getElementById('animationTimeline').scrollLeft;
 			
-			let coords = this._getCoordinates(timelineCanvas, event);
-			let x = coords.x + scrollDistance;
-			let y = coords.y;
+			const coords = this._getCoordinates(timelineCanvas, event);
+			const x = coords.x + scrollDistance;
+			const y = coords.y;
 			
 			// which frame does this coordinate match to?
 			if(this.state.timelineFrames.length > 0){
-	
-				let width = 123; // don't hardcode this? it should be based on img width in the timeline
-				let frameGuess = Math.floor(x/width) + 1;
+				const width = 123; // don't hardcode this? it should be based on img width in the timeline
+				const frameGuess = Math.floor(x/width) + 1;
 				
 				if(frameGuess <= this.state.timelineFrames.length){
 				
@@ -117,8 +113,12 @@ class PresentationWrapper extends React.Component {
 						'frame': this.state.timelineFrames[frameGuess-1] 
 					};
 					
+					this.state.toolbarInstance.goToFrame(frameGuess-1);
+					
 					this.setState({
-						'timelineMarkers': markers
+						'timelineMarkers': markers,
+						'currentFrame': frameGuess,
+						'currentLayer': 1
 					});
 				}
 			}
@@ -325,7 +325,6 @@ class PresentationWrapper extends React.Component {
 				'currentLayer': visibleLayerIndex + 1,
 				'timelineFrames': newFrames
 			});
-			
 		});
 		
 		// make the goLeft and goRight arrows clickable FOR LAYERS
@@ -416,43 +415,6 @@ class PresentationWrapper extends React.Component {
 		});
 	}
 	
-	_setupFilters(){
-		let filterInstance = this.state.filtersInstance;
-		let filterNames = Object.getOwnPropertyNames(filterInstance).filter((name) => name.indexOf('filter') < 0);
-		let filterChoices = document.getElementById("filterChoices");
-		
-		filterNames.forEach((name) => {
-			let newFilterElement = document.createElement('li');
-			newFilterElement.id = name;
-			newFilterElement.textContent = name;
-			
-			if(name === "defaultFisheye" || name === "outline"){
-				// these filters work a bit differently
-				newFilterElement.addEventListener('click', () => {
-					filterInstance[name]();
-				});
-			}else{
-				newFilterElement.addEventListener('click', () => {
-					filterInstance.filterCanvas(filterInstance[name]);
-				});
-			}
-			filterChoices.appendChild(newFilterElement);
-		});
-		
-		let resetOption = document.createElement('li');
-		resetOption.style.color = "#ff3232";
-		resetOption.textContent = "reset";
-		resetOption.addEventListener('click', () => {
-			this.state.toolbarInstance.resetImage();
-		});
-		
-		filterChoices.appendChild(resetOption);
-		
-		document.getElementById('filterSelect').addEventListener('click', () => {
-			this._showOptions('filters');
-		});
-	}
-	
 	_setupAnimationControl(){
 		document.getElementById('timePerFrame').addEventListener('onchange', (evt) => {
 			this.state.toolbarInstance.timePerFrame = parseInt(evt.target.selectedOptions[0].value);
@@ -463,60 +425,6 @@ class PresentationWrapper extends React.Component {
 		let demoSelect = document.getElementById("chooseDemo");
 		demoSelect.addEventListener("change", (evt) => {
 			this._getDemo(evt.target.selectedOptions[0].value);
-		});
-	}
-	
-	_changeCursor(cursorType){
-		// pass in a string representing a cursor type to use for the current frame
-		let currFrame = this.state.animationProject.getCurrFrame();
-		if(cursorType === "paintbucket"){
-			currFrame.canvasList.forEach((layer) => {
-				layer.style.cursor = "url(" + "\"paintbucket.png\"" + "), auto";
-			});
-		}else{
-			currFrame.canvasList.forEach((layer) => {
-				layer.style.cursor = "crosshair";
-			});
-		}
-	}
-	
-	_setupBrushControls(){
-
-		let brush = this.state.brushInstance;
-		
-		document.getElementById('brushSelect').addEventListener('click', () => { 
-			this._showOptions('brushes');
-		});
-		
-		document.getElementById('defaultBrush').addEventListener('click', () => {
-			this._changeCursor("crosshair");
-			brush.setBrushType('default');
-			brush.applyBrush();
-		});
-		
-		document.getElementById('penBrush').addEventListener('click', () => {
-			this._changeCursor("crosshair");
-			brush.setBrushType('pen');
-			brush.applyBrush();
-		});
-		
-		document.getElementById('radialBrush').addEventListener('click', () => {
-			this._changeCursor("crosshair");
-			brush.setBrushType('radial');
-			brush.applyBrush();
-		});
-		
-		document.getElementById('floodfill').addEventListener('click', () => {
-			this._changeCursor("paintbucket");
-			brush.setBrushType('floodfill');
-			brush.applyBrush();
-		});
-		
-		//<input id='brushSize' type='range' min='1' max='15' step='.5' value='2' oninput='newBrush.changeBrushSize(this.value); showSize()'>
-		// make a function component for the brush? but then need to maintain state of brush size...
-		document.getElementById('brushSize').addEventListener('input', () => {
-			brush.changeBrushSize(document.getElementById('brushSize').value); 
-			this._showSize();
 		});
 	}
 	
@@ -531,12 +439,7 @@ class PresentationWrapper extends React.Component {
 		}
 	}
 	
-	_showSize(){
-		document.getElementById('brushSizeValue').textContent = document.getElementById('brushSize').value;
-	}
-	
 	_playAnimation(){
-
 		let timelineFrames = this.state.timelineFrames;
 		if(Object.keys(timelineFrames).length === 0){
 			return;
@@ -708,14 +611,13 @@ class PresentationWrapper extends React.Component {
 	
 
 	componentDidMount(){
-		
 		const animationProj = new AnimationProject('canvasArea');
 		animationProj.addNewFrame(true); 
 		
-		const newBrush = new Brush(animationProj);
-		newBrush.defaultBrush();
+		const newBrush = new BrushManager(animationProj);
+		newBrush.brushesMap["default"].attachBrush();
 		
-		const newFilters = new Filters(animationProj.getCurrFrame(), newBrush);
+		const newFilters = new FilterManager(animationProj, newBrush);
 		const newToolbar = new Toolbar(newBrush, animationProj);
 		
 		this.setState({
@@ -725,12 +627,26 @@ class PresentationWrapper extends React.Component {
 			'filtersInstance': newFilters
 		}, () => {
 			this._setupToolbar();
-			this._setupBrushControls();
 			this._linkDemos();
-			this._setupFilters();
 			this._setKeyDown(document); // set key down on the whole document
 			this._timelineMarkerSetup();
 		});
+	}
+	
+	componentDidUpdate(){
+		// make the active canvas shown reflect the state's current frame and layer? instead of toggling it in different places
+	}
+	
+	_clickCaret(evt){
+		let id = evt.target.id;
+		let target = document.getElementById("display" + id);
+		if(target.style.display !== "none"){
+			target.style.display = "none";
+			evt.target.innerHTML = "&#9656;";
+		}else{
+			target.style.display = "block";
+			evt.target.innerHTML = "&#9662;";
+		}
 	}
 	
 	render(){
@@ -739,7 +655,7 @@ class PresentationWrapper extends React.Component {
 				<div className='row'>
 					<div id='toolbar' className='col-lg-3'>
 						<div id='toolbarArea'>
-							<h3 id='title'> funSketch: draw, edit, and animate! </h3>
+							<h3 id='title'> funSketch: draw and animate! </h3>
 
 							<div id='buttons'>
 							
@@ -748,42 +664,46 @@ class PresentationWrapper extends React.Component {
 								<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
 								<button id='toggleInstructions'>hide instructions</button>
 							
-								<h4> layer: </h4>
-								<button id='insertCanvas'>add new layer after</button>
-								<button id='deleteCanvas'>delete current layer</button>
-								<button id='duplicateCanvas'>duplicate layer</button>
-								<button id='clearCanvas'>clear layer</button>
-								<button id='downloadLayer'>download current layer</button>
+								<h4> layer <span className="caret2" id="LayerStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+								<div id="displayLayerStuff">
+									<button id='insertCanvas'>add new layer after</button>
+									<button id='deleteCanvas'>delete current layer</button>
+									<button id='duplicateCanvas'>duplicate layer</button>
+									<button id='clearCanvas'>clear layer</button>
+									<button id='downloadLayer'>download current layer</button>
+								</div>
 								
-								<h4> frame: </h4>
-								<button id='addNewFrame'>add new frame</button>
-								<button id='deleteCurrFrame'>delete current frame</button>
-								<button id='changeLayerOrder'>change layer order</button>
-								<button id='downloadFrame'>download current frame</button>
+								<h4> frame <span className="caret2" id="FrameStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+								<div id="displayFrameStuff">
+									<button id='addNewFrame'>add new frame</button>
+									<button id='deleteCurrFrame'>delete current frame</button>
+									<button id='changeLayerOrder'>change layer order</button>
+									<button id='downloadFrame'>download current frame</button>
 								
 								<LayerOrder 
 									changingLayerOrder={this.state.changingLayerOrder}
-									layers={this.state.animationProject ? this.state.animationProject.getCurrFrame().canvasList.map((x, idx) => idx) : []}
+									layers={this.state.animationProject ? this.state.animationProject.getCurrFrame().getLayers().map((x, idx) => idx) : []}
 									updateParentStateFunction={
 										(newLayerOrder) => {
 											// 1. update layer order of current frame
 											// 2. set changingLayerOrder in state to false
 											let newLayerList = [];
 											let currFrame = this.state.animationProject.getCurrFrame();
-											let currLayerIndex = currFrame.currentIndex;
-											let currFrameLayerList = currFrame.canvasList;
+											let currLayerIndex = currFrame.getCurrCanvasIndex();
+											let currFrameLayerList = currFrame.getLayers();
 											
-											currFrame.canvasList[currLayerIndex].style.opacity = 0;
-											currFrame.canvasList[currLayerIndex].style.zIndex = 0;
+											currFrame.getCurrCanvas().style.opacity = 0;
+											currFrame.getCurrCanvas().style.zIndex = 0;
 											if(currLayerIndex-1 > 0){
-												currFrame.canvasList[currLayerIndex-1].style.opacity = 0;
-												currFrame.canvasList[currLayerIndex-1].style.zIndex = 0;
+												currFrame.getLayers()[currLayerIndex-1].style.opacity = 0;
+												currFrame.getLayers()[currLayerIndex-1].style.zIndex = 0;
 											}
 										
 											newLayerOrder.forEach((index) => {
 												newLayerList.push(currFrameLayerList[index]);
 											});
-											currFrame.canvasList = newLayerList;
+											
+											currFrame.setLayers(newLayerList);
 											
 											// update the currently shown layer to reflect the re-ordering
 											this.state.toolbarInstance.setCurrLayer(currLayerIndex);
@@ -791,71 +711,55 @@ class PresentationWrapper extends React.Component {
 											this.setState({"changingLayerOrder": false});
 										}
 									}
-									
 								/>
-								
-								<h4> other: </h4>
-								<button id='importImage'> import image </button>
-								<button id='rotateCanvasImage'>rotate image</button>
-								<button id='undo'>undo</button>
-								<button id='saveWork'>save project (.json)</button> 
-								<button id='importProject'>import project </button> 
-								<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
-								
-								<div id='animationControl'>
-									<br />
-									<h4> animation control: </h4>
-									<ul id='timeOptions'>
-										<label htmlFor='timePerFrame'>time per frame (ms):</label>
-										<select name='timePerFrame' id='timePerFrame' onChange={
-											(evt) => {
-												this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
-											}
-										}>
-											<option value='100'>100</option>
-											<option value='200'>200</option>
-											<option value='500'>500</option>
-											<option value='700'>700</option>
-											<option value='1000'>1000</option>
-										</select>
-									</ul>
-									<button onClick={
-										() => {
-											this._playAnimation();
-										}
-									}> play animation </button>
-									<button id='generateGif'> generate gif! </button>
 								</div>
-								<p id='loadingScreen'></p>
+								
+								<h4> other <span className="caret2" id="OtherStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+								<div id="displayOtherStuff">
+									<button id='importImage'> import image </button>
+									<button id='rotateCanvasImage'>rotate image</button>
+									<button id='undo'>undo</button>
+									<button id='saveWork'>save project (.json)</button> 
+									<button id='importProject'>import project </button> 
+									<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
+									
+									<div id='animationControl'>
+										<br />
+										<h4> animation control: </h4>
+										<ul id='timeOptions'>
+											<label htmlFor='timePerFrame'>time per frame (ms):</label>
+											<select name='timePerFrame' id='timePerFrame' onChange={
+												(evt) => {
+													this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+												}
+											}>
+												<option value='100'>100</option>
+												<option value='200'>200</option>
+												<option value='500'>500</option>
+												<option value='700'>700</option>
+												<option value='1000'>1000</option>
+											</select>
+										</ul>
+										<button onClick={
+											() => {
+												this._playAnimation();
+											}
+										}> play animation </button>
+										<button id='generateGif'> generate gif! </button>
+									</div>
+									<p id='loadingScreen'></p>
+								</div>
 							
 								<br />
-							
 							</div>
 							
 							<br />
 							
-							<div id='filters'>
-								<p id='filterSelect'> filters &#9660; </p>
-								<ul id='filterChoices'>
-								</ul>
-							</div>
-
-							<div id='brushes'>
-								<p id='brushSelect'> brushes &#9660; </p>
-								<ul>
-									<li id='defaultBrush'> default brush </li>
-									<li id='penBrush'> pen brush </li>
-									<li id='radialBrush'> radial gradient brush </li>
-									<li id='floodfill'> floodfill </li>
-								</ul>
-							</div>
+							<FilterDashboard filterManager={this.state.filtersInstance} />
 							
-							<div id='adjustBrushSize'>
-								<br />
-								<p className="text-info">change brush size</p>
-									<input id='brushSize' type='range' min='1' max='15' step='.5' defaultValue='2' />
-								<span id='brushSizeValue'> 2 </span>
-							</div>
+							<br />
+
+							<BrushDashboard brushManager={this.state.brushInstance} />
 							
 							<div id='colorPicker'>
 							</div>

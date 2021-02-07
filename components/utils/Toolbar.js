@@ -1,13 +1,6 @@
-// toolbar class
 
-// assemble the common functions for the toolbar
-// remove canvas param since you have animationProj
 class Toolbar {
 	constructor(brush, animationProj){
-		// use this for storing the most recent imported image
-		// can be useful for resetting image
-		this.recentImage = null;
-
 		// used as a flag for the animation playback features
 		this.play = null;
 
@@ -27,53 +20,61 @@ class Toolbar {
     }
 	
     nextLayer(){
-        // this moves the current layer to the next one if exists
+		this.brush.resetBrush();
         let frame = this.animationProj.getCurrFrame();
-		if(frame.nextLayer()){
-			// apply brush
-			// TODO: can we figure out a better way to handle brushes?
-            this.brush.applyBrush();
-			return true;
-		}else{
-			return false;
-		}
+		let result = frame.nextLayer();
+		// TODO: can we figure out a better way to handle brushes?
+        this.brush.applyBrush(); // apply brush whether or not layer changed because it was reset initially
+		return result;
     }
 	
     prevLayer(){
-        // this moves the current layer to the previous one if exists
+		this.brush.resetBrush();
         let frame = this.animationProj.getCurrFrame();
-        if(frame.prevLayer()){			
-            // apply brush
-            this.brush.applyBrush();
-            return true;
-        }
-        return false;
+        let result = frame.prevLayer();
+		this.brush.applyBrush();
+        return result;
     }
 	
 	setCurrLayer(layerIndex){
-		// true to show onion skin of prev layer
+		// true to show onion skin of prev layer (when would we not?)
 		this.animationProj.getCurrFrame().setToLayer(layerIndex, true);
 	}
 	
     nextFrame(){
+		this.brush.resetBrush();
         let curr = this.animationProj.getCurrFrame();
         let next = this.animationProj.nextFrame();
-        if(next !== null){
+        this.brush.applyBrush();
+		if(next !== null){
             curr.hide();
             next.show();
-            this.brush.applyBrush();
-            return true;
+			return true;
         }
         return false;
     }
 	
     prevFrame(){
+		this.brush.resetBrush();
         let curr = this.animationProj.getCurrFrame();
         let prev = this.animationProj.prevFrame();
-        if(prev !== null){
+        this.brush.applyBrush();
+		if(prev !== null){
             curr.hide();
             prev.show();
-            this.brush.applyBrush();
+            return true;
+        }
+        return false;
+    }
+	
+    goToFrame(frameIndex){
+		this.brush.resetBrush();
+        let curr = this.animationProj.getCurrFrame();
+        let destFrame = this.animationProj.goToFrame(frameIndex);
+        this.brush.applyBrush();
+		if(destFrame !== null){
+            curr.hide();
+            destFrame.show();
             return true;
         }
         return false;
@@ -98,8 +99,6 @@ class Toolbar {
         insert a new layer after the current layer
     ***/
     insertLayer(elementId){
-        // not sure if better idea to add the container the layers go in as an instance letiable 
-        // or pass in elementId here? 
         document.getElementById(elementId).addEventListener('click', () => {
             this.insertNewLayer();
         });
@@ -312,11 +311,13 @@ class Toolbar {
     ***/
     setClearCanvas(elementId){
         document.getElementById(elementId).addEventListener('click', () => {
-            let canvas = this.animationProj.getCurrFrame();
-            let context = canvas.currentCanvas.getContext("2d");
-            context.clearRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+            const frame = this.animationProj.getCurrFrame();
+            const context = frame.currentCanvas.getContext("2d");
+            const width = frame.currentCanvas.getAttribute("width");
+            const height = frame.currentCanvas.getAttribute("height");
+            context.clearRect(0, 0, width, height);
             context.fillStyle = "#FFFFFF";
-            context.fillRect(0, 0, canvas.currentCanvas.getAttribute('width'), canvas.currentCanvas.getAttribute('height'));
+            context.fillRect(0, 0, width, height);
         });
     }
 	
@@ -328,21 +329,41 @@ class Toolbar {
     ***/
     undo(elementId){
         document.getElementById(elementId).addEventListener('click', () => {
-            let canvas = this.animationProj.getCurrFrame();
-            let context = canvas.currentCanvas.getContext("2d");
-            let width = canvas.currentCanvas.getAttribute("width");
-            let height = canvas.currentCanvas.getAttribute("height");
-            // unshift to add to front of stack of snapshots. 
-            this.brush.currentCanvasSnapshots.unshift(context.getImageData(0, 0, width, height));
-            // clear first
-            context.clearRect(0, 0, width, height);
+            const frame = this.animationProj.getCurrFrame();
+			const currLayer = frame.getCurrCanvas();
+            const context = currLayer.getContext("2d");
+            const width = currLayer.getAttribute("width");
+            const height = currLayer.getAttribute("height");
+			const currLayerSnapshots = frame.getSnapshots();
+			
             // then put back last image (ignore the one that had just been drawn)
-            // snapshots is a variable that only holds all the images up to the 2nd to last image drawn. 
-            // if you keep up to the last image drawn, then you have to click undo twice initially to get to the previous frame.
-            if(this.brush.currentCanvasSnapshots.length >= 1){
-                let mostRecentImage = this.brush.currentCanvasSnapshots.pop();
+            if(currLayerSnapshots.length > 1){
+                let mostRecentImage = currLayerSnapshots.pop();
+				
+				// unfortunately, we might need to pop again b/c if we just finished drawing and want to undo,
+				// the first one on the stack is the image we just finished drawing
+				// but this operation seems fast enough
+				const currImgData = context.getImageData(0, 0, width, height).data;
+				let isSameImage = true;
+				for(let i = 0; i < currImgData.length; i++){
+					if(currImgData[i] !== mostRecentImage.data[i]){
+						isSameImage = false;
+						break;
+					}
+				}
+				if(isSameImage){
+					mostRecentImage = currLayerSnapshots.pop();
+				}
+				
+				context.clearRect(0, 0, width, height);
                 context.putImageData(mostRecentImage, 0, 0);
-            }
+				
+				// but then put it back on the stack
+				frame.addSnapshot(mostRecentImage);
+				
+            }else if(currLayerSnapshots.length === 1){
+				context.putImageData(currLayerSnapshots[0], 0, 0);
+			}
         });
     }
 	
@@ -383,17 +404,14 @@ class Toolbar {
                     let height = img.height;
                     let width = img.width;
 
-					// default value in super canvas object
 					height = canvas.height;
 					width = canvas.width;
 					currentCanvas.setAttribute('height', height);
 					currentCanvas.setAttribute('width', width);
                     
                     context.drawImage(img, 0, 0, width, height);
-                    // assign recentImage the image 
-                    self.recentImage = img;
-                    // add the current image to snapshots 
-                    self.brush.currentCanvasSnapshots.push(context.getImageData(0, 0, width, height));
+					
+					canvas.addSnapshot(currentCanvas.getContext("2d").getImageData(0, 0, width, height));
                 };
                 //after reader has loaded file, put the data in the image object.
                 reader.onloadend = function(){ 

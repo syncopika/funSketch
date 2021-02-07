@@ -5102,7 +5102,9 @@ var Toolbar = /*#__PURE__*/function () {
           }
 
           context.clearRect(0, 0, width, height);
-          context.putImageData(mostRecentImage, 0, 0);
+          context.putImageData(mostRecentImage, 0, 0); // but then put it back on the stack
+
+          frame.addSnapshot(mostRecentImage);
         } else if (currLayerSnapshots.length === 1) {
           context.putImageData(currLayerSnapshots[0], 0, 0);
         }

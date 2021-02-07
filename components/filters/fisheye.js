@@ -70,9 +70,7 @@ class Fisheye extends FilterTemplate {
     }
 	
     filter(pixels){
-        let width = pixels.width;
-        let height = pixels.height;
-        return this.fisheye(pixels, 0, 0, 0, width, height);
+        return this.fisheye(pixels, 0, 0, 0, pixels.width, pixels.height);
     }
 }
 

@@ -2,9 +2,11 @@ import React from 'react';
 import {useState} from 'react';
 
 function constructSlider(name, params){
-	let id = "slider_" + name;
+	const id = "slider_" + name;
+	const sliderCounterId = name + 'CurrValue';
 	return (
 		<div>
+			<label htmlFor={name}>{name}</label>
 			<input 
 				type="range" 
 				name={name} 
@@ -20,10 +22,13 @@ function constructSlider(name, params){
 						// update reference to the filter's parameter object value field,
 						// which is used when applying the filter
 						params.value = parseInt(newVal);
+						
+						document.getElementById(sliderCounterId).textContent = params.value;
 					}
 				}
 			></input>
-			<label htmlFor={name}>{name}</label>
+			<p id={sliderCounterId}>{params.value}</p>
+			<br />
 		</div>
 	);
 }

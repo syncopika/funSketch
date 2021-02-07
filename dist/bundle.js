@@ -299,7 +299,10 @@ __webpack_require__.r(__webpack_exports__);
 
 function constructSlider(name, params) {
   var id = "slider_" + name;
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
+  var sliderCounterId = name + 'CurrValue';
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", {
+    htmlFor: name
+  }, name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
     type: "range",
     name: name,
     id: id,
@@ -312,10 +315,11 @@ function constructSlider(name, params) {
       // which is used when applying the filter
 
       params.value = parseInt(newVal);
+      document.getElementById(sliderCounterId).textContent = params.value;
     }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", {
-    htmlFor: name
-  }, name));
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
+    id: sliderCounterId
+  }, params.value), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("br", null));
 }
 
 var FilterDashboard = function FilterDashboard(props) {
@@ -3099,9 +3103,7 @@ var Fisheye = /*#__PURE__*/function (_FilterTemplate) {
   }, {
     key: "filter",
     value: function filter(pixels) {
-      var width = pixels.width;
-      var height = pixels.height;
-      return this.fisheye(pixels, 0, 0, 0, width, height);
+      return this.fisheye(pixels, 0, 0, 0, pixels.width, pixels.height);
     }
   }]);
 
@@ -3518,15 +3520,9 @@ var Mosaic = /*#__PURE__*/function (_FilterTemplate) {
       var height = pixels.height; // change sampling size here. lower for higher detail preservation, higher for less detail (because larger chunks)
 
       var chunkWidth = this.params.chunkWidth.value;
-      var chunkHeight = this.params.chunkHeight.value; // make sure chunkWidth can completely divide the image width * 4 
-
-      while (width % chunkWidth != 0) {
-        chunkWidth--;
-        chunkHeight--;
-      } // when looking at each chunk of the image, for these 2 outer for loops, 
+      var chunkHeight = this.params.chunkHeight.value; // when looking at each chunk of the image, for these 2 outer for loops, 
       // focus on looking at each chunk as if looking at a single pixel first (think bigger picture; abstraction!) 
       // don't think about selecting single channels yet 
-
 
       for (var i = 0; i < width; i += chunkWidth) {
         for (var j = 0; j < height; j += chunkHeight) {

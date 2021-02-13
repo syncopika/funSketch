@@ -1654,7 +1654,7 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       var frame = this.brushManager.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
 
-      if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
+      if (evt.which === 1 || evt.type === 'touchstart') {
         //when left click only
         this.paint = true; // offset will be different with mobile
         // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
@@ -1666,7 +1666,8 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
           evt.offsetX = newCoords.x;
           evt.offsetY = newCoords.y;
           evt.preventDefault();
-        }
+        } // TODO: take into account pen pressure
+
 
         this._addClick(evt.offsetX, evt.offsetY, null, null, true);
 
@@ -1750,23 +1751,23 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 
       var start = this.brushStart.bind(this);
-      currLayer.addEventListener('mousedown', start);
+      currLayer.addEventListener('pointerdown', start);
       currLayer.addEventListener('touchstart', start);
-      this.brushManager.currentEventListeners['mousedown'] = start;
+      this.brushManager.currentEventListeners['pointerdown'] = start;
       this.brushManager.currentEventListeners['touchstart'] = start;
       var move = this.brushMove.bind(this);
-      currLayer.addEventListener('mousemove', move);
+      currLayer.addEventListener('pointermove', move);
       currLayer.addEventListener('touchmove', move);
-      this.brushManager.currentEventListeners['mousemove'] = move;
+      this.brushManager.currentEventListeners['pointermove'] = move;
       this.brushManager.currentEventListeners['touchmove'] = move;
       var stop = this.brushStop.bind(this);
-      currLayer.addEventListener('mouseup', stop);
+      currLayer.addEventListener('pointerup', stop);
       currLayer.addEventListener('touchend', stop);
-      this.brushManager.currentEventListeners['mouseup'] = stop;
+      this.brushManager.currentEventListeners['pointerup'] = stop;
       this.brushManager.currentEventListeners['touchend'] = stop;
       var leave = this.brushLeave.bind(this);
-      currLayer.addEventListener('mouseleave', leave);
-      this.brushManager.currentEventListeners['mouseleave'] = leave;
+      currLayer.addEventListener('pointerleave', leave);
+      this.brushManager.currentEventListeners['pointerleave'] = leave;
     }
   }]);
 

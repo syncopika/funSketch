@@ -5,6 +5,7 @@ buggy stuff / refactor
 
 short-term
 ----------
+- pressure-sensitivity for tablet pen
 - when saving a project, make sure to include any timeline markers!
 - maybe add a context menu for the animation timeline?
 	- i.e. besides being able to change the frame rate, set start/end points?

@@ -1540,7 +1540,9 @@ var BrushTemplate = /*#__PURE__*/function () {
     key: "_redraw",
     value: function _redraw(strokeFunction) {
       var frame = this.brushManager.animationProject.getCurrFrame();
-      var context = frame.getCurrCanvas().getContext("2d");
+      var context = frame.getCurrCanvas().getContext("2d", {
+        desynchronized: true
+      });
       context.lineJoin = 'round';
       strokeFunction(context);
     }
@@ -1689,7 +1691,14 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
           evt.preventDefault();
         }
 
-        this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+        var width = 4;
+
+        if (evt.pressure) {
+          width = evt.pressure * 8 * this.brushManager.currSize;
+          console.log(evt.pressure);
+        }
+
+        this._addClick(evt.offsetX, evt.offsetY, null, width, true);
 
         this._redraw(this.brushStroke.bind(this));
       }
@@ -1711,11 +1720,7 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
 
   }, {
     key: "brushStroke",
-    value: function brushStroke() {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      var context = currLayer.getContext("2d");
-
+    value: function brushStroke(context) {
       for (var i = 0; i < this.clickX.length; i++) {
         context.beginPath(); //this helps generate a solid line, rather than a line of dots. 
         //the subtracting of 1 from i means that the point at i is being connected

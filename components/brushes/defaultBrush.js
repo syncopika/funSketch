@@ -39,7 +39,13 @@ class DefaultBrush extends BrushTemplate {
 				// prevent page scrolling when drawing 
 				evt.preventDefault();
 			}
-			this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+			
+			let width = 4;
+			if(evt.pressure){
+				width = evt.pressure * 8 * this.brushManager.currSize;
+			}
+			
+			this._addClick(evt.offsetX, evt.offsetY, null, width, true);
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}
@@ -58,10 +64,7 @@ class DefaultBrush extends BrushTemplate {
 	}
 	
 	// this is for determining what the brush stroke looks like
-	brushStroke(){
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		const context = currLayer.getContext("2d");
+	brushStroke(context){
 		for(let i = 0; i < this.clickX.length; i++){
             context.beginPath();
             //this helps generate a solid line, rather than a line of dots. 

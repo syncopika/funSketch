@@ -31,8 +31,8 @@ class BrushTemplate {
 	
 	
     _redraw(strokeFunction){
-        let frame = this.brushManager.animationProject.getCurrFrame();
-        let context = frame.getCurrCanvas().getContext("2d");
+        const frame = this.brushManager.animationProject.getCurrFrame();
+		const context = frame.getCurrCanvas().getContext("2d", {desynchronized: true});
         context.lineJoin = 'round';
 		strokeFunction(context);
     }

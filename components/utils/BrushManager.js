@@ -20,14 +20,6 @@ class BrushManager {
 		this.currColorArray = Uint8Array.from([0, 0, 0, 0]);
 		this.currSize = 2;
 		
-		// keep track of the pixels drawn on by the mouse.
-		// the redraw function uses this data to connect the dots 
-		this.clickX = [];
-		this.clickY = [];
-		this.clickDrag = [];
-		this.clickColor = [];
-		this.clickSize = [];
-		
 		// brushes map
 		this.brushesMap = {};
 		this.brushesMap["default"] = new DefaultBrush(this);
@@ -35,37 +27,6 @@ class BrushManager {
 		this.brushesMap["pen"] = new PenBrush(this);
 		this.brushesMap["floodfill"] = new FloodfillBrush(this);
 		this.brushesMap["eraser"] = new EraserBrush(this);
-	}
-	
-    //collect info where each pixel is to be drawn on canvas
-    _addClick(x, y, color, size, dragging){
-        this.clickX.push(x);
-        this.clickY.push(y);
-        this.clickDrag.push(dragging);
-        this.clickColor.push((color === null ? this.currColor : color));
-        this.clickSize.push((size === null ? this.currSize : size));
-    }
-	
-    _redraw(strokeFunction){
-        let frame = this.animationProject.getCurrFrame();
-        let context = frame.getCurrCanvas().getContext("2d");
-        context.lineJoin = 'round';
-		strokeFunction(context);
-    }
-	
-    _clearClick() {
-        this.clickX = [];
-        this.clickY = [];
-        this.clickDrag = [];
-        this.clickColor = [];
-        this.clickSize = [];
-    }
-	
-	_handleTouchEvent(evt){
-		let rect = evt.target.getBoundingClientRect();
-		let x = evt.touches[0].pageX - rect.left;
-		let y = evt.touches[0].pageY - rect.top - window.pageYOffset;
-		return {'x': x, 'y': y};
 	}
 	
     resetBrush(){

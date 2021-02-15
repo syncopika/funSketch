@@ -1434,6 +1434,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "demo"
       }, "floaty_thingy"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
         className: "demo"
+      }, "cake_cut"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
+        className: "demo"
       }, "asakusa_mizusaki_butterfly")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "footer",
         className: "row"
@@ -1521,10 +1523,22 @@ var BrushTemplate = /*#__PURE__*/function () {
     this.clickSize = []; // cursor type
 
     this.cursorType = "crosshair";
-  } //collect info where each pixel is to be drawn on canvas
+  } // assuming a PointerEvent, calculate the brush width based on stylus pressure
 
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BrushTemplate, [{
+    key: "_calculateBrushWidth",
+    value: function _calculateBrushWidth(pointerEvt) {
+      var brushWidth = this.brushManager.currSize;
+
+      if (pointerEvt.pressure) {
+        brushWidth = pointerEvt.pressure * 2 * brushWidth;
+      }
+
+      return brushWidth;
+    } //collect info where each pixel is to be drawn on canvas
+
+  }, {
     key: "_addClick",
     value: function _addClick(x, y, color, size, dragging) {
       var currColor = this.brushManager.currColor; //'rgb(0,0,0)';
@@ -1663,15 +1677,16 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
         // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
 
         if (evt.type === 'touchstart') {
-          var newCoords = this.brushManager._handleTouchEvent(evt);
+          var newCoords = this._handleTouchEvent(evt);
 
           evt.offsetX = newCoords.x;
           evt.offsetY = newCoords.y;
           evt.preventDefault();
-        } // TODO: take into account pen pressure
+        }
 
+        var brushWidth = this._calculateBrushWidth(evt);
 
-        this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+        this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 
         this._redraw(this.brushStroke.bind(this));
       }
@@ -1691,14 +1706,9 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
           evt.preventDefault();
         }
 
-        var width = 4;
+        var brushWidth = this._calculateBrushWidth(evt);
 
-        if (evt.pressure) {
-          width = evt.pressure * 8 * this.brushManager.currSize;
-          console.log(evt.pressure);
-        }
-
-        this._addClick(evt.offsetX, evt.offsetY, null, width, true);
+        this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 
         this._redraw(this.brushStroke.bind(this));
       }
@@ -1846,7 +1856,7 @@ var EraserBrush = /*#__PURE__*/function (_BrushTemplate) {
         // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
 
         if (evt.type === 'touchstart') {
-          var newCoords = this.brushManager._handleTouchEvent(evt);
+          var newCoords = this._handleTouchEvent(evt);
 
           evt.offsetX = newCoords.x;
           evt.offsetY = newCoords.y;
@@ -2255,7 +2265,9 @@ var PenBrush = /*#__PURE__*/function (_BrushTemplate) {
           evt.preventDefault();
         }
 
-        this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+        var brushWidth = this._calculateBrushWidth(evt);
+
+        this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 
         this._redraw(this.brushStroke.bind(this));
       }
@@ -2275,7 +2287,9 @@ var PenBrush = /*#__PURE__*/function (_BrushTemplate) {
           evt.preventDefault();
         }
 
-        this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+        var brushWidth = this._calculateBrushWidth(evt);
+
+        this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 
         this._redraw(this.brushStroke.bind(this));
       }
@@ -2430,16 +2444,18 @@ var RadialBrush = /*#__PURE__*/function (_BrushTemplate) {
         // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
 
         if (evt.type === 'touchstart') {
-          var newCoords = this.brushManager._handleTouchEvent(evt);
+          var newCoords = this._handleTouchEvent(evt);
 
           evt.offsetX = newCoords.x;
           evt.offsetY = newCoords.y;
           evt.preventDefault();
         }
 
-        this.radialGrad(evt.offsetX, evt.offsetY);
+        var brushWidth = this._calculateBrushWidth(evt);
 
-        this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+        this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
+
+        this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 
         this._redraw(this.brushStroke.bind(this));
       }
@@ -2459,9 +2475,11 @@ var RadialBrush = /*#__PURE__*/function (_BrushTemplate) {
           evt.preventDefault();
         }
 
-        this.radialGrad(evt.offsetX, evt.offsetY);
+        var brushWidth = this._calculateBrushWidth(evt);
 
-        this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+        this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
+
+        this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 
         this._redraw(this.brushStroke.bind(this));
       }
@@ -2509,14 +2527,13 @@ var RadialBrush = /*#__PURE__*/function (_BrushTemplate) {
     }
   }, {
     key: "radialGrad",
-    value: function radialGrad(x, y) {
+    value: function radialGrad(x, y, brushSize) {
       var frame = this.brushManager.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
       var context = currLayer.getContext("2d");
-      var currSize = this.brushManager.currSize;
       var colorPicked = this.brushManager.currColorArray;
       var currColor = this.brushManager.currColor;
-      var radGrad = context.createRadialGradient(x, y, currSize, x, y, currSize * 1.5);
+      var radGrad = context.createRadialGradient(x, y, brushSize, x, y, brushSize * 1.5);
       context.lineJoin = context.lineCap = 'round';
       radGrad.addColorStop(0, currColor);
 
@@ -4304,6 +4321,11 @@ var AnimationProject = /*#__PURE__*/function () {
       }
     }
   }, {
+    key: "copyCurrFrame",
+    value: function copyCurrFrame() {// TODO:
+      // get current frame and make a copy of it. append the copy to the end of the list of frames.
+    }
+  }, {
     key: "deleteFrame",
     value: function deleteFrame(index) {
       // don't allow removal if only one frame exists
@@ -4373,7 +4395,6 @@ var AnimationProject = /*#__PURE__*/function () {
 
       var onionSkinCtx = this.onionSkinFrame.getContext("2d");
       onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // take the previous frame, merge all layers, put into onion skin frame
-      // try this? only draw pixels that are non-white?
 
       var onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // build the merged image from the first to last
 
@@ -4385,8 +4406,6 @@ var AnimationProject = /*#__PURE__*/function () {
           if (imageData[i] === 255 && imageData[i + 1] === 255 && imageData[i + 2] === 255) {
             continue;
           } else {
-            // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
-            // we might run into index/length issues...
             onionSkinImageData.data[i] = imageData[i];
             onionSkinImageData.data[i + 1] = imageData[i + 1];
             onionSkinImageData.data[i + 2] = imageData[i + 2];
@@ -4490,14 +4509,7 @@ var BrushManager = /*#__PURE__*/function () {
 
     this.currColor = 'rgb(0,0,0)';
     this.currColorArray = Uint8Array.from([0, 0, 0, 0]);
-    this.currSize = 2; // keep track of the pixels drawn on by the mouse.
-    // the redraw function uses this data to connect the dots 
-
-    this.clickX = [];
-    this.clickY = [];
-    this.clickDrag = [];
-    this.clickColor = [];
-    this.clickSize = []; // brushes map
+    this.currSize = 2; // brushes map
 
     this.brushesMap = {};
     this.brushesMap["default"] = new _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_2__["DefaultBrush"](this);
@@ -4505,47 +4517,9 @@ var BrushManager = /*#__PURE__*/function () {
     this.brushesMap["pen"] = new _brushes_penBrush_js__WEBPACK_IMPORTED_MODULE_5__["PenBrush"](this);
     this.brushesMap["floodfill"] = new _brushes_floodfillBrush_js__WEBPACK_IMPORTED_MODULE_6__["FloodfillBrush"](this);
     this.brushesMap["eraser"] = new _brushes_eraserBrush_js__WEBPACK_IMPORTED_MODULE_3__["EraserBrush"](this);
-  } //collect info where each pixel is to be drawn on canvas
-
+  }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BrushManager, [{
-    key: "_addClick",
-    value: function _addClick(x, y, color, size, dragging) {
-      this.clickX.push(x);
-      this.clickY.push(y);
-      this.clickDrag.push(dragging);
-      this.clickColor.push(color === null ? this.currColor : color);
-      this.clickSize.push(size === null ? this.currSize : size);
-    }
-  }, {
-    key: "_redraw",
-    value: function _redraw(strokeFunction) {
-      var frame = this.animationProject.getCurrFrame();
-      var context = frame.getCurrCanvas().getContext("2d");
-      context.lineJoin = 'round';
-      strokeFunction(context);
-    }
-  }, {
-    key: "_clearClick",
-    value: function _clearClick() {
-      this.clickX = [];
-      this.clickY = [];
-      this.clickDrag = [];
-      this.clickColor = [];
-      this.clickSize = [];
-    }
-  }, {
-    key: "_handleTouchEvent",
-    value: function _handleTouchEvent(evt) {
-      var rect = evt.target.getBoundingClientRect();
-      var x = evt.touches[0].pageX - rect.left;
-      var y = evt.touches[0].pageY - rect.top - window.pageYOffset;
-      return {
-        'x': x,
-        'y': y
-      };
-    }
-  }, {
     key: "resetBrush",
     value: function resetBrush() {
       // detach any events from mouse actions (reset the events connected with mouse events) from previous layer worked on

@@ -13,6 +13,7 @@ https://stackoverflow.com/questions/2837057/what-has-bigger-priority-opacity-or-
 https://stackoverflow.com/questions/18639734/z-index-not-behaving-as-expected-with-absolute-positioning-inside-a-fixed-positi
 https://stackoverflow.com/questions/19560878/css-change-custom-cursor-image-origin-hotspot-to-center
 https://stackoverflow.com/questions/40477245/is-it-possible-to-use-if-else-statement-in-react-render-function
+https://sighack.com/ -> really cool stuff to learn about here
 
 // pressure-sensitivity for pen
 https://github.com/amoshydra/draw/blob/master/js/libs/Pen.js

@@ -17,14 +17,14 @@ class DefaultBrush extends BrushTemplate {
 			// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
 			// https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
 			if(evt.type === 'touchstart'){
-				const newCoords = this.brushManager._handleTouchEvent(evt);
+				const newCoords = this._handleTouchEvent(evt);
 				evt.offsetX = newCoords.x;
 				evt.offsetY = newCoords.y;
 				evt.preventDefault();
 			}
 			
-			// TODO: take into account pen pressure
-			this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+			const brushWidth = this._calculateBrushWidth(evt);
+			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}
@@ -40,12 +40,8 @@ class DefaultBrush extends BrushTemplate {
 				evt.preventDefault();
 			}
 			
-			let width = 4;
-			if(evt.pressure){
-				width = evt.pressure * 8 * this.brushManager.currSize;
-			}
-			
-			this._addClick(evt.offsetX, evt.offsetY, null, width, true);
+			const brushWidth = this._calculateBrushWidth(evt);
+			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}

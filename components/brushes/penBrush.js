@@ -25,7 +25,8 @@ class PenBrush extends BrushTemplate {
 				evt.offsetY = newCoords.y;
 				evt.preventDefault();
 			}
-			this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+			const brushWidth = this._calculateBrushWidth(evt);
+			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 			this._redraw(this.brushStroke.bind(this));
 		}		
 	}
@@ -40,7 +41,8 @@ class PenBrush extends BrushTemplate {
 				// prevent page scrolling when drawing 
 				evt.preventDefault();
 			}
-			this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+			const brushWidth = this._calculateBrushWidth(evt);
+			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}

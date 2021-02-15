@@ -20,7 +20,7 @@ class EraserBrush extends BrushTemplate {
 			// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
 			// https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
 			if(evt.type === 'touchstart'){
-				const newCoords = this.brushManager._handleTouchEvent(evt);
+				const newCoords = this._handleTouchEvent(evt);
 				evt.offsetX = newCoords.x;
 				evt.offsetY = newCoords.y;
 				evt.preventDefault();

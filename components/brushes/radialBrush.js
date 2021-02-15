@@ -17,13 +17,14 @@ class RadialBrush extends BrushTemplate {
 			// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
 			// https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
 			if(evt.type === 'touchstart'){
-				const newCoords = this.brushManager._handleTouchEvent(evt);
+				const newCoords = this._handleTouchEvent(evt);
 				evt.offsetX = newCoords.x;
 				evt.offsetY = newCoords.y;
 				evt.preventDefault();
 			}
-			this.radialGrad(evt.offsetX, evt.offsetY);
-			this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+			const brushWidth = this._calculateBrushWidth(evt);
+			this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
+			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 			this._redraw(this.brushStroke.bind(this));
 		}			
 	}
@@ -38,8 +39,9 @@ class RadialBrush extends BrushTemplate {
 				// prevent page scrolling when drawing 
 				evt.preventDefault();
 			}
-			this.radialGrad(evt.offsetX, evt.offsetY);
-			this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+			const brushWidth = this._calculateBrushWidth(evt);
+			this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
+			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}
@@ -82,14 +84,13 @@ class RadialBrush extends BrushTemplate {
         }
 	}
 	
-	radialGrad(x, y){
+	radialGrad(x, y, brushSize){
 		const frame = this.brushManager.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
 		const context = currLayer.getContext("2d");
-		const currSize = this.brushManager.currSize;
         const colorPicked = this.brushManager.currColorArray;
 		const currColor = this.brushManager.currColor;
-		const radGrad = context.createRadialGradient(x, y, currSize, x, y, currSize * 1.5);
+		const radGrad = context.createRadialGradient(x, y, brushSize, x, y, brushSize * 1.5);
 		
 		context.lineJoin = context.lineCap = 'round';
         radGrad.addColorStop(0, currColor);

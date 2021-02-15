@@ -17,6 +17,15 @@ class BrushTemplate {
 		this.cursorType = "crosshair";
 	}
 	
+	// assuming a PointerEvent, calculate the brush width based on stylus pressure
+	_calculateBrushWidth(pointerEvt){
+		let brushWidth = this.brushManager.currSize;
+		if(pointerEvt.pressure){
+			brushWidth = (pointerEvt.pressure*2) * brushWidth;
+		}
+		return brushWidth;
+	}
+	
 	//collect info where each pixel is to be drawn on canvas
     _addClick(x, y, color, size, dragging){
 		const currColor = this.brushManager.currColor; //'rgb(0,0,0)';
@@ -37,7 +46,7 @@ class BrushTemplate {
 		strokeFunction(context);
     }
 	
-    _clearClick() {
+    _clearClick(){
         this.clickX = [];
         this.clickY = [];
         this.clickDrag = [];

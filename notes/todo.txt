@@ -2,10 +2,13 @@ buggy stuff / refactor
 ---------
 - rotate image needs fixing
 - need more tests
+- there *might* be something wrong with the onion skin when switching between layers (i.e. from 2nd layer to 1st layer).
+  I think I saw a scenario where multiple previous frames were being shown in the onion skin.
 
 short-term
 ----------
-- pressure-sensitivity for tablet pen
+- be able to copy a frame
+- when erasing, don't let cursor disappear on pointerdown event?
 - when saving a project, make sure to include any timeline markers!
 - maybe add a context menu for the animation timeline?
 	- i.e. besides being able to change the frame rate, set start/end points?

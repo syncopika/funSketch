@@ -277,6 +277,7 @@ class PresentationWrapper extends React.Component {
 		newToolbar.downloadLayer('downloadLayer');
 		
 		newToolbar.addNewFrameButton('addNewFrame');
+		newToolbar.copyCurrFrameButton('copyCurrFrame');
 		newToolbar.changeCurrentFrameLayerOrder('changeLayerOrder');
 		newToolbar.downloadFrame('downloadFrame');
 		
@@ -676,6 +677,7 @@ class PresentationWrapper extends React.Component {
 								<h4> frame <span className="caret2" id="FrameStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
 								<div id="displayFrameStuff">
 									<button id='addNewFrame'>add new frame</button>
+									<button id='copyCurrFrame'>duplicate frame</button>
 									<button id='deleteCurrFrame'>delete current frame</button>
 									<button id='changeLayerOrder'>change layer order</button>
 									<button id='downloadFrame'>download current frame</button>

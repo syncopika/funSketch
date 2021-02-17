@@ -311,8 +311,26 @@ class AnimationProject {
     }
 	
 	copyCurrFrame(){
-		// TODO:
 		// get current frame and make a copy of it. append the copy to the end of the list of frames.
+		this.addNewFrame(false);
+		const newCopy = this.frameList[this.frameList.length-1];
+		const currFrameLayersToCopy = this.getCurrFrame().getLayers();
+		
+		currFrameLayersToCopy.forEach(function(layer, layerIndex){
+			
+			if((layerIndex + 1) > newCopy.getLayers().length){
+				newCopy.setupNewLayer();
+			}
+			
+			const currLayer = newCopy.getLayers()[layerIndex];
+			currLayer.style.opacity = layer.opacity;
+			currLayer.style.zIndex = layer.zIndex;
+
+			// add the image data 
+			const newCtx = currLayer.getContext("2d");
+			const currImageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height);
+			newCtx.putImageData(currImageData, 0, 0);
+		});
 	}
 	
 	deleteFrame(index){

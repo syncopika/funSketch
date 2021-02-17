@@ -893,6 +893,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       newToolbar.setClearCanvas('clearCanvas');
       newToolbar.downloadLayer('downloadLayer');
       newToolbar.addNewFrameButton('addNewFrame');
+      newToolbar.copyCurrFrameButton('copyCurrFrame');
       newToolbar.changeCurrentFrameLayerOrder('changeLayerOrder');
       newToolbar.downloadFrame('downloadFrame');
       newToolbar.rotateImage('rotateCanvasImage');
@@ -1330,6 +1331,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "addNewFrame"
       }, "add new frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "copyCurrFrame"
+      }, "duplicate frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "deleteCurrFrame"
       }, "delete current frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "changeLayerOrder"
@@ -4322,8 +4325,24 @@ var AnimationProject = /*#__PURE__*/function () {
     }
   }, {
     key: "copyCurrFrame",
-    value: function copyCurrFrame() {// TODO:
+    value: function copyCurrFrame() {
       // get current frame and make a copy of it. append the copy to the end of the list of frames.
+      this.addNewFrame(false);
+      var newCopy = this.frameList[this.frameList.length - 1];
+      var currFrameLayersToCopy = this.getCurrFrame().getLayers();
+      currFrameLayersToCopy.forEach(function (layer, layerIndex) {
+        if (layerIndex + 1 > newCopy.getLayers().length) {
+          newCopy.setupNewLayer();
+        }
+
+        var currLayer = newCopy.getLayers()[layerIndex];
+        currLayer.style.opacity = layer.opacity;
+        currLayer.style.zIndex = layer.zIndex; // add the image data 
+
+        var newCtx = currLayer.getContext("2d");
+        var currImageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height);
+        newCtx.putImageData(currImageData, 0, 0);
+      });
     }
   }, {
     key: "deleteFrame",
@@ -4812,19 +4831,6 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
-    add a new frame
-    ***/
-
-  }, {
-    key: "addNewFrameButton",
-    value: function addNewFrameButton(elementId) {
-      var _this3 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        _this3.animationProj.addNewFrame();
-      });
-    }
-    /***
         delete current layer
         shifts the current layer to the next one if there is one.
         otherwise, the previous layer will become the current one.
@@ -4834,11 +4840,11 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "deleteLayer",
     value: function deleteLayer(elementId, setStateFunction) {
-      var _this4 = this;
+      var _this3 = this;
 
       // elementId here refers to the display that shows current frame and layer
       document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this4.animationProj.getCurrFrame();
+        var frame = _this3.animationProj.getCurrFrame();
 
         var oldLayerIndex = frame.getCurrCanvasIndex();
         var oldLayer = frame.getCurrCanvas();
@@ -4849,7 +4855,7 @@ var Toolbar = /*#__PURE__*/function () {
           frame.deleteLayer(oldLayerIndex);
           parentNode.removeChild(oldLayer);
 
-          _this4.brush.applyBrush();
+          _this3.brush.applyBrush();
         } else {
           // otherwise, just blank the canvas 
           var context = oldLayer.getContext("2d");
@@ -4862,26 +4868,52 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
+    add a new frame
+    ***/
+
+  }, {
+    key: "addNewFrameButton",
+    value: function addNewFrameButton(elementId) {
+      var _this4 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        _this4.animationProj.addNewFrame();
+      });
+    }
+    /***
+    duplicate current frame
+    ***/
+
+  }, {
+    key: "copyCurrFrameButton",
+    value: function copyCurrFrameButton(elementId) {
+      var _this5 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        _this5.animationProj.copyCurrFrame();
+      });
+    }
+    /***
     	delete current frame
     ***/
 
   }, {
     key: "deleteCurrentFrameButton",
     value: function deleteCurrentFrameButton(elementId, setStateFunction) {
-      var _this5 = this;
+      var _this6 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
-        var currFrameIdx = _this5.animationProj.getCurrFrameIndex(); // move to another frame first before deleting
+        var currFrameIdx = _this6.animationProj.getCurrFrameIndex(); // move to another frame first before deleting
 
 
         if (currFrameIdx - 1 >= 0) {
-          _this5.prevFrame();
+          _this6.prevFrame();
         } else {
           // go forward a frame
-          _this5.nextFrame();
+          _this6.nextFrame();
         }
 
-        if (_this5.animationProj.deleteFrame(currFrameIdx)) {
+        if (_this6.animationProj.deleteFrame(currFrameIdx)) {
           setStateFunction(currFrameIdx); // the index of the frame we deleted
         }
       });
@@ -4912,7 +4944,7 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "createColorWheel",
     value: function createColorWheel(elementId, size) {
-      var _this6 = this;
+      var _this7 = this;
 
       var location = document.getElementById(elementId);
       var colorWheel = document.createElement('canvas');
@@ -4981,8 +5013,8 @@ var Toolbar = /*#__PURE__*/function () {
         colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
         colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
 
-        _this6.brush.currColorArray = colorPicked;
-        _this6.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
+        _this7.brush.currColorArray = colorPicked;
+        _this7.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
       });
     }
     /***
@@ -4996,11 +5028,11 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "rotateImage",
     value: function rotateImage(elementId) {
-      var _this7 = this;
+      var _this8 = this;
 
       //rotate image
       document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this7.animationProj.getCurrFrame(); //using a promise to convert the initial image to a bitmap
+        var canvas = _this8.animationProj.getCurrFrame(); //using a promise to convert the initial image to a bitmap
 
 
         var width = canvas.currentCanvas.getAttribute("width");
@@ -5024,10 +5056,10 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "setClearCanvas",
     value: function setClearCanvas(elementId) {
-      var _this8 = this;
+      var _this9 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this8.animationProj.getCurrFrame();
+        var frame = _this9.animationProj.getCurrFrame();
 
         var context = frame.currentCanvas.getContext("2d");
         var width = frame.currentCanvas.getAttribute("width");
@@ -5047,10 +5079,10 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "undo",
     value: function undo(elementId) {
-      var _this9 = this;
+      var _this10 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this9.animationProj.getCurrFrame();
+        var frame = _this10.animationProj.getCurrFrame();
 
         var currLayer = frame.getCurrCanvas();
         var context = currLayer.getContext("2d");
@@ -5093,11 +5125,11 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "importImage",
     value: function importImage(elementId) {
-      var _this10 = this;
+      var _this11 = this;
 
       var self = this;
       document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this10.animationProj.getCurrFrame(); // call fileHandler here
+        var canvas = _this11.animationProj.getCurrFrame(); // call fileHandler here
 
 
         fileHandler(); // define fileHandler 
@@ -5171,11 +5203,11 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "downloadLayer",
     value: function downloadLayer(elementId) {
-      var _this11 = this;
+      var _this12 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
         // get image data from current canvas as blob
-        var canvas = _this11.animationProj.getCurrFrame();
+        var canvas = _this12.animationProj.getCurrFrame();
 
         var data = document.getElementById(canvas.currentCanvas.id).toBlob(function (blob) {
           var url = URL.createObjectURL(blob);
@@ -5200,12 +5232,12 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "downloadFrame",
     value: function downloadFrame(elementId) {
-      var _this12 = this;
+      var _this13 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this12.animationProj.getCurrFrame();
+        var frame = _this13.animationProj.getCurrFrame();
 
-        var mergedLayers = _this12.mergeFrameLayers(frame);
+        var mergedLayers = _this13.mergeFrameLayers(frame);
 
         var data = mergedLayers.toBlob(function (blob) {
           var url = URL.createObjectURL(blob);
@@ -5366,7 +5398,7 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "save",
     value: function save(elementId) {
-      var _this13 = this;
+      var _this14 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
         // prompt the user to name the file 
@@ -5380,7 +5412,7 @@ var Toolbar = /*#__PURE__*/function () {
 
         var savedData = [];
 
-        _this13.animationProj.frameList.forEach(function (frame) {
+        _this14.animationProj.frameList.forEach(function (frame) {
           // get frame metadata
           var newFrame = frame.getMetadata();
           newFrame['layers'] = []; // list of objects
@@ -5477,7 +5509,7 @@ var Toolbar = /*#__PURE__*/function () {
                     currFrame.setupNewLayer();
                   }
 
-                  var currLayer = self.animationProj.getFrames()[index].getLayers()[layerIndex]; // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
+                  var currLayer = currFrame.getLayers()[layerIndex]; // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
 
                   currLayer.style.opacity = layer.opacity;
                   currLayer.style.zIndex = layer.zIndex; // add the image data 

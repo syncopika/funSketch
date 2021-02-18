@@ -280,8 +280,9 @@ class Toolbar {
             colorPickedText.style.backgroundColor = colorPickedText.textContent;
             
 			// update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
-            this.brush.currColorArray = colorPicked;
-            this.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
+            this.brush.changeBrushColor(colorPicked);
+			//this.brush.currColorArray = colorPicked;
+            //this.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
         });
     }
 

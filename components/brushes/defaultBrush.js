@@ -22,9 +22,7 @@ class DefaultBrush extends BrushTemplate {
 				evt.offsetY = newCoords.y;
 				evt.preventDefault();
 			}
-			
-			const brushWidth = this._calculateBrushWidth(evt);
-			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
+			this._addClick(evt, true);
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}
@@ -39,9 +37,7 @@ class DefaultBrush extends BrushTemplate {
 				// prevent page scrolling when drawing 
 				evt.preventDefault();
 			}
-			
-			const brushWidth = this._calculateBrushWidth(evt);
-			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
+			this._addClick(evt, true);
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}
@@ -62,20 +58,20 @@ class DefaultBrush extends BrushTemplate {
 	// this is for determining what the brush stroke looks like
 	brushStroke(context){
 		for(let i = 0; i < this.clickX.length; i++){
+			context.strokeStyle = this.clickColor[i];
+            context.lineWidth = this.clickSize[i];
+			
             context.beginPath();
-            //this helps generate a solid line, rather than a line of dots. 
-            //the subtracting of 1 from i means that the point at i is being connected
-            //with the previous point
+			
+            // this helps generate a solid line, rather than a line of dots.
             if(this.clickDrag[i] && i){
                 context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
             }else{
-                //the adding of 1 allows you to make a dot on click
+                // the adding of 1 allows you to make a dot on click
                 context.moveTo(this.clickX[i], this.clickY[i] + 1);
             }
             context.lineTo(this.clickX[i], this.clickY[i]);
             context.closePath();
-            context.strokeStyle = this.clickColor[i];
-            context.lineWidth = this.clickSize[i];
             context.stroke();
         }
 	}

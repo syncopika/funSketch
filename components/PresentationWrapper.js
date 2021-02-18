@@ -756,12 +756,12 @@ class PresentationWrapper extends React.Component {
 							</div>
 							
 							<br />
-							
-							<FilterDashboard filterManager={this.state.filtersInstance} />
-							
-							<br />
 
 							<BrushDashboard brushManager={this.state.brushInstance} />
+							
+							<br />
+							
+							<FilterDashboard filterManager={this.state.filtersInstance} />
 							
 							<div id='colorPicker'>
 							</div>

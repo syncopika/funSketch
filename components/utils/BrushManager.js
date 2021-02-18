@@ -7,7 +7,7 @@
 import { DefaultBrush } from '../brushes/defaultBrush.js';
 import { EraserBrush } from '../brushes/eraserBrush.js';
 import { RadialBrush } from '../brushes/radialBrush.js';
-import { PenBrush } from '../brushes/penBrush.js';
+import { ShadedBrush } from '../brushes/shadedBrush.js';
 import { FloodfillBrush } from '../brushes/floodfillBrush.js';
 
 class BrushManager {
@@ -17,14 +17,15 @@ class BrushManager {
 		this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
 		this.selectedBrush = 'default'; // user-selected brush 
 		this.currColor = 'rgb(0,0,0)';
-		this.currColorArray = Uint8Array.from([0, 0, 0, 0]);
+		this.currColorArray = Uint8Array.from([0, 0, 0]);
 		this.currSize = 2;
+		this.pressureColorFlag = false; // whether brush color should depend on pen pressure
 		
 		// brushes map
 		this.brushesMap = {};
 		this.brushesMap["default"] = new DefaultBrush(this);
 		this.brushesMap["radial"] = new RadialBrush(this);
-		this.brushesMap["pen"] = new PenBrush(this);
+		this.brushesMap["shaded"] = new ShadedBrush(this);
 		this.brushesMap["floodfill"] = new FloodfillBrush(this);
 		this.brushesMap["eraser"] = new EraserBrush(this);
 	}
@@ -44,12 +45,37 @@ class BrushManager {
         this.currSize = size;
     }
 	
+	changeBrushColor(colorArray){
+		this.currColor = 'rgba(' + colorArray[0] + ',' + colorArray[1] + ',' + colorArray[2] + ')';
+		this.currColorArray = colorArray;
+	}
+	
 	getBrushType(){
 		return this.selectedBrush;
 	}
 	
+	getCurrColor(){
+		return this.currColor;
+	}
+	
+	getCurrColorArray(){
+		return this.currColorArray;
+	}
+	
+	getCurrSize(){
+		return this.currSize;
+	}
+	
+	applyPressureColor(){
+		return this.pressureColorFlag;
+	}
+	
 	setBrushType(brushType){
 		this.selectedBrush = brushType;
+	}
+	
+	togglePressureColorFlag(){
+		this.pressureColorFlag = !this.pressureColorFlag;
 	}
 	
 	applyBrush(){

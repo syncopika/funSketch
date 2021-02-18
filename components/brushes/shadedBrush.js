@@ -5,7 +5,7 @@
 
 import { BrushTemplate } from './BrushTemplate.js';
 
-class PenBrush extends BrushTemplate {
+class ShadedBrush extends BrushTemplate {
 	
 	constructor(brushManager){
 		super(brushManager);
@@ -25,8 +25,7 @@ class PenBrush extends BrushTemplate {
 				evt.offsetY = newCoords.y;
 				evt.preventDefault();
 			}
-			const brushWidth = this._calculateBrushWidth(evt);
-			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
+			this._addClick(evt, true);
 			this._redraw(this.brushStroke.bind(this));
 		}		
 	}
@@ -41,8 +40,7 @@ class PenBrush extends BrushTemplate {
 				// prevent page scrolling when drawing 
 				evt.preventDefault();
 			}
-			const brushWidth = this._calculateBrushWidth(evt);
-			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
+			this._addClick(evt, true);
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}
@@ -67,17 +65,23 @@ class PenBrush extends BrushTemplate {
 		const context = currLayer.getContext("2d");
 		
 		// connect current dot with previous dot
+		context.strokeStyle = this.clickColor[this.clickColor.length-1];
 		context.beginPath();
 		context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
 		if(this.clickX.length > 1){
 			context.lineTo(this.clickX[this.clickX.length - 2], this.clickY[this.clickY.length - 2]);
 		}
 		context.closePath();
-		context.strokeStyle = this.clickColor[this.clickColor.length-1];
 		context.lineWidth = this.clickSize[this.clickSize.length - 1];
 		context.stroke();
 		
-		// then add some extra strokes
+		// then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+		if(this.brushManager.applyPressureColor()){
+			const currColor = this.brushManager.getCurrColorArray();
+			const extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + (this.clickPressure[this.clickPressure.length-1] * 0.1) + ')';
+			context.strokeStyle = extraStrokeColor;
+		}
+		
 		for(let i = 0; i < this.clickX.length; i++){
 			const dx = this.clickX[i] - this.clickX[this.clickX.length - 1];
 			const dy = this.clickY[i] - this.clickY[this.clickY.length - 1];
@@ -131,5 +135,5 @@ class PenBrush extends BrushTemplate {
 
 
 export {
-	PenBrush
+	ShadedBrush
 };

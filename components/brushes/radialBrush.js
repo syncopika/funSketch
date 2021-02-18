@@ -24,7 +24,7 @@ class RadialBrush extends BrushTemplate {
 			}
 			const brushWidth = this._calculateBrushWidth(evt);
 			this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
-			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
+			this._addClick(evt, true);
 			this._redraw(this.brushStroke.bind(this));
 		}			
 	}
@@ -41,7 +41,7 @@ class RadialBrush extends BrushTemplate {
 			}
 			const brushWidth = this._calculateBrushWidth(evt);
 			this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
-			this._addClick(evt.offsetX, evt.offsetY, null, brushWidth, true);
+			this._addClick(evt, true);
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}
@@ -66,10 +66,11 @@ class RadialBrush extends BrushTemplate {
 		const context = currLayer.getContext("2d");
 		
 		for(let i = 0; i < this.clickX.length; i++){
+			context.strokeStyle = this.clickColor[i];
+            context.lineWidth = this.clickSize[i];
+			
             context.beginPath();
-            //this helps generate a solid line, rather than a line of dots. 
-            //the subtracting of 1 from i means that the point at i is being connected
-            //with the previous point
+			
             if(this.clickDrag[i] && i){
                 context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
             }else{
@@ -78,8 +79,6 @@ class RadialBrush extends BrushTemplate {
             }
             context.lineTo(this.clickX[i], this.clickY[i]);
             context.closePath();
-            context.strokeStyle = this.clickColor[i];
-            context.lineWidth = this.clickSize[i];
             context.stroke();
         }
 	}
@@ -88,8 +87,8 @@ class RadialBrush extends BrushTemplate {
 		const frame = this.brushManager.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
 		const context = currLayer.getContext("2d");
-        const colorPicked = this.brushManager.currColorArray;
-		const currColor = this.brushManager.currColor;
+        const colorPicked = this.brushManager.getCurrColorArray();
+		const currColor = this.brushManager.getCurrColor();
 		const radGrad = context.createRadialGradient(x, y, brushSize, x, y, brushSize * 1.5);
 		
 		context.lineJoin = context.lineCap = 'round';

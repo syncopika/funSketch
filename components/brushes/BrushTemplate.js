@@ -10,8 +10,9 @@ class BrushTemplate {
 		this.clickX = [];
 		this.clickY = [];
 		this.clickDrag = [];
-		this.clickColor = [];
+		this.clickColor = []; // TODO: I don't think color and size are necessary?
 		this.clickSize = [];
+		this.clickPressure = [];
 		
 		// cursor type
 		this.cursorType = "crosshair";
@@ -19,23 +20,36 @@ class BrushTemplate {
 	
 	// assuming a PointerEvent, calculate the brush width based on stylus pressure
 	_calculateBrushWidth(pointerEvt){
-		let brushWidth = this.brushManager.currSize;
+		let brushWidth = this.brushManager.getCurrSize();
 		if(pointerEvt.pressure){
 			brushWidth = (pointerEvt.pressure*2) * brushWidth;
 		}
 		return brushWidth;
 	}
 	
-	//collect info where each pixel is to be drawn on canvas
-    _addClick(x, y, color, size, dragging){
-		const currColor = this.brushManager.currColor; //'rgb(0,0,0)';
-		const currSize = this.brushManager.currSize;
+	// collect info where each pixel is to be drawn on canvas
+    _addClick(pointerEvt, dragging){
+		const x = pointerEvt.offsetX;
+		const y = pointerEvt.offsetY;
+		let currSize = this.brushManager.getCurrSize();
+		let currColor = this.brushManager.getCurrColorArray();
+		
+		// take into account pen pressure for color if needed
+		if(this.brushManager.applyPressureColor() && pointerEvt.pressure){
+			const alpha = pointerEvt.pressure * 0.5;
+			currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + alpha + ')';
+			currSize = this._calculateBrushWidth(pointerEvt);
+			this.clickPressure.push(pointerEvt.pressure);
+		}else{
+			currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',255)';
+			this.clickPressure.push(1);
+		}
 		
         this.clickX.push(x);
         this.clickY.push(y);
         this.clickDrag.push(dragging);
-        this.clickColor.push((color === null ? currColor : color));
-        this.clickSize.push((size === null ? currSize : size));
+        this.clickColor.push(currColor);
+        this.clickSize.push(currSize);
     }
 	
 	
@@ -52,6 +66,7 @@ class BrushTemplate {
         this.clickDrag = [];
         this.clickColor = [];
         this.clickSize = [];
+		this.clickPressure = [];
     }
 	
 	_handleTouchEvent(evt){

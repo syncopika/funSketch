@@ -1,5 +1,7 @@
 buggy stuff / refactor
 ---------
+- remove lists in brush manager for color and brush size?
+- add button to toggle whether pen pressure should be factored into brush color
 - rotate image needs fixing
 - need more tests
 - there *might* be something wrong with the onion skin when switching between layers (i.e. from 2nd layer to 1st layer).

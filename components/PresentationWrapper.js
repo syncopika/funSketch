@@ -414,6 +414,11 @@ class PresentationWrapper extends React.Component {
 				}
 			});
 		});
+		
+		// toggle pen pressure for brush color
+		document.getElementById('togglePenPressureColor').addEventListener('click', (evt) => {
+			this.state.brushInstance.togglePressureColorFlag();
+		});
 	}
 	
 	_setupAnimationControl(){
@@ -722,7 +727,8 @@ class PresentationWrapper extends React.Component {
 									<button id='rotateCanvasImage'>rotate image</button>
 									<button id='undo'>undo</button>
 									<button id='saveWork'>save project (.json)</button> 
-									<button id='importProject'>import project </button> 
+									<button id='importProject'>import project </button>
+									<button id='togglePenPressureColor'> toggle pen pressure for color </button>
 									<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
 									
 									<div id='animationControl'>

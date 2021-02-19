@@ -1,6 +1,11 @@
+/***
+	web brush 
+	thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/web.js
+***/
+
 import { BrushTemplate } from './BrushTemplate.js';
 
-class DefaultBrush extends BrushTemplate {
+class WebBrush extends BrushTemplate {
 	
 	constructor(brushManager){
 		super(brushManager);
@@ -13,18 +18,16 @@ class DefaultBrush extends BrushTemplate {
 		const currLayer = frame.getCurrCanvas();
 		if(evt.which === 1 || evt.type === 'touchstart'){ //when left click only
 			this.paint = true;
-			// offset will be different with mobile
-			// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
-			// https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
+			
 			if(evt.type === 'touchstart'){
-				const newCoords = this._handleTouchEvent(evt);
+				let newCoords = this._handleTouchEvent(evt);
 				evt.offsetX = newCoords.x;
 				evt.offsetY = newCoords.y;
 				evt.preventDefault();
 			}
 			this._addClick(evt, true);
 			this._redraw(this.brushStroke.bind(this));
-		}
+		}		
 	}
 	
 	brushMove(evt){
@@ -43,12 +46,12 @@ class DefaultBrush extends BrushTemplate {
 	}
 	
 	brushStop(evt){
-        const frame = this.brushManager.animationProject.getCurrFrame();	
+        const frame = this.brushManager.animationProject.getCurrFrame();
 		const currLayer = frame.getCurrCanvas();
 		evt.preventDefault();
-
+		
 		const w = currLayer.width;
-		const h = currLayer.height;
+		const h = currLayer.height;		
 		frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
 		
 		this._clearClick();
@@ -57,23 +60,38 @@ class DefaultBrush extends BrushTemplate {
 	
 	// this is for determining what the brush stroke looks like
 	brushStroke(context){
+		const frame = this.brushManager.animationProject.getCurrFrame();
+		
+		// connect current dot with previous dot
+		context.strokeStyle = this.clickColor[this.clickColor.length - 1];
+		context.beginPath();
+		context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
+		if(this.clickX.length > 1){
+			context.lineTo(this.clickX[this.clickX.length - 2], this.clickY[this.clickY.length - 2]);
+		}
+		context.closePath();
+		context.lineWidth = this.clickSize[this.clickSize.length - 1];
+		context.stroke();
+		
+		// then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+		if(this.brushManager.applyPressureColor()){
+			const currColor = this.brushManager.getCurrColorArray();
+			const extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + (this.clickPressure[this.clickPressure.length-1] * 0.1) + ')';
+			context.strokeStyle = extraStrokeColor;
+		}
+		
 		for(let i = 0; i < this.clickX.length; i++){
-			context.strokeStyle = this.clickColor[i];
-            context.lineWidth = this.clickSize[i];
+			const dx = this.clickX[i] - this.clickX[this.clickX.length - 1];
+			const dy = this.clickY[i] - this.clickY[this.clickY.length - 1];
+			const d = dx*dx + dy*dy;
 			
-            context.beginPath();
-			
-            // this helps generate a solid line, rather than a line of dots.
-            if(this.clickDrag[i] && i){
-                context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
-            }else{
-                // the adding of 1 allows you to make a dot on click
-                context.moveTo(this.clickX[i], this.clickY[i] + 1);
-            }
-			
-            context.lineTo(this.clickX[i], this.clickY[i]);
-            context.closePath();
-            context.stroke();
+			if(d < 2500 && Math.random() > 0.9){
+				context.beginPath();
+				context.moveTo(this.clickX[this.clickX.length-1], this.clickY[this.clickY.length-1]);
+				context.lineTo(this.clickX[i], this.clickY[i]);
+				context.closePath();
+				context.stroke();
+			}
         }
 	}
 	
@@ -115,5 +133,5 @@ class DefaultBrush extends BrushTemplate {
 
 
 export {
-	DefaultBrush
+	WebBrush
 };

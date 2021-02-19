@@ -7,7 +7,8 @@
 import { DefaultBrush } from '../brushes/defaultBrush.js';
 import { EraserBrush } from '../brushes/eraserBrush.js';
 import { RadialBrush } from '../brushes/radialBrush.js';
-import { ShadedBrush } from '../brushes/shadedBrush.js';
+import { SketchyBrush } from '../brushes/sketchyBrush.js';
+import { WebBrush } from '../brushes/webBrush.js';
 import { FloodfillBrush } from '../brushes/floodfillBrush.js';
 
 class BrushManager {
@@ -25,7 +26,8 @@ class BrushManager {
 		this.brushesMap = {};
 		this.brushesMap["default"] = new DefaultBrush(this);
 		this.brushesMap["radial"] = new RadialBrush(this);
-		this.brushesMap["shaded"] = new ShadedBrush(this);
+		this.brushesMap["sketchy"] = new SketchyBrush(this);
+		this.brushesMap["web"] = new WebBrush(this);
 		this.brushesMap["floodfill"] = new FloodfillBrush(this);
 		this.brushesMap["eraser"] = new EraserBrush(this);
 	}

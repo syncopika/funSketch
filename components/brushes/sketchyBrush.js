@@ -5,7 +5,7 @@
 
 import { BrushTemplate } from './BrushTemplate.js';
 
-class ShadedBrush extends BrushTemplate {
+class SketchyBrush extends BrushTemplate {
 	
 	constructor(brushManager){
 		super(brushManager);
@@ -59,13 +59,11 @@ class ShadedBrush extends BrushTemplate {
 	}
 	
 	// this is for determining what the brush stroke looks like
-	brushStroke(){
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		const context = currLayer.getContext("2d");
+	brushStroke(context){
+		const frame = this.brushManager.animationProject.getCurrFrame();
 		
 		// connect current dot with previous dot
-		context.strokeStyle = this.clickColor[this.clickColor.length-1];
+		context.strokeStyle = this.clickColor[this.clickColor.length - 1];
 		context.beginPath();
 		context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
 		if(this.clickX.length > 1){
@@ -95,6 +93,7 @@ class ShadedBrush extends BrushTemplate {
 				context.stroke();
 			}
         }
+
 	}
 	
 	brushLeave(){
@@ -135,5 +134,5 @@ class ShadedBrush extends BrushTemplate {
 
 
 export {
-	ShadedBrush
+	SketchyBrush
 };

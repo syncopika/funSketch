@@ -10,7 +10,7 @@ class BrushTemplate {
 		this.clickX = [];
 		this.clickY = [];
 		this.clickDrag = [];
-		this.clickColor = []; // TODO: I don't think color and size are necessary?
+		this.clickColor = [];
 		this.clickSize = [];
 		this.clickPressure = [];
 		
@@ -31,18 +31,19 @@ class BrushTemplate {
     _addClick(pointerEvt, dragging){
 		const x = pointerEvt.offsetX;
 		const y = pointerEvt.offsetY;
+		const pressure = pointerEvt.pressure;
 		let currSize = this.brushManager.getCurrSize();
 		let currColor = this.brushManager.getCurrColorArray();
+		let penPressure = 1;
 		
-		// take into account pen pressure for color if needed
-		if(this.brushManager.applyPressureColor() && pointerEvt.pressure){
-			const alpha = pointerEvt.pressure * 0.5;
+		// take into account pen pressure for color if needed (as well as for brush size)
+		if(this.brushManager.applyPressureColor() && pressure){
+			const alpha = pressure * 0.5;
 			currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + alpha + ')';
 			currSize = this._calculateBrushWidth(pointerEvt);
-			this.clickPressure.push(pointerEvt.pressure);
+			penPressure = pressure;
 		}else{
 			currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',255)';
-			this.clickPressure.push(1);
 		}
 		
         this.clickX.push(x);
@@ -50,13 +51,14 @@ class BrushTemplate {
         this.clickDrag.push(dragging);
         this.clickColor.push(currColor);
         this.clickSize.push(currSize);
+		this.clickPressure.push(penPressure);
     }
 	
 	
     _redraw(strokeFunction){
         const frame = this.brushManager.animationProject.getCurrFrame();
-		const context = frame.getCurrCanvas().getContext("2d", {desynchronized: true});
-        context.lineJoin = 'round';
+		const context = frame.getCurrCanvas().getContext("2d");
+        context.lineJoin = 'round'; //TODO: make this a brushmanager variable?
 		strokeFunction(context);
     }
 	

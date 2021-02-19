@@ -1,4 +1,5 @@
 http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/
+http://perfectionkills.com/exploring-canvas-drawing-techniques/
 https://gedd.ski/post/overlapping-grid-items/
 https://www.html5rocks.com/en/tutorials/dnd/basics/
 https://stackoverflow.com/questions/18027751/overlay-divs-without-absolute-position
@@ -17,7 +18,6 @@ https://sighack.com/ -> really cool stuff to learn about here
 
 // pressure-sensitivity for pen
 https://github.com/amoshydra/draw/blob/master/js/libs/Pen.js
-https://developers.google.com/web/updates/2019/05/desynchronized#create_the_canvas
 https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events
 
 // testing stuff

@@ -417,8 +417,15 @@ class PresentationWrapper extends React.Component {
 		
 		// toggle pen pressure for brush color
 		document.getElementById('togglePenPressureColor').addEventListener('click', (evt) => {
+			if(evt.target.style.border === "1px solid rgb(255, 0, 0)"){
+				evt.target.style.border = "1px solid rgb(0, 255, 0)"; // green
+			}else{
+				evt.target.style.border = "1px solid rgb(255, 0, 0)";
+			}
+			
 			this.state.brushInstance.togglePressureColorFlag();
 		});
+		document.getElementById('togglePenPressureColor').style.border = "1px solid rgb(255, 0, 0)"; // red for off by default
 	}
 	
 	_setupAnimationControl(){

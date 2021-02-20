@@ -80,13 +80,11 @@ class PenBrush extends BrushTemplate {
 			context.strokeStyle = extraStrokeColor;
 		}
 		
-		if(this.clickX.length > 10){
-			for(let i = 0; i < this.clickX.length; i++){
-				
+		if(this.clickX.length > 7){
+			for(let i = this.clickX.length - 6; i < this.clickX.length; i++){
 				// maybe we can do something neat like take into account the direction of the brush based on
 				// the vector created by the current and previous coordinates?
-				let prevIndex = Math.round(Math.random() * (this.clickX.length - 5));
-				if(prevIndex){
+				let prevIndex = Math.round((Math.random() * ((this.clickX.length-1) - (this.clickX.length - 6))) + (this.clickX.length - 6)); // get rand index from this.clickX.length - 6 to this.clickX.length - 1 
 					const prevCoordX = this.clickX[prevIndex];
 					const prevCoordY = this.clickY[prevIndex];
 					context.beginPath();
@@ -94,7 +92,6 @@ class PenBrush extends BrushTemplate {
 					context.lineTo(this.clickX[i] - (2 * Math.random()), this.clickY[i] - (Math.random() * 3));
 					context.closePath();
 					context.stroke();
-				}
 			}
 		}
 	}

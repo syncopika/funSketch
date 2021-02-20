@@ -62,16 +62,23 @@ class SketchyBrush extends BrushTemplate {
 	brushStroke(context){
 		const frame = this.brushManager.animationProject.getCurrFrame();
 		
-		// connect current dot with previous dot
-		context.strokeStyle = this.clickColor[this.clickColor.length - 1];
-		context.beginPath();
-		context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
-		if(this.clickX.length > 1){
-			context.lineTo(this.clickX[this.clickX.length - 2], this.clickY[this.clickY.length - 2]);
-		}
-		context.closePath();
-		context.lineWidth = this.clickSize[this.clickSize.length - 1];
-		context.stroke();
+		// connect the dots
+		for(let i = 0; i < this.clickX.length; i++){
+			context.strokeStyle = this.clickColor[i];
+            context.lineWidth = this.clickSize[i];
+			
+            context.beginPath();
+			
+            if(this.clickDrag[i] && i){
+                context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+            }else{
+                context.moveTo(this.clickX[i], this.clickY[i] + 1);
+            }
+			
+            context.lineTo(this.clickX[i], this.clickY[i]);
+            context.closePath();
+            context.stroke();
+        }
 		
 		// then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
 		if(this.brushManager.applyPressureColor()){

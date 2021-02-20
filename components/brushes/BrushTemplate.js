@@ -54,7 +54,6 @@ class BrushTemplate {
 		this.clickPressure.push(penPressure);
     }
 	
-	
     _redraw(strokeFunction){
         const frame = this.brushManager.animationProject.getCurrFrame();
 		const context = frame.getCurrCanvas().getContext("2d");
@@ -102,7 +101,6 @@ class BrushTemplate {
 	// equip the brush and set up the current canvas for using the brush
 	attachBrush(){
 	}
-
 
 }
 

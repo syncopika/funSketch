@@ -2330,40 +2330,47 @@ var PenBrush = /*#__PURE__*/function (_BrushTemplate) {
   }, {
     key: "brushStroke",
     value: function brushStroke(context) {
-      var frame = this.brushManager.animationProject.getCurrFrame(); // connect current dot with previous dot
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currColor = this.brushManager.getCurrColorArray(); // connect the dots first
 
-      context.strokeStyle = this.clickColor[this.clickColor.length - 1];
-      context.beginPath();
-      context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.strokeStyle = this.clickColor[i];
+        context.lineWidth = this.clickSize[i];
+        context.beginPath();
 
-      if (this.clickX.length > 1) {
-        context.lineTo(this.clickX[this.clickX.length - 2], this.clickY[this.clickY.length - 2]);
-      }
+        if (this.clickDrag[i] && i) {
+          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+        } else {
+          context.moveTo(this.clickX[i], this.clickY[i] + 1);
+        }
 
-      context.closePath();
-      context.lineWidth = this.clickSize[this.clickSize.length - 1];
-      context.stroke(); // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+        context.lineTo(this.clickX[i], this.clickY[i]);
+        context.closePath();
+        context.stroke();
+      } // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+
 
       if (this.brushManager.applyPressureColor()) {
-        var currColor = this.brushManager.getCurrColorArray();
-        var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.1 + ')';
+        var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.3 + ')';
         context.strokeStyle = extraStrokeColor;
-      }
+      } // pick a random point from some of the most recent points drawn so far. adjust that coord slightly based on some random numbers.
+      // then draw a line from that coord to a new coord that is based off the latest drawn point (this point will also be slightly altered based on random nums).
+      // this way we get some random, skewed lines to our strokes to give some texture.
+
 
       if (this.clickX.length > 7) {
-        for (var i = this.clickX.length - 6; i < this.clickX.length; i++) {
+        var currIndex = this.clickX.length - 1;
+
+        for (var _i = this.clickX.length - 6; _i < this.clickX.length; _i++) {
           // maybe we can do something neat like take into account the direction of the brush based on
           // the vector created by the current and previous coordinates?
-          var prevIndex = Math.round(Math.random() * (this.clickX.length - 1 - (this.clickX.length - 6)) + (this.clickX.length - 6)); // get rand index from this.clickX.length - 6 to this.clickX.length - 1 
-          //if(prevIndex){
+          var prevIndex = Math.round(Math.random() * (currIndex - (currIndex - 5)) + (currIndex - 5)); // get rand index from currIndex - 5 to the last index
 
-          var prevCoordX = this.clickX[prevIndex];
-          var prevCoordY = this.clickY[prevIndex];
           context.beginPath();
-          context.moveTo(prevCoordX + Math.random() * 3, prevCoordY + 2 * Math.random());
-          context.lineTo(this.clickX[i] - 2 * Math.random(), this.clickY[i] - Math.random() * 3);
+          context.moveTo(this.clickX[prevIndex] + Math.random() * 3, this.clickY[prevIndex] + 2 * Math.random());
+          context.lineTo(this.clickX[_i], this.clickY[_i]);
           context.closePath();
-          context.stroke(); //}
+          context.stroke();
         }
       }
     }
@@ -2907,19 +2914,24 @@ var SketchyBrush = /*#__PURE__*/function (_BrushTemplate) {
   }, {
     key: "brushStroke",
     value: function brushStroke(context) {
-      var frame = this.brushManager.animationProject.getCurrFrame(); // connect current dot with previous dot
+      var frame = this.brushManager.animationProject.getCurrFrame(); // connect the dots
 
-      context.strokeStyle = this.clickColor[this.clickColor.length - 1];
-      context.beginPath();
-      context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.strokeStyle = this.clickColor[i];
+        context.lineWidth = this.clickSize[i];
+        context.beginPath();
 
-      if (this.clickX.length > 1) {
-        context.lineTo(this.clickX[this.clickX.length - 2], this.clickY[this.clickY.length - 2]);
-      }
+        if (this.clickDrag[i] && i) {
+          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+        } else {
+          context.moveTo(this.clickX[i], this.clickY[i] + 1);
+        }
 
-      context.closePath();
-      context.lineWidth = this.clickSize[this.clickSize.length - 1];
-      context.stroke(); // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+        context.lineTo(this.clickX[i], this.clickY[i]);
+        context.closePath();
+        context.stroke();
+      } // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+
 
       if (this.brushManager.applyPressureColor()) {
         var currColor = this.brushManager.getCurrColorArray();
@@ -2927,15 +2939,15 @@ var SketchyBrush = /*#__PURE__*/function (_BrushTemplate) {
         context.strokeStyle = extraStrokeColor;
       }
 
-      for (var i = 0; i < this.clickX.length; i++) {
-        var dx = this.clickX[i] - this.clickX[this.clickX.length - 1];
-        var dy = this.clickY[i] - this.clickY[this.clickY.length - 1];
+      for (var _i = 0; _i < this.clickX.length; _i++) {
+        var dx = this.clickX[_i] - this.clickX[this.clickX.length - 1];
+        var dy = this.clickY[_i] - this.clickY[this.clickY.length - 1];
         var d = dx * dx + dy * dy;
 
         if (d < 4000 && Math.random() > d / 1000) {
           context.beginPath();
           context.moveTo(this.clickX[this.clickX.length - 1] + dx * 0.3, this.clickY[this.clickY.length - 1] + dy * 0.3);
-          context.lineTo(this.clickX[i] - dx * 0.3, this.clickY[i] - dy * 0.3);
+          context.lineTo(this.clickX[_i] - dx * 0.3, this.clickY[_i] - dy * 0.3);
           context.closePath();
           context.stroke();
         }
@@ -3095,19 +3107,24 @@ var WebBrush = /*#__PURE__*/function (_BrushTemplate) {
   }, {
     key: "brushStroke",
     value: function brushStroke(context) {
-      var frame = this.brushManager.animationProject.getCurrFrame(); // connect current dot with previous dot
+      var frame = this.brushManager.animationProject.getCurrFrame(); // connect the dots
 
-      context.strokeStyle = this.clickColor[this.clickColor.length - 1];
-      context.beginPath();
-      context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.strokeStyle = this.clickColor[i];
+        context.lineWidth = this.clickSize[i];
+        context.beginPath();
 
-      if (this.clickX.length > 1) {
-        context.lineTo(this.clickX[this.clickX.length - 2], this.clickY[this.clickY.length - 2]);
-      }
+        if (this.clickDrag[i] && i) {
+          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+        } else {
+          context.moveTo(this.clickX[i], this.clickY[i] + 1);
+        }
 
-      context.closePath();
-      context.lineWidth = this.clickSize[this.clickSize.length - 1];
-      context.stroke(); // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+        context.lineTo(this.clickX[i], this.clickY[i]);
+        context.closePath();
+        context.stroke();
+      } // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+
 
       if (this.brushManager.applyPressureColor()) {
         var currColor = this.brushManager.getCurrColorArray();
@@ -3115,15 +3132,15 @@ var WebBrush = /*#__PURE__*/function (_BrushTemplate) {
         context.strokeStyle = extraStrokeColor;
       }
 
-      for (var i = 0; i < this.clickX.length; i++) {
-        var dx = this.clickX[i] - this.clickX[this.clickX.length - 1];
-        var dy = this.clickY[i] - this.clickY[this.clickY.length - 1];
+      for (var _i = 0; _i < this.clickX.length; _i++) {
+        var dx = this.clickX[_i] - this.clickX[this.clickX.length - 1];
+        var dy = this.clickY[_i] - this.clickY[this.clickY.length - 1];
         var d = dx * dx + dy * dy;
 
         if (d < 2500 && Math.random() > 0.9) {
           context.beginPath();
           context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
-          context.lineTo(this.clickX[i], this.clickY[i]);
+          context.lineTo(this.clickX[_i], this.clickY[_i]);
           context.closePath();
           context.stroke();
         }

@@ -19,6 +19,14 @@ https://sighack.com/ -> really cool stuff to learn about here
 // pressure-sensitivity for pen
 https://github.com/amoshydra/draw/blob/master/js/libs/Pen.js
 https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events
+https://github.com/fabricjs/fabric.js/issues/4885 -> note @arcatdmz's comment on how he made smooth lines with a path simplification algorithm.
+
+// path simplification/curve fitting
+https://stackoverflow.com/questions/27428182/algorithm-to-fit-polygon-lines-to-drawn-pixels-in-canvas
+https://stackoverflow.com/questions/5829437/efficient-line-smoothing-and-or-simplification
+http://willowsystems.github.io/jSignature/#/about/linesmoothing/
+https://stackoverflow.com/questions/33877527/smooth-canvas-line-and-on-curser-start-point -> looks super helpful and most relevant
+https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/quadraticCurveTo
 
 // testing stuff
 https://www.robinwieruch.de/react-testing-jest

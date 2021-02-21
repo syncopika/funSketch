@@ -1,6 +1,6 @@
 /***
-	pen-like brush 
-	thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/sketchy.js
+	brush for making shapes
+	inspired by mrdoob's work: https://github.com/mrdoob/harmony/
 ***/
 
 import { BrushTemplate } from './BrushTemplate.js';
@@ -16,7 +16,7 @@ class PenBrush extends BrushTemplate {
 		evt.preventDefault();
 		const frame = this.brushManager.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
-		if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart') { //when left click only
+		if(evt.which === 1 || evt.type === 'touchstart'){ //when left click only
 			this.paint = true;
 			
 			if(evt.type === 'touchstart'){
@@ -25,7 +25,7 @@ class PenBrush extends BrushTemplate {
 				evt.offsetY = newCoords.y;
 				evt.preventDefault();
 			}
-			this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+			this._addClick(evt, true);
 			this._redraw(this.brushStroke.bind(this));
 		}		
 	}
@@ -40,7 +40,7 @@ class PenBrush extends BrushTemplate {
 				// prevent page scrolling when drawing 
 				evt.preventDefault();
 			}
-			this._addClick(evt.offsetX, evt.offsetY, null, null, true);
+			this._addClick(evt, true);
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}
@@ -59,36 +59,51 @@ class PenBrush extends BrushTemplate {
 	}
 	
 	// this is for determining what the brush stroke looks like
-	brushStroke(){
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		const context = currLayer.getContext("2d");
+	brushStroke(context){
+		const frame = this.brushManager.animationProject.getCurrFrame();
+		const currColor = this.brushManager.getCurrColorArray();
 		
-		// connect current dot with previous dot
-		context.beginPath();
-		context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
-		if(this.clickX.length > 1){
-			context.lineTo(this.clickX[this.clickX.length - 2], this.clickY[this.clickY.length - 2]);
-		}
-		context.closePath();
-		context.strokeStyle = this.clickColor[this.clickColor.length-1];
-		context.lineWidth = this.clickSize[this.clickSize.length - 1];
-		context.stroke();
-		
-		// then add some extra strokes
+		// connect the dots first
 		for(let i = 0; i < this.clickX.length; i++){
-			const dx = this.clickX[i] - this.clickX[this.clickX.length - 1];
-			const dy = this.clickY[i] - this.clickY[this.clickY.length - 1];
-			const d = dx*dx + dy*dy;
+			context.strokeStyle = this.clickColor[i];
+            context.lineWidth = this.clickSize[i];
 			
-			if(d < 4000 && Math.random() > (d / 1000)){
+            context.beginPath();
+			
+            if(this.clickDrag[i] && i){
+                context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+            }else{
+                context.moveTo(this.clickX[i], this.clickY[i] + 1);
+            }
+			
+            context.lineTo(this.clickX[i], this.clickY[i]);
+            context.closePath();
+            context.stroke();
+        }
+		
+		// then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+		if(this.brushManager.applyPressureColor()){
+			const extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + (this.clickPressure[this.clickPressure.length-1] * 0.3) + ')';
+			context.strokeStyle = extraStrokeColor;
+		}
+		
+		// TODO: I think the below stuff should go in the loop above (take the strokeStyle change above along with it).
+		// pick a random point from some of the most recent points drawn so far. adjust that coord slightly based on some random numbers.
+		// then draw a line from that coord to a new coord that is based off the latest drawn point (this point will also be slightly altered based on random nums).
+		// this way we get some random, skewed lines to our strokes to give some texture.
+		if(this.clickX.length > 7){
+			const currIndex = this.clickX.length - 1;
+			for(let i = this.clickX.length - 6; i < this.clickX.length; i++){
+				// maybe we can do something neat like take into account the direction of the brush based on
+				// the vector created by the current and previous coordinates?
+				const prevIndex = Math.round((Math.random() * (currIndex - (currIndex - 5))) + (currIndex - 5)); // get rand index from currIndex - 5 to the last index
 				context.beginPath();
-				context.moveTo(this.clickX[this.clickX.length-1] + (dx * 0.3), this.clickY[this.clickY.length-1] + (dy * 0.3));
-				context.lineTo(this.clickX[i] - (dx * 0.3), this.clickY[i] - (dy * 0.3));
+				context.moveTo(this.clickX[prevIndex] + (Math.random() * 3), this.clickY[prevIndex] + (2 * Math.random()));
+				context.lineTo(this.clickX[i], this.clickY[i]);
 				context.closePath();
 				context.stroke();
 			}
-        }
+		}
 	}
 	
 	brushLeave(){
@@ -104,26 +119,26 @@ class PenBrush extends BrushTemplate {
 
 		// TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 		let start = this.brushStart.bind(this);
-		currLayer.addEventListener('mousedown', start);
+		currLayer.addEventListener('pointerdown', start);
 		currLayer.addEventListener('touchstart', start);
-		this.brushManager.currentEventListeners['mousedown'] = start;
+		this.brushManager.currentEventListeners['pointerdown'] = start;
 		this.brushManager.currentEventListeners['touchstart'] = start;
 		
 		let move = this.brushMove.bind(this);
-		currLayer.addEventListener('mousemove', move);
+		currLayer.addEventListener('pointermove', move);
 		currLayer.addEventListener('touchmove', move);
-		this.brushManager.currentEventListeners['mousemove'] = move;
+		this.brushManager.currentEventListeners['pointermove'] = move;
 		this.brushManager.currentEventListeners['touchmove'] = move;
 		
 		let stop = this.brushStop.bind(this);
-		currLayer.addEventListener('mouseup', stop);
+		currLayer.addEventListener('pointerup', stop);
 		currLayer.addEventListener('touchend', stop);
-		this.brushManager.currentEventListeners['mouseup'] = stop;
+		this.brushManager.currentEventListeners['pointerup'] = stop;
 		this.brushManager.currentEventListeners['touchend'] = stop;
 		
 		let leave = this.brushLeave.bind(this);
-		currLayer.addEventListener('mouseleave', leave);
-		this.brushManager.currentEventListeners['mouseleave'] = leave;
+		currLayer.addEventListener('pointerleave', leave);
+		this.brushManager.currentEventListeners['pointerleave'] = leave;
 	}
 }
 

@@ -117,15 +117,6 @@ class Toolbar {
 	}
 	
     /***
-		add a new frame
-    ***/
-    addNewFrameButton(elementId){
-        document.getElementById(elementId).addEventListener('click', () => {
-            this.animationProj.addNewFrame();
-        });
-    }
-	
-    /***
         delete current layer
         shifts the current layer to the next one if there is one.
         otherwise, the previous layer will become the current one.
@@ -153,6 +144,24 @@ class Toolbar {
             }
 			
 			setStateFunction(frame.getCurrCanvasIndex());
+        });
+    }
+	
+    /***
+		add a new frame
+    ***/
+    addNewFrameButton(elementId){
+        document.getElementById(elementId).addEventListener('click', () => {
+            this.animationProj.addNewFrame();
+        });
+    }
+	
+    /***
+		duplicate current frame
+    ***/
+    copyCurrFrameButton(elementId){
+        document.getElementById(elementId).addEventListener('click', () => {
+            this.animationProj.copyCurrFrame();
         });
     }
 	
@@ -271,8 +280,9 @@ class Toolbar {
             colorPickedText.style.backgroundColor = colorPickedText.textContent;
             
 			// update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
-            this.brush.currColorArray = colorPicked;
-            this.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
+            this.brush.changeBrushColor(colorPicked);
+			//this.brush.currColorArray = colorPicked;
+            //this.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
         });
     }
 
@@ -705,7 +715,7 @@ class Toolbar {
                                     currFrame.setupNewLayer();
                                 }
 								
-                                let currLayer = self.animationProj.getFrames()[index].getLayers()[layerIndex];
+                                let currLayer = currFrame.getLayers()[layerIndex];
                                 // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
                                 currLayer.style.opacity = layer.opacity;
                                 currLayer.style.zIndex = layer.zIndex;

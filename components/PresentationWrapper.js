@@ -277,6 +277,7 @@ class PresentationWrapper extends React.Component {
 		newToolbar.downloadLayer('downloadLayer');
 		
 		newToolbar.addNewFrameButton('addNewFrame');
+		newToolbar.copyCurrFrameButton('copyCurrFrame');
 		newToolbar.changeCurrentFrameLayerOrder('changeLayerOrder');
 		newToolbar.downloadFrame('downloadFrame');
 		
@@ -413,6 +414,18 @@ class PresentationWrapper extends React.Component {
 				}
 			});
 		});
+		
+		// toggle pen pressure for brush color
+		document.getElementById('togglePenPressureColor').addEventListener('click', (evt) => {
+			if(evt.target.style.border === "1px solid rgb(255, 0, 0)"){
+				evt.target.style.border = "1px solid rgb(0, 255, 0)"; // green
+			}else{
+				evt.target.style.border = "1px solid rgb(255, 0, 0)";
+			}
+			
+			this.state.brushInstance.togglePressureColorFlag();
+		});
+		document.getElementById('togglePenPressureColor').style.border = "1px solid rgb(255, 0, 0)"; // red for off by default
 	}
 	
 	_setupAnimationControl(){
@@ -676,6 +689,7 @@ class PresentationWrapper extends React.Component {
 								<h4> frame <span className="caret2" id="FrameStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
 								<div id="displayFrameStuff">
 									<button id='addNewFrame'>add new frame</button>
+									<button id='copyCurrFrame'>duplicate frame</button>
 									<button id='deleteCurrFrame'>delete current frame</button>
 									<button id='changeLayerOrder'>change layer order</button>
 									<button id='downloadFrame'>download current frame</button>
@@ -720,7 +734,8 @@ class PresentationWrapper extends React.Component {
 									<button id='rotateCanvasImage'>rotate image</button>
 									<button id='undo'>undo</button>
 									<button id='saveWork'>save project (.json)</button> 
-									<button id='importProject'>import project </button> 
+									<button id='importProject'>import project </button>
+									<button id='togglePenPressureColor'> toggle pen pressure for color </button>
 									<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
 									
 									<div id='animationControl'>
@@ -754,12 +769,12 @@ class PresentationWrapper extends React.Component {
 							</div>
 							
 							<br />
-							
-							<FilterDashboard filterManager={this.state.filtersInstance} />
-							
-							<br />
 
 							<BrushDashboard brushManager={this.state.brushInstance} />
+							
+							<br />
+							
+							<FilterDashboard filterManager={this.state.filtersInstance} />
 							
 							<div id='colorPicker'>
 							</div>
@@ -770,6 +785,7 @@ class PresentationWrapper extends React.Component {
 									<option label=""></option>
 									<option className='demo'>run_demo</option>
 									<option className='demo'>floaty_thingy</option>
+									<option className='demo'>cake_cut</option>
 									<option className='demo'>asakusa_mizusaki_butterfly</option>
 								</select>
 							</div>

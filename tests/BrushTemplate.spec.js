@@ -1,8 +1,9 @@
 import 'jest-canvas-mock';
 import { BrushManager } from '../components/utils/BrushManager.js';
 import { AnimationProject } from '../components/utils/AnimationProject.js';
+import { BrushTemplate } from '../components/brushes/BrushTemplate.js';
 
-describe("test Brush class", () => {
+describe("test brush template", () => {
 	
 	const containerId = "containerId";
 	
@@ -13,17 +14,27 @@ describe("test Brush class", () => {
 		container.style.width = "200px";
 		document.body.appendChild(container);
 	});
-	
-	it("test brush object creation", () => {
+
+	it("test creation", () => {
 		const animProj = new AnimationProject(containerId);
-		const brush = new BrushManager(animProj);
-		expect(brush.animationProject).toEqual(animProj);
+		const brushMan = new BrushManager(animProj);
+		const brush = new BrushTemplate(brushMan);
+		expect(brush.brushManager).toEqual(brushMan);
+		expect(brush.paint).toEqual(false);
 	});
 	
+	// TODO: need to mock pointer events!
 	it("test _addClick and _clearClick", () => {
 		const animProj = new AnimationProject(containerId);
-		const brush = new BrushManager(animProj);
-		brush._addClick(1, 5, "color", 5, true);
+		const brushMan = new BrushManager(animProj);
+		const brush = new BrushTemplate(brushMan);
+		
+		const mockEvt = {
+			offsetX: 1,
+			offsetY: 5,
+		}
+		
+		brush._addClick(mockEvt, true);
 		expect(brush.clickX.length).toEqual(1);
 		expect(brush.clickY.length).toEqual(1);
 		expect(brush.clickDrag.length).toEqual(1);
@@ -33,11 +44,12 @@ describe("test Brush class", () => {
 		expect(brush.clickX[0]).toEqual(1);
 		expect(brush.clickY[0]).toEqual(5);
 		expect(brush.clickDrag[0]).toEqual(true);
-		expect(brush.clickColor[0]).toEqual("color");
-		expect(brush.clickSize[0]).toEqual(5);
+		expect(brush.clickColor[0]).toEqual("rgba(0,0,0,255)");
+		expect(brush.clickSize[0]).toEqual(2);
+		expect(brush.clickPressure[0]).toEqual(1);
 		
-		brush._addClick(1, 5, null, null, true);
-		expect(brush.clickColor[1]).toEqual("rgb(0,0,0)");
+		brush._addClick(mockEvt, true);
+		expect(brush.clickColor[1]).toEqual("rgba(0,0,0,255)");
 		expect(brush.clickSize[1]).toEqual(2);
 		
 		brush._clearClick();
@@ -46,21 +58,16 @@ describe("test Brush class", () => {
 		expect(brush.clickDrag.length).toEqual(0);
 		expect(brush.clickColor.length).toEqual(0);
 		expect(brush.clickSize.length).toEqual(0);
+		
+		// now add the pressure field to the evt and activate pressure sensitivity
+		mockEvt.pressure = 0.5;
+		brushMan.togglePressureColorFlag();
+		
+		brush._addClick(mockEvt, true);
+		expect(brush.clickX.length).toEqual(1);
+		expect(brush.clickColor[0]).toEqual("rgba(0,0,0,0.25)");
+		expect(brush.clickPressure[0]).toEqual(.5);
+		expect(brush.clickSize[0]).toEqual(2);
 	});
 	
-	it("test change brush size", () => {
-		const animProj = new AnimationProject(containerId);
-		const brush = new BrushManager(animProj);
-		expect(brush.currSize).toEqual(2);
-		brush.changeBrushSize(10);
-		expect(brush.currSize).toEqual(10);
-	});
-	
-	it("test change brush type", () => {
-		const animProj = new AnimationProject(containerId);
-		const brush = new BrushManager(animProj);
-		expect(brush.selectedBrush).toEqual("default");
-		brush.setBrushType("radial");
-		expect(brush.selectedBrush).toEqual("radial");
-	});
 });

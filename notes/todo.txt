@@ -1,10 +1,15 @@
 buggy stuff / refactor
 ---------
+- probably need to add a curve fitting algorithm to smooth lines (esp when using a pen)
 - rotate image needs fixing
 - need more tests
+- there *might* be something wrong with the onion skin when switching between layers (i.e. from 2nd layer to 1st layer).
+  I think I saw a scenario where multiple previous frames were being shown in the onion skin.
 
 short-term
 ----------
+- make context.lineJoin a variable that can be changed? i.e. have more options besides 'round'?
+- when erasing, don't let cursor disappear on pointerdown event?
 - when saving a project, make sure to include any timeline markers!
 - maybe add a context menu for the animation timeline?
 	- i.e. besides being able to change the frame rate, set start/end points?
@@ -16,7 +21,6 @@ long-term
 - be able to change frame order
 - acutally make some decent animation to prove its usability
 - make footer span the whole page (needs its own row?)
-- more brush types
 - copy and paste?
 - loopcut/move parts of canvas?
 - be able to blur a section of the canvas?

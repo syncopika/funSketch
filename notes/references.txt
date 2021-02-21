@@ -1,4 +1,5 @@
 http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/
+http://perfectionkills.com/exploring-canvas-drawing-techniques/
 https://gedd.ski/post/overlapping-grid-items/
 https://www.html5rocks.com/en/tutorials/dnd/basics/
 https://stackoverflow.com/questions/18027751/overlay-divs-without-absolute-position
@@ -13,6 +14,19 @@ https://stackoverflow.com/questions/2837057/what-has-bigger-priority-opacity-or-
 https://stackoverflow.com/questions/18639734/z-index-not-behaving-as-expected-with-absolute-positioning-inside-a-fixed-positi
 https://stackoverflow.com/questions/19560878/css-change-custom-cursor-image-origin-hotspot-to-center
 https://stackoverflow.com/questions/40477245/is-it-possible-to-use-if-else-statement-in-react-render-function
+https://sighack.com/ -> really cool stuff to learn about here
+
+// pressure-sensitivity for pen
+https://github.com/amoshydra/draw/blob/master/js/libs/Pen.js
+https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events
+https://github.com/fabricjs/fabric.js/issues/4885 -> note @arcatdmz's comment on how he made smooth lines with a path simplification algorithm.
+
+// path simplification/curve fitting
+https://stackoverflow.com/questions/27428182/algorithm-to-fit-polygon-lines-to-drawn-pixels-in-canvas
+https://stackoverflow.com/questions/5829437/efficient-line-smoothing-and-or-simplification
+http://willowsystems.github.io/jSignature/#/about/linesmoothing/
+https://stackoverflow.com/questions/33877527/smooth-canvas-line-and-on-curser-start-point -> looks super helpful and most relevant
+https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/quadraticCurveTo
 
 // testing stuff
 https://www.robinwieruch.de/react-testing-jest

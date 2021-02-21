@@ -310,6 +310,29 @@ class AnimationProject {
         }
     }
 	
+	copyCurrFrame(){
+		// get current frame and make a copy of it. append the copy to the end of the list of frames.
+		this.addNewFrame(false);
+		const newCopy = this.frameList[this.frameList.length-1];
+		const currFrameLayersToCopy = this.getCurrFrame().getLayers();
+		
+		currFrameLayersToCopy.forEach(function(layer, layerIndex){
+			
+			if((layerIndex + 1) > newCopy.getLayers().length){
+				newCopy.setupNewLayer();
+			}
+			
+			const currLayer = newCopy.getLayers()[layerIndex];
+			currLayer.style.opacity = layer.opacity;
+			currLayer.style.zIndex = layer.zIndex;
+
+			// add the image data 
+			const newCtx = currLayer.getContext("2d");
+			const currImageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height);
+			newCtx.putImageData(currImageData, 0, 0);
+		});
+	}
+	
 	deleteFrame(index){
 		// don't allow removal if only one frame exists
 		if(this.frameList.length === 1 || index < 0 || index > this.frameList.length - 1){
@@ -369,13 +392,15 @@ class AnimationProject {
 			this.onionSkinFrame.style.opacity = 0;
             return;
         }
-        this.onionSkinFrame.style.display = ''; // show onion skin
+        
+		this.onionSkinFrame.style.display = ''; // show onion skin
         let onionSkinCtx = this.onionSkinFrame.getContext("2d");
         onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
-        // take the previous frame, merge all layers, put into onion skin frame
-        // try this? only draw pixels that are non-white?
+        
+		// take the previous frame, merge all layers, put into onion skin frame
         let onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
-        // build the merged image from the first to last
+        
+		// build the merged image from the first to last
         let prevFrame = this.frameList[this.currentFrameIndex-1];
         prevFrame.getLayers().forEach(function (layer) {
             let imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
@@ -384,8 +409,6 @@ class AnimationProject {
                     continue;
                 }
                 else {
-                    // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
-                    // we might run into index/length issues...
                     onionSkinImageData.data[i] = imageData[i];
                     onionSkinImageData.data[i+1] = imageData[i+1];
                     onionSkinImageData.data[i+2] = imageData[i+2];
@@ -395,6 +418,7 @@ class AnimationProject {
             // apply each layer to the onion skin
             onionSkinCtx.putImageData(onionSkinImageData, 0, 0);
         });
+		
         this.onionSkinFrame.style.zIndex = 0;
         this.onionSkinFrame.style.opacity = 0.92;
     }

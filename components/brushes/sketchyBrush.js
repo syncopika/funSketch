@@ -1,6 +1,11 @@
+/***
+	pen-like brush 
+	thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/sketchy.js
+***/
+
 import { BrushTemplate } from './BrushTemplate.js';
 
-class RadialBrush extends BrushTemplate {
+class SketchyBrush extends BrushTemplate {
 	
 	constructor(brushManager){
 		super(brushManager);
@@ -11,22 +16,18 @@ class RadialBrush extends BrushTemplate {
 		evt.preventDefault();
 		const frame = this.brushManager.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
-		if(evt.which === 1 || evt.type === 'touchstart'){ //when left click only			
+		if(evt.which === 1 || evt.type === 'touchstart'){ //when left click only
 			this.paint = true;
-			// offset will be different with mobile
-			// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
-			// https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
+			
 			if(evt.type === 'touchstart'){
-				const newCoords = this._handleTouchEvent(evt);
+				let newCoords = this._handleTouchEvent(evt);
 				evt.offsetX = newCoords.x;
 				evt.offsetY = newCoords.y;
 				evt.preventDefault();
 			}
-			const brushWidth = this._calculateBrushWidth(evt);
-			this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
 			this._addClick(evt, true);
 			this._redraw(this.brushStroke.bind(this));
-		}			
+		}		
 	}
 	
 	brushMove(evt){
@@ -39,20 +40,18 @@ class RadialBrush extends BrushTemplate {
 				// prevent page scrolling when drawing 
 				evt.preventDefault();
 			}
-			const brushWidth = this._calculateBrushWidth(evt);
-			this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
 			this._addClick(evt, true);
 			this._redraw(this.brushStroke.bind(this));
 		}
 	}
 	
 	brushStop(evt){
-        const frame = this.brushManager.animationProject.getCurrFrame();	
+        const frame = this.brushManager.animationProject.getCurrFrame();
 		const currLayer = frame.getCurrCanvas();
 		evt.preventDefault();
 		
 		const w = currLayer.width;
-		const h = currLayer.height;
+		const h = currLayer.height;		
 		frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
 		
 		this._clearClick();
@@ -60,11 +59,10 @@ class RadialBrush extends BrushTemplate {
 	}
 	
 	// this is for determining what the brush stroke looks like
-	brushStroke(){
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		const context = currLayer.getContext("2d");
+	brushStroke(context){
+		const frame = this.brushManager.animationProject.getCurrFrame();
 		
+		// connect the dots
 		for(let i = 0; i < this.clickX.length; i++){
 			context.strokeStyle = this.clickColor[i];
             context.lineWidth = this.clickSize[i];
@@ -74,35 +72,35 @@ class RadialBrush extends BrushTemplate {
             if(this.clickDrag[i] && i){
                 context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
             }else{
-                //the adding of 1 allows you to make a dot on click
                 context.moveTo(this.clickX[i], this.clickY[i] + 1);
             }
+			
             context.lineTo(this.clickX[i], this.clickY[i]);
             context.closePath();
             context.stroke();
         }
-	}
-	
-	radialGrad(x, y, brushSize){
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		const context = currLayer.getContext("2d");
-        const colorPicked = this.brushManager.getCurrColorArray();
-		const currColor = this.brushManager.getCurrColor();
-		const radGrad = context.createRadialGradient(x, y, brushSize, x, y, brushSize * 1.5);
 		
-		context.lineJoin = context.lineCap = 'round';
-        radGrad.addColorStop(0, currColor);
-        
-		if(colorPicked !== undefined) {
-            radGrad.addColorStop(.5, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',.5)');
-            radGrad.addColorStop(1, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',0)');
-        }else{
-            radGrad.addColorStop(.5, 'rgba(0,0,0,.5)');
-            radGrad.addColorStop(1, 'rgba(0,0,0,0)');
+		// then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+		if(this.brushManager.applyPressureColor()){
+			const currColor = this.brushManager.getCurrColorArray();
+			const extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + (this.clickPressure[this.clickPressure.length-1] * 0.1) + ')';
+			context.strokeStyle = extraStrokeColor;
+		}
+		
+		for(let i = 0; i < this.clickX.length; i++){
+			const dx = this.clickX[i] - this.clickX[this.clickX.length - 1];
+			const dy = this.clickY[i] - this.clickY[this.clickY.length - 1];
+			const d = dx*dx + dy*dy;
+			
+			if(d < 4000 && Math.random() > (d / 1000)){
+				context.beginPath();
+				context.moveTo(this.clickX[this.clickX.length-1] + (dx * 0.3), this.clickY[this.clickY.length-1] + (dy * 0.3));
+				context.lineTo(this.clickX[i] - (dx * 0.3), this.clickY[i] - (dy * 0.3));
+				context.closePath();
+				context.stroke();
+			}
         }
-		context.fillStyle = radGrad;
-        context.fillRect(x - 20, y - 20, 40, 40);
+
 	}
 	
 	brushLeave(){
@@ -143,5 +141,5 @@ class RadialBrush extends BrushTemplate {
 
 
 export {
-	RadialBrush
+	SketchyBrush
 };

@@ -87,6 +87,7 @@ class PenBrush extends BrushTemplate {
 			context.strokeStyle = extraStrokeColor;
 		}
 		
+		// TODO: I think the below stuff should go in the loop above (take the strokeStyle change above along with it).
 		// pick a random point from some of the most recent points drawn so far. adjust that coord slightly based on some random numbers.
 		// then draw a line from that coord to a new coord that is based off the latest drawn point (this point will also be slightly altered based on random nums).
 		// this way we get some random, skewed lines to our strokes to give some texture.

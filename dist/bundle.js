@@ -4676,7 +4676,7 @@ var Frame = /*#__PURE__*/function () {
     value: function show() {
       var _this = this;
 
-      // makes all layers visible
+      // shows active layer of frame
       var activeLayerOpacity = .97;
       this.canvasList.forEach(function (canvas) {
         if (canvas === _this.currentCanvas) {
@@ -5245,6 +5245,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _misc_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./misc.js */ "./components/utils/misc.js");
+
 
 
 
@@ -5501,7 +5503,7 @@ var Toolbar = /*#__PURE__*/function () {
     /***
         color wheel functions
     ***/
-    // pass in the elementId of the div where the color wheel should be 
+    // pass in the elementId of the div where the color wheel should be (its container)
     // pass in the size of the canvas of the color wheel 
 
   }, {
@@ -5509,57 +5511,7 @@ var Toolbar = /*#__PURE__*/function () {
     value: function createColorWheel(elementId, size) {
       var _this7 = this;
 
-      var location = document.getElementById(elementId);
-      var colorWheel = document.createElement('canvas');
-      colorWheel.id = "colorWheel";
-      colorWheel.setAttribute('width', size);
-      colorWheel.setAttribute('height', size);
-      var colorWheelContext = colorWheel.getContext('2d');
-      var x = colorWheel.width / 2;
-      var y = colorWheel.height / 2;
-      var radius = 90; // why 5600??
-
-      for (var angle = 0; angle <= 5600; angle++) {
-        var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
-
-        var endAngle = angle * Math.PI / 180;
-        colorWheelContext.beginPath();
-        colorWheelContext.moveTo(x, y); //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
-
-        colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
-        colorWheelContext.closePath(); //use .createRadialGradient to get a different color for each angle
-        //createRadialGradient(x0, y0, r0, x1, y1, r1)
-
-        var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
-        gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
-        gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
-        colorWheelContext.fillStyle = gradient;
-        colorWheelContext.fill();
-      } // make black a pickable color 
-
-
-      colorWheelContext.fillStyle = "#000";
-      colorWheelContext.beginPath();
-      colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
-      colorWheelContext.fill(); // make white pickable too
-      // black outline
-
-      colorWheelContext.beginPath();
-      colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 
-
-      colorWheelContext.stroke(); // make sure circle is filled with #fff
-
-      colorWheelContext.fillStyle = "#fff";
-      colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
-      colorWheelContext.fill();
-      location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
-
-      var showColor = document.createElement('p'); // this element will show the color picked 
-
-      showColor.style.textAlign = 'center';
-      showColor.id = 'colorPicked';
-      showColor.textContent = "pick a color! :)";
-      location.appendChild(showColor);
+      var colorWheel = Object(_misc_js__WEBPACK_IMPORTED_MODULE_2__["makeColorWheel"])(elementId, size);
       document.getElementById(colorWheel.id).addEventListener('mousedown', function (evt) {
         var x = evt.offsetX;
         var y = evt.offsetY;
@@ -5576,9 +5528,7 @@ var Toolbar = /*#__PURE__*/function () {
         colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
         colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
 
-        _this7.brush.changeBrushColor(colorPicked); //this.brush.currColorArray = colorPicked;
-        //this.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
-
+        _this7.brush.changeBrushColor(colorPicked);
       });
     }
     /***
@@ -6011,11 +5961,11 @@ var Toolbar = /*#__PURE__*/function () {
         link.download = name + ".json";
         link.click();
       });
-    }
+    } // data: JSON data representing a project
+    // updateStateFunction: function that updates state. used in the react component that has the toolbar as a prop
+
   }, {
     key: "importData",
-    // data: JSON data representing a project
-    // updateStateFunction: function that updates state. used in the react component that has the toolbar as a prop
     value: function importData(data, updateStateFunction) {
       var _this15 = this;
 
@@ -6115,6 +6065,80 @@ var Toolbar = /*#__PURE__*/function () {
 
 
 
+
+/***/ }),
+
+/***/ "./components/utils/misc.js":
+/*!**********************************!*\
+  !*** ./components/utils/misc.js ***!
+  \**********************************/
+/*! exports provided: makeColorWheel */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeColorWheel", function() { return makeColorWheel; });
+// catch-all file for functions that might be better suited being in this file
+function makeColorWheel(elementId, size) {
+  var location = document.getElementById(elementId);
+
+  if (location === undefined) {
+    console.log("could not find element with id ".concat(elementId, "!"));
+    return null;
+  }
+
+  var colorWheel = document.createElement('canvas');
+  colorWheel.id = "colorWheel";
+  colorWheel.setAttribute('width', size);
+  colorWheel.setAttribute('height', size);
+  var colorWheelContext = colorWheel.getContext('2d');
+  var x = colorWheel.width / 2;
+  var y = colorWheel.height / 2;
+  var radius = 90; // why 5600??
+
+  for (var angle = 0; angle <= 5600; angle++) {
+    var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
+
+    var endAngle = angle * Math.PI / 180;
+    colorWheelContext.beginPath();
+    colorWheelContext.moveTo(x, y); //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+
+    colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
+    colorWheelContext.closePath(); //use .createRadialGradient to get a different color for each angle
+    //createRadialGradient(x0, y0, r0, x1, y1, r1)
+
+    var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
+    gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
+    gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
+    colorWheelContext.fillStyle = gradient;
+    colorWheelContext.fill();
+  } // make black a pickable color 
+
+
+  colorWheelContext.fillStyle = "#000";
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill(); // make white pickable too
+  // black outline
+
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 
+
+  colorWheelContext.stroke(); // make sure circle is filled with #fff
+
+  colorWheelContext.fillStyle = "#fff";
+  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill();
+  location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
+
+  var showColor = document.createElement('p'); // this element will show the color picked 
+
+  showColor.style.textAlign = 'center';
+  showColor.id = 'colorPicked';
+  showColor.textContent = "pick a color! :)";
+  location.appendChild(showColor);
+  return colorWheel;
+}
 
 /***/ }),
 

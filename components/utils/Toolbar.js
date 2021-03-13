@@ -1,3 +1,4 @@
+import { makeColorWheel } from "./misc.js";
 
 class Toolbar {
 	constructor(brush, animationProj){
@@ -203,70 +204,15 @@ class Toolbar {
     /***
         color wheel functions
     ***/
-    // pass in the elementId of the div where the color wheel should be 
+    // pass in the elementId of the div where the color wheel should be (its container)
     // pass in the size of the canvas of the color wheel 
     createColorWheel(elementId, size){
-        let location = document.getElementById(elementId);
-        
-		let colorWheel = document.createElement('canvas');
-        colorWheel.id = "colorWheel";
-        colorWheel.setAttribute('width', size);
-        colorWheel.setAttribute('height', size);
-        
-		let colorWheelContext = colorWheel.getContext('2d');
-        let x = colorWheel.width / 2;
-        let y = colorWheel.height / 2;
-        let radius = 90;
-       
-	   // why 5600??
-        for(let angle = 0; angle <= 5600; angle++) {
-            let startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
-            let endAngle = (angle) * Math.PI / 180;
-            colorWheelContext.beginPath();
-            colorWheelContext.moveTo(x, y);
-            //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
-            colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
-            colorWheelContext.closePath();
-            //use .createRadialGradient to get a different color for each angle
-            //createRadialGradient(x0, y0, r0, x1, y1, r1)
-            let gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
-            gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
-            gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
-            colorWheelContext.fillStyle = gradient;
-            colorWheelContext.fill();
-        }
-		
-        // make black a pickable color 
-        colorWheelContext.fillStyle = "#000";
-		colorWheelContext.beginPath();
-        colorWheelContext.arc(10, 10, 8, 0, 2*Math.PI);
-		colorWheelContext.fill();
-		
-        // make white pickable too
-		
-		// black outline
-		colorWheelContext.beginPath();
-        colorWheelContext.arc(30, 10, 8, 0, 2*Math.PI); // border around the white 
-        colorWheelContext.stroke();
-		
-		// make sure circle is filled with #fff
-		colorWheelContext.fillStyle = "#fff";
-        colorWheelContext.arc(30, 10, 8, 0, 2*Math.PI);
-		colorWheelContext.fill();
-		
-        location.appendChild(colorWheel);
-		
-        // make the color wheel interactive and show picked color 
-        let showColor = document.createElement('p'); // this element will show the color picked 
-        showColor.style.textAlign = 'center';
-        showColor.id = 'colorPicked';
-        showColor.textContent = "pick a color! :)";
-        location.appendChild(showColor);
+        const colorWheel = makeColorWheel(elementId, size);
         
 		document.getElementById(colorWheel.id).addEventListener('mousedown', (evt) => {
-            let x = evt.offsetX;
-            let y = evt.offsetY;
-            let colorPicked = (document.getElementById(colorWheel.id).getContext('2d')).getImageData(x, y, 1, 1).data;
+            const x = evt.offsetX;
+            const y = evt.offsetY;
+            const colorPicked = (document.getElementById(colorWheel.id).getContext('2d')).getImageData(x, y, 1, 1).data;
 			
             //correct the font color if the color is really dark
 			let colorPickedText = document.getElementById(showColor.id);
@@ -281,8 +227,6 @@ class Toolbar {
             
 			// update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
             this.brush.changeBrushColor(colorPicked);
-			//this.brush.currColorArray = colorPicked;
-            //this.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
         });
     }
 
@@ -657,7 +601,7 @@ class Toolbar {
             link.download = name + ".json";
             link.click();
         });
-    };
+    }
 	
 	// data: JSON data representing a project
 	// updateStateFunction: function that updates state. used in the react component that has the toolbar as a prop
@@ -743,7 +687,8 @@ class Toolbar {
                 reader.readAsText(file);
             }
         });
-    };
+    }
+	
 } // end of Toolbar 
 
 

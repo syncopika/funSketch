@@ -175,7 +175,6 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_setKeyDown(doc){
-		
 		const toolbar = this.state.toolbarInstance;
 		const animationProj = this.state.animationProject;
 		const self = this;
@@ -286,47 +285,7 @@ class PresentationWrapper extends React.Component {
 		newToolbar.importImage('importImage');
 		newToolbar.save('saveWork');
 		
-		newToolbar.importProject('importProject', () => {
-			this.setState({
-				'currentFrame': 1,
-				'currentLayer': 1,
-				'timelineFrames': [],
-				'timelineMarkers': {}
-			});
-			
-			this.timelineFramesSet = new Set();
-			
-			// update animation timeline after project is loaded
-			let newFrames = [];
-			project.frameList.forEach((frame, index) => {
-				let mergedLayersFrame = newToolbar.mergeFrameLayers(frame);
-				let currFrameData = mergedLayersFrame.toDataURL();
-				let currFrameIndex = index;
-				
-				if(!this.timelineFramesSet.has(currFrameIndex)){
-					newFrames.push({"data": currFrameData, "height": mergedLayersFrame.height, "width": mergedLayersFrame.width});
-					this.timelineFramesSet.add(currFrameIndex);
-				}else{
-					// update image data
-					newFrames[currFrameIndex].data = currFrameData;
-				}
-			});
-			
-			// figure out which layer is the one that should be visible 
-			let visibleLayerIndex = 0;
-			let layers = project.frameList[0].canvasList;
-			for(var i = 0; i < layers.length; i++){
-				if(layers[i].style.opacity >= .97){
-					visibleLayerIndex = i;
-					break;
-				}
-			}
-			
-			this.setState({
-				'currentLayer': visibleLayerIndex + 1,
-				'timelineFrames': newFrames
-			});
-		});
+		newToolbar.importProject('importProject', this._importProjectUpdateFunc.bind(this));
 		
 		// make the goLeft and goRight arrows clickable FOR LAYERS
 		// note: this is for clicking the icons with a mouse!
@@ -508,116 +467,70 @@ class PresentationWrapper extends React.Component {
 		});
 	}
 	
+	_importProjectUpdateFunc(){
+		// update state when loading in a project
+		const project = this.state.animationProject;
+		const toolbar = this.state.toolbarInstance;
+	
+		this.setState({
+			'currentFrame': 1,
+			'currentLayer': 1,
+			'timelineFrames': [],
+			'timelineMarkers': {}
+		});
+		
+		this.timelineFramesSet = new Set();
+		
+		// update animation timeline after project is loaded
+		let newFrames = [];
+		project.frameList.forEach((frame, index) => {
+			let mergedLayersFrame = toolbar.mergeFrameLayers(frame);
+			let currFrameData = mergedLayersFrame.toDataURL();
+			let currFrameIndex = index;
+			
+			if(!this.timelineFramesSet.has(currFrameIndex)){
+				newFrames.push({"data": currFrameData, "height": mergedLayersFrame.height, "width": mergedLayersFrame.width});
+				this.timelineFramesSet.add(currFrameIndex);
+			}else{
+				// update image data
+				newFrames[currFrameIndex].data = currFrameData;
+			}
+		});
+		
+		// figure out which layer is the one that should be visible for the first frame
+		const layers = project.frameList[0].canvasList;
+		let visibleLayerIndex = 0;
+		
+		for(var i = 0; i < layers.length; i++){
+			if(layers[i].style.opacity >= .97){
+				visibleLayerIndex = i;
+				break;
+			}
+		}
+		project.getFrames()[0].show();
+		
+		this.setState({
+			'currentLayer': visibleLayerIndex + 1,
+			'timelineFrames': newFrames
+		});		
+	}
+	
 	_getDemo(selected){
 		// case for the blank option 
 		if(selected === ""){
 			return;
 		}
-
-		// get the selected demo from the dropbox
-		// selectedDemo is the path to the demo to load 
-		let selectedDemo = "demos/" + selected + ".json"; 
-
-		let httpRequest = new XMLHttpRequest();
+		const selectedDemo = "demos/" + selected + ".json"; 
+		const httpRequest = new XMLHttpRequest();
 
 		if(!httpRequest){
 			return;
 		}
-		
-		// set request type
 		httpRequest.open("GET", selectedDemo);
 		
-		// what to do when data comes back
 		httpRequest.onload = () => {
-			
-			let toolbar = this.state.toolbarInstance;
-			let project = this.state.animationProject;
-			let self = this;
-			
-			// parse the JSON using JSON.parse 
-			let data = JSON.parse(httpRequest.responseText);
-
-			if(!data[0] || (!data[0].name && !data[0].height && !data[0].width && !data[0].data)){
-				console.log("it appears to not be a valid project! :<");
-				return;
-			}
-
-			// clear existing project
-			project.resetProject();
-			
-			// load saved project
-			data.forEach(function(frame, index){
-				if(index > 0){
-					// add a new frame
-					project.addNewFrame(false);
-				}
-				// overwrite existing frame
-				// TODO: implement an updateFrame method 
-				// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a Frame object to update with as well
-				let currFrame = project.frameList[index];
-				let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-				let currFrameLayersFromCurrPrj = currFrame.getLayers();
-				
-				// make sure current index (the layer that should be showing) of this frame is consistent with the data
-				currFrame.currentIndex = frame.currentIndex;
-				
-				currFrameLayersFromImport.forEach(function(layer, layerIndex){
-					if((layerIndex+1) > currFrameLayersFromCurrPrj.length){
-						// add new layer to curr project as needed based on import
-						currFrame.setupNewLayer();
-					}
-					
-					let currLayer = currFrame.getLayers()[layerIndex];
-					if(layerIndex === currFrame.currentIndex){
-						currFrame.currentCanvas = currLayer;
-					}
-					
-					// is this part necessary? maybe, if you want the project to look exactly as when it was saved.
-					currLayer.style.opacity = layer.opacity;
-					currLayer.style.zIndex = layer.zIndex; 
-					
-					// add the image data 
-					let newCtx = currLayer.getContext("2d");
-					let img = new Image();
-					
-					(function(context, image){
-						image.onload = function(){
-							
-							context.drawImage(image, 0, 0);
-							
-							// update state
-							if(index === data.length - 1){
-								self.timelineFramesSet = new Set();
-								
-								// update animation timeline after project is loaded
-								let newFrames = [];
-								project.frameList.forEach((frame, index) => {
-									let mergedLayersFrame = toolbar.mergeFrameLayers(frame);
-									let currFrameData = mergedLayersFrame.toDataURL();
-									let currFrameIndex = index;
-									
-									if(!self.timelineFramesSet.has(currFrameIndex)){
-										newFrames.push({"data": currFrameData, "height": mergedLayersFrame.height, "width": mergedLayersFrame.width});
-										self.timelineFramesSet.add(currFrameIndex);
-									}else{
-										// update image data
-										newFrames[currFrameIndex].data = currFrameData;
-									}
-								});
-								
-								self.setState({
-									'timelineFrames': newFrames,
-									'currentFrame': 1,
-									'currentLayer': 1,
-									'timelineMarkers': {}
-								});
-							}
-						}
-						image.src = layer.imageData;
-					})(newCtx, img);
-					
-				});
-			});
+			const data = JSON.parse(httpRequest.responseText);
+			this.state.toolbarInstance.importData(data, this._importProjectUpdateFunc.bind(this));
 		}
 		httpRequest.send();
 	}
@@ -641,7 +554,7 @@ class PresentationWrapper extends React.Component {
 		}, () => {
 			this._setupToolbar();
 			this._linkDemos();
-			this._setKeyDown(document); // set key down on the whole document
+			this._setKeyDown(document);
 			this._timelineMarkerSetup();
 		});
 	}

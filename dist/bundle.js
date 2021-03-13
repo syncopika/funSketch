@@ -900,51 +900,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       newToolbar.undo('undo');
       newToolbar.importImage('importImage');
       newToolbar.save('saveWork');
-      newToolbar.importProject('importProject', function () {
-        _this3.setState({
-          'currentFrame': 1,
-          'currentLayer': 1,
-          'timelineFrames': [],
-          'timelineMarkers': {}
-        });
-
-        _this3.timelineFramesSet = new Set(); // update animation timeline after project is loaded
-
-        var newFrames = [];
-        project.frameList.forEach(function (frame, index) {
-          var mergedLayersFrame = newToolbar.mergeFrameLayers(frame);
-          var currFrameData = mergedLayersFrame.toDataURL();
-          var currFrameIndex = index;
-
-          if (!_this3.timelineFramesSet.has(currFrameIndex)) {
-            newFrames.push({
-              "data": currFrameData,
-              "height": mergedLayersFrame.height,
-              "width": mergedLayersFrame.width
-            });
-
-            _this3.timelineFramesSet.add(currFrameIndex);
-          } else {
-            // update image data
-            newFrames[currFrameIndex].data = currFrameData;
-          }
-        }); // figure out which layer is the one that should be visible 
-
-        var visibleLayerIndex = 0;
-        var layers = project.frameList[0].canvasList;
-
-        for (var i = 0; i < layers.length; i++) {
-          if (layers[i].style.opacity >= .97) {
-            visibleLayerIndex = i;
-            break;
-          }
-        }
-
-        _this3.setState({
-          'currentLayer': visibleLayerIndex + 1,
-          'timelineFrames': newFrames
-        });
-      }); // make the goLeft and goRight arrows clickable FOR LAYERS
+      newToolbar.importProject('importProject', this._importProjectUpdateFunc.bind(this)); // make the goLeft and goRight arrows clickable FOR LAYERS
       // note: this is for clicking the icons with a mouse!
 
       document.getElementById('goLeft').addEventListener('click', function () {
@@ -1134,114 +1090,80 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
+    key: "_importProjectUpdateFunc",
+    value: function _importProjectUpdateFunc() {
+      var _this8 = this;
+
+      // update state when loading in a project
+      var project = this.state.animationProject;
+      var toolbar = this.state.toolbarInstance;
+      this.setState({
+        'currentFrame': 1,
+        'currentLayer': 1,
+        'timelineFrames': [],
+        'timelineMarkers': {}
+      });
+      this.timelineFramesSet = new Set(); // update animation timeline after project is loaded
+
+      var newFrames = [];
+      project.frameList.forEach(function (frame, index) {
+        var mergedLayersFrame = toolbar.mergeFrameLayers(frame);
+        var currFrameData = mergedLayersFrame.toDataURL();
+        var currFrameIndex = index;
+
+        if (!_this8.timelineFramesSet.has(currFrameIndex)) {
+          newFrames.push({
+            "data": currFrameData,
+            "height": mergedLayersFrame.height,
+            "width": mergedLayersFrame.width
+          });
+
+          _this8.timelineFramesSet.add(currFrameIndex);
+        } else {
+          // update image data
+          newFrames[currFrameIndex].data = currFrameData;
+        }
+      }); // figure out which layer is the one that should be visible for the first frame
+
+      var layers = project.frameList[0].canvasList;
+      var visibleLayerIndex = 0;
+
+      for (var i = 0; i < layers.length; i++) {
+        if (layers[i].style.opacity >= .97) {
+          visibleLayerIndex = i;
+          break;
+        }
+      }
+
+      project.getFrames()[0].show();
+      this.setState({
+        'currentLayer': visibleLayerIndex + 1,
+        'timelineFrames': newFrames
+      });
+    }
+  }, {
     key: "_getDemo",
     value: function _getDemo(selected) {
-      var _this8 = this;
+      var _this9 = this;
 
       // case for the blank option 
       if (selected === "") {
         return;
-      } // get the selected demo from the dropbox
-      // selectedDemo is the path to the demo to load 
-
+      }
 
       var selectedDemo = "demos/" + selected + ".json";
       var httpRequest = new XMLHttpRequest();
 
       if (!httpRequest) {
         return;
-      } // set request type
+      }
 
-
-      httpRequest.open("GET", selectedDemo); // what to do when data comes back
+      httpRequest.open("GET", selectedDemo);
 
       httpRequest.onload = function () {
-        var toolbar = _this8.state.toolbarInstance;
-        var project = _this8.state.animationProject;
-        var self = _this8; // parse the JSON using JSON.parse 
-
         var data = JSON.parse(httpRequest.responseText);
 
-        if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
-          console.log("it appears to not be a valid project! :<");
-          return;
-        } // clear existing project
-
-
-        project.resetProject(); // load saved project
-
-        data.forEach(function (frame, index) {
-          if (index > 0) {
-            // add a new frame
-            project.addNewFrame(false);
-          } // overwrite existing frame
-          // TODO: implement an updateFrame method 
-          // animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a Frame object to update with as well
-
-
-          var currFrame = project.frameList[index];
-          var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-
-          var currFrameLayersFromCurrPrj = currFrame.getLayers(); // make sure current index (the layer that should be showing) of this frame is consistent with the data
-
-          currFrame.currentIndex = frame.currentIndex;
-          currFrameLayersFromImport.forEach(function (layer, layerIndex) {
-            if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
-              // add new layer to curr project as needed based on import
-              currFrame.setupNewLayer();
-            }
-
-            var currLayer = currFrame.getLayers()[layerIndex];
-
-            if (layerIndex === currFrame.currentIndex) {
-              currFrame.currentCanvas = currLayer;
-            } // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
-
-
-            currLayer.style.opacity = layer.opacity;
-            currLayer.style.zIndex = layer.zIndex; // add the image data 
-
-            var newCtx = currLayer.getContext("2d");
-            var img = new Image();
-
-            (function (context, image) {
-              image.onload = function () {
-                context.drawImage(image, 0, 0); // update state
-
-                if (index === data.length - 1) {
-                  self.timelineFramesSet = new Set(); // update animation timeline after project is loaded
-
-                  var newFrames = [];
-                  project.frameList.forEach(function (frame, index) {
-                    var mergedLayersFrame = toolbar.mergeFrameLayers(frame);
-                    var currFrameData = mergedLayersFrame.toDataURL();
-                    var currFrameIndex = index;
-
-                    if (!self.timelineFramesSet.has(currFrameIndex)) {
-                      newFrames.push({
-                        "data": currFrameData,
-                        "height": mergedLayersFrame.height,
-                        "width": mergedLayersFrame.width
-                      });
-                      self.timelineFramesSet.add(currFrameIndex);
-                    } else {
-                      // update image data
-                      newFrames[currFrameIndex].data = currFrameData;
-                    }
-                  });
-                  self.setState({
-                    'timelineFrames': newFrames,
-                    'currentFrame': 1,
-                    'currentLayer': 1,
-                    'timelineMarkers': {}
-                  });
-                }
-              };
-
-              image.src = layer.imageData;
-            })(newCtx, img);
-          });
-        });
+        _this9.state.toolbarInstance.importData(data, _this9._importProjectUpdateFunc.bind(_this9));
       };
 
       httpRequest.send();
@@ -1249,7 +1171,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this9 = this;
+      var _this10 = this;
 
       var animationProj = new _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__["AnimationProject"]('canvasArea');
       animationProj.addNewFrame(true);
@@ -1263,14 +1185,13 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         'toolbarInstance': newToolbar,
         'filtersInstance': newFilters
       }, function () {
-        _this9._setupToolbar();
+        _this10._setupToolbar();
 
-        _this9._linkDemos();
+        _this10._linkDemos();
 
-        _this9._setKeyDown(document); // set key down on the whole document
+        _this10._setKeyDown(document);
 
-
-        _this9._timelineMarkerSetup();
+        _this10._timelineMarkerSetup();
       });
     }
   }, {
@@ -1294,7 +1215,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this10 = this;
+      var _this11 = this;
 
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         className: "container-fluid"
@@ -1359,7 +1280,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           // 2. set changingLayerOrder in state to false
           var newLayerList = [];
 
-          var currFrame = _this10.state.animationProject.getCurrFrame();
+          var currFrame = _this11.state.animationProject.getCurrFrame();
 
           var currLayerIndex = currFrame.getCurrCanvasIndex();
           var currFrameLayerList = currFrame.getLayers();
@@ -1376,9 +1297,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           });
           currFrame.setLayers(newLayerList); // update the currently shown layer to reflect the re-ordering
 
-          _this10.state.toolbarInstance.setCurrLayer(currLayerIndex);
+          _this11.state.toolbarInstance.setCurrLayer(currLayerIndex);
 
-          _this10.setState({
+          _this11.setState({
             "changingLayerOrder": false
           });
         }
@@ -1412,7 +1333,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         name: "timePerFrame",
         id: "timePerFrame",
         onChange: function onChange(evt) {
-          _this10.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+          _this11.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
         }
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
         value: "100"
@@ -1426,7 +1347,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         value: "1000"
       }, "1000"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         onClick: function onClick() {
-          _this10._playAnimation();
+          _this11._playAnimation();
         }
       }, " play animation "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "generateGif"
@@ -1475,7 +1396,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           'display': 'block'
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
-        var marker = _this10.state.timelineMarkers[markerKey];
+        var marker = _this11.state.timelineMarkers[markerKey];
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
           htmlFor: 'marker' + marker.frameNumber + 'Select'
         }, "marker for frame ", marker.frameNumber, ": \xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
@@ -1490,7 +1411,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             'color': 'red'
           },
           onClick: function onClick() {
-            return _this10._timelineMarkerDelete(marker.frameNumber);
+            return _this11._timelineMarkerDelete(marker.frameNumber);
           }
         }, " \xA0delete "));
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null)))));
@@ -2353,7 +2274,8 @@ var PenBrush = /*#__PURE__*/function (_BrushTemplate) {
       if (this.brushManager.applyPressureColor()) {
         var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.3 + ')';
         context.strokeStyle = extraStrokeColor;
-      } // pick a random point from some of the most recent points drawn so far. adjust that coord slightly based on some random numbers.
+      } // TODO: I think the below stuff should go in the loop above (take the strokeStyle change above along with it).
+      // pick a random point from some of the most recent points drawn so far. adjust that coord slightly based on some random numbers.
       // then draw a line from that coord to a new coord that is based off the latest drawn point (this point will also be slightly altered based on random nums).
       // this way we get some random, skewed lines to our strokes to give some texture.
 
@@ -4752,13 +4674,17 @@ var Frame = /*#__PURE__*/function () {
   }, {
     key: "show",
     value: function show() {
+      var _this = this;
+
       // makes all layers visible
       var activeLayerOpacity = .97;
       this.canvasList.forEach(function (canvas) {
-        if (canvas.style.opacity >= activeLayerOpacity) {
+        if (canvas === _this.currentCanvas) {
           canvas.style.zIndex = 1;
+          canvas.style.opacity = activeLayerOpacity;
         } else {
           canvas.style.zIndex = 0;
+          canvas.style.opacity = 0;
         }
 
         canvas.style.visibility = "";
@@ -4816,8 +4742,8 @@ var Frame = /*#__PURE__*/function () {
     value: function copyCanvas() {
       var newCanvas = document.createElement('canvas');
       newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
-      setCanvas(newCanvas, this.width, this.height);
-      newCanvas.style.opacity = 0.97;
+      setCanvas(newCanvas, this.width, this.height); //newCanvas.style.opacity = 0.97;
+
       document.getElementById(this.containerId).appendChild(newCanvas);
       newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
       this.canvasList.push(newCanvas);
@@ -6087,6 +6013,62 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
   }, {
+    key: "importData",
+    // data: JSON data representing a project
+    // updateStateFunction: function that updates state. used in the react component that has the toolbar as a prop
+    value: function importData(data, updateStateFunction) {
+      var _this15 = this;
+
+      if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
+        console.log("import failed: it appears to not be a valid project! :<");
+        return;
+      } // clear existing project
+
+
+      this.animationProj.resetProject(); // load saved project
+
+      data.forEach(function (frame, index) {
+        if (index > 0) {
+          // add a new frame
+          _this15.animationProj.addNewFrame();
+        } // overwrite existing frame
+        // TODO: implement an updateFrame method 
+        // something like: animationProj.updateFrame(0, frame);
+
+
+        var currFrame = _this15.animationProj.getFrames()[index];
+
+        var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+
+        var currFrameLayersFromCurrPrj = currFrame.getLayers();
+        currFrameLayersFromImport.forEach(function (layer, layerIndex) {
+          if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
+            // add new layer to curr project as needed based on import
+            currFrame.setupNewLayer();
+          }
+
+          var currLayer = currFrame.getLayers()[layerIndex]; // add the image data 
+
+          var newCtx = currLayer.getContext("2d");
+          var img = new Image();
+
+          (function (context, image) {
+            image.onload = function () {
+              context.drawImage(image, 0, 0);
+
+              if (index === data.length - 1 && updateStateFunction) {
+                // after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
+                updateStateFunction();
+              }
+            };
+
+            image.src = layer.imageData;
+          })(newCtx, img);
+        });
+        currFrame.setCurrIndex(frame.currentIndex);
+      });
+    }
+  }, {
     key: "importProject",
     value: function importProject(elementId, updateStateFunction) {
       var self = this;
@@ -6114,68 +6096,11 @@ var Toolbar = /*#__PURE__*/function () {
                 data = JSON.parse(e.target.result);
               } catch (e) {
                 // not valid json file 
+                console.log("import failed: not a valid JSON file");
                 return;
-              } // do some validation
-              // if there is no canvas
-              // or it's a valid json object but no fields correspond to a canvas, quit
+              }
 
-
-              if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
-                console.log("it appears to not be a valid project! :<");
-                return;
-              } // clear existing project
-
-
-              self.animationProj.resetProject(); // load saved project
-
-              data.forEach(function (frame, index) {
-                if (index > 0) {
-                  // add a new frame
-                  self.animationProj.addNewFrame();
-                } // overwrite existing frame
-                // TODO: implement an updateFrame method 
-                // something like: animationProj.updateFrame(0, frame);
-
-
-                var currFrame = self.animationProj.getFrames()[index];
-                var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-
-                var currFrameLayersFromCurrPrj = currFrame.getLayers();
-                currFrameLayersFromImport.forEach(function (layer, layerIndex) {
-                  if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
-                    // add new layer to curr project as needed based on import
-                    currFrame.setupNewLayer();
-                  }
-
-                  var currLayer = currFrame.getLayers()[layerIndex]; // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
-
-                  currLayer.style.opacity = layer.opacity;
-                  currLayer.style.zIndex = layer.zIndex; // add the image data 
-
-                  var newCtx = currLayer.getContext("2d");
-                  var img = new Image();
-
-                  (function (context, image) {
-                    image.onload = function () {
-                      context.drawImage(image, 0, 0);
-
-                      if (index === data.length - 1 && updateStateFunction) {
-                        updateStateFunction();
-                      }
-                    };
-
-                    image.src = layer.imageData;
-                  })(newCtx, img); // make sure to update this frame's current canvas so it matches currentIndex
-                  // another thing to refactor later (i.e. since we have currentIndex, we really shouldn't have another variable
-                  // to keep track of whose value could be known with currentIndex)
-
-
-                  if (layerIndex === currFrame.currentIndex) {
-                    currFrame.currentCanvas = currLayer;
-                  }
-                });
-                currFrame.setCurrIndex(frame.currentIndex);
-              });
+              self.importData(data, updateStateFunction);
             };
           }(file);
 

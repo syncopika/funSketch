@@ -659,20 +659,71 @@ class Toolbar {
         });
     };
 	
+	// data: JSON data representing a project
+	// updateStateFunction: function that updates state. used in the react component that has the toolbar as a prop
+	importData(data, updateStateFunction){
+		if(!data[0] || (!data[0].name && !data[0].height && !data[0].width && !data[0].data)){
+			console.log("import failed: it appears to not be a valid project! :<");
+			return;
+		}
+		// clear existing project
+		this.animationProj.resetProject();
+		
+		// load saved project
+		data.forEach((frame, index) => {
+			if(index > 0){
+				// add a new frame
+				this.animationProj.addNewFrame();
+			}
+			// overwrite existing frame
+			// TODO: implement an updateFrame method 
+			// something like: animationProj.updateFrame(0, frame);
+			const currFrame = this.animationProj.getFrames()[index];
+			const currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+			const currFrameLayersFromCurrPrj = currFrame.getLayers();
+			
+			currFrameLayersFromImport.forEach((layer, layerIndex) => {
+				
+				if((layerIndex + 1) > currFrameLayersFromCurrPrj.length){
+					// add new layer to curr project as needed based on import
+					currFrame.setupNewLayer();
+				}
+				
+				const currLayer = currFrame.getLayers()[layerIndex];
+
+				// add the image data 
+				const newCtx = currLayer.getContext("2d");
+				const img = new Image();
+				(function(context, image){
+					image.onload = function(){
+						context.drawImage(image, 0, 0);
+						if(index === data.length-1 && updateStateFunction){
+							// after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
+							updateStateFunction();
+						}
+					};
+					image.src = layer.imageData;
+				})(newCtx, img);
+			});
+			
+			currFrame.setCurrIndex(frame.currentIndex);
+		});
+	}
+	
 	importProject(elementId, updateStateFunction){
 		const self = this;
         document.getElementById(elementId).addEventListener('click', () => {
             fileHandler();
             //import project json file
             function fileHandler(){
-                let input = document.createElement('input');
+                const input = document.createElement('input');
                 input.type = 'file';
                 input.addEventListener('change', getFile, false);
                 input.click();
             }
             function getFile(e){
-                let reader = new FileReader();
-                let file = e.target.files[0];
+                const reader = new FileReader();
+                const file = e.target.files[0];
                 //when the file loads, put it on the canvas.
                 reader.onload = (function(theFile){
                     return function(e){
@@ -683,66 +734,10 @@ class Toolbar {
                             data = JSON.parse(e.target.result);
                         }catch(e){
                             // not valid json file 
+							console.log("import failed: not a valid JSON file");
                             return;
                         }
-                        // do some validation
-                        // if there is no canvas
-                        // or it's a valid json object but no fields correspond to a canvas, quit
-                        if (!data[0] || (!data[0].name && !data[0].height && !data[0].width && !data[0].data)) {
-                            console.log("it appears to not be a valid project! :<");
-                            return;
-                        }
-                        // clear existing project
-                        self.animationProj.resetProject();
-						
-                        // load saved project
-                        data.forEach(function(frame, index){
-                            if(index > 0){
-                                // add a new frame
-                                self.animationProj.addNewFrame();
-                            }
-                            // overwrite existing frame
-                            // TODO: implement an updateFrame method 
-                            // something like: animationProj.updateFrame(0, frame);
-                            let currFrame = self.animationProj.getFrames()[index];
-                            let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-                            let currFrameLayersFromCurrPrj = currFrame.getLayers();
-                            
-							currFrameLayersFromImport.forEach(function(layer, layerIndex){
-								
-                                if((layerIndex + 1) > currFrameLayersFromCurrPrj.length){
-                                    // add new layer to curr project as needed based on import
-                                    currFrame.setupNewLayer();
-                                }
-								
-                                let currLayer = currFrame.getLayers()[layerIndex];
-                                // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
-                                currLayer.style.opacity = layer.opacity;
-                                currLayer.style.zIndex = layer.zIndex;
-
-                                // add the image data 
-                                let newCtx = currLayer.getContext("2d");
-                                let img = new Image();
-                                (function(context, image){
-                                    image.onload = function(){
-                                        context.drawImage(image, 0, 0);
-										if(index === data.length-1 && updateStateFunction){
-											updateStateFunction();
-										}
-                                    };
-                                    image.src = layer.imageData;
-                                })(newCtx, img);
-									
-								// make sure to update this frame's current canvas so it matches currentIndex
-								// another thing to refactor later (i.e. since we have currentIndex, we really shouldn't have another variable
-								// to keep track of whose value could be known with currentIndex)
-								if(layerIndex === currFrame.currentIndex){
-									currFrame.currentCanvas = currLayer;
-								}
-                            });
-							
-							currFrame.setCurrIndex(frame.currentIndex);
-                        });
+						self.importData(data, updateStateFunction);
                     };
                 })(file);
                 reader.readAsText(file);

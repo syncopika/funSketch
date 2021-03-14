@@ -15,22 +15,16 @@
 		font-family: 'Merriweather', serif;
 	}
 	
-	#buttons{
-		padding-top: 5px;
-		text-align: center;
-		border: 1px solid #000;
-	}
-	
 	button{
 		margin: 3px;
 		font-size: 13px;
 	}
 	
 	#toolbarArea{
-		width: 75%;
+		width: 100%;
 		text-align: center;
 		padding-top: 10px;
-		/*margin-left: 50px;*/
+		margin: 0 auto;
 	}
 	
 	#canvasArea{
@@ -57,11 +51,6 @@
 		margin-left: 20px;
 	}
 	
-	#colorPicker{
-		margin-top: 10%;
-		margin-bottom: 15%;
-	}
-	
 	li{
 		list-style-type: none;
 		padding: 2px;
@@ -83,19 +72,56 @@
 		text-align: center;
 	}
 	
+	.toolbarSection{
+		border: 1px solid #000;
+		display: inline-block;
+	}
+	
 	.container{
 		display: grid;
-		grid-template-columns: 500px;
+		grid-template-rows: auto auto auto;
 		width: 100%;
 	}
 	
 	#toolbar{
-		grid-column: 1;
+		grid-row: 1;
+		width: 100%;
 	}
 	
 	#screen{
-		grid-column: 2;
+		grid-row: 2;
+		width: 95%;
+		margin: 0 auto;
 	}
+	
+	#screenContainer{
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 5% 2fr 1fr;
+		/*padding-bottom: 5%;*/
+	}
+	
+	/* want to overlay the timelinecanvas over the timeline */
+	#animationTimelineArea{
+		display: grid;
+		grid-template-columns: 1fr;
+		padding-bottom: 5%;
+	}
+	
+	#animationTimeline{
+		grid-row: 1;
+	}
+	
+	#animationTimelineCanvas{
+		grid-row: 1;
+	}
+	
+	#footer{
+		grid-row: 3;
+		width: 100%;
+		text-align: center;
+	}
+	
 	
 </style>
 

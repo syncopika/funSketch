@@ -15,6 +15,7 @@ https://stackoverflow.com/questions/18639734/z-index-not-behaving-as-expected-wi
 https://stackoverflow.com/questions/19560878/css-change-custom-cursor-image-origin-hotspot-to-center
 https://stackoverflow.com/questions/40477245/is-it-possible-to-use-if-else-statement-in-react-render-function
 https://sighack.com/ -> really cool stuff to learn about here
+https://stackoverflow.com/questions/54812239/expanding-to-fill-remaining-space-in-a-css-grid-layout
 
 // pressure-sensitivity for pen
 https://github.com/amoshydra/draw/blob/master/js/libs/Pen.js

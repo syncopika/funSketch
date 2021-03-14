@@ -577,193 +577,186 @@ class PresentationWrapper extends React.Component {
 	
 	render(){
 		return(
-			<div className='container-fluid'>
-				<div className='row'>
-					<div id='toolbar' className='col-lg-3'>
-						<div id='toolbarArea'>
-							<h3 id='title'> funSketch: draw and animate! </h3>
-
-							<div id='buttons'>
+			<div className='container'>
+				<div id='toolbar'>
+					<div id='toolbarArea'>
+						<div id='buttons'>
+						
+							<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
+							<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
+							<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
+							<button id='toggleInstructions'>hide instructions</button>
+						
+							<h4> layer <span className="caret2" id="LayerStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+							<div id="displayLayerStuff">
+								<button id='insertCanvas'>add new layer after</button>
+								<button id='deleteCanvas'>delete current layer</button>
+								<button id='duplicateCanvas'>duplicate layer</button>
+								<button id='clearCanvas'>clear layer</button>
+								<button id='downloadLayer'>download current layer</button>
+							</div>
 							
-								<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
-								<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
-								<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
-								<button id='toggleInstructions'>hide instructions</button>
+							<h4> frame <span className="caret2" id="FrameStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+							<div id="displayFrameStuff">
+								<button id='addNewFrame'>add new frame</button>
+								<button id='copyCurrFrame'>duplicate frame</button>
+								<button id='deleteCurrFrame'>delete current frame</button>
+								<button id='changeLayerOrder'>change layer order</button>
+								<button id='downloadFrame'>download current frame</button>
 							
-								<h4> layer <span className="caret2" id="LayerStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
-								<div id="displayLayerStuff">
-									<button id='insertCanvas'>add new layer after</button>
-									<button id='deleteCanvas'>delete current layer</button>
-									<button id='duplicateCanvas'>duplicate layer</button>
-									<button id='clearCanvas'>clear layer</button>
-									<button id='downloadLayer'>download current layer</button>
-								</div>
-								
-								<h4> frame <span className="caret2" id="FrameStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
-								<div id="displayFrameStuff">
-									<button id='addNewFrame'>add new frame</button>
-									<button id='copyCurrFrame'>duplicate frame</button>
-									<button id='deleteCurrFrame'>delete current frame</button>
-									<button id='changeLayerOrder'>change layer order</button>
-									<button id='downloadFrame'>download current frame</button>
-								
-								<LayerOrder 
-									changingLayerOrder={this.state.changingLayerOrder}
-									layers={this.state.animationProject ? this.state.animationProject.getCurrFrame().getLayers().map((x, idx) => idx) : []}
-									updateParentStateFunction={
-										(newLayerOrder) => {
-											// 1. update layer order of current frame
-											// 2. set changingLayerOrder in state to false
-											let newLayerList = [];
-											let currFrame = this.state.animationProject.getCurrFrame();
-											let currLayerIndex = currFrame.getCurrCanvasIndex();
-											let currFrameLayerList = currFrame.getLayers();
-											
-											currFrame.getCurrCanvas().style.opacity = 0;
-											currFrame.getCurrCanvas().style.zIndex = 0;
-											if(currLayerIndex-1 > 0){
-												currFrame.getLayers()[currLayerIndex-1].style.opacity = 0;
-												currFrame.getLayers()[currLayerIndex-1].style.zIndex = 0;
-											}
+							<LayerOrder 
+								changingLayerOrder={this.state.changingLayerOrder}
+								layers={this.state.animationProject ? this.state.animationProject.getCurrFrame().getLayers().map((x, idx) => idx) : []}
+								updateParentStateFunction={
+									(newLayerOrder) => {
+										// 1. update layer order of current frame
+										// 2. set changingLayerOrder in state to false
+										let newLayerList = [];
+										let currFrame = this.state.animationProject.getCurrFrame();
+										let currLayerIndex = currFrame.getCurrCanvasIndex();
+										let currFrameLayerList = currFrame.getLayers();
 										
-											newLayerOrder.forEach((index) => {
-												newLayerList.push(currFrameLayerList[index]);
-											});
-											
-											currFrame.setLayers(newLayerList);
-											
-											// update the currently shown layer to reflect the re-ordering
-											this.state.toolbarInstance.setCurrLayer(currLayerIndex);
-		
-											this.setState({"changingLayerOrder": false});
+										currFrame.getCurrCanvas().style.opacity = 0;
+										currFrame.getCurrCanvas().style.zIndex = 0;
+										if(currLayerIndex-1 > 0){
+											currFrame.getLayers()[currLayerIndex-1].style.opacity = 0;
+											currFrame.getLayers()[currLayerIndex-1].style.zIndex = 0;
 										}
-									}
-								/>
-								</div>
-								
-								<h4> other <span className="caret2" id="OtherStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
-								<div id="displayOtherStuff">
-									<button id='importImage'> import image </button>
-									<button id='rotateCanvasImage'>rotate image</button>
-									<button id='undo'>undo</button>
-									<button id='saveWork'>save project (.json)</button> 
-									<button id='importProject'>import project </button>
-									<button id='togglePenPressureColor'> toggle pen pressure for color </button>
-									<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
 									
-									<div id='animationControl'>
-										<br />
-										<h4> animation control: </h4>
-										<ul id='timeOptions'>
-											<label htmlFor='timePerFrame'>time per frame (ms):</label>
-											<select name='timePerFrame' id='timePerFrame' onChange={
-												(evt) => {
-													this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
-												}
-											}>
-												<option value='100'>100</option>
-												<option value='200'>200</option>
-												<option value='500'>500</option>
-												<option value='700'>700</option>
-												<option value='1000'>1000</option>
-											</select>
-										</ul>
-										<button onClick={
-											() => {
-												this._playAnimation();
-											}
-										}> play animation </button>
-										<button id='generateGif'> generate gif! </button>
-									</div>
-									<p id='loadingScreen'></p>
-								</div>
-							
-								<br />
+										newLayerOrder.forEach((index) => {
+											newLayerList.push(currFrameLayerList[index]);
+										});
+										
+										currFrame.setLayers(newLayerList);
+										
+										// update the currently shown layer to reflect the re-ordering
+										this.state.toolbarInstance.setCurrLayer(currLayerIndex);
+	
+										this.setState({"changingLayerOrder": false});
+									}
+								}
+							/>
 							</div>
 							
-							<br />
-
-							<BrushDashboard brushManager={this.state.brushInstance} />
-							
-							<br />
-							
-							<FilterDashboard filterManager={this.state.filtersInstance} />
-							
-							<div id='colorPicker'>
-							</div>
-							
-							<div id='showDemos'>
-								<h3> demos </h3>
-								<select id='chooseDemo'>
-									<option label=""></option>
-									<option className='demo'>run_demo</option>
-									<option className='demo'>floaty_thingy</option>
-									<option className='demo'>cake_cut</option>
-									<option className='demo'>asakusa_mizusaki_butterfly</option>
-								</select>
-							</div>
-							
-						</div>
-						
-						<div id='footer' className='row'>
-							<hr />
-							<p> n.c.h works 2017-2021 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
-						</div>
-						
-					</div>
-
-					<div id='screen' className='col-lg-9 grid'>
+							<h4> other <span className="caret2" id="OtherStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+							<div id="displayOtherStuff">
+								<button id='importImage'> import image </button>
+								<button id='rotateCanvasImage'>rotate image</button>
+								<button id='undo'>undo</button>
+								<button id='saveWork'>save project (.json)</button> 
+								<button id='importProject'>import project </button>
+								<button id='togglePenPressureColor'> toggle pen pressure for color </button>
+								<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
 								
-						<FrameCounterDisplay
-							currFrame={this.state.currentFrame}
-							currLayer={this.state.currentLayer}
-						/>
+								<div id='animationControl'>
+									<br />
+									<h4> animation control: </h4>
+									<ul id='timeOptions'>
+										<label htmlFor='timePerFrame'>time per frame (ms):</label>
+										<select name='timePerFrame' id='timePerFrame' onChange={
+											(evt) => {
+												this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+											}
+										}>
+											<option value='100'>100</option>
+											<option value='200'>200</option>
+											<option value='500'>500</option>
+											<option value='700'>700</option>
+											<option value='1000'>1000</option>
+										</select>
+									</ul>
+									<button onClick={
+										() => {
+											this._playAnimation();
+										}
+									}> play animation </button>
+									<button id='generateGif'> generate gif! </button>
+								</div>
+								<p id='loadingScreen'></p>
+							</div>
 						
-						<div id='canvasArea'>
+							<br />
 						</div>
 						
-						<AnimationTimeline frames={this.state.timelineFrames} />
-						<canvas id='animationTimelineCanvas' style={{
-									'border': '1px solid #000',
-									'borderTop': 0,
-									'display': 'block',
-						}}></canvas>
-						
-						<div>
-						{
-							Object.keys(this.state.timelineMarkers).map((markerKey, index) => {
-								let marker = this.state.timelineMarkers[markerKey];
-								return (
-									<div>
-										<label htmlFor={'marker' + marker.frameNumber + 'Select'}>marker for frame {marker.frameNumber}: &nbsp;</label>
-										<select 
-										id={'marker' + marker.frameNumber + 'Select'} 
-										name={'marker' + marker.frameNumber + 'Select'}
-										onChange={(evt) => {
-											marker.speed = evt.target.value;
-										}}
-										>
-											<option>100</option>
-											<option>200</option>
-											<option>300</option>
-											<option>500</option>
-											<option>1000</option>
-										</select>
-										<label 
-											id={'deleteMarker_' + marker.frameNumber} 
-											style={{'color': 'red'}}
-											onClick={() => this._timelineMarkerDelete(marker.frameNumber)}
-										> &nbsp;delete </label>
-									</div>
-								);
-							})
-						}
 						<br />
-						<br />
-					</div>
 
+						<BrushDashboard brushManager={this.state.brushInstance} />
+						
+						<br />
+						
+						<FilterDashboard filterManager={this.state.filtersInstance} />
+						
+						<div id='colorPicker'>
+						</div>
+						
+						<div id='showDemos'>
+							<h3> demos </h3>
+							<select id='chooseDemo'>
+								<option label=""></option>
+								<option className='demo'>run_demo</option>
+								<option className='demo'>floaty_thingy</option>
+								<option className='demo'>cake_cut</option>
+								<option className='demo'>asakusa_mizusaki_butterfly</option>
+							</select>
+						</div>
+						
 					</div>
 					
+					<div id='footer' className='row'>
+						<hr />
+						<p> c.2017 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
+					</div>
+					
+				</div>
+
+				<div id='screen'>	
+					<FrameCounterDisplay
+						currFrame={this.state.currentFrame}
+						currLayer={this.state.currentLayer}
+					/>
+					
+					<div id='canvasArea'>
+					</div>
+					
+					<AnimationTimeline frames={this.state.timelineFrames} />
+					<canvas id='animationTimelineCanvas' style={{
+								'border': '1px solid #000',
+								'borderTop': 0,
+								'display': 'block',
+					}}></canvas>
+					
+					<div>
+					{
+						Object.keys(this.state.timelineMarkers).map((markerKey, index) => {
+							let marker = this.state.timelineMarkers[markerKey];
+							return (
+								<div>
+									<label htmlFor={'marker' + marker.frameNumber + 'Select'}>marker for frame {marker.frameNumber}: &nbsp;</label>
+									<select 
+									id={'marker' + marker.frameNumber + 'Select'} 
+									name={'marker' + marker.frameNumber + 'Select'}
+									onChange={(evt) => {
+										marker.speed = evt.target.value;
+									}}
+									>
+										<option>100</option>
+										<option>200</option>
+										<option>300</option>
+										<option>500</option>
+										<option>1000</option>
+									</select>
+									<label 
+										id={'deleteMarker_' + marker.frameNumber} 
+										style={{'color': 'red'}}
+										onClick={() => this._timelineMarkerDelete(marker.frameNumber)}
+									> &nbsp;delete </label>
+								</div>
+							);
+						})
+					}
+					</div>
+					<br />
+					<br />
 				</div>
 				
 			</div> 

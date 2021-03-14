@@ -3,7 +3,7 @@
 <html>
 
 <head>
-	<title> funSketch! </title>
+	<title> funSketch </title>
 	<meta charset='utf-8'>
 	<link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -16,6 +16,7 @@
 	}
 	
 	#buttons{
+		padding-top: 5px;
 		text-align: center;
 		border: 1px solid #000;
 	}
@@ -28,7 +29,8 @@
 	#toolbarArea{
 		width: 75%;
 		text-align: center;
-		margin-left: 50px;
+		padding-top: 10px;
+		/*margin-left: 50px;*/
 	}
 	
 	#canvasArea{
@@ -81,73 +83,19 @@
 		text-align: center;
 	}
 	
-	/* accomodate smaller screens */
-	@media (max-width: 1200px){
-	
-		#toolbarArea{
-			width: 80%;
-			margin: 0 auto;
-		}
-		#colorPicker p{
-			margin-bottom: 0;
-		}
-		
-		/* 
-			there's currently a bug such that 
-			when painting on a canvas on a smaller screen, 
-			floodfill doesn't work.
-			
-			it seems like it's coloring the spot before getting 
-			the color of the spot. so for now, turn it off
-			for smaller screens.
-		*/
-		#floodfillDir, #colorPicker button{
-			display: none;
-		}
-		
-		#colorPicker, #animationControl{
-			width: 45%;
-			display: inline-block;
-			margin: 0;
-			vertical-align: top;
-		}
-		
-		#screen{
-			width: 100%;
-			height: 800px;
-			margin: 0 auto;
-		}
-		
-		#footer{
-			margin-top: 10%;
-		}
-		
-		#floodfillDir{
-			font-size: 10px;
-		}
-	}
-	
-	.grid{
+	.container{
 		display: grid;
-		grid-template-columns: 1fr;
-		grid-template-rows: 70px 850px 220px;
+		grid-template-columns: 500px;
+		width: 100%;
 	}
 	
-	.grid #pageCount{
-		grid-row: 1;
-		grid-column: 1;
-	}
-
-	.grid #animationTimeline{
-		grid-row: 3;
+	#toolbar{
 		grid-column: 1;
 	}
 	
-	.grid #animationTimelineCanvas{
-		grid-row: 3;
-		grid-column: 1;
+	#screen{
+		grid-column: 2;
 	}
-
 	
 </style>
 

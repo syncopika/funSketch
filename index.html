@@ -25,6 +25,9 @@
 		text-align: center;
 		padding-top: 10px;
 		margin: 0 auto;
+		display: grid;
+		grid-template-rows: 1fr;
+		grid-template-columns: repeat(10, 1fr);
 	}
 	
 	#canvasArea{
@@ -88,32 +91,46 @@
 		width: 100%;
 	}
 	
+	#toolbarOptions{
+		text-align: center;
+	}
+	
+	#toolbarOptions ul{
+		padding: 0;
+	}
+	
 	#screen{
 		grid-row: 2;
-		width: 95%;
+		width: 90%;
 		margin: 0 auto;
 	}
 	
 	#screenContainer{
 		display: grid;
 		grid-template-columns: 1fr;
-		grid-template-rows: 5% 2fr 1fr;
-		/*padding-bottom: 5%;*/
+		grid-template-rows: 6% 3fr 1fr;
 	}
 	
 	/* want to overlay the timelinecanvas over the timeline */
 	#animationTimelineArea{
 		display: grid;
 		grid-template-columns: 1fr;
-		padding-bottom: 5%;
+		grid-template-rows: 1fr auto;
+		padding-bottom: 3%;
 	}
 	
 	#animationTimeline{
 		grid-row: 1;
+		grid-column: 1;
 	}
 	
 	#animationTimelineCanvas{
 		grid-row: 1;
+		grid-column: 1;
+	}
+	
+	#animationTimelineMarkers{
+		grid-row: 2;
 	}
 	
 	#footer{

@@ -580,6 +580,18 @@ class PresentationWrapper extends React.Component {
 			<div className='container'>
 				<div id='toolbar'>
 					<div id='toolbarArea'>
+					
+						<div id="toolbarOptions" className="toolbarSection">
+							<ul>
+								<li>instructions <span className="caret2" id="instructionsOption" onClick={this._clickCaret}>&#9656;</span></li>
+								<li>frame control <span className="caret2" id="frameCtrlOption" onClick={this._clickCaret}>&#9656;</span></li>
+								<li>layer control <span className="caret2" id="layerCtrlOption" onClick={this._clickCaret}>&#9656;</span></li>
+								<li>animation control <span className="caret2" id="animationCtrlOption" onClick={this._clickCaret}>&#9656;</span></li>
+								<li>brushes <span className="caret2" id="brushesOption" onClick={this._clickCaret}>&#9656;</span></li>
+								<li>filters <span className="caret2" id="filtersOption" onClick={this._clickCaret}>&#9656;</span></li>
+								<li>other <span className="caret2" id="otherOption" onClick={this._clickCaret}>&#9656;</span></li>
+							</ul>
+						</div>					
 						
 						<div id="instructions" className="toolbarSection">
 							<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
@@ -653,33 +665,34 @@ class PresentationWrapper extends React.Component {
 								<button id='importProject'>import project </button>
 								<button id='togglePenPressureColor'> toggle pen pressure for color </button>
 								<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
-								
-								<div id='animationControl'>
-									<br />
-									<h4> animation control: </h4>
-									<ul id='timeOptions'>
-										<label htmlFor='timePerFrame'>time per frame (ms):</label>
-										<select name='timePerFrame' id='timePerFrame' onChange={
-											(evt) => {
-												this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
-											}
-										}>
-											<option value='100'>100</option>
-											<option value='200'>200</option>
-											<option value='500'>500</option>
-											<option value='700'>700</option>
-											<option value='1000'>1000</option>
-										</select>
-									</ul>
-									<button onClick={
-										() => {
-											this._playAnimation();
-										}
-									}> play animation </button>
-									<button id='generateGif'> generate gif! </button>
-								</div>
-								<p id='loadingScreen'></p>
 							</div>
+						</div>
+						
+						<div id="animControlSection" className="toolbarSection">
+							<div id='animationControl'>
+								<h4> animation control: </h4>
+								<ul id='timeOptions'>
+									<label htmlFor='timePerFrame'>time per frame (ms):</label>
+									<select name='timePerFrame' id='timePerFrame' onChange={
+										(evt) => {
+											this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+										}
+									}>
+										<option value='100'>100</option>
+										<option value='200'>200</option>
+										<option value='500'>500</option>
+										<option value='700'>700</option>
+										<option value='1000'>1000</option>
+									</select>
+								</ul>
+								<button onClick={
+									() => {
+										this._playAnimation();
+									}
+								}> play animation </button>
+								<button id='generateGif'> generate gif! </button>
+							</div>
+							<p id='loadingScreen'></p>
 						</div>
 						
 						<div id="filterSection" className="toolbarSection">
@@ -688,6 +701,9 @@ class PresentationWrapper extends React.Component {
 					
 						<div id="brushSection" className="toolbarSection">
 							<BrushDashboard brushManager={this.state.brushInstance} />
+						</div>
+						
+						<div id="colorPickerSection" className="toolbarSection">
 							<div id='colorPicker'>
 							</div>
 						</div>
@@ -725,7 +741,7 @@ class PresentationWrapper extends React.Component {
 										'display': 'block',
 							}}></canvas>
 							
-							<div>
+							<div id="animationTimelineMarkers">
 							{
 								Object.keys(this.state.timelineMarkers).map((markerKey, index) => {
 									const marker = this.state.timelineMarkers[markerKey];

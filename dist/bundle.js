@@ -1224,6 +1224,37 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "toolbarArea"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "toolbarOptions",
+        className: "toolbarSection"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "instructions ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
+        className: "caret2",
+        id: "instructionsOption",
+        onClick: this._clickCaret
+      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "frame control ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
+        className: "caret2",
+        id: "frameCtrlOption",
+        onClick: this._clickCaret
+      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "layer control ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
+        className: "caret2",
+        id: "layerCtrlOption",
+        onClick: this._clickCaret
+      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "animation control ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
+        className: "caret2",
+        id: "animationCtrlOption",
+        onClick: this._clickCaret
+      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "brushes ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
+        className: "caret2",
+        id: "brushesOption",
+        onClick: this._clickCaret
+      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "filters ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
+        className: "caret2",
+        id: "filtersOption",
+        onClick: this._clickCaret
+      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "other ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
+        className: "caret2",
+        id: "otherOption",
+        onClick: this._clickCaret
+      }, "\u25B8")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "instructions",
         className: "toolbarSection"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
@@ -1328,9 +1359,12 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "togglePenPressureColor"
       }, " toggle pen pressure for color "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "toggleLayerOrFrame"
-      }, " toggle frame addition on spacebar press "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, " toggle frame addition on spacebar press "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "animControlSection",
+        className: "toolbarSection"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "animationControl"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " animation control: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " animation control: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", {
         id: "timeOptions"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
         htmlFor: "timePerFrame"
@@ -1358,7 +1392,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "generateGif"
       }, " generate gif! ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         id: "loadingScreen"
-      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "filterSection",
         className: "toolbarSection"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__["FilterDashboard"], {
@@ -1368,7 +1402,10 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "toolbarSection"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__["BrushDashboard"], {
         brushManager: this.state.brushInstance
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "colorPickerSection",
+        className: "toolbarSection"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "colorPicker"
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "showDemos",
@@ -1405,7 +1442,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           'borderTop': 0,
           'display': 'block'
         }
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "animationTimelineMarkers"
+      }, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
         var marker = _this11.state.timelineMarkers[markerKey];
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
           htmlFor: 'marker' + marker.frameNumber + 'Select'

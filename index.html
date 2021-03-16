@@ -27,7 +27,7 @@
 		margin: 0 auto;
 		display: grid;
 		grid-template-rows: 1fr;
-		grid-template-columns: repeat(10, 1fr);
+		grid-template-columns: 1fr 3fr 1fr;
 	}
 	
 	#canvasArea{
@@ -75,9 +75,24 @@
 		text-align: center;
 	}
 	
-	.toolbarSection{
+	.toolbarSection, .toolbarSection2, .toolbarSection3{
 		border: 1px solid #000;
 		display: inline-block;
+	}
+	
+	.tbar{
+		display: none;
+	}
+	
+	.toolbarSection2{
+		grid-row: 1;
+		grid-column: 2;
+		display: block;
+	}
+	
+	.toolbarSection3{
+		grid-row: 1;
+		grid-column: 3;
 	}
 	
 	.container{
@@ -101,7 +116,7 @@
 	
 	#screen{
 		grid-row: 2;
-		width: 90%;
+		width: 80%;
 		margin: 0 auto;
 	}
 	

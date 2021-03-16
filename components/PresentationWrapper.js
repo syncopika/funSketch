@@ -360,20 +360,6 @@ class PresentationWrapper extends React.Component {
 			}
 		});
 		
-		// toggle instructions 
-		document.getElementById('toggleInstructions').addEventListener('click', function(evt){
-			let instructions = document.querySelectorAll('.instructions');
-			[...instructions].forEach((inst) => {
-				if(inst.style.display === "none"){
-					inst.style.display = "block";
-					this.textContent = "hide instructions";
-				}else{
-					inst.style.display = "none";
-					this.textContent = "show instructions";
-				}
-			});
-		});
-		
 		// toggle pen pressure for brush color
 		document.getElementById('togglePenPressureColor').addEventListener('click', (evt) => {
 			if(evt.target.style.border === "1px solid rgb(255, 0, 0)"){
@@ -564,15 +550,41 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_clickCaret(evt){
-		let id = evt.target.id;
-		let target = document.getElementById("display" + id);
+		const id = evt.target.id;
+		
+		/*
+		const target = document.getElementById("display" + id);
 		if(target.style.display !== "none"){
 			target.style.display = "none";
 			evt.target.innerHTML = "&#9656;";
 		}else{
 			target.style.display = "block";
 			evt.target.innerHTML = "&#9662;";
-		}
+		}*/
+		
+		// map caret id to div id of option that should show up in the 2nd column of the toolbar
+		const options = {
+			"instructionsOption": "instructions",
+			"frameCtrlOption": "frameSection",
+			"layerCtrlOption": "layerSection",
+			"animationCtrlOption": "animControlSection",
+			"otherOption": "otherSection",
+			"brushesOption": "brushSection",
+			"filtersOption": "filterSection",
+			"demosOption": "showDemos",
+		};
+		
+		Array.from(Object.keys(options)).forEach((section) => {
+			const contentToToggle = document.getElementById(options[section]);
+			contentToToggle.classList.remove("toolbarSection2");
+			
+			if(section === id){
+				contentToToggle.classList.add("toolbarSection2");
+				contentToToggle.classList.remove("tbar");
+			}else{
+				contentToToggle.classList.add("tbar");
+			}
+		});
 	}
 	
 	render(){
@@ -590,18 +602,18 @@ class PresentationWrapper extends React.Component {
 								<li>brushes <span className="caret2" id="brushesOption" onClick={this._clickCaret}>&#9656;</span></li>
 								<li>filters <span className="caret2" id="filtersOption" onClick={this._clickCaret}>&#9656;</span></li>
 								<li>other <span className="caret2" id="otherOption" onClick={this._clickCaret}>&#9656;</span></li>
+								<li>demos <span className="caret2" id="demosOption" onClick={this._clickCaret}>&#9656;</span></li>
 							</ul>
 						</div>					
 						
-						<div id="instructions" className="toolbarSection">
+						<div id="instructions" className="tbar">
 							<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
 							<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
 							<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
-							<button id='toggleInstructions'>hide instructions</button>
 						</div>
 					
-						<div id="layerSection" className="toolbarSection">
-							<h4> layer <span className="caret2" id="LayerStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+						<div id="layerSection" className="tbar">
+							<h4> layer </h4>
 							<div id="displayLayerStuff">
 								<button id='insertCanvas'>add new layer after</button>
 								<button id='deleteCanvas'>delete current layer</button>
@@ -611,8 +623,8 @@ class PresentationWrapper extends React.Component {
 							</div>
 						</div>
 						
-						<div id="frameSection" className="toolbarSection">
-							<h4> frame <span className="caret2" id="FrameStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+						<div id="frameSection" className="tbar">
+							<h4> frame </h4>
 							<div id="displayFrameStuff">
 								<button id='addNewFrame'>add new frame</button>
 								<button id='copyCurrFrame'>duplicate frame</button>
@@ -655,8 +667,8 @@ class PresentationWrapper extends React.Component {
 							</div>
 						</div>
 						
-						<div id="otherSection" className="toolbarSection">
-							<h4> other <span className="caret2" id="OtherStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
+						<div id="otherSection" className="tbar">
+							<h4> other </h4>
 							<div id="displayOtherStuff">
 								<button id='importImage'> import image </button>
 								<button id='rotateCanvasImage'>rotate image</button>
@@ -668,7 +680,7 @@ class PresentationWrapper extends React.Component {
 							</div>
 						</div>
 						
-						<div id="animControlSection" className="toolbarSection">
+						<div id="animControlSection" className="tbar">
 							<div id='animationControl'>
 								<h4> animation control: </h4>
 								<ul id='timeOptions'>
@@ -695,20 +707,15 @@ class PresentationWrapper extends React.Component {
 							<p id='loadingScreen'></p>
 						</div>
 						
-						<div id="filterSection" className="toolbarSection">
+						<div id="filterSection" className="tbar">
 							<FilterDashboard filterManager={this.state.filtersInstance} />
 						</div>
 					
-						<div id="brushSection" className="toolbarSection">
+						<div id="brushSection" className="tbar">
 							<BrushDashboard brushManager={this.state.brushInstance} />
 						</div>
 						
-						<div id="colorPickerSection" className="toolbarSection">
-							<div id='colorPicker'>
-							</div>
-						</div>
-						
-						<div id='showDemos' className="toolbarSection">
+						<div id='showDemos' className="tbar">
 							<h3> demos </h3>
 							<select id='chooseDemo'>
 								<option label=""></option>
@@ -717,6 +724,11 @@ class PresentationWrapper extends React.Component {
 								<option className='demo'>cake_cut</option>
 								<option className='demo'>asakusa_mizusaki_butterfly</option>
 							</select>
+						</div>
+						
+						<div id="colorPickerSection" className="toolbarSection3">
+							<div id='colorPicker'>
+							</div>
 						</div>
 							
 					</div>

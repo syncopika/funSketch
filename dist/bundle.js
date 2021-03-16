@@ -973,22 +973,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           newToolbar.layerMode = true;
           element.textContent = "toggle frame addition on spacebar press";
         }
-      }); // toggle instructions 
-
-      document.getElementById('toggleInstructions').addEventListener('click', function (evt) {
-        var _this4 = this;
-
-        var instructions = document.querySelectorAll('.instructions');
-
-        _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(instructions).forEach(function (inst) {
-          if (inst.style.display === "none") {
-            inst.style.display = "block";
-            _this4.textContent = "hide instructions";
-          } else {
-            inst.style.display = "none";
-            _this4.textContent = "show instructions";
-          }
-        });
       }); // toggle pen pressure for brush color
 
       document.getElementById('togglePenPressureColor').addEventListener('click', function (evt) {
@@ -1005,20 +989,20 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_setupAnimationControl",
     value: function _setupAnimationControl() {
-      var _this5 = this;
+      var _this4 = this;
 
       document.getElementById('timePerFrame').addEventListener('onchange', function (evt) {
-        _this5.state.toolbarInstance.timePerFrame = parseInt(evt.target.selectedOptions[0].value);
+        _this4.state.toolbarInstance.timePerFrame = parseInt(evt.target.selectedOptions[0].value);
       });
     }
   }, {
     key: "_linkDemos",
     value: function _linkDemos() {
-      var _this6 = this;
+      var _this5 = this;
 
       var demoSelect = document.getElementById("chooseDemo");
       demoSelect.addEventListener("change", function (evt) {
-        _this6._getDemo(evt.target.selectedOptions[0].value);
+        _this5._getDemo(evt.target.selectedOptions[0].value);
       });
     }
   }, {
@@ -1037,7 +1021,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_playAnimation",
     value: function _playAnimation() {
-      var _this7 = this;
+      var _this6 = this;
 
       var timelineFrames = this.state.timelineFrames;
 
@@ -1062,8 +1046,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var totalElapsedTime = 0;
       var lastSpeed = this.state.toolbarInstance.timePerFrame;
       timelineFrames.forEach(function (frame, index) {
-        if (_this7.state.timelineMarkers[index + 1]) {
-          lastSpeed = parseInt(_this7.state.timelineMarkers[index + 1].speed);
+        if (_this6.state.timelineMarkers[index + 1]) {
+          lastSpeed = parseInt(_this6.state.timelineMarkers[index + 1].speed);
         }
 
         setTimeout(function () {
@@ -1092,7 +1076,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_importProjectUpdateFunc",
     value: function _importProjectUpdateFunc() {
-      var _this8 = this;
+      var _this7 = this;
 
       // update state when loading in a project
       var project = this.state.animationProject;
@@ -1111,14 +1095,14 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         var currFrameData = mergedLayersFrame.toDataURL();
         var currFrameIndex = index;
 
-        if (!_this8.timelineFramesSet.has(currFrameIndex)) {
+        if (!_this7.timelineFramesSet.has(currFrameIndex)) {
           newFrames.push({
             "data": currFrameData,
             "height": mergedLayersFrame.height,
             "width": mergedLayersFrame.width
           });
 
-          _this8.timelineFramesSet.add(currFrameIndex);
+          _this7.timelineFramesSet.add(currFrameIndex);
         } else {
           // update image data
           newFrames[currFrameIndex].data = currFrameData;
@@ -1144,7 +1128,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDemo",
     value: function _getDemo(selected) {
-      var _this9 = this;
+      var _this8 = this;
 
       // case for the blank option 
       if (selected === "") {
@@ -1163,7 +1147,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       httpRequest.onload = function () {
         var data = JSON.parse(httpRequest.responseText);
 
-        _this9.state.toolbarInstance.importData(data, _this9._importProjectUpdateFunc.bind(_this9));
+        _this8.state.toolbarInstance.importData(data, _this8._importProjectUpdateFunc.bind(_this8));
       };
 
       httpRequest.send();
@@ -1171,7 +1155,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this10 = this;
+      var _this9 = this;
 
       var animationProj = new _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__["AnimationProject"]('canvasArea');
       animationProj.addNewFrame(true);
@@ -1185,13 +1169,13 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         'toolbarInstance': newToolbar,
         'filtersInstance': newFilters
       }, function () {
-        _this10._setupToolbar();
+        _this9._setupToolbar();
 
-        _this10._linkDemos();
+        _this9._linkDemos();
 
-        _this10._setKeyDown(document);
+        _this9._setKeyDown(document);
 
-        _this10._timelineMarkerSetup();
+        _this9._timelineMarkerSetup();
       });
     }
   }, {
@@ -1202,20 +1186,43 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
     key: "_clickCaret",
     value: function _clickCaret(evt) {
       var id = evt.target.id;
-      var target = document.getElementById("display" + id);
+      /*
+      const target = document.getElementById("display" + id);
+      if(target.style.display !== "none"){
+      	target.style.display = "none";
+      	evt.target.innerHTML = "&#9656;";
+      }else{
+      	target.style.display = "block";
+      	evt.target.innerHTML = "&#9662;";
+      }*/
+      // map caret id to div id of option that should show up in the 2nd column of the toolbar
 
-      if (target.style.display !== "none") {
-        target.style.display = "none";
-        evt.target.innerHTML = "&#9656;";
-      } else {
-        target.style.display = "block";
-        evt.target.innerHTML = "&#9662;";
-      }
+      var options = {
+        "instructionsOption": "instructions",
+        "frameCtrlOption": "frameSection",
+        "layerCtrlOption": "layerSection",
+        "animationCtrlOption": "animControlSection",
+        "otherOption": "otherSection",
+        "brushesOption": "brushSection",
+        "filtersOption": "filterSection",
+        "demosOption": "showDemos"
+      };
+      Array.from(Object.keys(options)).forEach(function (section) {
+        var contentToToggle = document.getElementById(options[section]);
+        contentToToggle.classList.remove("toolbarSection2");
+
+        if (section === id) {
+          contentToToggle.classList.add("toolbarSection2");
+          contentToToggle.classList.remove("tbar");
+        } else {
+          contentToToggle.classList.add("tbar");
+        }
+      });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this11 = this;
+      var _this10 = this;
 
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         className: "container"
@@ -1254,25 +1261,23 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "caret2",
         id: "otherOption",
         onClick: this._clickCaret
+      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "demos ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
+        className: "caret2",
+        id: "demosOption",
+        onClick: this._clickCaret
       }, "\u25B8")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "instructions",
-        className: "toolbarSection"
+        className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
       }, " Use the spacebar to append a new layer or frame. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
       }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
-      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "toggleInstructions"
-      }, "hide instructions")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "layerSection",
-        className: "toolbarSection"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " layer ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
-        id: "LayerStuff",
-        onClick: this._clickCaret
-      }, "\u25BE"), " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " layer "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "displayLayerStuff"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "insertCanvas"
@@ -1286,12 +1291,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "downloadLayer"
       }, "download current layer"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "frameSection",
-        className: "toolbarSection"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " frame ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
-        id: "FrameStuff",
-        onClick: this._clickCaret
-      }, "\u25BE"), " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " frame "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "displayFrameStuff"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "addNewFrame"
@@ -1313,7 +1314,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           // 2. set changingLayerOrder in state to false
           var newLayerList = [];
 
-          var currFrame = _this11.state.animationProject.getCurrFrame();
+          var currFrame = _this10.state.animationProject.getCurrFrame();
 
           var currLayerIndex = currFrame.getCurrCanvasIndex();
           var currFrameLayerList = currFrame.getLayers();
@@ -1330,20 +1331,16 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           });
           currFrame.setLayers(newLayerList); // update the currently shown layer to reflect the re-ordering
 
-          _this11.state.toolbarInstance.setCurrLayer(currLayerIndex);
+          _this10.state.toolbarInstance.setCurrLayer(currLayerIndex);
 
-          _this11.setState({
+          _this10.setState({
             "changingLayerOrder": false
           });
         }
       }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "otherSection",
-        className: "toolbarSection"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " other ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
-        id: "OtherStuff",
-        onClick: this._clickCaret
-      }, "\u25BE"), " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " other "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "displayOtherStuff"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "importImage"
@@ -1361,7 +1358,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "toggleLayerOrFrame"
       }, " toggle frame addition on spacebar press "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "animControlSection",
-        className: "toolbarSection"
+        className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "animationControl"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " animation control: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", {
@@ -1372,7 +1369,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         name: "timePerFrame",
         id: "timePerFrame",
         onChange: function onChange(evt) {
-          _this11.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+          _this10.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
         }
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
         value: "100"
@@ -1386,7 +1383,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         value: "1000"
       }, "1000"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         onClick: function onClick() {
-          _this11._playAnimation();
+          _this10._playAnimation();
         }
       }, " play animation "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "generateGif"
@@ -1394,22 +1391,17 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "loadingScreen"
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "filterSection",
-        className: "toolbarSection"
+        className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__["FilterDashboard"], {
         filterManager: this.state.filtersInstance
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "brushSection",
-        className: "toolbarSection"
+        className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__["BrushDashboard"], {
         brushManager: this.state.brushInstance
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "colorPickerSection",
-        className: "toolbarSection"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "colorPicker"
-      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "showDemos",
-        className: "toolbarSection"
+        className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", null, " demos "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
         id: "chooseDemo"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
@@ -1422,7 +1414,12 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "demo"
       }, "cake_cut"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
         className: "demo"
-      }, "asakusa_mizusaki_butterfly"))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, "asakusa_mizusaki_butterfly"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "colorPickerSection",
+        className: "toolbarSection3"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "colorPicker"
+      })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "screen"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "screenContainer"
@@ -1445,7 +1442,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "animationTimelineMarkers"
       }, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
-        var marker = _this11.state.timelineMarkers[markerKey];
+        var marker = _this10.state.timelineMarkers[markerKey];
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
           htmlFor: 'marker' + marker.frameNumber + 'Select'
         }, "marker for frame ", marker.frameNumber, ": \xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
@@ -1460,7 +1457,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             'color': 'red'
           },
           onClick: function onClick() {
-            return _this11._timelineMarkerDelete(marker.frameNumber);
+            return _this10._timelineMarkerDelete(marker.frameNumber);
           }
         }, " \xA0delete "));
       }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {

@@ -234,7 +234,7 @@ class PresentationWrapper extends React.Component {
 		const project = this.state.animationProject;
 		
 		newToolbar.setCounter("count");
-		newToolbar.createColorWheel('colorPicker', 200);
+		newToolbar.createColorWheel('colorPicker', 170);
 		newToolbar.insertLayer('insertCanvas');
 		newToolbar.deleteLayer('deleteCanvas', (newLayerIndex) => {
 			this.setState({
@@ -549,24 +549,14 @@ class PresentationWrapper extends React.Component {
 		// make the active canvas shown reflect the state's current frame and layer? instead of toggling it in different places
 	}
 	
+	// TODO: rename this function
 	_clickCaret(evt){
 		const id = evt.target.id;
-		
-		/*
-		const target = document.getElementById("display" + id);
-		if(target.style.display !== "none"){
-			target.style.display = "none";
-			evt.target.innerHTML = "&#9656;";
-		}else{
-			target.style.display = "block";
-			evt.target.innerHTML = "&#9662;";
-		}*/
-		
+
 		// map caret id to div id of option that should show up in the 2nd column of the toolbar
 		const options = {
 			"instructionsOption": "instructions",
-			"frameCtrlOption": "frameSection",
-			"layerCtrlOption": "layerSection",
+			"frameLayerCtrlOption": "frameLayerSection",
 			"animationCtrlOption": "animControlSection",
 			"otherOption": "otherSection",
 			"brushesOption": "brushSection",
@@ -595,25 +585,25 @@ class PresentationWrapper extends React.Component {
 					
 						<div id="toolbarOptions" className="toolbarSection">
 							<ul>
-								<li>instructions <span className="caret2" id="instructionsOption" onClick={this._clickCaret}>&#9656;</span></li>
-								<li>frame control <span className="caret2" id="frameCtrlOption" onClick={this._clickCaret}>&#9656;</span></li>
-								<li>layer control <span className="caret2" id="layerCtrlOption" onClick={this._clickCaret}>&#9656;</span></li>
-								<li>animation control <span className="caret2" id="animationCtrlOption" onClick={this._clickCaret}>&#9656;</span></li>
-								<li>brushes <span className="caret2" id="brushesOption" onClick={this._clickCaret}>&#9656;</span></li>
-								<li>filters <span className="caret2" id="filtersOption" onClick={this._clickCaret}>&#9656;</span></li>
-								<li>other <span className="caret2" id="otherOption" onClick={this._clickCaret}>&#9656;</span></li>
-								<li>demos <span className="caret2" id="demosOption" onClick={this._clickCaret}>&#9656;</span></li>
+								<li id="instructionsOption" onClick={this._clickCaret}> instructions </li>
+								<li id="frameLayerCtrlOption" onClick={this._clickCaret}> frame/layer control </li>
+								<li id="animationCtrlOption" onClick={this._clickCaret}> animation control </li>
+								<li id="brushesOption" onClick={this._clickCaret}> brushes </li>
+								<li id="filtersOption" onClick={this._clickCaret}> filters </li>
+								<li id="otherOption" onClick={this._clickCaret}> other </li>
+								<li id="demosOption" onClick={this._clickCaret}> demos </li>
 							</ul>
 						</div>					
 						
 						<div id="instructions" className="tbar">
+							<h4> instructions </h4>
 							<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
 							<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
 							<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
 						</div>
 					
-						<div id="layerSection" className="tbar">
-							<h4> layer </h4>
+						<div id="frameLayerSection" className="tbar">
+							<h4> frame/layer controls </h4>
 							<div id="displayLayerStuff">
 								<button id='insertCanvas'>add new layer after</button>
 								<button id='deleteCanvas'>delete current layer</button>
@@ -621,10 +611,6 @@ class PresentationWrapper extends React.Component {
 								<button id='clearCanvas'>clear layer</button>
 								<button id='downloadLayer'>download current layer</button>
 							</div>
-						</div>
-						
-						<div id="frameSection" className="tbar">
-							<h4> frame </h4>
 							<div id="displayFrameStuff">
 								<button id='addNewFrame'>add new frame</button>
 								<button id='copyCurrFrame'>duplicate frame</button>

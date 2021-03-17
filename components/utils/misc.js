@@ -12,15 +12,15 @@ export function makeColorWheel(elementId, size){
 	colorWheel.setAttribute('width', size);
 	colorWheel.setAttribute('height', size);
 	
-	let colorWheelContext = colorWheel.getContext('2d');
-	let x = colorWheel.width / 2;
-	let y = colorWheel.height / 2;
-	let radius = 90;
+	const colorWheelContext = colorWheel.getContext('2d');
+	const x = colorWheel.width / 2;
+	const y = colorWheel.height / 2;
+	const radius = 70;
    
    // why 5600??
 	for(let angle = 0; angle <= 5600; angle++) {
-		let startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
-		let endAngle = (angle) * Math.PI / 180;
+		const startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
+		const endAngle = (angle) * Math.PI / 180;
 		colorWheelContext.beginPath();
 		colorWheelContext.moveTo(x, y);
 		//.arc(x, y, radius, startAngle, endAngle, anticlockwise)
@@ -28,7 +28,7 @@ export function makeColorWheel(elementId, size){
 		colorWheelContext.closePath();
 		//use .createRadialGradient to get a different color for each angle
 		//createRadialGradient(x0, y0, r0, x1, y1, r1)
-		let gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
+		const gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
 		gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
 		gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
 		colorWheelContext.fillStyle = gradient;
@@ -41,9 +41,7 @@ export function makeColorWheel(elementId, size){
 	colorWheelContext.arc(10, 10, 8, 0, 2*Math.PI);
 	colorWheelContext.fill();
 	
-	// make white pickable too
-	
-	// black outline
+	// make white pickable too (and add a black outline)
 	colorWheelContext.beginPath();
 	colorWheelContext.arc(30, 10, 8, 0, 2*Math.PI); // border around the white 
 	colorWheelContext.stroke();
@@ -56,7 +54,7 @@ export function makeColorWheel(elementId, size){
 	location.appendChild(colorWheel);
 	
 	// make the color wheel interactive and show picked color 
-	let showColor = document.createElement('p'); // this element will show the color picked 
+	const showColor = document.createElement('p'); // this element will show the color picked 
 	showColor.style.textAlign = 'center';
 	showColor.id = 'colorPicked';
 	showColor.textContent = "pick a color! :)";

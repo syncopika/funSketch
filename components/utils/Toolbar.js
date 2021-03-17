@@ -215,7 +215,7 @@ class Toolbar {
             const colorPicked = (document.getElementById(colorWheel.id).getContext('2d')).getImageData(x, y, 1, 1).data;
 			
             //correct the font color if the color is really dark
-			let colorPickedText = document.getElementById(showColor.id);
+			const colorPickedText = document.getElementById('colorPicked');
 			if(colorPicked[0] > 10 && colorPicked[1] > 200){
                 colorPickedText.style.color = "#000";
             }else{
@@ -229,7 +229,6 @@ class Toolbar {
             this.brush.changeBrushColor(colorPicked);
         });
     }
-
 	
     /***
         rotate image

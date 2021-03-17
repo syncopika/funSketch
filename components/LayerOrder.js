@@ -25,6 +25,7 @@ const LayerOrder = (props) => {
 		"margin": "2px auto",
 		"textAlign": "center",
 		"border": "1px solid #000",
+		"width": "10%",
 	};
 	
 	// use a hook to be able to drag and drop with 

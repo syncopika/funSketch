@@ -180,7 +180,10 @@ var BrushDashboard = function BrushDashboard(props) {
     "width": "80%",
     "margin": "2px auto",
     "textAlign": "center",
-    "border": "1px solid #000"
+    //"border": "1px solid #000",
+    "display": "grid",
+    "gridTemplateRows": "1fr",
+    "gridTemplateColumns": "1fr 1fr"
   }; // use a hook to be able to keep track of selected brush
 
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])("default"),
@@ -210,6 +213,11 @@ var BrushDashboard = function BrushDashboard(props) {
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     style: elementStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "gridRow": "1",
+      "gridColumn": "1"
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
     id: "brushSelect",
     style: {
@@ -255,7 +263,12 @@ var BrushDashboard = function BrushDashboard(props) {
         evt.target.style.color = "#000";
       }
     }, brushName);
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "gridRow": "1",
+      "gridColumn": "2"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     id: "adjustBrushSize"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
     className: "text-info"
@@ -319,7 +332,7 @@ function constructSlider(name, params) {
     }
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
     id: sliderCounterId
-  }, params.value), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("br", null));
+  }, params.value));
 }
 
 var FilterDashboard = function FilterDashboard(props) {
@@ -334,7 +347,10 @@ var FilterDashboard = function FilterDashboard(props) {
     "width": "80%",
     "margin": "2px auto",
     "textAlign": "center",
-    "border": "1px solid #000"
+    //"border": "1px solid #000",
+    "display": "grid",
+    "gridTemplateRows": "1fr",
+    "gridTemplateColumns": "1fr 1fr"
   }; // use a hook to be able to keep track of selected filter
 
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(""),
@@ -354,6 +370,11 @@ var FilterDashboard = function FilterDashboard(props) {
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     style: elementStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "gridRow": "1",
+      "gridColumn": "1"
+    }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
     id: "filterSelect",
     style: {
@@ -403,7 +424,12 @@ var FilterDashboard = function FilterDashboard(props) {
         evt.target.style.color = "#000";
       }
     }, filterName);
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
+  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "gridRow": "1",
+      "gridColumn": "2"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
     id: "applyFilter",
     onClick: function onClick() {
       filterManager.filterCanvasOption(selectedFilter);
@@ -469,7 +495,8 @@ var LayerOrder = function LayerOrder(props) {
   var elementStyle = {
     "margin": "2px auto",
     "textAlign": "center",
-    "border": "1px solid #000"
+    "border": "1px solid #000",
+    "width": "10%"
   }; // use a hook to be able to drag and drop with 
 
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(0),
@@ -853,7 +880,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var newToolbar = this.state.toolbarInstance;
       var project = this.state.animationProject;
       newToolbar.setCounter("count");
-      newToolbar.createColorWheel('colorPicker', 200);
+      newToolbar.createColorWheel('colorPicker', 170);
       newToolbar.insertLayer('insertCanvas');
       newToolbar.deleteLayer('deleteCanvas', function (newLayerIndex) {
         _this3.setState({
@@ -1181,26 +1208,16 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate() {// make the active canvas shown reflect the state's current frame and layer? instead of toggling it in different places
-    }
+    } // TODO: rename this function
+
   }, {
     key: "_clickCaret",
     value: function _clickCaret(evt) {
-      var id = evt.target.id;
-      /*
-      const target = document.getElementById("display" + id);
-      if(target.style.display !== "none"){
-      	target.style.display = "none";
-      	evt.target.innerHTML = "&#9656;";
-      }else{
-      	target.style.display = "block";
-      	evt.target.innerHTML = "&#9662;";
-      }*/
-      // map caret id to div id of option that should show up in the 2nd column of the toolbar
+      var id = evt.target.id; // map caret id to div id of option that should show up in the 2nd column of the toolbar
 
       var options = {
         "instructionsOption": "instructions",
-        "frameCtrlOption": "frameSection",
-        "layerCtrlOption": "layerSection",
+        "frameLayerCtrlOption": "frameLayerSection",
         "animationCtrlOption": "animControlSection",
         "otherOption": "otherSection",
         "brushesOption": "brushSection",
@@ -1233,51 +1250,40 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "toolbarOptions",
         className: "toolbarSection"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "instructions ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "instructionsOption",
         onClick: this._clickCaret
-      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "frame control ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
-        id: "frameCtrlOption",
+      }, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "frameLayerCtrlOption",
         onClick: this._clickCaret
-      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "layer control ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
-        id: "layerCtrlOption",
-        onClick: this._clickCaret
-      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "animation control ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
+      }, " frame/layer control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "animationCtrlOption",
         onClick: this._clickCaret
-      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "brushes ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
+      }, " animation control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "brushesOption",
         onClick: this._clickCaret
-      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "filters ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
+      }, " brushes "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "filtersOption",
         onClick: this._clickCaret
-      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "other ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
+      }, " filters "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "otherOption",
         onClick: this._clickCaret
-      }, "\u25B8")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", null, "demos ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
+      }, " other "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "demosOption",
         onClick: this._clickCaret
-      }, "\u25B8")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, " demos "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "instructions",
         className: "tbar"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
       }, " Use the spacebar to append a new layer or frame. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
       }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
       }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "layerSection",
+        id: "frameLayerSection",
         className: "tbar"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " layer "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "displayLayerStuff"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "insertCanvas"
@@ -1289,10 +1295,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "clearCanvas"
       }, "clear layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "downloadLayer"
-      }, "download current layer"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "frameSection",
-        className: "tbar"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " frame "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, "download current layer")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "displayFrameStuff"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "addNewFrame"
@@ -5567,7 +5570,7 @@ var Toolbar = /*#__PURE__*/function () {
         var y = evt.offsetY;
         var colorPicked = document.getElementById(colorWheel.id).getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
 
-        var colorPickedText = document.getElementById(showColor.id);
+        var colorPickedText = document.getElementById('colorPicked');
 
         if (colorPicked[0] > 10 && colorPicked[1] > 200) {
           colorPickedText.style.color = "#000";
@@ -6144,7 +6147,7 @@ function makeColorWheel(elementId, size) {
   var colorWheelContext = colorWheel.getContext('2d');
   var x = colorWheel.width / 2;
   var y = colorWheel.height / 2;
-  var radius = 90; // why 5600??
+  var radius = 70; // why 5600??
 
   for (var angle = 0; angle <= 5600; angle++) {
     var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
@@ -6168,8 +6171,7 @@ function makeColorWheel(elementId, size) {
   colorWheelContext.fillStyle = "#000";
   colorWheelContext.beginPath();
   colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
-  colorWheelContext.fill(); // make white pickable too
-  // black outline
+  colorWheelContext.fill(); // make white pickable too (and add a black outline)
 
   colorWheelContext.beginPath();
   colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 

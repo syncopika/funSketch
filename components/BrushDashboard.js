@@ -11,10 +11,10 @@ const BrushDashboard = (props) => {
 	};
 	
 	const elementStyle = {
-		"width": "80%",
-		"margin": "2px auto",
+		"width": "85%",
+		"height": "100%",
+		"margin": "1% auto",
 		"textAlign": "center",
-		//"border": "1px solid #000",
 		"display": "grid",
 		"gridTemplateRows": "1fr",
 		"gridTemplateColumns": "1fr 1fr",
@@ -43,50 +43,72 @@ const BrushDashboard = (props) => {
 			<div style={
 				{
 					"gridRow": "1",
-					"gridColumn": "1"
+					"gridColumn": "1",
+					"position": "relative",
+					"height": "100%"
 				}
 			}>
-				<p 
-					id='brushSelect'
-					style={{"margin": "0"}}
-					onClick={
-						function(){
-							let el = document.getElementById("brushDisplay");
-							if(el.style.display !== "block" ){
-								el.style.display = "block";
-							}else{
-								el.style.display = "none";
+				<div style={
+					{
+						"position": "absolute",
+						"overflowY": "auto",
+						"top": "0",
+						"left": "10%",
+						"height": "85%",
+						"width": "85%"
+					}
+				}>
+					<p 
+						id='brushSelect'
+						style={{"margin": "0"}}
+						onClick={
+							function(){
+								let el = document.getElementById("brushDisplay");
+								if(el.style.display !== "block" ){
+									el.style.display = "block";
+								}else{
+									el.style.display = "none";
+								}
+							}
+						}					
+					> brushes &#9660; </p>
+					<div 
+						id='brushDisplay'
+						style={
+							{
+								"display": "none"
 							}
 						}
-					}					
-				> brushes &#9660; </p>
-				<div 
-					id='brushDisplay'
-					style={{"display": "none"}}
-				>
-					<ul 
-						id='brushChoices'
-						style={{"margin": "0 auto", "padding": "0"}}
 					>
-					{
-						brushNames.map((brushName, index) => {
-							let selectedStyle = JSON.parse(JSON.stringify(style));
-							if(selectedBrush === brushName){
-								selectedStyle["backgroundColor"] = "#5f9ea0";
+						<ul 
+							id='brushChoices'
+							style={
+								{
+									"margin": "0 auto", 
+									"padding": "0"
+								}
 							}
-							let s = (selectedStyle !== null) ? selectedStyle : style;
-							return <li 
-								style={s}
-								key={(`brush_${index}`)}
-								id={(`${brushName}_${index}`)}
-								onClick={equipBrush(brushManager, brushName)}
-								onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}}
-								onMouseOut={(evt) => {evt.target.style.color = "#000"}}
-							>{brushName}</li>
-						})
-					}
-					</ul>
-				</div>
+						>
+						{
+							brushNames.map((brushName, index) => {
+								let selectedStyle = JSON.parse(JSON.stringify(style));
+								if(selectedBrush === brushName){
+									selectedStyle["backgroundColor"] = "#5f9ea0";
+								}
+								let s = (selectedStyle !== null) ? selectedStyle : style;
+								return <li 
+									style={s}
+									key={(`brush_${index}`)}
+									id={(`${brushName}_${index}`)}
+									onClick={equipBrush(brushManager, brushName)}
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}}
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+								>{brushName}</li>
+							})
+						}
+						</ul>
+					</div>
+				</div>	
 			</div>
 				
 			<div style={

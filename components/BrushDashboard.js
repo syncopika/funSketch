@@ -93,7 +93,7 @@ const BrushDashboard = (props) => {
 							brushNames.map((brushName, index) => {
 								let selectedStyle = JSON.parse(JSON.stringify(style));
 								if(selectedBrush === brushName){
-									selectedStyle["backgroundColor"] = "#5f9ea0";
+									selectedStyle["backgroundColor"] = "#c8c8c8";
 								}
 								let s = (selectedStyle !== null) ? selectedStyle : style;
 								return <li 

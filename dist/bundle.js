@@ -258,7 +258,7 @@ var BrushDashboard = function BrushDashboard(props) {
     var selectedStyle = JSON.parse(JSON.stringify(style));
 
     if (selectedBrush === brushName) {
-      selectedStyle["backgroundColor"] = "#5f9ea0";
+      selectedStyle["backgroundColor"] = "#c8c8c8";
     }
 
     var s = selectedStyle !== null ? selectedStyle : style;
@@ -427,7 +427,7 @@ var FilterDashboard = function FilterDashboard(props) {
 
     if (selectedFilter === filterName) {
       selectedStyle = JSON.parse(JSON.stringify(style));
-      selectedStyle["backgroundColor"] = "#5f9ea0";
+      selectedStyle["backgroundColor"] = "#c8c8c8";
     }
 
     var s = selectedStyle !== null ? selectedStyle : style;
@@ -1230,11 +1230,10 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentDidUpdate",
     value: function componentDidUpdate() {// make the active canvas shown reflect the state's current frame and layer? instead of toggling it in different places
-    } // TODO: rename this function
-
+    }
   }, {
-    key: "_clickCaret",
-    value: function _clickCaret(evt) {
+    key: "_clickOption",
+    value: function _clickOption(evt) {
       var id = evt.target.id; // map caret id to div id of option that should show up in the 2nd column of the toolbar
 
       var options = {
@@ -1274,28 +1273,70 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "toolbarSection"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "instructionsOption",
-        onClick: this._clickCaret
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
       }, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "frameLayerCtrlOption",
-        onClick: this._clickCaret
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
       }, " frame/layer control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "animationCtrlOption",
-        onClick: this._clickCaret
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
       }, " animation control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "brushesOption",
-        onClick: this._clickCaret
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
       }, " brushes "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "filtersOption",
-        onClick: this._clickCaret
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
       }, " filters "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "otherOption",
-        onClick: this._clickCaret
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
       }, " other "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
         id: "demosOption",
-        onClick: this._clickCaret
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
       }, " demos "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "instructions",
-        className: "tbar"
+        className: "toolbarSection2"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
       }, " Use the spacebar to append a new layer or frame. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
@@ -5609,9 +5650,6 @@ var Toolbar = /*#__PURE__*/function () {
     /***
         rotate image
         pass in an element id that will rotate the current canvas image on click
-        
-        currently buggy! after rotation, image becomes blurred. also, when attempting to draw on same canvas,
-        coordinates get altered so on mousedown the drawing gets offset
     ***/
 
   }, {
@@ -5627,13 +5665,19 @@ var Toolbar = /*#__PURE__*/function () {
         var width = canvas.currentCanvas.getAttribute("width");
         var height = canvas.currentCanvas.getAttribute("height");
         var context = canvas.currentCanvas.getContext("2d");
-        Promise.all([createImageBitmap(canvas.currentCanvas, 0, 0, width, height)]).then(function (bitmap) {
-          context.clearRect(0, 0, width, height);
-          context.translate(width / 2, height / 2);
-          context.rotate(Math.PI / 180);
-          context.translate(-width / 2, -height / 2); //the returned bitmap is an array
+        createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then(function (bitmap) {
+          var tmpCanvas = document.createElement("canvas");
+          tmpCanvas.width = width;
+          tmpCanvas.height = height; // use a temp canvas because translating on the real canvas will mess with mousedown coords
 
-          context.drawImage(bitmap[0], 0, 0);
+          var tmpCtx = tmpCanvas.getContext("2d");
+          tmpCtx.clearRect(0, 0, width, height);
+          tmpCtx.translate(width / 2, height / 2);
+          tmpCtx.rotate(Math.PI / 180);
+          tmpCtx.translate(-width / 2, -height / 2);
+          tmpCtx.drawImage(bitmap, 0, 0); // then draw image data from tmp canvas to the real one
+
+          context.putImageData(tmpCtx.getImageData(0, 0, width, height), 0, 0);
         });
       });
     }
@@ -5744,12 +5788,12 @@ var Toolbar = /*#__PURE__*/function () {
 
           img.onload = function () {
             // change current canvas' width and height according to imported picture
+            console.log("width: " + img.width);
+            console.log("height: " + img.height);
             var currentCanvas = canvas.currentCanvas;
             var context = currentCanvas.getContext("2d");
-            var height = img.height;
-            var width = img.width;
-            height = canvas.height;
-            width = canvas.width;
+            var height = canvas.height;
+            var width = canvas.width;
             currentCanvas.setAttribute('height', height);
             currentCanvas.setAttribute('width', width);
             context.drawImage(img, 0, 0, width, height);

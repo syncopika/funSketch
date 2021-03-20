@@ -549,8 +549,7 @@ class PresentationWrapper extends React.Component {
 		// make the active canvas shown reflect the state's current frame and layer? instead of toggling it in different places
 	}
 	
-	// TODO: rename this function
-	_clickCaret(evt){
+	_clickOption(evt){
 		const id = evt.target.id;
 
 		// map caret id to div id of option that should show up in the 2nd column of the toolbar
@@ -585,17 +584,38 @@ class PresentationWrapper extends React.Component {
 					
 						<div id="toolbarOptions" className="toolbarSection">
 							<ul>
-								<li id="instructionsOption" onClick={this._clickCaret}> instructions </li>
-								<li id="frameLayerCtrlOption" onClick={this._clickCaret}> frame/layer control </li>
-								<li id="animationCtrlOption" onClick={this._clickCaret}> animation control </li>
-								<li id="brushesOption" onClick={this._clickCaret}> brushes </li>
-								<li id="filtersOption" onClick={this._clickCaret}> filters </li>
-								<li id="otherOption" onClick={this._clickCaret}> other </li>
-								<li id="demosOption" onClick={this._clickCaret}> demos </li>
+								<li id="instructionsOption"
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+									onClick={this._clickOption}> instructions </li>
+								<li id="frameLayerCtrlOption" 
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+									onClick={this._clickOption}> frame/layer control </li>
+								<li id="animationCtrlOption" 
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+									onClick={this._clickOption}> animation control </li>
+								<li id="brushesOption" 
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+									onClick={this._clickOption}> brushes </li>
+								<li id="filtersOption" 
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+									onClick={this._clickOption}> filters </li>
+								<li id="otherOption"
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+									onClick={this._clickOption}> other </li>
+								<li id="demosOption" 
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+									onClick={this._clickOption}> demos </li>
 							</ul>
 						</div>					
 						
-						<div id="instructions" className="tbar">
+						<div id="instructions" className="toolbarSection2">
 							<h4> instructions </h4>
 							<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
 							<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>

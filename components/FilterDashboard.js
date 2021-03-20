@@ -123,7 +123,7 @@ const FilterDashboard = (props) => {
 								let selectedStyle = null;
 								if(selectedFilter === filterName){
 									selectedStyle = JSON.parse(JSON.stringify(style));
-									selectedStyle["backgroundColor"] = "#5f9ea0";
+									selectedStyle["backgroundColor"] = "#c8c8c8";
 								}
 								let s = (selectedStyle !== null) ? selectedStyle : style;
 								return <li 

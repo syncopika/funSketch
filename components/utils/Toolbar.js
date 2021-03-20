@@ -233,27 +233,31 @@ class Toolbar {
     /***
         rotate image
         pass in an element id that will rotate the current canvas image on click
-        
-        currently buggy! after rotation, image becomes blurred. also, when attempting to draw on same canvas,
-        coordinates get altered so on mousedown the drawing gets offset
     ***/
     rotateImage(elementId){
         //rotate image
         document.getElementById(elementId).addEventListener('click', () => {
-            let canvas = this.animationProj.getCurrFrame();
+            const canvas = this.animationProj.getCurrFrame();
             //using a promise to convert the initial image to a bitmap
-            let width = canvas.currentCanvas.getAttribute("width");
-            let height = canvas.currentCanvas.getAttribute("height");
-            let context = canvas.currentCanvas.getContext("2d");
-            Promise.all([
-                createImageBitmap(canvas.currentCanvas, 0, 0, width, height)
-            ]).then(function(bitmap){
-                context.clearRect(0, 0, width, height);
-                context.translate(width / 2, height / 2);
-                context.rotate((Math.PI) / 180);
-                context.translate(-width / 2, -height / 2);
-                //the returned bitmap is an array
-                context.drawImage(bitmap[0], 0, 0);
+            const width = canvas.currentCanvas.getAttribute("width");
+            const height = canvas.currentCanvas.getAttribute("height");
+            const context = canvas.currentCanvas.getContext("2d");
+            createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then(function(bitmap){
+				const tmpCanvas = document.createElement("canvas");
+				tmpCanvas.width = width;
+				tmpCanvas.height = height;
+				
+				// use a temp canvas because translating on the real canvas will mess with mousedown coords
+				const tmpCtx = tmpCanvas.getContext("2d");
+				tmpCtx.clearRect(0, 0, width, height);
+                tmpCtx.translate(width / 2, height / 2);
+                tmpCtx.rotate((Math.PI) / 180);
+                tmpCtx.translate(-width / 2, -height / 2);
+				
+                tmpCtx.drawImage(bitmap, 0, 0);
+				
+				// then draw image data from tmp canvas to the real one
+				context.putImageData(tmpCtx.getImageData(0, 0, width, height), 0, 0);
             });
         });
     }
@@ -342,23 +346,22 @@ class Toolbar {
             }
 			
             function getFile(e){
-                let img = new Image();
-                let reader = new FileReader();
-                let file = e.target.files[0];
-                if (!file.type.match(/image.*/)){
+                const img = new Image();
+                const reader = new FileReader();
+                const file = e.target.files[0];
+                if(!file.type.match(/image.*/)){
                     console.log("not a valid image");
                     return;
                 }
                 //when the image loads, put it on the canvas.
                 img.onload = () => {
                     // change current canvas' width and height according to imported picture
-                    let currentCanvas = canvas.currentCanvas;
-                    let context = currentCanvas.getContext("2d");
-                    let height = img.height;
-                    let width = img.width;
-
-					height = canvas.height;
-					width = canvas.width;
+					console.log("width: " + img.width);
+					console.log("height: " + img.height);
+                    const currentCanvas = canvas.currentCanvas;
+                    const context = currentCanvas.getContext("2d");
+					const height = canvas.height;
+					const width = canvas.width;
 					currentCanvas.setAttribute('height', height);
 					currentCanvas.setAttribute('width', width);
                     

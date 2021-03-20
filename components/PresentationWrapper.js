@@ -284,6 +284,7 @@ class PresentationWrapper extends React.Component {
 		newToolbar.undo('undo');
 		newToolbar.importImage('importImage');
 		newToolbar.save('saveWork');
+		newToolbar.toggleToolbarPosition('toggleToolbarPos', 'toolbar');
 		
 		newToolbar.importProject('importProject', this._importProjectUpdateFunc.bind(this));
 		
@@ -676,6 +677,7 @@ class PresentationWrapper extends React.Component {
 						<div id="otherSection" className="tbar">
 							<h4> other </h4>
 							<div id="displayOtherStuff">
+								<button id='toggleToolbarPos'>toggle toolbar position</button>
 								<button id='importImage'> import image </button>
 								<button id='rotateCanvasImage'>rotate image</button>
 								<button id='undo'>undo</button>

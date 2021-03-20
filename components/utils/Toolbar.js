@@ -437,6 +437,18 @@ class Toolbar {
 		});
 	}
 	
+	// for toggling the toolbar's position as sticky or not
+	toggleToolbarPosition(elementId, toolbarId){
+		document.getElementById(elementId).addEventListener('click', () => {
+			const toolbar = document.getElementById(toolbarId);
+			if(toolbar.style.position === "sticky" || toolbar.style.position === ""){
+				toolbar.style.position = "static";
+			}else{
+				toolbar.style.position = "sticky";
+			}
+		});
+	}
+	
     /********
     
         this section controls the animation playback features

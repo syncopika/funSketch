@@ -949,6 +949,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       newToolbar.undo('undo');
       newToolbar.importImage('importImage');
       newToolbar.save('saveWork');
+      newToolbar.toggleToolbarPosition('toggleToolbarPos', 'toolbar');
       newToolbar.importProject('importProject', this._importProjectUpdateFunc.bind(this)); // make the goLeft and goRight arrows clickable FOR LAYERS
       // note: this is for clicking the icons with a mouse!
 
@@ -1409,6 +1410,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " other "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "displayOtherStuff"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "toggleToolbarPos"
+      }, "toggle toolbar position"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "importImage"
       }, " import image "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "rotateCanvasImage"
@@ -5885,6 +5888,20 @@ var Toolbar = /*#__PURE__*/function () {
             link.click();
           }
         });
+      });
+    } // for toggling the toolbar's position as sticky or not
+
+  }, {
+    key: "toggleToolbarPosition",
+    value: function toggleToolbarPosition(elementId, toolbarId) {
+      document.getElementById(elementId).addEventListener('click', function () {
+        var toolbar = document.getElementById(toolbarId);
+
+        if (toolbar.style.position === "sticky" || toolbar.style.position === "") {
+          toolbar.style.position = "static";
+        } else {
+          toolbar.style.position = "sticky";
+        }
       });
     }
     /********

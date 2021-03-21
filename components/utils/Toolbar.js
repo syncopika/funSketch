@@ -1,3 +1,4 @@
+import { makeColorWheel } from "./misc.js";
 
 class Toolbar {
 	constructor(brush, animationProj){
@@ -203,73 +204,18 @@ class Toolbar {
     /***
         color wheel functions
     ***/
-    // pass in the elementId of the div where the color wheel should be 
+    // pass in the elementId of the div where the color wheel should be (its container)
     // pass in the size of the canvas of the color wheel 
     createColorWheel(elementId, size){
-        let location = document.getElementById(elementId);
-        
-		let colorWheel = document.createElement('canvas');
-        colorWheel.id = "colorWheel";
-        colorWheel.setAttribute('width', size);
-        colorWheel.setAttribute('height', size);
-        
-		let colorWheelContext = colorWheel.getContext('2d');
-        let x = colorWheel.width / 2;
-        let y = colorWheel.height / 2;
-        let radius = 90;
-       
-	   // why 5600??
-        for(let angle = 0; angle <= 5600; angle++) {
-            let startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
-            let endAngle = (angle) * Math.PI / 180;
-            colorWheelContext.beginPath();
-            colorWheelContext.moveTo(x, y);
-            //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
-            colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
-            colorWheelContext.closePath();
-            //use .createRadialGradient to get a different color for each angle
-            //createRadialGradient(x0, y0, r0, x1, y1, r1)
-            let gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
-            gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
-            gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
-            colorWheelContext.fillStyle = gradient;
-            colorWheelContext.fill();
-        }
-		
-        // make black a pickable color 
-        colorWheelContext.fillStyle = "#000";
-		colorWheelContext.beginPath();
-        colorWheelContext.arc(10, 10, 8, 0, 2*Math.PI);
-		colorWheelContext.fill();
-		
-        // make white pickable too
-		
-		// black outline
-		colorWheelContext.beginPath();
-        colorWheelContext.arc(30, 10, 8, 0, 2*Math.PI); // border around the white 
-        colorWheelContext.stroke();
-		
-		// make sure circle is filled with #fff
-		colorWheelContext.fillStyle = "#fff";
-        colorWheelContext.arc(30, 10, 8, 0, 2*Math.PI);
-		colorWheelContext.fill();
-		
-        location.appendChild(colorWheel);
-		
-        // make the color wheel interactive and show picked color 
-        let showColor = document.createElement('p'); // this element will show the color picked 
-        showColor.style.textAlign = 'center';
-        showColor.id = 'colorPicked';
-        showColor.textContent = "pick a color! :)";
-        location.appendChild(showColor);
+        const colorWheel = makeColorWheel(elementId, size);
         
 		document.getElementById(colorWheel.id).addEventListener('mousedown', (evt) => {
-            let x = evt.offsetX;
-            let y = evt.offsetY;
-            let colorPicked = (document.getElementById(colorWheel.id).getContext('2d')).getImageData(x, y, 1, 1).data;
+			const x = evt.offsetX;
+			const y = evt.offsetY;
+			const colorPicked = (document.getElementById(colorWheel.id).getContext('2d')).getImageData(x, y, 1, 1).data;
 			
             //correct the font color if the color is really dark
-			let colorPickedText = document.getElementById(showColor.id);
+			const colorPickedText = document.getElementById('colorPicked');
 			if(colorPicked[0] > 10 && colorPicked[1] > 200){
                 colorPickedText.style.color = "#000";
             }else{
@@ -281,36 +227,37 @@ class Toolbar {
             
 			// update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
             this.brush.changeBrushColor(colorPicked);
-			//this.brush.currColorArray = colorPicked;
-            //this.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
         });
     }
-
 	
     /***
         rotate image
         pass in an element id that will rotate the current canvas image on click
-        
-        currently buggy! after rotation, image becomes blurred. also, when attempting to draw on same canvas,
-        coordinates get altered so on mousedown the drawing gets offset
     ***/
     rotateImage(elementId){
         //rotate image
         document.getElementById(elementId).addEventListener('click', () => {
-            let canvas = this.animationProj.getCurrFrame();
+            const canvas = this.animationProj.getCurrFrame();
             //using a promise to convert the initial image to a bitmap
-            let width = canvas.currentCanvas.getAttribute("width");
-            let height = canvas.currentCanvas.getAttribute("height");
-            let context = canvas.currentCanvas.getContext("2d");
-            Promise.all([
-                createImageBitmap(canvas.currentCanvas, 0, 0, width, height)
-            ]).then(function(bitmap){
-                context.clearRect(0, 0, width, height);
-                context.translate(width / 2, height / 2);
-                context.rotate((Math.PI) / 180);
-                context.translate(-width / 2, -height / 2);
-                //the returned bitmap is an array
-                context.drawImage(bitmap[0], 0, 0);
+            const width = canvas.currentCanvas.getAttribute("width");
+            const height = canvas.currentCanvas.getAttribute("height");
+            const context = canvas.currentCanvas.getContext("2d");
+            createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then(function(bitmap){
+				const tmpCanvas = document.createElement("canvas");
+				tmpCanvas.width = width;
+				tmpCanvas.height = height;
+				
+				// use a temp canvas because translating on the real canvas will mess with mousedown coords
+				const tmpCtx = tmpCanvas.getContext("2d");
+				tmpCtx.clearRect(0, 0, width, height);
+				tmpCtx.translate(width / 2, height / 2);
+				tmpCtx.rotate((Math.PI) / 180);
+				tmpCtx.translate(-width / 2, -height / 2);
+				
+				tmpCtx.drawImage(bitmap, 0, 0);
+				
+				// then draw image data from tmp canvas to the real one
+				context.putImageData(tmpCtx.getImageData(0, 0, width, height), 0, 0);
             });
         });
     }
@@ -399,23 +346,20 @@ class Toolbar {
             }
 			
             function getFile(e){
-                let img = new Image();
-                let reader = new FileReader();
-                let file = e.target.files[0];
-                if (!file.type.match(/image.*/)){
+                const img = new Image();
+                const reader = new FileReader();
+                const file = e.target.files[0];
+                if(!file.type.match(/image.*/)){
                     console.log("not a valid image");
                     return;
                 }
                 //when the image loads, put it on the canvas.
                 img.onload = () => {
                     // change current canvas' width and height according to imported picture
-                    let currentCanvas = canvas.currentCanvas;
-                    let context = currentCanvas.getContext("2d");
-                    let height = img.height;
-                    let width = img.width;
-
-					height = canvas.height;
-					width = canvas.width;
+					const currentCanvas = canvas.currentCanvas;
+					const context = currentCanvas.getContext("2d");
+					const height = canvas.height;
+					const width = canvas.width;
 					currentCanvas.setAttribute('height', height);
 					currentCanvas.setAttribute('width', width);
                     
@@ -488,6 +432,18 @@ class Toolbar {
                     link.click();
                 }
 			});
+		});
+	}
+	
+	// for toggling the toolbar's position as sticky or not
+	toggleToolbarPosition(elementId, toolbarId){
+		document.getElementById(elementId).addEventListener('click', () => {
+			const toolbar = document.getElementById(toolbarId);
+			if(toolbar.style.position === "sticky" || toolbar.style.position === ""){
+				toolbar.style.position = "static";
+			}else{
+				toolbar.style.position = "sticky";
+			}
 		});
 	}
 	
@@ -657,7 +613,58 @@ class Toolbar {
             link.download = name + ".json";
             link.click();
         });
-    };
+    }
+	
+	// data: JSON data representing a project
+	// updateStateFunction: function that updates state. used in the react component that has the toolbar as a prop
+	importData(data, updateStateFunction){
+		if(!data[0] || (!data[0].name && !data[0].height && !data[0].width && !data[0].data)){
+			console.log("import failed: it appears to not be a valid project! :<");
+			return;
+		}
+		// clear existing project
+		this.animationProj.resetProject();
+		
+		// load saved project
+		data.forEach((frame, index) => {
+			if(index > 0){
+				// add a new frame
+				this.animationProj.addNewFrame();
+			}
+			// overwrite existing frame
+			// TODO: implement an updateFrame method 
+			// something like: animationProj.updateFrame(0, frame);
+			const currFrame = this.animationProj.getFrames()[index];
+			const currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+			const currFrameLayersFromCurrPrj = currFrame.getLayers();
+			
+			currFrameLayersFromImport.forEach((layer, layerIndex) => {
+				
+				if((layerIndex + 1) > currFrameLayersFromCurrPrj.length){
+					// add new layer to curr project as needed based on import
+					currFrame.setupNewLayer();
+				}
+				
+				const currLayer = currFrame.getLayers()[layerIndex];
+
+				// add the image data 
+				const newCtx = currLayer.getContext("2d");
+				const img = new Image();
+				(function(context, image){
+					image.onload = function(){
+						context.drawImage(image, 0, 0);
+						if(index === data.length-1 && updateStateFunction){
+							// after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
+							updateStateFunction();
+						}
+					};
+					image.src = layer.imageData;
+				})(newCtx, img);
+			});
+			
+			currFrame.setCurrIndex(frame.currentIndex);
+		});
+	}
 	
 	importProject(elementId, updateStateFunction){
 		const self = this;
@@ -665,14 +672,14 @@ class Toolbar {
             fileHandler();
             //import project json file
             function fileHandler(){
-                let input = document.createElement('input');
+                const input = document.createElement('input');
                 input.type = 'file';
                 input.addEventListener('change', getFile, false);
                 input.click();
             }
             function getFile(e){
-                let reader = new FileReader();
-                let file = e.target.files[0];
+                const reader = new FileReader();
+                const file = e.target.files[0];
                 //when the file loads, put it on the canvas.
                 reader.onload = (function(theFile){
                     return function(e){
@@ -683,72 +690,17 @@ class Toolbar {
                             data = JSON.parse(e.target.result);
                         }catch(e){
                             // not valid json file 
+							console.log("import failed: not a valid JSON file");
                             return;
                         }
-                        // do some validation
-                        // if there is no canvas
-                        // or it's a valid json object but no fields correspond to a canvas, quit
-                        if (!data[0] || (!data[0].name && !data[0].height && !data[0].width && !data[0].data)) {
-                            console.log("it appears to not be a valid project! :<");
-                            return;
-                        }
-                        // clear existing project
-                        self.animationProj.resetProject();
-						
-                        // load saved project
-                        data.forEach(function(frame, index){
-                            if(index > 0){
-                                // add a new frame
-                                self.animationProj.addNewFrame();
-                            }
-                            // overwrite existing frame
-                            // TODO: implement an updateFrame method 
-                            // something like: animationProj.updateFrame(0, frame);
-                            let currFrame = self.animationProj.getFrames()[index];
-                            let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-                            let currFrameLayersFromCurrPrj = currFrame.getLayers();
-                            
-							currFrameLayersFromImport.forEach(function(layer, layerIndex){
-								
-                                if((layerIndex + 1) > currFrameLayersFromCurrPrj.length){
-                                    // add new layer to curr project as needed based on import
-                                    currFrame.setupNewLayer();
-                                }
-								
-                                let currLayer = currFrame.getLayers()[layerIndex];
-                                // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
-                                currLayer.style.opacity = layer.opacity;
-                                currLayer.style.zIndex = layer.zIndex;
-
-                                // add the image data 
-                                let newCtx = currLayer.getContext("2d");
-                                let img = new Image();
-                                (function(context, image){
-                                    image.onload = function(){
-                                        context.drawImage(image, 0, 0);
-										if(index === data.length-1 && updateStateFunction){
-											updateStateFunction();
-										}
-                                    };
-                                    image.src = layer.imageData;
-                                })(newCtx, img);
-									
-								// make sure to update this frame's current canvas so it matches currentIndex
-								// another thing to refactor later (i.e. since we have currentIndex, we really shouldn't have another variable
-								// to keep track of whose value could be known with currentIndex)
-								if(layerIndex === currFrame.currentIndex){
-									currFrame.currentCanvas = currLayer;
-								}
-                            });
-							
-							currFrame.setCurrIndex(frame.currentIndex);
-                        });
+						self.importData(data, updateStateFunction);
                     };
                 })(file);
                 reader.readAsText(file);
             }
         });
-    };
+    }
+	
 } // end of Toolbar 
 
 

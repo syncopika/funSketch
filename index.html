@@ -3,7 +3,7 @@
 <html>
 
 <head>
-	<title> funSketch! </title>
+	<title> funSketch </title>
 	<meta charset='utf-8'>
 	<link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -15,20 +15,19 @@
 		font-family: 'Merriweather', serif;
 	}
 	
-	#buttons{
-		text-align: center;
-		border: 1px solid #000;
-	}
-	
 	button{
 		margin: 3px;
 		font-size: 13px;
 	}
 	
 	#toolbarArea{
-		width: 75%;
+		width: 100%;
 		text-align: center;
-		margin-left: 50px;
+		padding-top: 10px;
+		margin: 0 auto;
+		display: grid;
+		grid-template-rows: 1fr;
+		grid-template-columns: 1fr 3fr 1fr;
 	}
 	
 	#canvasArea{
@@ -55,11 +54,6 @@
 		margin-left: 20px;
 	}
 	
-	#colorPicker{
-		margin-top: 10%;
-		margin-bottom: 15%;
-	}
-	
 	li{
 		list-style-type: none;
 		padding: 2px;
@@ -81,73 +75,90 @@
 		text-align: center;
 	}
 	
-	/* accomodate smaller screens */
-	@media (max-width: 1200px){
-	
-		#toolbarArea{
-			width: 80%;
-			margin: 0 auto;
-		}
-		#colorPicker p{
-			margin-bottom: 0;
-		}
-		
-		/* 
-			there's currently a bug such that 
-			when painting on a canvas on a smaller screen, 
-			floodfill doesn't work.
-			
-			it seems like it's coloring the spot before getting 
-			the color of the spot. so for now, turn it off
-			for smaller screens.
-		*/
-		#floodfillDir, #colorPicker button{
-			display: none;
-		}
-		
-		#colorPicker, #animationControl{
-			width: 45%;
-			display: inline-block;
-			margin: 0;
-			vertical-align: top;
-		}
-		
-		#screen{
-			width: 100%;
-			height: 800px;
-			margin: 0 auto;
-		}
-		
-		#footer{
-			margin-top: 10%;
-		}
-		
-		#floodfillDir{
-			font-size: 10px;
-		}
+	.toolbarSection, .toolbarSection2, .toolbarSection3{
+		border: 1px solid #000;
+		display: inline-block;
 	}
 	
-	.grid{
+	.tbar{
+		display: none;
+	}
+	
+	.toolbarSection2{
+		grid-row: 1;
+		grid-column: 2;
+		display: block;
+		padding: 5px;
+	}
+	
+	.toolbarSection3{
+		grid-row: 1;
+		grid-column: 3;
+	}
+	
+	.container{
+		display: grid;
+		grid-template-rows: auto auto auto;
+		width: 100%;
+	}
+	
+	#toolbar{
+		grid-row: 1;
+		width: 100%;
+		position: sticky;
+		top: 0;
+		z-index: 100;
+		background-color: #fff;
+	}
+	
+	#toolbarOptions{
+		text-align: center;
+	}
+	
+	#toolbarOptions ul{
+		padding: 0;
+	}
+	
+	#screen{
+		grid-row: 2;
+		width: 80%;
+		margin: 0 auto;
+	}
+	
+	#screenContainer{
 		display: grid;
 		grid-template-columns: 1fr;
-		grid-template-rows: 70px 850px 220px;
+		grid-template-rows: 6% 3fr 1fr;
 	}
 	
-	.grid #pageCount{
+	/* want to overlay the timelinecanvas over the timeline */
+	#animationTimelineArea{
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr auto;
+		padding-bottom: 3%;
+	}
+	
+	#animationTimeline{
 		grid-row: 1;
 		grid-column: 1;
 	}
-
-	.grid #animationTimeline{
-		grid-row: 3;
+	
+	#animationTimelineCanvas{
+		grid-row: 1;
 		grid-column: 1;
 	}
 	
-	.grid #animationTimelineCanvas{
-		grid-row: 3;
-		grid-column: 1;
+	#animationTimelineMarkers{
+		grid-row: 2;
 	}
-
+	
+	#footer{
+		grid-row: 3;
+		width: 100%;
+		text-align: center;
+	}
+	
 	
 </style>
 

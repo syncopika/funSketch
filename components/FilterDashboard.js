@@ -28,7 +28,6 @@ function constructSlider(name, params){
 				}
 			></input>
 			<p id={sliderCounterId}>{params.value}</p>
-			<br />
 		</div>
 	);
 }
@@ -43,10 +42,13 @@ const FilterDashboard = (props) => {
 	};
 	
 	const elementStyle = {
-		"width": "80%",
-		"margin": "2px auto",
+		"width": "85%",
+		"height": "100%",
+		"margin": "1% auto",
 		"textAlign": "center",
-		"border": "1px solid #000",
+		"display": "grid",
+		"gridTemplateRows": "1fr",
+		"gridTemplateColumns": "1fr 1fr",
 	};
 	
 	// use a hook to be able to keep track of selected filter
@@ -63,53 +65,68 @@ const FilterDashboard = (props) => {
 	
 	return (
 		<div style={elementStyle}>
-			<p 
-				id='filterSelect'
-				style={{"margin": "0"}}
-				onClick={
-					function(){
-						let el = document.getElementById("filtersDisplay");
-						if(el.style.display !== "block" ){
-							el.style.display = "block";
-						}else{
-							el.style.display = "none";
-						}
-					}
-				}					
-			> filters &#9660; </p>
-				<div 
-					id='filtersDisplay'
-					style={{"display": "none"}}
-				>
-				<ul 
-					id='filterChoices'
-					style={{"margin": "0 auto", "padding": "0"}}
-				>
+			<div style={
 				{
-					filterNames.map((filterName, index) => {
-						let selectedStyle = null;
-						if(selectedFilter === filterName){
-							selectedStyle = JSON.parse(JSON.stringify(style));
-							selectedStyle["backgroundColor"] = "#5f9ea0";
-						}
-						let s = (selectedStyle !== null) ? selectedStyle : style;
-						return <li 
-							style={s}
-							key={(`filter_${index}`)}
-							id={(`${filterName}_${index}`)}
-							onClick={
-								(evt) => {
-									// show that the filter is selected
-									setSelectedFilter(filterName);
+					"gridRow": "1",
+					"gridColumn": "1",
+					"position": "relative",
+					"height": "100%"
+				}
+			}>
+				<div style={
+					{
+						"position": "absolute",
+						"overflowY": "auto",
+						"top": "0",
+						"left": "10%",
+						"height": "85%",
+						"width": "85%"
+					}
+				}>
+					<div id='filtersDisplay'>
+						<ul 
+							id='filterChoices'
+							style={
+								{
+									"margin": "0 auto", 
+									"padding": "0"
 								}
 							}
-							onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}}
-							onMouseOut={(evt) => {evt.target.style.color = "#000"}}
-						>{filterName}</li>
-					})
+						>
+						{
+							filterNames.map((filterName, index) => {
+								let selectedStyle = null;
+								if(selectedFilter === filterName){
+									selectedStyle = JSON.parse(JSON.stringify(style));
+									selectedStyle["backgroundColor"] = "#c8c8c8";
+								}
+								let s = (selectedStyle !== null) ? selectedStyle : style;
+								return <li 
+									style={s}
+									key={(`filter_${index}`)}
+									id={(`${filterName}_${index}`)}
+									onClick={
+										(evt) => {
+											// show that the filter is selected
+											setSelectedFilter(filterName);
+										}
+									}
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}}
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+								>{filterName}</li>
+							})
+						}
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+			<div style={
+				{
+					"gridRow": "1",
+					"gridColumn": "2"
 				}
-				</ul>
-				<br />
+			}>
 				<button
 					id={"applyFilter"}
 					onClick={
@@ -131,6 +148,7 @@ const FilterDashboard = (props) => {
 					</ul>
 				</div>
 			</div>
+			
 		</div>
 	);
 }

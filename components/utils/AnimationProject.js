@@ -163,15 +163,17 @@ class Frame {
     }
 	
     show(){
-        // makes all layers visible
+        // shows active layer of frame
 		const activeLayerOpacity = .97;
         this.canvasList.forEach((canvas) => {
-			if(canvas.style.opacity >= activeLayerOpacity){
+			if(canvas === this.currentCanvas){
 				canvas.style.zIndex = 1;
+				canvas.style.opacity = activeLayerOpacity;
 			}else{
 				canvas.style.zIndex = 0;
+				canvas.style.opacity = 0;
 			}
-			canvas.style.visibility = "";		
+			canvas.style.visibility = "";
         });
     }
 	
@@ -225,7 +227,7 @@ class Frame {
         const newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
         setCanvas(newCanvas, this.width, this.height);
-        newCanvas.style.opacity = 0.97;
+        //newCanvas.style.opacity = 0.97;
         document.getElementById(this.containerId).appendChild(newCanvas);
 		newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
         this.canvasList.push(newCanvas);
@@ -280,7 +282,7 @@ class AnimationProject {
             const parent = document.getElementById(frame.getContainerId());
             // just keep the first frame
             frame.canvasList.forEach(function(layer, layerIndex){
-                if (frameIndex > 0 || (frameIndex === 0 && layerIndex > 0)) {
+                if(frameIndex > 0 || (frameIndex === 0 && layerIndex > 0)){
                     parent.removeChild(layer);
                 }
             });

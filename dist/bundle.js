@@ -177,10 +177,13 @@ var BrushDashboard = function BrushDashboard(props) {
     "textAlign": "center"
   };
   var elementStyle = {
-    "width": "80%",
-    "margin": "2px auto",
+    "width": "85%",
+    "height": "100%",
+    "margin": "1% auto",
     "textAlign": "center",
-    "border": "1px solid #000"
+    "display": "grid",
+    "gridTemplateRows": "1fr",
+    "gridTemplateColumns": "1fr 1fr"
   }; // use a hook to be able to keep track of selected brush
 
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])("default"),
@@ -210,25 +213,24 @@ var BrushDashboard = function BrushDashboard(props) {
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     style: elementStyle
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
-    id: "brushSelect",
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     style: {
-      "margin": "0"
-    },
-    onClick: function onClick() {
-      var el = document.getElementById("brushDisplay");
-
-      if (el.style.display !== "block") {
-        el.style.display = "block";
-      } else {
-        el.style.display = "none";
-      }
+      "gridRow": "1",
+      "gridColumn": "1",
+      "position": "relative",
+      "height": "100%"
     }
-  }, " brushes \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    id: "brushDisplay",
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     style: {
-      "display": "none"
+      "position": "absolute",
+      "overflowY": "auto",
+      "top": "0",
+      "left": "10%",
+      "height": "85%",
+      "width": "85%"
     }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "brushDisplay"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
     id: "brushChoices",
     style: {
@@ -239,7 +241,7 @@ var BrushDashboard = function BrushDashboard(props) {
     var selectedStyle = JSON.parse(JSON.stringify(style));
 
     if (selectedBrush === brushName) {
-      selectedStyle["backgroundColor"] = "#5f9ea0";
+      selectedStyle["backgroundColor"] = "#c8c8c8";
     }
 
     var s = selectedStyle !== null ? selectedStyle : style;
@@ -255,7 +257,12 @@ var BrushDashboard = function BrushDashboard(props) {
         evt.target.style.color = "#000";
       }
     }, brushName);
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "gridRow": "1",
+      "gridColumn": "2"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     id: "adjustBrushSize"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
     className: "text-info"
@@ -319,7 +326,7 @@ function constructSlider(name, params) {
     }
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
     id: sliderCounterId
-  }, params.value), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("br", null));
+  }, params.value));
 }
 
 var FilterDashboard = function FilterDashboard(props) {
@@ -331,10 +338,13 @@ var FilterDashboard = function FilterDashboard(props) {
     "textAlign": "center"
   };
   var elementStyle = {
-    "width": "80%",
-    "margin": "2px auto",
+    "width": "85%",
+    "height": "100%",
+    "margin": "1% auto",
     "textAlign": "center",
-    "border": "1px solid #000"
+    "display": "grid",
+    "gridTemplateRows": "1fr",
+    "gridTemplateColumns": "1fr 1fr"
   }; // use a hook to be able to keep track of selected filter
 
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(""),
@@ -354,25 +364,24 @@ var FilterDashboard = function FilterDashboard(props) {
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     style: elementStyle
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
-    id: "filterSelect",
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     style: {
-      "margin": "0"
-    },
-    onClick: function onClick() {
-      var el = document.getElementById("filtersDisplay");
-
-      if (el.style.display !== "block") {
-        el.style.display = "block";
-      } else {
-        el.style.display = "none";
-      }
+      "gridRow": "1",
+      "gridColumn": "1",
+      "position": "relative",
+      "height": "100%"
     }
-  }, " filters \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    id: "filtersDisplay",
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     style: {
-      "display": "none"
+      "position": "absolute",
+      "overflowY": "auto",
+      "top": "0",
+      "left": "10%",
+      "height": "85%",
+      "width": "85%"
     }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "filtersDisplay"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
     id: "filterChoices",
     style: {
@@ -384,7 +393,7 @@ var FilterDashboard = function FilterDashboard(props) {
 
     if (selectedFilter === filterName) {
       selectedStyle = JSON.parse(JSON.stringify(style));
-      selectedStyle["backgroundColor"] = "#5f9ea0";
+      selectedStyle["backgroundColor"] = "#c8c8c8";
     }
 
     var s = selectedStyle !== null ? selectedStyle : style;
@@ -403,7 +412,12 @@ var FilterDashboard = function FilterDashboard(props) {
         evt.target.style.color = "#000";
       }
     }, filterName);
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
+  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "gridRow": "1",
+      "gridColumn": "2"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
     id: "applyFilter",
     onClick: function onClick() {
       filterManager.filterCanvasOption(selectedFilter);
@@ -469,7 +483,8 @@ var LayerOrder = function LayerOrder(props) {
   var elementStyle = {
     "margin": "2px auto",
     "textAlign": "center",
-    "border": "1px solid #000"
+    "border": "1px solid #000",
+    "width": "10%"
   }; // use a hook to be able to drag and drop with 
 
   var _useState = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(0),
@@ -853,7 +868,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var newToolbar = this.state.toolbarInstance;
       var project = this.state.animationProject;
       newToolbar.setCounter("count");
-      newToolbar.createColorWheel('colorPicker', 200);
+      newToolbar.createColorWheel('colorPicker', 170);
       newToolbar.insertLayer('insertCanvas');
       newToolbar.deleteLayer('deleteCanvas', function (newLayerIndex) {
         _this3.setState({
@@ -900,51 +915,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       newToolbar.undo('undo');
       newToolbar.importImage('importImage');
       newToolbar.save('saveWork');
-      newToolbar.importProject('importProject', function () {
-        _this3.setState({
-          'currentFrame': 1,
-          'currentLayer': 1,
-          'timelineFrames': [],
-          'timelineMarkers': {}
-        });
-
-        _this3.timelineFramesSet = new Set(); // update animation timeline after project is loaded
-
-        var newFrames = [];
-        project.frameList.forEach(function (frame, index) {
-          var mergedLayersFrame = newToolbar.mergeFrameLayers(frame);
-          var currFrameData = mergedLayersFrame.toDataURL();
-          var currFrameIndex = index;
-
-          if (!_this3.timelineFramesSet.has(currFrameIndex)) {
-            newFrames.push({
-              "data": currFrameData,
-              "height": mergedLayersFrame.height,
-              "width": mergedLayersFrame.width
-            });
-
-            _this3.timelineFramesSet.add(currFrameIndex);
-          } else {
-            // update image data
-            newFrames[currFrameIndex].data = currFrameData;
-          }
-        }); // figure out which layer is the one that should be visible 
-
-        var visibleLayerIndex = 0;
-        var layers = project.frameList[0].canvasList;
-
-        for (var i = 0; i < layers.length; i++) {
-          if (layers[i].style.opacity >= .97) {
-            visibleLayerIndex = i;
-            break;
-          }
-        }
-
-        _this3.setState({
-          'currentLayer': visibleLayerIndex + 1,
-          'timelineFrames': newFrames
-        });
-      }); // make the goLeft and goRight arrows clickable FOR LAYERS
+      newToolbar.toggleToolbarPosition('toggleToolbarPos', 'toolbar');
+      newToolbar.importProject('importProject', this._importProjectUpdateFunc.bind(this)); // make the goLeft and goRight arrows clickable FOR LAYERS
       // note: this is for clicking the icons with a mouse!
 
       document.getElementById('goLeft').addEventListener('click', function () {
@@ -1017,22 +989,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           newToolbar.layerMode = true;
           element.textContent = "toggle frame addition on spacebar press";
         }
-      }); // toggle instructions 
-
-      document.getElementById('toggleInstructions').addEventListener('click', function (evt) {
-        var _this4 = this;
-
-        var instructions = document.querySelectorAll('.instructions');
-
-        _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(instructions).forEach(function (inst) {
-          if (inst.style.display === "none") {
-            inst.style.display = "block";
-            _this4.textContent = "hide instructions";
-          } else {
-            inst.style.display = "none";
-            _this4.textContent = "show instructions";
-          }
-        });
       }); // toggle pen pressure for brush color
 
       document.getElementById('togglePenPressureColor').addEventListener('click', function (evt) {
@@ -1049,20 +1005,20 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_setupAnimationControl",
     value: function _setupAnimationControl() {
-      var _this5 = this;
+      var _this4 = this;
 
       document.getElementById('timePerFrame').addEventListener('onchange', function (evt) {
-        _this5.state.toolbarInstance.timePerFrame = parseInt(evt.target.selectedOptions[0].value);
+        _this4.state.toolbarInstance.timePerFrame = parseInt(evt.target.selectedOptions[0].value);
       });
     }
   }, {
     key: "_linkDemos",
     value: function _linkDemos() {
-      var _this6 = this;
+      var _this5 = this;
 
       var demoSelect = document.getElementById("chooseDemo");
       demoSelect.addEventListener("change", function (evt) {
-        _this6._getDemo(evt.target.selectedOptions[0].value);
+        _this5._getDemo(evt.target.selectedOptions[0].value);
       });
     }
   }, {
@@ -1081,7 +1037,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_playAnimation",
     value: function _playAnimation() {
-      var _this7 = this;
+      var _this6 = this;
 
       var timelineFrames = this.state.timelineFrames;
 
@@ -1106,8 +1062,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var totalElapsedTime = 0;
       var lastSpeed = this.state.toolbarInstance.timePerFrame;
       timelineFrames.forEach(function (frame, index) {
-        if (_this7.state.timelineMarkers[index + 1]) {
-          lastSpeed = parseInt(_this7.state.timelineMarkers[index + 1].speed);
+        if (_this6.state.timelineMarkers[index + 1]) {
+          lastSpeed = parseInt(_this6.state.timelineMarkers[index + 1].speed);
         }
 
         setTimeout(function () {
@@ -1134,6 +1090,58 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
+    key: "_importProjectUpdateFunc",
+    value: function _importProjectUpdateFunc() {
+      var _this7 = this;
+
+      // update state when loading in a project
+      var project = this.state.animationProject;
+      var toolbar = this.state.toolbarInstance;
+      this.setState({
+        'currentFrame': 1,
+        'currentLayer': 1,
+        'timelineFrames': [],
+        'timelineMarkers': {}
+      });
+      this.timelineFramesSet = new Set(); // update animation timeline after project is loaded
+
+      var newFrames = [];
+      project.frameList.forEach(function (frame, index) {
+        var mergedLayersFrame = toolbar.mergeFrameLayers(frame);
+        var currFrameData = mergedLayersFrame.toDataURL();
+        var currFrameIndex = index;
+
+        if (!_this7.timelineFramesSet.has(currFrameIndex)) {
+          newFrames.push({
+            "data": currFrameData,
+            "height": mergedLayersFrame.height,
+            "width": mergedLayersFrame.width
+          });
+
+          _this7.timelineFramesSet.add(currFrameIndex);
+        } else {
+          // update image data
+          newFrames[currFrameIndex].data = currFrameData;
+        }
+      }); // figure out which layer is the one that should be visible for the first frame
+
+      var layers = project.frameList[0].canvasList;
+      var visibleLayerIndex = 0;
+
+      for (var i = 0; i < layers.length; i++) {
+        if (layers[i].style.opacity >= .97) {
+          visibleLayerIndex = i;
+          break;
+        }
+      }
+
+      project.getFrames()[0].show();
+      this.setState({
+        'currentLayer': visibleLayerIndex + 1,
+        'timelineFrames': newFrames
+      });
+    }
+  }, {
     key: "_getDemo",
     value: function _getDemo(selected) {
       var _this8 = this;
@@ -1141,107 +1149,21 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       // case for the blank option 
       if (selected === "") {
         return;
-      } // get the selected demo from the dropbox
-      // selectedDemo is the path to the demo to load 
-
+      }
 
       var selectedDemo = "demos/" + selected + ".json";
       var httpRequest = new XMLHttpRequest();
 
       if (!httpRequest) {
         return;
-      } // set request type
+      }
 
-
-      httpRequest.open("GET", selectedDemo); // what to do when data comes back
+      httpRequest.open("GET", selectedDemo);
 
       httpRequest.onload = function () {
-        var toolbar = _this8.state.toolbarInstance;
-        var project = _this8.state.animationProject;
-        var self = _this8; // parse the JSON using JSON.parse 
-
         var data = JSON.parse(httpRequest.responseText);
 
-        if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
-          console.log("it appears to not be a valid project! :<");
-          return;
-        } // clear existing project
-
-
-        project.resetProject(); // load saved project
-
-        data.forEach(function (frame, index) {
-          if (index > 0) {
-            // add a new frame
-            project.addNewFrame(false);
-          } // overwrite existing frame
-          // TODO: implement an updateFrame method 
-          // animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a Frame object to update with as well
-
-
-          var currFrame = project.frameList[index];
-          var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-
-          var currFrameLayersFromCurrPrj = currFrame.getLayers(); // make sure current index (the layer that should be showing) of this frame is consistent with the data
-
-          currFrame.currentIndex = frame.currentIndex;
-          currFrameLayersFromImport.forEach(function (layer, layerIndex) {
-            if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
-              // add new layer to curr project as needed based on import
-              currFrame.setupNewLayer();
-            }
-
-            var currLayer = currFrame.getLayers()[layerIndex];
-
-            if (layerIndex === currFrame.currentIndex) {
-              currFrame.currentCanvas = currLayer;
-            } // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
-
-
-            currLayer.style.opacity = layer.opacity;
-            currLayer.style.zIndex = layer.zIndex; // add the image data 
-
-            var newCtx = currLayer.getContext("2d");
-            var img = new Image();
-
-            (function (context, image) {
-              image.onload = function () {
-                context.drawImage(image, 0, 0); // update state
-
-                if (index === data.length - 1) {
-                  self.timelineFramesSet = new Set(); // update animation timeline after project is loaded
-
-                  var newFrames = [];
-                  project.frameList.forEach(function (frame, index) {
-                    var mergedLayersFrame = toolbar.mergeFrameLayers(frame);
-                    var currFrameData = mergedLayersFrame.toDataURL();
-                    var currFrameIndex = index;
-
-                    if (!self.timelineFramesSet.has(currFrameIndex)) {
-                      newFrames.push({
-                        "data": currFrameData,
-                        "height": mergedLayersFrame.height,
-                        "width": mergedLayersFrame.width
-                      });
-                      self.timelineFramesSet.add(currFrameIndex);
-                    } else {
-                      // update image data
-                      newFrames[currFrameIndex].data = currFrameData;
-                    }
-                  });
-                  self.setState({
-                    'timelineFrames': newFrames,
-                    'currentFrame': 1,
-                    'currentLayer': 1,
-                    'timelineMarkers': {}
-                  });
-                }
-              };
-
-              image.src = layer.imageData;
-            })(newCtx, img);
-          });
-        });
+        _this8.state.toolbarInstance.importData(data, _this8._importProjectUpdateFunc.bind(_this8));
       };
 
       httpRequest.send();
@@ -1267,8 +1189,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
         _this9._linkDemos();
 
-        _this9._setKeyDown(document); // set key down on the whole document
-
+        _this9._setKeyDown(document);
 
         _this9._timelineMarkerSetup();
       });
@@ -1278,18 +1199,30 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
     value: function componentDidUpdate() {// make the active canvas shown reflect the state's current frame and layer? instead of toggling it in different places
     }
   }, {
-    key: "_clickCaret",
-    value: function _clickCaret(evt) {
-      var id = evt.target.id;
-      var target = document.getElementById("display" + id);
+    key: "_clickOption",
+    value: function _clickOption(evt) {
+      var id = evt.target.id; // map caret id to div id of option that should show up in the 2nd column of the toolbar
 
-      if (target.style.display !== "none") {
-        target.style.display = "none";
-        evt.target.innerHTML = "&#9656;";
-      } else {
-        target.style.display = "block";
-        evt.target.innerHTML = "&#9662;";
-      }
+      var options = {
+        "instructionsOption": "instructions",
+        "frameLayerCtrlOption": "frameLayerSection",
+        "animationCtrlOption": "animControlSection",
+        "otherOption": "otherSection",
+        "brushesOption": "brushSection",
+        "filtersOption": "filterSection",
+        "demosOption": "showDemos"
+      };
+      Array.from(Object.keys(options)).forEach(function (section) {
+        var contentToToggle = document.getElementById(options[section]);
+        contentToToggle.classList.remove("toolbarSection2");
+
+        if (section === id) {
+          contentToToggle.classList.add("toolbarSection2");
+          contentToToggle.classList.remove("tbar");
+        } else {
+          contentToToggle.classList.add("tbar");
+        }
+      });
     }
   }, {
     key: "render",
@@ -1297,31 +1230,92 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var _this10 = this;
 
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        className: "container-fluid"
+        className: "container"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        className: "row"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "toolbar",
-        className: "col-lg-3"
+        id: "toolbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "toolbarArea"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
-        id: "title"
-      }, " funSketch: draw and animate! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "buttons"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "toolbarOptions",
+        className: "toolbarSection"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "instructionsOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "frameLayerCtrlOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " frame/layer control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "animationCtrlOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " animation control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "brushesOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " brushes "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "filtersOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " filters "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "otherOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " other "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "demosOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " demos "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "instructions",
+        className: "toolbarSection2"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
       }, " Use the spacebar to append a new layer or frame. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
       }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
-      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "toggleInstructions"
-      }, "hide instructions"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " layer ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
-        id: "LayerStuff",
-        onClick: this._clickCaret
-      }, "\u25BE"), " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
+        className: "instructions"
+      }, " The toolbar can be static or sticky (so that it follows the scrollbar). You can toggle this via the 'toggle toolbar position' button in the 'other' section. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "frameLayerSection",
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "displayLayerStuff"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "insertCanvas"
@@ -1333,11 +1327,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "clearCanvas"
       }, "clear layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "downloadLayer"
-      }, "download current layer")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " frame ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
-        id: "FrameStuff",
-        onClick: this._clickCaret
-      }, "\u25BE"), " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, "download current layer")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "displayFrameStuff"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "addNewFrame"
@@ -1382,13 +1372,14 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             "changingLayerOrder": false
           });
         }
-      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " other ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("span", {
-        className: "caret2",
-        id: "OtherStuff",
-        onClick: this._clickCaret
-      }, "\u25BE"), " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "otherSection",
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " other "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "displayOtherStuff"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "toggleToolbarPos"
+      }, "toggle toolbar position"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "importImage"
       }, " import image "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "rotateCanvasImage"
@@ -1402,9 +1393,12 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "togglePenPressureColor"
       }, " toggle pen pressure for color "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
         id: "toggleLayerOrFrame"
-      }, " toggle frame addition on spacebar press "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, " toggle frame addition on spacebar press "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "animControlSection",
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "animationControl"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " animation control: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " animation control: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", {
         id: "timeOptions"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
         htmlFor: "timePerFrame"
@@ -1432,14 +1426,19 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "generateGif"
       }, " generate gif! ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         id: "loadingScreen"
-      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__["BrushDashboard"], {
-        brushManager: this.state.brushInstance
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__["FilterDashboard"], {
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "filterSection",
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__["FilterDashboard"], {
         filterManager: this.state.filtersInstance
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "colorPicker"
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "showDemos"
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "brushSection",
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__["BrushDashboard"], {
+        brushManager: this.state.brushInstance
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "showDemos",
+        className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", null, " demos "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
         id: "chooseDemo"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
@@ -1448,33 +1447,37 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "demo"
       }, "run_demo"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
         className: "demo"
-      }, "floaty_thingy"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        className: "demo"
-      }, "cake_cut"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        className: "demo"
-      }, "asakusa_mizusaki_butterfly")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "footer",
-        className: "row"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", null, " n.c.h works 2017-2021 | ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("a", {
-        href: "https://github.com/syncopika/funSketch"
-      }, "source ")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "screen",
-        className: "col-lg-9 grid"
+      }, "floaty_thingy"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "colorPickerSection",
+        className: "toolbarSection3"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "colorPicker"
+      })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "screen"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "screenContainer"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(FrameCounterDisplay, {
         currFrame: this.state.currentFrame,
         currLayer: this.state.currentLayer
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "canvasArea"
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__["AnimationTimeline"], {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "animationTimelineArea"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__["AnimationTimeline"], {
         frames: this.state.timelineFrames
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("canvas", {
         id: "animationTimelineCanvas",
         style: {
-          'border': '1px solid #000',
-          'borderTop': 0,
-          'display': 'block'
+          'display': 'block',
+          'marginTop': '10px',
+          'marginBottom': '10px',
+          'width': '100%',
+          'height': '200px' // note this height matches the height of AnimationTimeline
+
         }
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "animationTimelineMarkers"
+      }, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
         var marker = _this10.state.timelineMarkers[markerKey];
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
           htmlFor: 'marker' + marker.frameNumber + 'Select'
@@ -1493,7 +1496,11 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
             return _this10._timelineMarkerDelete(marker.frameNumber);
           }
         }, " \xA0delete "));
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("br", null)))));
+      }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "footer"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", null, " c.2017 | ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("a", {
+        href: "https://github.com/syncopika/funSketch"
+      }, "source "))));
     }
   }]);
 
@@ -2353,7 +2360,8 @@ var PenBrush = /*#__PURE__*/function (_BrushTemplate) {
       if (this.brushManager.applyPressureColor()) {
         var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.3 + ')';
         context.strokeStyle = extraStrokeColor;
-      } // pick a random point from some of the most recent points drawn so far. adjust that coord slightly based on some random numbers.
+      } // TODO: I think the below stuff should go in the loop above (take the strokeStyle change above along with it).
+      // pick a random point from some of the most recent points drawn so far. adjust that coord slightly based on some random numbers.
       // then draw a line from that coord to a new coord that is based off the latest drawn point (this point will also be slightly altered based on random nums).
       // this way we get some random, skewed lines to our strokes to give some texture.
 
@@ -4752,13 +4760,17 @@ var Frame = /*#__PURE__*/function () {
   }, {
     key: "show",
     value: function show() {
-      // makes all layers visible
+      var _this = this;
+
+      // shows active layer of frame
       var activeLayerOpacity = .97;
       this.canvasList.forEach(function (canvas) {
-        if (canvas.style.opacity >= activeLayerOpacity) {
+        if (canvas === _this.currentCanvas) {
           canvas.style.zIndex = 1;
+          canvas.style.opacity = activeLayerOpacity;
         } else {
           canvas.style.zIndex = 0;
+          canvas.style.opacity = 0;
         }
 
         canvas.style.visibility = "";
@@ -4816,8 +4828,8 @@ var Frame = /*#__PURE__*/function () {
     value: function copyCanvas() {
       var newCanvas = document.createElement('canvas');
       newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
-      setCanvas(newCanvas, this.width, this.height);
-      newCanvas.style.opacity = 0.97;
+      setCanvas(newCanvas, this.width, this.height); //newCanvas.style.opacity = 0.97;
+
       document.getElementById(this.containerId).appendChild(newCanvas);
       newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
       this.canvasList.push(newCanvas);
@@ -5319,6 +5331,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _misc_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./misc.js */ "./components/utils/misc.js");
+
 
 
 
@@ -5575,7 +5589,7 @@ var Toolbar = /*#__PURE__*/function () {
     /***
         color wheel functions
     ***/
-    // pass in the elementId of the div where the color wheel should be 
+    // pass in the elementId of the div where the color wheel should be (its container)
     // pass in the size of the canvas of the color wheel 
 
   }, {
@@ -5583,63 +5597,13 @@ var Toolbar = /*#__PURE__*/function () {
     value: function createColorWheel(elementId, size) {
       var _this7 = this;
 
-      var location = document.getElementById(elementId);
-      var colorWheel = document.createElement('canvas');
-      colorWheel.id = "colorWheel";
-      colorWheel.setAttribute('width', size);
-      colorWheel.setAttribute('height', size);
-      var colorWheelContext = colorWheel.getContext('2d');
-      var x = colorWheel.width / 2;
-      var y = colorWheel.height / 2;
-      var radius = 90; // why 5600??
-
-      for (var angle = 0; angle <= 5600; angle++) {
-        var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
-
-        var endAngle = angle * Math.PI / 180;
-        colorWheelContext.beginPath();
-        colorWheelContext.moveTo(x, y); //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
-
-        colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
-        colorWheelContext.closePath(); //use .createRadialGradient to get a different color for each angle
-        //createRadialGradient(x0, y0, r0, x1, y1, r1)
-
-        var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
-        gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
-        gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
-        colorWheelContext.fillStyle = gradient;
-        colorWheelContext.fill();
-      } // make black a pickable color 
-
-
-      colorWheelContext.fillStyle = "#000";
-      colorWheelContext.beginPath();
-      colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
-      colorWheelContext.fill(); // make white pickable too
-      // black outline
-
-      colorWheelContext.beginPath();
-      colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 
-
-      colorWheelContext.stroke(); // make sure circle is filled with #fff
-
-      colorWheelContext.fillStyle = "#fff";
-      colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
-      colorWheelContext.fill();
-      location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
-
-      var showColor = document.createElement('p'); // this element will show the color picked 
-
-      showColor.style.textAlign = 'center';
-      showColor.id = 'colorPicked';
-      showColor.textContent = "pick a color! :)";
-      location.appendChild(showColor);
+      var colorWheel = Object(_misc_js__WEBPACK_IMPORTED_MODULE_2__["makeColorWheel"])(elementId, size);
       document.getElementById(colorWheel.id).addEventListener('mousedown', function (evt) {
         var x = evt.offsetX;
         var y = evt.offsetY;
         var colorPicked = document.getElementById(colorWheel.id).getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
 
-        var colorPickedText = document.getElementById(showColor.id);
+        var colorPickedText = document.getElementById('colorPicked');
 
         if (colorPicked[0] > 10 && colorPicked[1] > 200) {
           colorPickedText.style.color = "#000";
@@ -5650,17 +5614,12 @@ var Toolbar = /*#__PURE__*/function () {
         colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
         colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
 
-        _this7.brush.changeBrushColor(colorPicked); //this.brush.currColorArray = colorPicked;
-        //this.brush.currColor = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
-
+        _this7.brush.changeBrushColor(colorPicked);
       });
     }
     /***
         rotate image
         pass in an element id that will rotate the current canvas image on click
-        
-        currently buggy! after rotation, image becomes blurred. also, when attempting to draw on same canvas,
-        coordinates get altered so on mousedown the drawing gets offset
     ***/
 
   }, {
@@ -5676,13 +5635,19 @@ var Toolbar = /*#__PURE__*/function () {
         var width = canvas.currentCanvas.getAttribute("width");
         var height = canvas.currentCanvas.getAttribute("height");
         var context = canvas.currentCanvas.getContext("2d");
-        Promise.all([createImageBitmap(canvas.currentCanvas, 0, 0, width, height)]).then(function (bitmap) {
-          context.clearRect(0, 0, width, height);
-          context.translate(width / 2, height / 2);
-          context.rotate(Math.PI / 180);
-          context.translate(-width / 2, -height / 2); //the returned bitmap is an array
+        createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then(function (bitmap) {
+          var tmpCanvas = document.createElement("canvas");
+          tmpCanvas.width = width;
+          tmpCanvas.height = height; // use a temp canvas because translating on the real canvas will mess with mousedown coords
 
-          context.drawImage(bitmap[0], 0, 0);
+          var tmpCtx = tmpCanvas.getContext("2d");
+          tmpCtx.clearRect(0, 0, width, height);
+          tmpCtx.translate(width / 2, height / 2);
+          tmpCtx.rotate(Math.PI / 180);
+          tmpCtx.translate(-width / 2, -height / 2);
+          tmpCtx.drawImage(bitmap, 0, 0); // then draw image data from tmp canvas to the real one
+
+          context.putImageData(tmpCtx.getImageData(0, 0, width, height), 0, 0);
         });
       });
     }
@@ -5795,10 +5760,8 @@ var Toolbar = /*#__PURE__*/function () {
             // change current canvas' width and height according to imported picture
             var currentCanvas = canvas.currentCanvas;
             var context = currentCanvas.getContext("2d");
-            var height = img.height;
-            var width = img.width;
-            height = canvas.height;
-            width = canvas.width;
+            var height = canvas.height;
+            var width = canvas.width;
             currentCanvas.setAttribute('height', height);
             currentCanvas.setAttribute('width', width);
             context.drawImage(img, 0, 0, width, height);
@@ -5890,6 +5853,20 @@ var Toolbar = /*#__PURE__*/function () {
             link.click();
           }
         });
+      });
+    } // for toggling the toolbar's position as sticky or not
+
+  }, {
+    key: "toggleToolbarPosition",
+    value: function toggleToolbarPosition(elementId, toolbarId) {
+      document.getElementById(elementId).addEventListener('click', function () {
+        var toolbar = document.getElementById(toolbarId);
+
+        if (toolbar.style.position === "sticky" || toolbar.style.position === "") {
+          toolbar.style.position = "static";
+        } else {
+          toolbar.style.position = "sticky";
+        }
       });
     }
     /********
@@ -6085,6 +6062,62 @@ var Toolbar = /*#__PURE__*/function () {
         link.download = name + ".json";
         link.click();
       });
+    } // data: JSON data representing a project
+    // updateStateFunction: function that updates state. used in the react component that has the toolbar as a prop
+
+  }, {
+    key: "importData",
+    value: function importData(data, updateStateFunction) {
+      var _this15 = this;
+
+      if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
+        console.log("import failed: it appears to not be a valid project! :<");
+        return;
+      } // clear existing project
+
+
+      this.animationProj.resetProject(); // load saved project
+
+      data.forEach(function (frame, index) {
+        if (index > 0) {
+          // add a new frame
+          _this15.animationProj.addNewFrame();
+        } // overwrite existing frame
+        // TODO: implement an updateFrame method 
+        // something like: animationProj.updateFrame(0, frame);
+
+
+        var currFrame = _this15.animationProj.getFrames()[index];
+
+        var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+
+        var currFrameLayersFromCurrPrj = currFrame.getLayers();
+        currFrameLayersFromImport.forEach(function (layer, layerIndex) {
+          if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
+            // add new layer to curr project as needed based on import
+            currFrame.setupNewLayer();
+          }
+
+          var currLayer = currFrame.getLayers()[layerIndex]; // add the image data 
+
+          var newCtx = currLayer.getContext("2d");
+          var img = new Image();
+
+          (function (context, image) {
+            image.onload = function () {
+              context.drawImage(image, 0, 0);
+
+              if (index === data.length - 1 && updateStateFunction) {
+                // after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
+                updateStateFunction();
+              }
+            };
+
+            image.src = layer.imageData;
+          })(newCtx, img);
+        });
+        currFrame.setCurrIndex(frame.currentIndex);
+      });
     }
   }, {
     key: "importProject",
@@ -6114,68 +6147,11 @@ var Toolbar = /*#__PURE__*/function () {
                 data = JSON.parse(e.target.result);
               } catch (e) {
                 // not valid json file 
+                console.log("import failed: not a valid JSON file");
                 return;
-              } // do some validation
-              // if there is no canvas
-              // or it's a valid json object but no fields correspond to a canvas, quit
+              }
 
-
-              if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
-                console.log("it appears to not be a valid project! :<");
-                return;
-              } // clear existing project
-
-
-              self.animationProj.resetProject(); // load saved project
-
-              data.forEach(function (frame, index) {
-                if (index > 0) {
-                  // add a new frame
-                  self.animationProj.addNewFrame();
-                } // overwrite existing frame
-                // TODO: implement an updateFrame method 
-                // something like: animationProj.updateFrame(0, frame);
-
-
-                var currFrame = self.animationProj.getFrames()[index];
-                var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-
-                var currFrameLayersFromCurrPrj = currFrame.getLayers();
-                currFrameLayersFromImport.forEach(function (layer, layerIndex) {
-                  if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
-                    // add new layer to curr project as needed based on import
-                    currFrame.setupNewLayer();
-                  }
-
-                  var currLayer = currFrame.getLayers()[layerIndex]; // is this part necessary? maybe, if you want the project to look exactly as when it was saved.
-
-                  currLayer.style.opacity = layer.opacity;
-                  currLayer.style.zIndex = layer.zIndex; // add the image data 
-
-                  var newCtx = currLayer.getContext("2d");
-                  var img = new Image();
-
-                  (function (context, image) {
-                    image.onload = function () {
-                      context.drawImage(image, 0, 0);
-
-                      if (index === data.length - 1 && updateStateFunction) {
-                        updateStateFunction();
-                      }
-                    };
-
-                    image.src = layer.imageData;
-                  })(newCtx, img); // make sure to update this frame's current canvas so it matches currentIndex
-                  // another thing to refactor later (i.e. since we have currentIndex, we really shouldn't have another variable
-                  // to keep track of whose value could be known with currentIndex)
-
-
-                  if (layerIndex === currFrame.currentIndex) {
-                    currFrame.currentCanvas = currLayer;
-                  }
-                });
-                currFrame.setCurrIndex(frame.currentIndex);
-              });
+              self.importData(data, updateStateFunction);
             };
           }(file);
 
@@ -6190,6 +6166,79 @@ var Toolbar = /*#__PURE__*/function () {
 
 
 
+
+/***/ }),
+
+/***/ "./components/utils/misc.js":
+/*!**********************************!*\
+  !*** ./components/utils/misc.js ***!
+  \**********************************/
+/*! exports provided: makeColorWheel */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeColorWheel", function() { return makeColorWheel; });
+// catch-all file for functions that might be better suited being in this file
+function makeColorWheel(elementId, size) {
+  var location = document.getElementById(elementId);
+
+  if (location === undefined) {
+    console.log("could not find element with id ".concat(elementId, "!"));
+    return null;
+  }
+
+  var colorWheel = document.createElement('canvas');
+  colorWheel.id = "colorWheel";
+  colorWheel.setAttribute('width', size);
+  colorWheel.setAttribute('height', size);
+  var colorWheelContext = colorWheel.getContext('2d');
+  var x = colorWheel.width / 2;
+  var y = colorWheel.height / 2;
+  var radius = 70; // why 5600??
+
+  for (var angle = 0; angle <= 5600; angle++) {
+    var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
+
+    var endAngle = angle * Math.PI / 180;
+    colorWheelContext.beginPath();
+    colorWheelContext.moveTo(x, y); //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+
+    colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
+    colorWheelContext.closePath(); //use .createRadialGradient to get a different color for each angle
+    //createRadialGradient(x0, y0, r0, x1, y1, r1)
+
+    var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
+    gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
+    gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
+    colorWheelContext.fillStyle = gradient;
+    colorWheelContext.fill();
+  } // make black a pickable color 
+
+
+  colorWheelContext.fillStyle = "#000";
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill(); // make white pickable too (and add a black outline)
+
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 
+
+  colorWheelContext.stroke(); // make sure circle is filled with #fff
+
+  colorWheelContext.fillStyle = "#fff";
+  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill();
+  location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
+
+  var showColor = document.createElement('p'); // this element will show the color picked 
+
+  showColor.style.textAlign = 'center';
+  showColor.id = 'colorPicked';
+  showColor.textContent = "pick a color! :)";
+  location.appendChild(showColor);
+  return colorWheel;
+}
 
 /***/ }),
 

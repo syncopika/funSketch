@@ -175,7 +175,6 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_setKeyDown(doc){
-		
 		const toolbar = this.state.toolbarInstance;
 		const animationProj = this.state.animationProject;
 		const self = this;
@@ -235,7 +234,7 @@ class PresentationWrapper extends React.Component {
 		const project = this.state.animationProject;
 		
 		newToolbar.setCounter("count");
-		newToolbar.createColorWheel('colorPicker', 200);
+		newToolbar.createColorWheel('colorPicker', 170);
 		newToolbar.insertLayer('insertCanvas');
 		newToolbar.deleteLayer('deleteCanvas', (newLayerIndex) => {
 			this.setState({
@@ -285,48 +284,9 @@ class PresentationWrapper extends React.Component {
 		newToolbar.undo('undo');
 		newToolbar.importImage('importImage');
 		newToolbar.save('saveWork');
+		newToolbar.toggleToolbarPosition('toggleToolbarPos', 'toolbar');
 		
-		newToolbar.importProject('importProject', () => {
-			this.setState({
-				'currentFrame': 1,
-				'currentLayer': 1,
-				'timelineFrames': [],
-				'timelineMarkers': {}
-			});
-			
-			this.timelineFramesSet = new Set();
-			
-			// update animation timeline after project is loaded
-			let newFrames = [];
-			project.frameList.forEach((frame, index) => {
-				let mergedLayersFrame = newToolbar.mergeFrameLayers(frame);
-				let currFrameData = mergedLayersFrame.toDataURL();
-				let currFrameIndex = index;
-				
-				if(!this.timelineFramesSet.has(currFrameIndex)){
-					newFrames.push({"data": currFrameData, "height": mergedLayersFrame.height, "width": mergedLayersFrame.width});
-					this.timelineFramesSet.add(currFrameIndex);
-				}else{
-					// update image data
-					newFrames[currFrameIndex].data = currFrameData;
-				}
-			});
-			
-			// figure out which layer is the one that should be visible 
-			let visibleLayerIndex = 0;
-			let layers = project.frameList[0].canvasList;
-			for(var i = 0; i < layers.length; i++){
-				if(layers[i].style.opacity >= .97){
-					visibleLayerIndex = i;
-					break;
-				}
-			}
-			
-			this.setState({
-				'currentLayer': visibleLayerIndex + 1,
-				'timelineFrames': newFrames
-			});
-		});
+		newToolbar.importProject('importProject', this._importProjectUpdateFunc.bind(this));
 		
 		// make the goLeft and goRight arrows clickable FOR LAYERS
 		// note: this is for clicking the icons with a mouse!
@@ -399,20 +359,6 @@ class PresentationWrapper extends React.Component {
 				newToolbar.layerMode = true;
 				element.textContent = "toggle frame addition on spacebar press";
 			}
-		});
-		
-		// toggle instructions 
-		document.getElementById('toggleInstructions').addEventListener('click', function(evt){
-			let instructions = document.querySelectorAll('.instructions');
-			[...instructions].forEach((inst) => {
-				if(inst.style.display === "none"){
-					inst.style.display = "block";
-					this.textContent = "hide instructions";
-				}else{
-					inst.style.display = "none";
-					this.textContent = "show instructions";
-				}
-			});
 		});
 		
 		// toggle pen pressure for brush color
@@ -508,116 +454,70 @@ class PresentationWrapper extends React.Component {
 		});
 	}
 	
+	_importProjectUpdateFunc(){
+		// update state when loading in a project
+		const project = this.state.animationProject;
+		const toolbar = this.state.toolbarInstance;
+	
+		this.setState({
+			'currentFrame': 1,
+			'currentLayer': 1,
+			'timelineFrames': [],
+			'timelineMarkers': {}
+		});
+		
+		this.timelineFramesSet = new Set();
+		
+		// update animation timeline after project is loaded
+		let newFrames = [];
+		project.frameList.forEach((frame, index) => {
+			let mergedLayersFrame = toolbar.mergeFrameLayers(frame);
+			let currFrameData = mergedLayersFrame.toDataURL();
+			let currFrameIndex = index;
+			
+			if(!this.timelineFramesSet.has(currFrameIndex)){
+				newFrames.push({"data": currFrameData, "height": mergedLayersFrame.height, "width": mergedLayersFrame.width});
+				this.timelineFramesSet.add(currFrameIndex);
+			}else{
+				// update image data
+				newFrames[currFrameIndex].data = currFrameData;
+			}
+		});
+		
+		// figure out which layer is the one that should be visible for the first frame
+		const layers = project.frameList[0].canvasList;
+		let visibleLayerIndex = 0;
+		
+		for(var i = 0; i < layers.length; i++){
+			if(layers[i].style.opacity >= .97){
+				visibleLayerIndex = i;
+				break;
+			}
+		}
+		project.getFrames()[0].show();
+		
+		this.setState({
+			'currentLayer': visibleLayerIndex + 1,
+			'timelineFrames': newFrames
+		});		
+	}
+	
 	_getDemo(selected){
 		// case for the blank option 
 		if(selected === ""){
 			return;
 		}
-
-		// get the selected demo from the dropbox
-		// selectedDemo is the path to the demo to load 
-		let selectedDemo = "demos/" + selected + ".json"; 
-
-		let httpRequest = new XMLHttpRequest();
+		const selectedDemo = "demos/" + selected + ".json"; 
+		const httpRequest = new XMLHttpRequest();
 
 		if(!httpRequest){
 			return;
 		}
-		
-		// set request type
 		httpRequest.open("GET", selectedDemo);
 		
-		// what to do when data comes back
 		httpRequest.onload = () => {
-			
-			let toolbar = this.state.toolbarInstance;
-			let project = this.state.animationProject;
-			let self = this;
-			
-			// parse the JSON using JSON.parse 
-			let data = JSON.parse(httpRequest.responseText);
-
-			if(!data[0] || (!data[0].name && !data[0].height && !data[0].width && !data[0].data)){
-				console.log("it appears to not be a valid project! :<");
-				return;
-			}
-
-			// clear existing project
-			project.resetProject();
-			
-			// load saved project
-			data.forEach(function(frame, index){
-				if(index > 0){
-					// add a new frame
-					project.addNewFrame(false);
-				}
-				// overwrite existing frame
-				// TODO: implement an updateFrame method 
-				// animationProj.updateFrame(0, frame); // updateFrame takes an index of the existing frame to overwrite and takes a Frame object to update with as well
-				let currFrame = project.frameList[index];
-				let currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-				let currFrameLayersFromCurrPrj = currFrame.getLayers();
-				
-				// make sure current index (the layer that should be showing) of this frame is consistent with the data
-				currFrame.currentIndex = frame.currentIndex;
-				
-				currFrameLayersFromImport.forEach(function(layer, layerIndex){
-					if((layerIndex+1) > currFrameLayersFromCurrPrj.length){
-						// add new layer to curr project as needed based on import
-						currFrame.setupNewLayer();
-					}
-					
-					let currLayer = currFrame.getLayers()[layerIndex];
-					if(layerIndex === currFrame.currentIndex){
-						currFrame.currentCanvas = currLayer;
-					}
-					
-					// is this part necessary? maybe, if you want the project to look exactly as when it was saved.
-					currLayer.style.opacity = layer.opacity;
-					currLayer.style.zIndex = layer.zIndex; 
-					
-					// add the image data 
-					let newCtx = currLayer.getContext("2d");
-					let img = new Image();
-					
-					(function(context, image){
-						image.onload = function(){
-							
-							context.drawImage(image, 0, 0);
-							
-							// update state
-							if(index === data.length - 1){
-								self.timelineFramesSet = new Set();
-								
-								// update animation timeline after project is loaded
-								let newFrames = [];
-								project.frameList.forEach((frame, index) => {
-									let mergedLayersFrame = toolbar.mergeFrameLayers(frame);
-									let currFrameData = mergedLayersFrame.toDataURL();
-									let currFrameIndex = index;
-									
-									if(!self.timelineFramesSet.has(currFrameIndex)){
-										newFrames.push({"data": currFrameData, "height": mergedLayersFrame.height, "width": mergedLayersFrame.width});
-										self.timelineFramesSet.add(currFrameIndex);
-									}else{
-										// update image data
-										newFrames[currFrameIndex].data = currFrameData;
-									}
-								});
-								
-								self.setState({
-									'timelineFrames': newFrames,
-									'currentFrame': 1,
-									'currentLayer': 1,
-									'timelineMarkers': {}
-								});
-							}
-						}
-						image.src = layer.imageData;
-					})(newCtx, img);
-					
-				});
-			});
+			const data = JSON.parse(httpRequest.responseText);
+			this.state.toolbarInstance.importData(data, this._importProjectUpdateFunc.bind(this));
 		}
 		httpRequest.send();
 	}
@@ -641,7 +541,7 @@ class PresentationWrapper extends React.Component {
 		}, () => {
 			this._setupToolbar();
 			this._linkDemos();
-			this._setKeyDown(document); // set key down on the whole document
+			this._setKeyDown(document);
 			this._timelineMarkerSetup();
 		});
 	}
@@ -650,50 +550,96 @@ class PresentationWrapper extends React.Component {
 		// make the active canvas shown reflect the state's current frame and layer? instead of toggling it in different places
 	}
 	
-	_clickCaret(evt){
-		let id = evt.target.id;
-		let target = document.getElementById("display" + id);
-		if(target.style.display !== "none"){
-			target.style.display = "none";
-			evt.target.innerHTML = "&#9656;";
-		}else{
-			target.style.display = "block";
-			evt.target.innerHTML = "&#9662;";
-		}
+	_clickOption(evt){
+		const id = evt.target.id;
+
+		// map caret id to div id of option that should show up in the 2nd column of the toolbar
+		const options = {
+			"instructionsOption": "instructions",
+			"frameLayerCtrlOption": "frameLayerSection",
+			"animationCtrlOption": "animControlSection",
+			"otherOption": "otherSection",
+			"brushesOption": "brushSection",
+			"filtersOption": "filterSection",
+			"demosOption": "showDemos",
+		};
+		
+		Array.from(Object.keys(options)).forEach((section) => {
+			const contentToToggle = document.getElementById(options[section]);
+			contentToToggle.classList.remove("toolbarSection2");
+			
+			if(section === id){
+				contentToToggle.classList.add("toolbarSection2");
+				contentToToggle.classList.remove("tbar");
+			}else{
+				contentToToggle.classList.add("tbar");
+			}
+		});
 	}
 	
 	render(){
 		return(
-			<div className='container-fluid'>
-				<div className='row'>
-					<div id='toolbar' className='col-lg-3'>
-						<div id='toolbarArea'>
-							<h3 id='title'> funSketch: draw and animate! </h3>
-
-							<div id='buttons'>
+			<div className='container'>
+				<div id='toolbar'>
+					<div id='toolbarArea'>
+					
+						<div id="toolbarOptions" className="toolbarSection">
+							<ul>
+								<li id="instructionsOption"
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+									onClick={this._clickOption}> instructions </li>
+								<li id="frameLayerCtrlOption" 
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+									onClick={this._clickOption}> frame/layer control </li>
+								<li id="animationCtrlOption" 
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+									onClick={this._clickOption}> animation control </li>
+								<li id="brushesOption" 
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+									onClick={this._clickOption}> brushes </li>
+								<li id="filtersOption" 
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+									onClick={this._clickOption}> filters </li>
+								<li id="otherOption"
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+									onClick={this._clickOption}> other </li>
+								<li id="demosOption" 
+									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+									onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+									onClick={this._clickOption}> demos </li>
+							</ul>
+						</div>					
+						
+						<div id="instructions" className="toolbarSection2">
+							<h4> instructions </h4>
+							<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
+							<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
+							<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
+							<p className='instructions'> The toolbar can be static or sticky (so that it follows the scrollbar). You can toggle this via the 'toggle toolbar position' button in the 'other' section. </p>
+						</div>
+					
+						<div id="frameLayerSection" className="tbar">
+							<h4> frame/layer controls </h4>
+							<div id="displayLayerStuff">
+								<button id='insertCanvas'>add new layer after</button>
+								<button id='deleteCanvas'>delete current layer</button>
+								<button id='duplicateCanvas'>duplicate layer</button>
+								<button id='clearCanvas'>clear layer</button>
+								<button id='downloadLayer'>download current layer</button>
+							</div>
+							<div id="displayFrameStuff">
+								<button id='addNewFrame'>add new frame</button>
+								<button id='copyCurrFrame'>duplicate frame</button>
+								<button id='deleteCurrFrame'>delete current frame</button>
+								<button id='changeLayerOrder'>change layer order</button>
+								<button id='downloadFrame'>download current frame</button>
 							
-								<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
-								<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
-								<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
-								<button id='toggleInstructions'>hide instructions</button>
-							
-								<h4> layer <span className="caret2" id="LayerStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
-								<div id="displayLayerStuff">
-									<button id='insertCanvas'>add new layer after</button>
-									<button id='deleteCanvas'>delete current layer</button>
-									<button id='duplicateCanvas'>duplicate layer</button>
-									<button id='clearCanvas'>clear layer</button>
-									<button id='downloadLayer'>download current layer</button>
-								</div>
-								
-								<h4> frame <span className="caret2" id="FrameStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
-								<div id="displayFrameStuff">
-									<button id='addNewFrame'>add new frame</button>
-									<button id='copyCurrFrame'>duplicate frame</button>
-									<button id='deleteCurrFrame'>delete current frame</button>
-									<button id='changeLayerOrder'>change layer order</button>
-									<button id='downloadFrame'>download current frame</button>
-								
 								<LayerOrder 
 									changingLayerOrder={this.state.changingLayerOrder}
 									layers={this.state.animationProject ? this.state.animationProject.getCurrFrame().getLayers().map((x, idx) => idx) : []}
@@ -726,81 +672,77 @@ class PresentationWrapper extends React.Component {
 										}
 									}
 								/>
-								</div>
-								
-								<h4> other <span className="caret2" id="OtherStuff" onClick={this._clickCaret}>&#9662;</span> </h4>
-								<div id="displayOtherStuff">
-									<button id='importImage'> import image </button>
-									<button id='rotateCanvasImage'>rotate image</button>
-									<button id='undo'>undo</button>
-									<button id='saveWork'>save project (.json)</button> 
-									<button id='importProject'>import project </button>
-									<button id='togglePenPressureColor'> toggle pen pressure for color </button>
-									<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
-									
-									<div id='animationControl'>
-										<br />
-										<h4> animation control: </h4>
-										<ul id='timeOptions'>
-											<label htmlFor='timePerFrame'>time per frame (ms):</label>
-											<select name='timePerFrame' id='timePerFrame' onChange={
-												(evt) => {
-													this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
-												}
-											}>
-												<option value='100'>100</option>
-												<option value='200'>200</option>
-												<option value='500'>500</option>
-												<option value='700'>700</option>
-												<option value='1000'>1000</option>
-											</select>
-										</ul>
-										<button onClick={
-											() => {
-												this._playAnimation();
-											}
-										}> play animation </button>
-										<button id='generateGif'> generate gif! </button>
-									</div>
-									<p id='loadingScreen'></p>
-								</div>
-							
-								<br />
 							</div>
-							
-							<br />
-
-							<BrushDashboard brushManager={this.state.brushInstance} />
-							
-							<br />
-							
+						</div>
+						
+						<div id="otherSection" className="tbar">
+							<h4> other </h4>
+							<div id="displayOtherStuff">
+								<button id='toggleToolbarPos'>toggle toolbar position</button>
+								<button id='importImage'> import image </button>
+								<button id='rotateCanvasImage'>rotate image</button>
+								<button id='undo'>undo</button>
+								<button id='saveWork'>save project (.json)</button> 
+								<button id='importProject'>import project </button>
+								<button id='togglePenPressureColor'> toggle pen pressure for color </button>
+								<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
+							</div>
+						</div>
+						
+						<div id="animControlSection" className="tbar">
+							<div id='animationControl'>
+								<h4> animation control: </h4>
+								<ul id='timeOptions'>
+									<label htmlFor='timePerFrame'>time per frame (ms):</label>
+									<select name='timePerFrame' id='timePerFrame' onChange={
+										(evt) => {
+											this.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+										}
+									}>
+										<option value='100'>100</option>
+										<option value='200'>200</option>
+										<option value='500'>500</option>
+										<option value='700'>700</option>
+										<option value='1000'>1000</option>
+									</select>
+								</ul>
+								<button onClick={
+									() => {
+										this._playAnimation();
+									}
+								}> play animation </button>
+								<button id='generateGif'> generate gif! </button>
+							</div>
+							<p id='loadingScreen'></p>
+						</div>
+						
+						<div id="filterSection" className="tbar">
 							<FilterDashboard filterManager={this.state.filtersInstance} />
-							
+						</div>
+					
+						<div id="brushSection" className="tbar">
+							<BrushDashboard brushManager={this.state.brushInstance} />
+						</div>
+						
+						<div id='showDemos' className="tbar">
+							<h3> demos </h3>
+							<select id='chooseDemo'>
+								<option label=""></option>
+								<option className='demo'>run_demo</option>
+								<option className='demo'>floaty_thingy</option>
+							</select>
+						</div>
+						
+						<div id="colorPickerSection" className="toolbarSection3">
 							<div id='colorPicker'>
 							</div>
-							
-							<div id='showDemos'>
-								<h3> demos </h3>
-								<select id='chooseDemo'>
-									<option label=""></option>
-									<option className='demo'>run_demo</option>
-									<option className='demo'>floaty_thingy</option>
-									<option className='demo'>cake_cut</option>
-									<option className='demo'>asakusa_mizusaki_butterfly</option>
-								</select>
-							</div>
-							
 						</div>
-						
-						<div id='footer' className='row'>
-							<hr />
-							<p> n.c.h works 2017-2021 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
-						</div>
-						
+							
 					</div>
+				</div>
 
-					<div id='screen' className='col-lg-9 grid'>
-								
+				<div id='screen'>
+					<div id="screenContainer">
 						<FrameCounterDisplay
 							currFrame={this.state.currentFrame}
 							currLayer={this.state.currentLayer}
@@ -809,48 +751,54 @@ class PresentationWrapper extends React.Component {
 						<div id='canvasArea'>
 						</div>
 						
-						<AnimationTimeline frames={this.state.timelineFrames} />
-						<canvas id='animationTimelineCanvas' style={{
-									'border': '1px solid #000',
-									'borderTop': 0,
-									'display': 'block',
-						}}></canvas>
-						
-						<div>
-						{
-							Object.keys(this.state.timelineMarkers).map((markerKey, index) => {
-								let marker = this.state.timelineMarkers[markerKey];
-								return (
-									<div>
-										<label htmlFor={'marker' + marker.frameNumber + 'Select'}>marker for frame {marker.frameNumber}: &nbsp;</label>
-										<select 
-										id={'marker' + marker.frameNumber + 'Select'} 
-										name={'marker' + marker.frameNumber + 'Select'}
-										onChange={(evt) => {
-											marker.speed = evt.target.value;
-										}}
-										>
-											<option>100</option>
-											<option>200</option>
-											<option>300</option>
-											<option>500</option>
-											<option>1000</option>
-										</select>
-										<label 
-											id={'deleteMarker_' + marker.frameNumber} 
-											style={{'color': 'red'}}
-											onClick={() => this._timelineMarkerDelete(marker.frameNumber)}
-										> &nbsp;delete </label>
-									</div>
-								);
-							})
-						}
-						<br />
-						<br />
+						<div id="animationTimelineArea">
+							<AnimationTimeline frames={this.state.timelineFrames} />
+							
+							<canvas id='animationTimelineCanvas' style={{
+										'display': 'block',
+										'marginTop': '10px',
+										'marginBottom': '10px',
+										'width': '100%',
+										'height': '200px' // note this height matches the height of AnimationTimeline
+							}}></canvas>
+							
+							<div id="animationTimelineMarkers">
+							{
+								Object.keys(this.state.timelineMarkers).map((markerKey, index) => {
+									const marker = this.state.timelineMarkers[markerKey];
+									return (
+										<div>
+											<label htmlFor={'marker' + marker.frameNumber + 'Select'}>marker for frame {marker.frameNumber}: &nbsp;</label>
+											<select 
+											id={'marker' + marker.frameNumber + 'Select'} 
+											name={'marker' + marker.frameNumber + 'Select'}
+											onChange={(evt) => {
+												marker.speed = evt.target.value;
+											}}
+											>
+												<option>100</option>
+												<option>200</option>
+												<option>300</option>
+												<option>500</option>
+												<option>1000</option>
+											</select>
+											<label 
+												id={'deleteMarker_' + marker.frameNumber} 
+												style={{'color': 'red'}}
+												onClick={() => this._timelineMarkerDelete(marker.frameNumber)}
+											> &nbsp;delete </label>
+										</div>
+									);
+								})
+							}
+							</div>
+						</div>
 					</div>
-
-					</div>
-					
+				</div>
+				
+				<div id='footer'>
+					<hr />
+					<p> c.2017 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
 				</div>
 				
 			</div> 

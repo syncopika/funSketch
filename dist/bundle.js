@@ -127,7 +127,7 @@ var TimelineFrameThumnail = function TimelineFrameThumnail(props) {
 var AnimationTimeline = function AnimationTimeline(props) {
   var timelineStyle = {
     'width': '100%',
-    'height': '175px',
+    'height': '200px',
     'border': '1px solid #000',
     'display': 'block',
     'backgroundColor': '#fff',
@@ -1472,7 +1472,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           'marginTop': '10px',
           'marginBottom': '10px',
           'width': '100%',
-          'height': '175px' // note this height matches the height of AnimationTimeline
+          'height': '200px' // note this height matches the height of AnimationTimeline
 
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
@@ -5758,8 +5758,6 @@ var Toolbar = /*#__PURE__*/function () {
 
           img.onload = function () {
             // change current canvas' width and height according to imported picture
-            console.log("width: " + img.width);
-            console.log("height: " + img.height);
             var currentCanvas = canvas.currentCanvas;
             var context = currentCanvas.getContext("2d");
             var height = canvas.height;

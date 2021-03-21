@@ -210,9 +210,9 @@ class Toolbar {
         const colorWheel = makeColorWheel(elementId, size);
         
 		document.getElementById(colorWheel.id).addEventListener('mousedown', (evt) => {
-            const x = evt.offsetX;
-            const y = evt.offsetY;
-            const colorPicked = (document.getElementById(colorWheel.id).getContext('2d')).getImageData(x, y, 1, 1).data;
+			const x = evt.offsetX;
+			const y = evt.offsetY;
+			const colorPicked = (document.getElementById(colorWheel.id).getContext('2d')).getImageData(x, y, 1, 1).data;
 			
             //correct the font color if the color is really dark
 			const colorPickedText = document.getElementById('colorPicked');
@@ -250,11 +250,11 @@ class Toolbar {
 				// use a temp canvas because translating on the real canvas will mess with mousedown coords
 				const tmpCtx = tmpCanvas.getContext("2d");
 				tmpCtx.clearRect(0, 0, width, height);
-                tmpCtx.translate(width / 2, height / 2);
-                tmpCtx.rotate((Math.PI) / 180);
-                tmpCtx.translate(-width / 2, -height / 2);
+				tmpCtx.translate(width / 2, height / 2);
+				tmpCtx.rotate((Math.PI) / 180);
+				tmpCtx.translate(-width / 2, -height / 2);
 				
-                tmpCtx.drawImage(bitmap, 0, 0);
+				tmpCtx.drawImage(bitmap, 0, 0);
 				
 				// then draw image data from tmp canvas to the real one
 				context.putImageData(tmpCtx.getImageData(0, 0, width, height), 0, 0);
@@ -356,10 +356,8 @@ class Toolbar {
                 //when the image loads, put it on the canvas.
                 img.onload = () => {
                     // change current canvas' width and height according to imported picture
-					console.log("width: " + img.width);
-					console.log("height: " + img.height);
-                    const currentCanvas = canvas.currentCanvas;
-                    const context = currentCanvas.getContext("2d");
+					const currentCanvas = canvas.currentCanvas;
+					const context = currentCanvas.getContext("2d");
 					const height = canvas.height;
 					const width = canvas.width;
 					currentCanvas.setAttribute('height', height);

@@ -759,7 +759,7 @@ class PresentationWrapper extends React.Component {
 										'marginTop': '10px',
 										'marginBottom': '10px',
 										'width': '100%',
-										'height': '175px' // note this height matches the height of AnimationTimeline
+										'height': '200px' // note this height matches the height of AnimationTimeline
 							}}></canvas>
 							
 							<div id="animationTimelineMarkers">

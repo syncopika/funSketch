@@ -755,8 +755,11 @@ class PresentationWrapper extends React.Component {
 							<AnimationTimeline frames={this.state.timelineFrames} />
 							
 							<canvas id='animationTimelineCanvas' style={{
-										'borderTop': 0,
 										'display': 'block',
+										'marginTop': '10px',
+										'marginBottom': '10px',
+										'width': '100%',
+										'height': '175px' // note this height matches the height of AnimationTimeline
 							}}></canvas>
 							
 							<div id="animationTimelineMarkers">

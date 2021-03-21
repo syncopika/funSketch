@@ -27,7 +27,7 @@ const AnimationTimeline = (props) => {
 	
 	let timelineStyle = {
 		'width': '100%',
-		'height': '200px',
+		'height': '175px',
 		'border': '1px solid #000',
 		'display': 'block',
 		'backgroundColor': '#fff',

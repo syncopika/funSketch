@@ -127,7 +127,7 @@ var TimelineFrameThumnail = function TimelineFrameThumnail(props) {
 var AnimationTimeline = function AnimationTimeline(props) {
   var timelineStyle = {
     'width': '100%',
-    'height': '200px',
+    'height': '175px',
     'border': '1px solid #000',
     'display': 'block',
     'backgroundColor': '#fff',
@@ -229,25 +229,8 @@ var BrushDashboard = function BrushDashboard(props) {
       "height": "85%",
       "width": "85%"
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
-    id: "brushSelect",
-    style: {
-      "margin": "0"
-    },
-    onClick: function onClick() {
-      var el = document.getElementById("brushDisplay");
-
-      if (el.style.display !== "block") {
-        el.style.display = "block";
-      } else {
-        el.style.display = "none";
-      }
-    }
-  }, " brushes \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    id: "brushDisplay",
-    style: {
-      "display": "none"
-    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "brushDisplay"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
     id: "brushChoices",
     style: {
@@ -397,25 +380,8 @@ var FilterDashboard = function FilterDashboard(props) {
       "height": "85%",
       "width": "85%"
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
-    id: "filterSelect",
-    style: {
-      "margin": "0"
-    },
-    onClick: function onClick() {
-      var el = document.getElementById("filtersDisplay");
-
-      if (el.style.display !== "block") {
-        el.style.display = "block";
-      } else {
-        el.style.display = "none";
-      }
-    }
-  }, " filters \u25BC "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    id: "filtersDisplay",
-    style: {
-      "display": "none"
-    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "filtersDisplay"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
     id: "filterChoices",
     style: {
@@ -1502,8 +1468,12 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("canvas", {
         id: "animationTimelineCanvas",
         style: {
-          'borderTop': 0,
-          'display': 'block'
+          'display': 'block',
+          'marginTop': '10px',
+          'marginBottom': '10px',
+          'width': '100%',
+          'height': '175px' // note this height matches the height of AnimationTimeline
+
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "animationTimelineMarkers"

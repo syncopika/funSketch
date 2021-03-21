@@ -58,28 +58,7 @@ const BrushDashboard = (props) => {
 						"width": "85%"
 					}
 				}>
-					<p 
-						id='brushSelect'
-						style={{"margin": "0"}}
-						onClick={
-							function(){
-								let el = document.getElementById("brushDisplay");
-								if(el.style.display !== "block" ){
-									el.style.display = "block";
-								}else{
-									el.style.display = "none";
-								}
-							}
-						}					
-					> brushes &#9660; </p>
-					<div 
-						id='brushDisplay'
-						style={
-							{
-								"display": "none"
-							}
-						}
-					>
+					<div id='brushDisplay'>
 						<ul 
 							id='brushChoices'
 							style={

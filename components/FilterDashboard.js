@@ -83,32 +83,7 @@ const FilterDashboard = (props) => {
 						"width": "85%"
 					}
 				}>
-					<p 
-						id='filterSelect'
-						style={
-							{
-								"margin": "0"
-							}
-						}
-						onClick={
-							function(){
-								let el = document.getElementById("filtersDisplay");
-								if(el.style.display !== "block" ){
-									el.style.display = "block";
-								}else{
-									el.style.display = "none";
-								}
-							}
-						}					
-					> filters &#9660; </p>
-					<div 
-						id='filtersDisplay'
-						style={
-							{
-								"display": "none"
-							}
-						}
-					>
+					<div id='filtersDisplay'>
 						<ul 
 							id='filterChoices'
 							style={

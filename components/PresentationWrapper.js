@@ -621,6 +621,7 @@ class PresentationWrapper extends React.Component {
 							<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
 							<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
 							<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
+							<p className='instructions'> The toolbar can be static or sticky (so that it follows the scrollbar). You can toggle this via the 'toggle toolbar position' button in the 'other' section. </p>
 						</div>
 					
 						<div id="frameLayerSection" className="tbar">
@@ -729,8 +730,6 @@ class PresentationWrapper extends React.Component {
 								<option label=""></option>
 								<option className='demo'>run_demo</option>
 								<option className='demo'>floaty_thingy</option>
-								<option className='demo'>cake_cut</option>
-								<option className='demo'>asakusa_mizusaki_butterfly</option>
 							</select>
 						</div>
 						
@@ -756,7 +755,6 @@ class PresentationWrapper extends React.Component {
 							<AnimationTimeline frames={this.state.timelineFrames} />
 							
 							<canvas id='animationTimelineCanvas' style={{
-										'border': '1px solid #000',
 										'borderTop': 0,
 										'display': 'block',
 							}}></canvas>

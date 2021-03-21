@@ -1344,7 +1344,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "instructions"
       }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
-      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
+        className: "instructions"
+      }, " The toolbar can be static or sticky (so that it follows the scrollbar). You can toggle this via the 'toggle toolbar position' button in the 'other' section. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "frameLayerSection",
         className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
@@ -1479,11 +1481,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "demo"
       }, "run_demo"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
         className: "demo"
-      }, "floaty_thingy"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        className: "demo"
-      }, "cake_cut"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        className: "demo"
-      }, "asakusa_mizusaki_butterfly"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, "floaty_thingy"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "colorPickerSection",
         className: "toolbarSection3"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
@@ -1504,7 +1502,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("canvas", {
         id: "animationTimelineCanvas",
         style: {
-          'border': '1px solid #000',
           'borderTop': 0,
           'display': 'block'
         }

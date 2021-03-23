@@ -580,7 +580,9 @@ class PresentationWrapper extends React.Component {
 	render(){
 		return(
 			<div className='container'>
-				<div id='toolbar'>
+				<div id='toolbar'
+					style={{"position": "static"}}
+				>
 					<div id='toolbarArea'>
 					
 						<div id="toolbarOptions" className="toolbarSection">
@@ -759,7 +761,7 @@ class PresentationWrapper extends React.Component {
 										'marginTop': '10px',
 										'marginBottom': '10px',
 										'width': '100%',
-										'height': '200px' // note this height matches the height of AnimationTimeline
+										'height': '185px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
 							}}></canvas>
 							
 							<div id="animationTimelineMarkers">

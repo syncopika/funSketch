@@ -1232,7 +1232,10 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         className: "container"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "toolbar"
+        id: "toolbar",
+        style: {
+          "position": "static"
+        }
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "toolbarArea"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
@@ -1472,7 +1475,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           'marginTop': '10px',
           'marginBottom': '10px',
           'width': '100%',
-          'height': '200px' // note this height matches the height of AnimationTimeline
+          'height': '185px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
 
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
@@ -6195,7 +6198,7 @@ function makeColorWheel(elementId, size) {
   var colorWheelContext = colorWheel.getContext('2d');
   var x = colorWheel.width / 2;
   var y = colorWheel.height / 2;
-  var radius = 70; // why 5600??
+  var radius = 60; // why 5600??
 
   for (var angle = 0; angle <= 5600; angle++) {
     var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians

@@ -15,7 +15,7 @@ export function makeColorWheel(elementId, size){
 	const colorWheelContext = colorWheel.getContext('2d');
 	const x = colorWheel.width / 2;
 	const y = colorWheel.height / 2;
-	const radius = 70;
+	const radius = 60;
    
    // why 5600??
 	for(let angle = 0; angle <= 5600; angle++) {

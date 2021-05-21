@@ -3474,7 +3474,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 	this function causes a blurring effect. It takes the pixel itself and
 	its left, right, above and below neighbors (if it has them)
 	and calculates the average of their total R, G, B, and A channels respectively.
-	http://blog.ivank.net/fastest-gaussian-blur.html
+	source: http://blog.ivank.net/fastest-gaussian-blur.html
 ***/
 
 
@@ -3490,32 +3490,148 @@ var Blur = /*#__PURE__*/function (_FilterTemplate) {
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Blur, [{
+    key: "generateGaussBoxes",
+    value: function generateGaussBoxes(stdDev, numBoxes) {
+      // I honestly don't know how this works :/ TODO: understand how/why this works
+      // wikipedia is a good start: https://en.wikipedia.org/wiki/Gaussian_blur
+      var wIdeal = Math.sqrt(12 * stdDev * stdDev / numBoxes + 1); // ideal averaging filter width
+
+      var wl = Math.floor(wIdeal);
+
+      if (wl % 2 == 0) {
+        wl--;
+      }
+
+      var wu = wl + 2;
+      var mIdeal = (12 * stdDev * stdDev - numBoxes * wl * wl - 4 * numBoxes * wl - 3 * numBoxes) / (-4 * wl - 4);
+      var m = Math.round(mIdeal);
+      var sizes = [];
+
+      for (var i = 0; i < numBoxes; i++) {
+        sizes.push(i < m ? wl : wu);
+      }
+
+      return sizes;
+    }
+  }, {
+    key: "boxBlurHorz",
+    value: function boxBlurHorz(src, trgt, width, height, stdDev) {
+      var iarr = 1 / (stdDev + stdDev + 1);
+
+      for (var i = 0; i < height; i++) {
+        var ti = i * width;
+        var li = ti;
+        var ri = ti + stdDev;
+        var fv = src[ti];
+        var lv = src[ti + width - 1];
+        var val = (stdDev + 1) * fv;
+
+        for (var j = 0; j < stdDev; j++) {
+          val += src[ti + j];
+        }
+
+        for (var _j = 0; _j <= stdDev; _j++) {
+          val += src[ri++] - fv;
+          trgt[ti++] = Math.round(val * iarr);
+        }
+
+        for (var _j2 = stdDev + 1; _j2 < width - stdDev; _j2++) {
+          val += src[ri++] - src[li++];
+          trgt[ti++] = Math.round(val * iarr);
+        }
+
+        for (var _j3 = width - stdDev; _j3 < width; _j3++) {
+          val += lv - src[li++];
+          trgt[ti++] = Math.round(val * iarr);
+        }
+      }
+    }
+  }, {
+    key: "boxBlurTotal",
+    value: function boxBlurTotal(src, trgt, width, height, stdDev) {
+      var iarr = 1 / (stdDev + stdDev + 1);
+
+      for (var i = 0; i < width; i++) {
+        var ti = i;
+        var li = ti;
+        var ri = ti + stdDev * width;
+        var fv = src[ti];
+        var lv = src[ti + width * (height - 1)];
+        var val = (stdDev + 1) * fv;
+
+        for (var j = 0; j < stdDev; j++) {
+          val += src[ti + j * width];
+        }
+
+        for (var _j4 = 0; _j4 <= stdDev; _j4++) {
+          val += src[ri] - fv;
+          trgt[ti] = Math.round(val * iarr);
+          ri += width;
+          ti += width;
+        }
+
+        for (var _j5 = stdDev + 1; _j5 < height - stdDev; _j5++) {
+          val += src[ri] - src[li];
+          trgt[ti] = Math.round(val * iarr);
+          li += width;
+          ri += width;
+          ti += width;
+        }
+
+        for (var _j6 = height - stdDev; _j6 < height; _j6++) {
+          val += lv - src[li];
+          trgt[ti] = Math.round(val * iarr);
+          li += width;
+          ti += width;
+        }
+      }
+    }
+  }, {
+    key: "boxBlur",
+    value: function boxBlur(src, trgt, width, height, stdDev) {
+      for (var i = 0; i < src.length; i++) {
+        trgt[i] = src[i];
+      }
+
+      this.boxBlurHorz(trgt, src, width, height, stdDev);
+      this.boxBlurTotal(src, trgt, width, height, stdDev);
+    } // source channel, target channel, width, height, stdDev
+
+  }, {
+    key: "gaussBlur",
+    value: function gaussBlur(src, trgt, width, height, stdDev) {
+      var boxes = this.generateGaussBoxes(stdDev, 3);
+      this.boxBlur(src, trgt, width, height, (boxes[0] - 1) / 2);
+      this.boxBlur(trgt, src, width, height, (boxes[1] - 1) / 2);
+      this.boxBlur(src, trgt, width, height, (boxes[2] - 1) / 2);
+    }
+  }, {
     key: "filter",
     value: function filter(pixels) {
-      var d = pixels.data;
+      // run gausBlurr for each color channel, then piece them all back together
+      // see Marc Perez's comment in http://blog.ivank.net/fastest-gaussian-blur.html
       var width = pixels.width;
-      var maximum = 4 * width;
+      var height = pixels.height;
+      var data = pixels.data; //const copy = new Uint8ClampedArray(data);
 
-      for (var i = 0; i < d.length; i += 4) {
-        //right pixel (check if 4 pixel radius ok)
-        var cond1 = d[i + 4] == undefined; //left pixel
+      var redChannel = new Uint8ClampedArray(data.length / 4);
+      var greenChannel = new Uint8ClampedArray(data.length / 4);
+      var blueChannel = new Uint8ClampedArray(data.length / 4);
 
-        var cond2 = d[i - 4] == undefined; //pixel below
+      for (var i = 0; i < data.length; i += 4) {
+        redChannel[i / 4] = data[i];
+        greenChannel[i / 4] = data[i + 1];
+        blueChannel[i / 4] = data[i + 2];
+      }
 
-        var cond3 = d[i + maximum] == undefined; //pixel above
+      this.gaussBlur(redChannel, redChannel, width, height, 3);
+      this.gaussBlur(greenChannel, greenChannel, width, height, 3);
+      this.gaussBlur(blueChannel, blueChannel, width, height, 3);
 
-        var cond4 = d[i - maximum] == undefined;
-
-        if (!cond1 && !cond2 && !cond3 && !cond4) {
-          var newR = d[i + 4] * .2 + d[i - 4] * .2 + d[i + maximum] * .2 + d[i - maximum] * .2 + d[i] * .2;
-          var newG = d[i + 5] * .2 + d[i - 3] * .2 + d[i + (maximum + 1)] * .2 + d[i - (maximum - 1)] * .2 + d[i + 1] * .2;
-          var newB = d[i + 6] * .2 + d[i - 2] * .2 + d[i + (maximum + 2)] * .2 + d[i - (maximum - 2)] * .2 + d[i + 2] * .2;
-          var newA = d[i + 7] * .2 + d[i - 1] * .2 + d[i + (maximum + 3)] * .2 + d[i - (maximum - 3)] * .2 + d[i + 3] * .2;
-          d[i] = newR;
-          d[i + 1] = newG;
-          d[i + 2] = newB;
-          d[i + 3] = newA;
-        }
+      for (var _i = 0; _i < data.length; _i += 4) {
+        data[_i] = redChannel[_i / 4];
+        data[_i + 1] = greenChannel[_i / 4];
+        data[_i + 2] = blueChannel[_i / 4]; //data[i+3] = 255;
       }
 
       return pixels;

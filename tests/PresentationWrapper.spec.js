@@ -2,10 +2,10 @@ import React from 'react';
 import 'jest-canvas-mock';
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { AnimationProject } from '../components/utils/AnimationProject.js';
-import { Toolbar } from '../components/utils/Toolbar.js';
-import { BrushManager } from '../components/utils/BrushManager.js';
-import { PresentationWrapper, FrameCounterDisplay } from '../components/PresentationWrapper.js';
+import { AnimationProject } from '../src/utils/AnimationProject.js';
+import { Toolbar } from '../src/utils/Toolbar.js';
+import { BrushManager } from '../src/utils/BrushManager.js';
+import { PresentationWrapper, FrameCounterDisplay } from '../src/PresentationWrapper.js';
 
 describe("testing PresentationWrapper component", () => {
 	

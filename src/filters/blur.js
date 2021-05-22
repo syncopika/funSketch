@@ -10,7 +10,15 @@ import { FilterTemplate } from './FilterTemplate.js';
 class Blur extends FilterTemplate {
 	
 	constructor(){
-		super(null);
+		const params = {
+			"blurFactor": {
+				"value": 3,
+				"min": 1,
+				"max": 15,
+				"step": 1,
+			}
+		}
+		super(params);
 	}
 	
 	generateGaussBoxes(stdDev, numBoxes){
@@ -126,11 +134,10 @@ class Blur extends FilterTemplate {
 	
 	filter(pixels){
 		// run gausBlurr for each color channel, then piece them all back together
-		// see Marc Perez's comment in http://blog.ivank.net/fastest-gaussian-blur.html
+		// see Marc Pérez's comment in http://blog.ivank.net/fastest-gaussian-blur.html
 		const width = pixels.width;
 		const height = pixels.height;
 		const data = pixels.data;
-        //const copy = new Uint8ClampedArray(data);
 		
 		const redChannel = new Uint8ClampedArray(data.length/4);
 		const greenChannel = new Uint8ClampedArray(data.length/4);
@@ -142,15 +149,15 @@ class Blur extends FilterTemplate {
 			blueChannel[i/4] = data[i+2];
 		}
 		
-		this.gaussBlur(redChannel, redChannel, width, height, 3);
-		this.gaussBlur(greenChannel, greenChannel, width, height, 3);
-		this.gaussBlur(blueChannel, blueChannel, width, height, 3);
+		const blurFactor = this.params.blurFactor.value;
+		this.gaussBlur(redChannel, redChannel, width, height, blurFactor);
+		this.gaussBlur(greenChannel, greenChannel, width, height, blurFactor);
+		this.gaussBlur(blueChannel, blueChannel, width, height, blurFactor);
 		
 		for(let i = 0; i < data.length; i+=4){
 			data[i] = redChannel[i/4];
 			data[i+1] = greenChannel[i/4];
 			data[i+2] = blueChannel[i/4];
-			//data[i+3] = 255;
 		}
 		
 		return pixels;

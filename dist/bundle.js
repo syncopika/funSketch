@@ -86,6165 +86,6 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./components/AnimationTimeline.js":
-/*!*****************************************!*\
-  !*** ./components/AnimationTimeline.js ***!
-  \*****************************************/
-/*! exports provided: AnimationTimeline */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AnimationTimeline", function() { return AnimationTimeline; });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-// https://stackoverflow.com/questions/55340888/fast-way-to-resize-imagedata-in-browser
-// https://stackoverflow.com/questions/19262141/resize-image-with-javascript-canvas-smoothly
-// https://stackoverflow.com/questions/13416800/how-to-generate-an-image-from-imagedata-in-javascript
-
-
-var TimelineFrameThumnail = function TimelineFrameThumnail(props) {
-  var frameImgData = props.imgData;
-  var height = '120px'; //props.height;
-
-  var width = '120px'; //props.width;
-
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
-    style: {
-      'display': 'inline-block',
-      'border': '1px solid #000',
-      'margin': '3px'
-    },
-    width: width,
-    height: height,
-    src: frameImgData
-  });
-}; // need to pass in a method from PresentationWrapper to allow updates that may occur 
-// in AnimationTimeline (i.e. changing the fps at a marker or deleting a marker)
-// to persist (these changes should be stored in PresentationWrapper's state)
-
-
-var AnimationTimeline = function AnimationTimeline(props) {
-  var timelineStyle = {
-    'width': '100%',
-    'height': '200px',
-    'border': '1px solid #000',
-    'display': 'block',
-    'backgroundColor': '#fff',
-    'overflowX': 'auto',
-    'whiteSpace': 'nowrap',
-    'marginTop': '10px'
-  };
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    id: "animationTimeline",
-    style: timelineStyle
-  }, props.frames.map(function (frame, index) {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(TimelineFrameThumnail, {
-      imgData: frame.data,
-      key: index
-    });
-  }));
-};
-
-
-
-/***/ }),
-
-/***/ "./components/BrushDashboard.js":
-/*!**************************************!*\
-  !*** ./components/BrushDashboard.js ***!
-  \**************************************/
-/*! exports provided: BrushDashboard */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrushDashboard", function() { return BrushDashboard; });
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-
-var BrushDashboard = function BrushDashboard(props) {
-  var brushManager = props.brushManager;
-  var brushes = brushManager ? brushManager.brushesMap : {}; // can be null initially
-
-  var brushNames = Object.keys(brushes);
-  var style = {
-    "textAlign": "center"
-  };
-  var elementStyle = {
-    "width": "85%",
-    "height": "100%",
-    "margin": "1% auto",
-    "textAlign": "center",
-    "display": "grid",
-    "gridTemplateRows": "1fr",
-    "gridTemplateColumns": "1fr 1fr"
-  }; // use a hook to be able to keep track of selected brush
-
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])("default"),
-      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
-      selectedBrush = _useState2[0],
-      setSelectedBrush = _useState2[1];
-
-  var brushSize = brushManager ? "".concat(brushManager.currSize) : "2";
-
-  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(brushSize),
-      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState3, 2),
-      currBrushSize = _useState4[0],
-      setBrushSize = _useState4[1];
-
-  function equipBrush(brushManager, brushName) {
-    return function (evt) {
-      setSelectedBrush(brushName);
-
-      if (brushManager) {
-        // equip brush
-        brushManager.resetBrush();
-        brushManager.setBrushType(brushName);
-        brushManager.applyBrush();
-      }
-    };
-  }
-
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    style: elementStyle
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    style: {
-      "gridRow": "1",
-      "gridColumn": "1",
-      "position": "relative",
-      "height": "100%"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    style: {
-      "position": "absolute",
-      "overflowY": "auto",
-      "top": "0",
-      "left": "10%",
-      "height": "85%",
-      "width": "85%"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    id: "brushDisplay"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
-    id: "brushChoices",
-    style: {
-      "margin": "0 auto",
-      "padding": "0"
-    }
-  }, brushNames.map(function (brushName, index) {
-    var selectedStyle = JSON.parse(JSON.stringify(style));
-
-    if (selectedBrush === brushName) {
-      selectedStyle["backgroundColor"] = "#c8c8c8";
-    }
-
-    var s = selectedStyle !== null ? selectedStyle : style;
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
-      style: s,
-      key: "brush_".concat(index),
-      id: "".concat(brushName, "_").concat(index),
-      onClick: equipBrush(brushManager, brushName),
-      onMouseOver: function onMouseOver(evt) {
-        evt.target.style.color = "#99b5d1";
-      },
-      onMouseOut: function onMouseOut(evt) {
-        evt.target.style.color = "#000";
-      }
-    }, brushName);
-  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    style: {
-      "gridRow": "1",
-      "gridColumn": "2"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    id: "adjustBrushSize"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
-    className: "text-info"
-  }, "change brush size"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
-    id: "brushSize",
-    type: "range",
-    min: "1",
-    max: "20",
-    step: ".5",
-    defaultValue: currBrushSize,
-    onChange: function onChange(evt) {
-      brushManager.changeBrushSize(evt.target.value);
-      setBrushSize(evt.target.value);
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
-    id: "brushSizeValue"
-  }, currBrushSize))));
-};
-
-
-
-/***/ }),
-
-/***/ "./components/FilterDashboard.js":
-/*!***************************************!*\
-  !*** ./components/FilterDashboard.js ***!
-  \***************************************/
-/*! exports provided: FilterDashboard */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FilterDashboard", function() { return FilterDashboard; });
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-
-function constructSlider(name, params) {
-  var id = "slider_" + name;
-  var sliderCounterId = name + 'CurrValue';
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", {
-    htmlFor: name
-  }, name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
-    type: "range",
-    name: name,
-    id: id,
-    max: params.max,
-    min: params.min,
-    step: params.step,
-    defaultValue: params.value,
-    onChange: function onChange(evt) {
-      var newVal = evt.target.value; // update reference to the filter's parameter object value field,
-      // which is used when applying the filter
-
-      params.value = parseInt(newVal);
-      document.getElementById(sliderCounterId).textContent = params.value;
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
-    id: sliderCounterId
-  }, params.value));
-}
-
-var FilterDashboard = function FilterDashboard(props) {
-  var filterManager = props.filterManager;
-  var filters = filterManager ? filterManager.filtersMap : {}; // props.filterManager can be null initially
-
-  var filterNames = Object.keys(filters);
-  var style = {
-    "textAlign": "center"
-  };
-  var elementStyle = {
-    "width": "85%",
-    "height": "100%",
-    "margin": "1% auto",
-    "textAlign": "center",
-    "display": "grid",
-    "gridTemplateRows": "1fr",
-    "gridTemplateColumns": "1fr 1fr"
-  }; // use a hook to be able to keep track of selected filter
-
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(""),
-      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
-      selectedFilter = _useState2[0],
-      setSelectedFilter = _useState2[1];
-
-  var parameterSliders = [];
-
-  if (filters[selectedFilter] && filters[selectedFilter].params) {
-    // need to set up sliders for each editable parameter for the selected filter
-    for (var paramName in filters[selectedFilter].params) {
-      var newSlider = constructSlider(paramName, filters[selectedFilter].params[paramName]);
-      parameterSliders.push(newSlider);
-    }
-  }
-
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    style: elementStyle
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    style: {
-      "gridRow": "1",
-      "gridColumn": "1",
-      "position": "relative",
-      "height": "100%"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    style: {
-      "position": "absolute",
-      "overflowY": "auto",
-      "top": "0",
-      "left": "10%",
-      "height": "85%",
-      "width": "85%"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    id: "filtersDisplay"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
-    id: "filterChoices",
-    style: {
-      "margin": "0 auto",
-      "padding": "0"
-    }
-  }, filterNames.map(function (filterName, index) {
-    var selectedStyle = null;
-
-    if (selectedFilter === filterName) {
-      selectedStyle = JSON.parse(JSON.stringify(style));
-      selectedStyle["backgroundColor"] = "#c8c8c8";
-    }
-
-    var s = selectedStyle !== null ? selectedStyle : style;
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
-      style: s,
-      key: "filter_".concat(index),
-      id: "".concat(filterName, "_").concat(index),
-      onClick: function onClick(evt) {
-        // show that the filter is selected
-        setSelectedFilter(filterName);
-      },
-      onMouseOver: function onMouseOver(evt) {
-        evt.target.style.color = "#99b5d1";
-      },
-      onMouseOut: function onMouseOut(evt) {
-        evt.target.style.color = "#000";
-      }
-    }, filterName);
-  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    style: {
-      "gridRow": "1",
-      "gridColumn": "2"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
-    id: "applyFilter",
-    onClick: function onClick() {
-      filterManager.filterCanvasOption(selectedFilter);
-    }
-  }, " apply filter "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-    id: "filterParameters"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
-    style: {
-      "margin": "0 auto",
-      "padding": "0"
-    }
-  }, parameterSliders.map(function (slider, index) {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
-      key: "filter_param_".concat(index)
-    }, slider);
-  })))));
-};
-
-
-
-/***/ }),
-
-/***/ "./components/LayerOrder.js":
-/*!**********************************!*\
-  !*** ./components/LayerOrder.js ***!
-  \**********************************/
-/*! exports provided: LayerOrder */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LayerOrder", function() { return LayerOrder; });
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
-
-
-
-
-
-function saveNewLayerOrder(updateParentStateFunc) {
-  var layers = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(document.querySelectorAll('[id^="layerOrder"]')).map(function (el) {
-    // currently each element's text content is like "layer <number>". 
-    // map the list so that we get the number - 1, because we want list indexes so we can 
-    // rearrange the order of the layers accordingly
-    return parseInt(el.textContent.split(' ')[1]) - 1;
-  });
-
-  updateParentStateFunc(layers); // update parent state.
-}
-
-var LayerOrder = function LayerOrder(props) {
-  var show = props.changingLayerOrder;
-  var updateParentState = props.updateParentStateFunction; // need to pass arg to this function
-
-  var layers = props.layers;
-  var style = {
-    "textAlign": "center"
-  };
-  var elementStyle = {
-    "margin": "2px auto",
-    "textAlign": "center",
-    "border": "1px solid #000",
-    "width": "10%"
-  }; // use a hook to be able to drag and drop with 
-
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(0),
-      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
-      dragSourceEl = _useState2[0],
-      setDragSourceEl = _useState2[1];
-
-  if (show) {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
-      style: style
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("h4", null, " layer order for current frame: "), layers.map(function (layerIndex) {
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
-        style: elementStyle,
-        key: layerIndex,
-        id: "layerOrder_".concat(layerIndex),
-        onDragStart: function onDragStart(e) {
-          e.stopPropagation();
-          var thisEl = e.target;
-          thisEl.style.opacity = 0.5;
-          setDragSourceEl(thisEl);
-          e.dataTransfer.effectAllowed = "move";
-          e.dataTransfer.setData("text/html", thisEl.innerHTML);
-        },
-        onDragEnter: function onDragEnter(e) {
-          e.target.style.border = "1px dotted #000";
-        },
-        onDragOver: function onDragOver(e) {
-          e.preventDefault();
-        },
-        onDragLeave: function onDragLeave(e) {
-          e.target.style.border = "1px solid #000";
-        },
-        onDrop: function onDrop(e) {
-          var thisEl = e.target; // e is the target element to drop on
-
-          e.stopPropagation(); // do nothing if target is the same as the element being dragged
-
-          if (dragSourceEl != thisEl) {
-            dragSourceEl.innerHTML = thisEl.innerHTML;
-            thisEl.innerHTML = e.dataTransfer.getData('text/html');
-          } // make sure source goes back to normal opacity
-
-
-          dragSourceEl.style.opacity = 1; // also make sure target has its border style restored
-
-          thisEl.style.border = "1px solid #000";
-          e.preventDefault();
-        },
-        draggable: "true"
-      }, "layer ", layerIndex + 1);
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("button", {
-      id: "doneChangingLayerButton",
-      onClick: function onClick() {
-        saveNewLayerOrder(updateParentState);
-      }
-    }, " done "));
-  } else {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", null);
-  }
-};
-
-
-
-/***/ }),
-
-/***/ "./components/PresentationWrapper.js":
-/*!*******************************************!*\
-  !*** ./components/PresentationWrapper.js ***!
-  \*******************************************/
-/*! exports provided: PresentationWrapper, FrameCounterDisplay */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PresentationWrapper", function() { return PresentationWrapper; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FrameCounterDisplay", function() { return FrameCounterDisplay; });
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/AnimationProject.js */ "./components/utils/AnimationProject.js");
-/* harmony import */ var _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/Toolbar.js */ "./components/utils/Toolbar.js");
-/* harmony import */ var _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils/BrushManager.js */ "./components/utils/BrushManager.js");
-/* harmony import */ var _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./utils/FilterManager.js */ "./components/utils/FilterManager.js");
-/* harmony import */ var _AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./AnimationTimeline.js */ "./components/AnimationTimeline.js");
-/* harmony import */ var _LayerOrder_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./LayerOrder.js */ "./components/LayerOrder.js");
-/* harmony import */ var _FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./FilterDashboard.js */ "./components/FilterDashboard.js");
-/* harmony import */ var _BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./BrushDashboard.js */ "./components/BrushDashboard.js");
-
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-
-
-
-
-
-
-
-
- // for displaying current frame and layer number
-// TODO: importing a project won't update the counter display since it's using the Toolbar class functions
-// and so the PresentationWrapper's state doesn't get updated with the new currentFrame/Layer
-
-var FrameCounterDisplay = function FrameCounterDisplay(props) {
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-    id: "pageCount"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
-    id: "prevFrame"
-  }, " \u25C0 \xA0\xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
-    id: "goLeft"
-  }, " < "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
-    id: "count"
-  }, " frame: ", props.currFrame, ", layer: ", props.currLayer, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
-    id: "goRight"
-  }, " > "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
-    id: "nextFrame"
-  }, "\xA0\xA0 \u25B6"));
-};
-
-var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default()(PresentationWrapper, _React$Component);
-
-  var _super = _createSuper(PresentationWrapper);
-
-  function PresentationWrapper(props) {
-    var _this;
-
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default()(this, PresentationWrapper);
-
-    _this = _super.call(this, props);
-    _this.state = {
-      'animationProject': null,
-      'brushInstance': null,
-      'toolbarInstance': null,
-      'filtersInstance': null,
-      'currentFrame': 1,
-      'currentLayer': 1,
-      'timelineFrames': [],
-      'timelineMarkers': {},
-      // keep track of where fps should change - not 0-indexed!
-      'changingLayerOrder': false
-    };
-    _this.timelineFramesSet = new Set(); // keep track of what frames have been added to timeline so we don't duplicate - 0-indexed!
-
-    return _this;
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(PresentationWrapper, [{
-    key: "_getCoordinates",
-    value: function _getCoordinates(canvas, event) {
-      var rect = canvas.getBoundingClientRect();
-      var scaleX = canvas.width / rect.width;
-      var scaleY = canvas.width / rect.height;
-      var x = (event.clientX - rect.left) * scaleX;
-      var y = (event.clientY - rect.top) * scaleY;
-      return {
-        'x': x,
-        'y': y,
-        'rect': rect
-      };
-    }
-  }, {
-    key: "_timelineMarkerSetup",
-    value: function _timelineMarkerSetup() {
-      var _this2 = this;
-
-      var timelineCanvas = document.getElementById('animationTimelineCanvas'); // make sure pixel width of canvas is the same as the timeline element
-
-      timelineCanvas.width = document.getElementById('animationTimeline').clientWidth;
-      timelineCanvas.height = document.getElementById('animationTimeline').clientHeight - 20; // leave a gap for the scrollbar
-
-      timelineCanvas.addEventListener('mousemove', function (event) {
-        var context = timelineCanvas.getContext('2d'); // clear canvas first
-
-        context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height); // get canvas coordinates
-
-        var coords = _this2._getCoordinates(timelineCanvas, event);
-
-        var x = coords.x;
-        var y = coords.y;
-        var rect = coords.rect;
-        context.beginPath();
-        context.moveTo(x, 0);
-        context.lineTo(x, rect.height);
-        context.stroke(); // just get all y-coords while holding that x coord
-        // draw a line
-        // if click, mark that line in canvas. have to figure out how to not erase that line 
-        // how wide should line be?
-        // also need to figure out how to translate distance between lines as frames per second...
-        // you also can't have half a frame be a different frame rate than the other half...
-      });
-      timelineCanvas.addEventListener('mouseleave', function (event) {
-        var context = timelineCanvas.getContext('2d');
-        context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
-      });
-      timelineCanvas.addEventListener('click', function (event) {
-        // also take into account horizontal scroll distance, if any
-        var scrollDistance = document.getElementById('animationTimeline').scrollLeft;
-
-        var coords = _this2._getCoordinates(timelineCanvas, event);
-
-        var x = coords.x + scrollDistance;
-        var y = coords.y; // which frame does this coordinate match to?
-
-        if (_this2.state.timelineFrames.length > 0) {
-          var width = 123; // don't hardcode this? it should be based on img width in the timeline
-
-          var frameGuess = Math.floor(x / width) + 1;
-
-          if (frameGuess <= _this2.state.timelineFrames.length) {
-            // update markers in state
-            var markers = _this2.state.timelineMarkers; // use frame number as the key
-
-            markers[frameGuess] = {
-              'xCoord': x,
-              'frameNumber': frameGuess,
-              'speed': 100,
-              'frame': _this2.state.timelineFrames[frameGuess - 1]
-            };
-
-            _this2.state.toolbarInstance.goToFrame(frameGuess - 1);
-
-            _this2.setState({
-              'timelineMarkers': markers,
-              'currentFrame': frameGuess,
-              'currentLayer': 1
-            });
-          }
-        }
-      });
-    }
-  }, {
-    key: "_timelineMarkerDelete",
-    value: function _timelineMarkerDelete(frameNumToDelete) {
-      var currentMarkers = this.state.timelineMarkers;
-
-      if (!delete currentMarkers[frameNumToDelete]) {
-        console.log("couldn't delete frame marker for frame: " + frameNumToDelete);
-      }
-
-      this.setState({
-        'timelineMarkers': currentMarkers
-      });
-    }
-  }, {
-    key: "_moveToFrame",
-    value: function _moveToFrame(direction) {
-      var animationProj = this.state.animationProject;
-      var toolbar = this.state.toolbarInstance;
-      var brush = this.state.brushInstance;
-      var currFrameIndex = animationProj.getCurrFrameIndex();
-      var frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
-      var currFrameData = frame.toDataURL();
-
-      var newFrames = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.state.timelineFrames);
-
-      if (!this.timelineFramesSet.has(currFrameIndex)) {
-        // if the animation timeline doesn't have the current frame, add it
-        newFrames.push({
-          "data": currFrameData,
-          "height": frame.height,
-          "width": frame.width
-        });
-        this.timelineFramesSet.add(currFrameIndex);
-      } else {
-        // update image data in the animation timeline
-        newFrames[currFrameIndex].data = currFrameData;
-      }
-
-      this.setState({
-        'timelineFrames': newFrames,
-        'changingLayerOrder': false
-      });
-
-      if (direction === "prev") {
-        if (toolbar.prevFrame()) {
-          return true;
-        }
-      } else {
-        if (toolbar.nextFrame()) {
-          return true;
-        }
-      }
-
-      return false;
-    }
-  }, {
-    key: "_setKeyDown",
-    value: function _setKeyDown(doc) {
-      var toolbar = this.state.toolbarInstance;
-      var animationProj = this.state.animationProject;
-      var self = this;
-      doc.addEventListener('keydown', function (evt) {
-        var updateStateFlag = false;
-        var frame = null;
-
-        switch (evt.which) {
-          case 37:
-            //left arrow key
-            if (toolbar.prevLayer()) {
-              frame = animationProj.getCurrFrame();
-              updateStateFlag = true;
-            }
-
-            break;
-
-          case 39:
-            //right arrow key
-            if (toolbar.nextLayer()) {
-              frame = animationProj.getCurrFrame();
-              updateStateFlag = true;
-            }
-
-            break;
-
-          case 32:
-            //space bar
-            if (toolbar.layerMode) {
-              toolbar.addNewLayer();
-            } else {
-              animationProj.addNewFrame(false);
-            }
-
-            break;
-
-          case 65:
-            // a key 
-            {
-              updateStateFlag = self._moveToFrame("prev");
-              frame = animationProj.getCurrFrame();
-              break;
-            }
-
-          case 68:
-            // d key 
-            {
-              updateStateFlag = self._moveToFrame("next");
-              frame = animationProj.getCurrFrame();
-              break;
-            }
-
-          default:
-            break;
-        }
-
-        evt.preventDefault();
-
-        if (updateStateFlag) {
-          self.setState({
-            'currentFrame': animationProj.getCurrFrameIndex() + 1,
-            'currentLayer': frame.getCurrCanvasIndex() + 1
-          });
-          frame = null;
-          updateStateFlag = false;
-        }
-      });
-    }
-  }, {
-    key: "_setupToolbar",
-    value: function _setupToolbar() {
-      var _this3 = this;
-
-      var newToolbar = this.state.toolbarInstance;
-      var project = this.state.animationProject;
-      newToolbar.setCounter("count");
-      newToolbar.createColorWheel('colorPicker', 170);
-      newToolbar.insertLayer('insertCanvas');
-      newToolbar.deleteLayer('deleteCanvas', function (newLayerIndex) {
-        _this3.setState({
-          'currentLayer': newLayerIndex + 1
-        });
-      });
-      newToolbar.deleteCurrentFrameButton('deleteCurrFrame', function (frameIndexToRemove) {
-        var newTimelineFrames = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(_this3.state.timelineFrames);
-
-        newTimelineFrames.splice(frameIndexToRemove, 1);
-        _this3.timelineFramesSet = new Set(Array.from(newTimelineFrames, function (x, idx) {
-          return idx;
-        }));
-        var newTimelineMarkers = {};
-        Object.keys(_this3.state.timelineMarkers).forEach(function (key, index) {
-          // since we removed a frame, reassign new frame indexes to each entry in the object
-          if (parseInt(key) !== frameIndexToRemove + 1) {
-            newTimelineMarkers[index + 1] = _this3.state.timelineMarkers[key];
-          }
-        });
-
-        _this3.setState({
-          'currentFrame': project.getCurrFrameIndex() + 1,
-          'currentLayer': project.getCurrFrame().getCurrCanvasIndex() + 1,
-          'timelineFrames': newTimelineFrames,
-          'timelineMarkers': newTimelineMarkers
-        });
-      }); // change layer order for current frame
-
-      newToolbar.changeCurrentFrameLayerOrder('changeLayerOrder', function (someArg) {
-        // update state to show layer order currently
-        _this3.setState({
-          "changingLayerOrder": true
-        });
-      });
-      newToolbar.duplicateLayer('duplicateCanvas');
-      newToolbar.setClearCanvas('clearCanvas');
-      newToolbar.downloadLayer('downloadLayer');
-      newToolbar.addNewFrameButton('addNewFrame');
-      newToolbar.copyCurrFrameButton('copyCurrFrame');
-      newToolbar.changeCurrentFrameLayerOrder('changeLayerOrder');
-      newToolbar.downloadFrame('downloadFrame');
-      newToolbar.rotateImage('rotateCanvasImage');
-      newToolbar.undo('undo');
-      newToolbar.importImage('importImage');
-      newToolbar.save('saveWork');
-      newToolbar.toggleToolbarPosition('toggleToolbarPos', 'toolbar');
-      newToolbar.importProject('importProject', this._importProjectUpdateFunc.bind(this)); // make the goLeft and goRight arrows clickable FOR LAYERS
-      // note: this is for clicking the icons with a mouse!
-
-      document.getElementById('goLeft').addEventListener('click', function () {
-        if (newToolbar.prevLayer()) {
-          var curr = project.getCurrFrame();
-
-          _this3.setState({
-            'currentFrame': project.getCurrFrameIndex() + 1,
-            'currentLayer': curr.getCurrCanvasIndex() + 1
-          });
-        }
-      });
-      document.getElementById('goRight').addEventListener('click', function () {
-        if (newToolbar.nextLayer()) {
-          var curr = project.getCurrFrame();
-
-          _this3.setState({
-            'currentFrame': project.getCurrFrameIndex() + 1,
-            'currentLayer': curr.getCurrCanvasIndex() + 1
-          });
-        }
-      }); // left and right arrows for FRAMES
-
-      document.getElementById('prevFrame').addEventListener('click', function () {
-        if (_this3._moveToFrame("prev")) {
-          var curr = project.getCurrFrame();
-
-          _this3.setState({
-            'currentFrame': project.getCurrFrameIndex() + 1,
-            'currentLayer': curr.getCurrCanvasIndex() + 1
-          });
-        }
-      });
-      document.getElementById('nextFrame').addEventListener('click', function () {
-        if (_this3._moveToFrame("next")) {
-          var curr = project.getCurrFrame();
-
-          _this3.setState({
-            'currentFrame': project.getCurrFrameIndex() + 1,
-            'currentLayer': curr.getCurrCanvasIndex() + 1
-          });
-        }
-      });
-      document.getElementById('generateGif').addEventListener('click', function () {
-        var frameSpeedMarkers = {}; // if there's at least one timeline marker, we need to apply frame speed for each frame 
-        // based on the marker
-        // the initial speed will be whatever speed is currently selected (if no marker on the first frame)
-
-        if (Object.keys(_this3.state.timelineFrames).length > 0) {
-          var currFrameSpeed = parseInt(document.getElementById('timePerFrame').selectedOptions[0].value);
-
-          _this3.state.timelineFrames.forEach(function (frame, index) {
-            if (_this3.state.timelineMarkers[index + 1]) {
-              currFrameSpeed = _this3.state.timelineMarkers[index + 1].speed;
-            }
-
-            frameSpeedMarkers[index + 1] = currFrameSpeed;
-          });
-        }
-
-        newToolbar.getGif("loadingScreen", frameSpeedMarkers);
-      });
-      document.getElementById('toggleLayerOrFrame').addEventListener('click', function () {
-        var element = document.getElementById("toggleLayerOrFrame");
-
-        if (newToolbar.layerMode) {
-          newToolbar.layerMode = false;
-          element.textContent = "toggle layer addition on spacebar press";
-        } else {
-          newToolbar.layerMode = true;
-          element.textContent = "toggle frame addition on spacebar press";
-        }
-      }); // toggle pen pressure for brush color
-
-      document.getElementById('togglePenPressureColor').addEventListener('click', function (evt) {
-        if (evt.target.style.border === "1px solid rgb(255, 0, 0)") {
-          evt.target.style.border = "1px solid rgb(0, 255, 0)"; // green
-        } else {
-          evt.target.style.border = "1px solid rgb(255, 0, 0)";
-        }
-
-        _this3.state.brushInstance.togglePressureColorFlag();
-      });
-      document.getElementById('togglePenPressureColor').style.border = "1px solid rgb(255, 0, 0)"; // red for off by default
-    }
-  }, {
-    key: "_setupAnimationControl",
-    value: function _setupAnimationControl() {
-      var _this4 = this;
-
-      document.getElementById('timePerFrame').addEventListener('onchange', function (evt) {
-        _this4.state.toolbarInstance.timePerFrame = parseInt(evt.target.selectedOptions[0].value);
-      });
-    }
-  }, {
-    key: "_linkDemos",
-    value: function _linkDemos() {
-      var _this5 = this;
-
-      var demoSelect = document.getElementById("chooseDemo");
-      demoSelect.addEventListener("change", function (evt) {
-        _this5._getDemo(evt.target.selectedOptions[0].value);
-      });
-    }
-  }, {
-    key: "_showOptions",
-    value: function _showOptions(category) {
-      var el = document.getElementById(category);
-      var child = el.children[1]; // skip the p element and get the ul element
-
-      if (child.style.display !== "block") {
-        child.style.display = "block";
-      } else {
-        child.style.display = "none";
-        el.style.marginBottom = 0;
-      }
-    }
-  }, {
-    key: "_playAnimation",
-    value: function _playAnimation() {
-      var _this6 = this;
-
-      var timelineFrames = this.state.timelineFrames;
-
-      if (Object.keys(timelineFrames).length === 0) {
-        return;
-      }
-
-      var currFrame = this.state.animationProject.getCurrFrame();
-      var animationDisplay = document.createElement('canvas'); // all frames should have the same dimensions
-
-      animationDisplay.width = currFrame.currentCanvas.width;
-      animationDisplay.height = currFrame.currentCanvas.height;
-      animationDisplay.style.zIndex = 200;
-      animationDisplay.style.border = '1px solid #000';
-      animationDisplay.style.position = 'absolute';
-      animationDisplay.style.opacity = 1.0;
-      animationDisplay.id = "animationDisplay";
-      document.getElementById("canvasArea").appendChild(animationDisplay);
-      var displayContext = animationDisplay.getContext('2d');
-      displayContext.fillStyle = "#ffffff";
-      displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
-      var totalElapsedTime = 0;
-      var lastSpeed = this.state.toolbarInstance.timePerFrame;
-      timelineFrames.forEach(function (frame, index) {
-        if (_this6.state.timelineMarkers[index + 1]) {
-          lastSpeed = parseInt(_this6.state.timelineMarkers[index + 1].speed);
-        }
-
-        setTimeout(function () {
-          // set the animation canvas to white instead of clearRect 
-          // we don't want transparency otherwise we'll see our current frame we were working on flash between animation frames
-          displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
-          var image = new Image();
-
-          image.onload = function () {
-            displayContext.drawImage(image, 0, 0); // remove animationDisplay after last frame
-
-            if (index + 1 === timelineFrames.length) {
-              setTimeout(function () {
-                document.getElementById("canvasArea").removeChild(animationDisplay);
-              }, lastSpeed);
-            }
-
-            ;
-          };
-
-          image.src = frame.data;
-        }, totalElapsedTime + lastSpeed);
-        totalElapsedTime += lastSpeed;
-      });
-    }
-  }, {
-    key: "_importProjectUpdateFunc",
-    value: function _importProjectUpdateFunc() {
-      var _this7 = this;
-
-      // update state when loading in a project
-      var project = this.state.animationProject;
-      var toolbar = this.state.toolbarInstance;
-      this.setState({
-        'currentFrame': 1,
-        'currentLayer': 1,
-        'timelineFrames': [],
-        'timelineMarkers': {}
-      });
-      this.timelineFramesSet = new Set(); // update animation timeline after project is loaded
-
-      var newFrames = [];
-      project.frameList.forEach(function (frame, index) {
-        var mergedLayersFrame = toolbar.mergeFrameLayers(frame);
-        var currFrameData = mergedLayersFrame.toDataURL();
-        var currFrameIndex = index;
-
-        if (!_this7.timelineFramesSet.has(currFrameIndex)) {
-          newFrames.push({
-            "data": currFrameData,
-            "height": mergedLayersFrame.height,
-            "width": mergedLayersFrame.width
-          });
-
-          _this7.timelineFramesSet.add(currFrameIndex);
-        } else {
-          // update image data
-          newFrames[currFrameIndex].data = currFrameData;
-        }
-      }); // figure out which layer is the one that should be visible for the first frame
-
-      var layers = project.frameList[0].canvasList;
-      var visibleLayerIndex = 0;
-
-      for (var i = 0; i < layers.length; i++) {
-        if (layers[i].style.opacity >= .97) {
-          visibleLayerIndex = i;
-          break;
-        }
-      }
-
-      project.getFrames()[0].show();
-      this.setState({
-        'currentLayer': visibleLayerIndex + 1,
-        'timelineFrames': newFrames
-      });
-    }
-  }, {
-    key: "_getDemo",
-    value: function _getDemo(selected) {
-      var _this8 = this;
-
-      // case for the blank option 
-      if (selected === "") {
-        return;
-      }
-
-      var selectedDemo = "demos/" + selected + ".json";
-      var httpRequest = new XMLHttpRequest();
-
-      if (!httpRequest) {
-        return;
-      }
-
-      httpRequest.open("GET", selectedDemo);
-
-      httpRequest.onload = function () {
-        var data = JSON.parse(httpRequest.responseText);
-
-        _this8.state.toolbarInstance.importData(data, _this8._importProjectUpdateFunc.bind(_this8));
-      };
-
-      httpRequest.send();
-    }
-  }, {
-    key: "componentDidMount",
-    value: function componentDidMount() {
-      var _this9 = this;
-
-      var animationProj = new _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__["AnimationProject"]('canvasArea');
-      animationProj.addNewFrame(true);
-      var newBrush = new _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_9__["BrushManager"](animationProj);
-      newBrush.brushesMap["default"].attachBrush();
-      var newFilters = new _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_10__["FilterManager"](animationProj, newBrush);
-      var newToolbar = new _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__["Toolbar"](newBrush, animationProj);
-      this.setState({
-        'animationProject': animationProj,
-        'brushInstance': newBrush,
-        'toolbarInstance': newToolbar,
-        'filtersInstance': newFilters
-      }, function () {
-        _this9._setupToolbar();
-
-        _this9._linkDemos();
-
-        _this9._setKeyDown(document);
-
-        _this9._timelineMarkerSetup();
-      });
-    }
-  }, {
-    key: "componentDidUpdate",
-    value: function componentDidUpdate() {// make the active canvas shown reflect the state's current frame and layer? instead of toggling it in different places
-    }
-  }, {
-    key: "_clickOption",
-    value: function _clickOption(evt) {
-      var id = evt.target.id; // map caret id to div id of option that should show up in the 2nd column of the toolbar
-
-      var options = {
-        "instructionsOption": "instructions",
-        "frameLayerCtrlOption": "frameLayerSection",
-        "animationCtrlOption": "animControlSection",
-        "otherOption": "otherSection",
-        "brushesOption": "brushSection",
-        "filtersOption": "filterSection",
-        "demosOption": "showDemos"
-      };
-      Array.from(Object.keys(options)).forEach(function (section) {
-        var contentToToggle = document.getElementById(options[section]);
-        contentToToggle.classList.remove("toolbarSection2");
-
-        if (section === id) {
-          contentToToggle.classList.add("toolbarSection2");
-          contentToToggle.classList.remove("tbar");
-        } else {
-          contentToToggle.classList.add("tbar");
-        }
-      });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this10 = this;
-
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        className: "container"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "toolbar",
-        style: {
-          "position": "static"
-        }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "toolbarArea"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "toolbarOptions",
-        className: "toolbarSection"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "instructionsOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
-        onClick: this._clickOption
-      }, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "frameLayerCtrlOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
-        onClick: this._clickOption
-      }, " frame/layer control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "animationCtrlOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
-        onClick: this._clickOption
-      }, " animation control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "brushesOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
-        onClick: this._clickOption
-      }, " brushes "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "filtersOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
-        onClick: this._clickOption
-      }, " filters "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "otherOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
-        onClick: this._clickOption
-      }, " other "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
-        id: "demosOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
-        onClick: this._clickOption
-      }, " demos "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "instructions",
-        className: "toolbarSection2"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
-        className: "instructions"
-      }, " Use the spacebar to append a new layer or frame. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
-        className: "instructions"
-      }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
-        className: "instructions"
-      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
-        className: "instructions"
-      }, " The toolbar can be static or sticky (so that it follows the scrollbar). You can toggle this via the 'toggle toolbar position' button in the 'other' section. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "frameLayerSection",
-        className: "tbar"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "displayLayerStuff"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "insertCanvas"
-      }, "add new layer after"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "deleteCanvas"
-      }, "delete current layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "duplicateCanvas"
-      }, "duplicate layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "clearCanvas"
-      }, "clear layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "downloadLayer"
-      }, "download current layer")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "displayFrameStuff"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "addNewFrame"
-      }, "add new frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "copyCurrFrame"
-      }, "duplicate frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "deleteCurrFrame"
-      }, "delete current frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "changeLayerOrder"
-      }, "change layer order"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "downloadFrame"
-      }, "download current frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_LayerOrder_js__WEBPACK_IMPORTED_MODULE_12__["LayerOrder"], {
-        changingLayerOrder: this.state.changingLayerOrder,
-        layers: this.state.animationProject ? this.state.animationProject.getCurrFrame().getLayers().map(function (x, idx) {
-          return idx;
-        }) : [],
-        updateParentStateFunction: function updateParentStateFunction(newLayerOrder) {
-          // 1. update layer order of current frame
-          // 2. set changingLayerOrder in state to false
-          var newLayerList = [];
-
-          var currFrame = _this10.state.animationProject.getCurrFrame();
-
-          var currLayerIndex = currFrame.getCurrCanvasIndex();
-          var currFrameLayerList = currFrame.getLayers();
-          currFrame.getCurrCanvas().style.opacity = 0;
-          currFrame.getCurrCanvas().style.zIndex = 0;
-
-          if (currLayerIndex - 1 > 0) {
-            currFrame.getLayers()[currLayerIndex - 1].style.opacity = 0;
-            currFrame.getLayers()[currLayerIndex - 1].style.zIndex = 0;
-          }
-
-          newLayerOrder.forEach(function (index) {
-            newLayerList.push(currFrameLayerList[index]);
-          });
-          currFrame.setLayers(newLayerList); // update the currently shown layer to reflect the re-ordering
-
-          _this10.state.toolbarInstance.setCurrLayer(currLayerIndex);
-
-          _this10.setState({
-            "changingLayerOrder": false
-          });
-        }
-      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "otherSection",
-        className: "tbar"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " other "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "displayOtherStuff"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "toggleToolbarPos"
-      }, "toggle toolbar position"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "importImage"
-      }, " import image "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "rotateCanvasImage"
-      }, "rotate image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "undo"
-      }, "undo"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "saveWork"
-      }, "save project (.json)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "importProject"
-      }, "import project "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "togglePenPressureColor"
-      }, " toggle pen pressure for color "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "toggleLayerOrFrame"
-      }, " toggle frame addition on spacebar press "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "animControlSection",
-        className: "tbar"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "animationControl"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " animation control: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", {
-        id: "timeOptions"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
-        htmlFor: "timePerFrame"
-      }, "time per frame (ms):"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
-        name: "timePerFrame",
-        id: "timePerFrame",
-        onChange: function onChange(evt) {
-          _this10.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
-        }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        value: "100"
-      }, "100"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        value: "200"
-      }, "200"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        value: "500"
-      }, "500"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        value: "700"
-      }, "700"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        value: "1000"
-      }, "1000"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        onClick: function onClick() {
-          _this10._playAnimation();
-        }
-      }, " play animation "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
-        id: "generateGif"
-      }, " generate gif! ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
-        id: "loadingScreen"
-      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "filterSection",
-        className: "tbar"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__["FilterDashboard"], {
-        filterManager: this.state.filtersInstance
-      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "brushSection",
-        className: "tbar"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__["BrushDashboard"], {
-        brushManager: this.state.brushInstance
-      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "showDemos",
-        className: "tbar"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", null, " demos "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
-        id: "chooseDemo"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        label: ""
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        className: "demo"
-      }, "run_demo"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
-        className: "demo"
-      }, "floaty_thingy"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "colorPickerSection",
-        className: "toolbarSection3"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "colorPicker"
-      })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "screen"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "screenContainer"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(FrameCounterDisplay, {
-        currFrame: this.state.currentFrame,
-        currLayer: this.state.currentLayer
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "canvasArea"
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "animationTimelineArea"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__["AnimationTimeline"], {
-        frames: this.state.timelineFrames
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("canvas", {
-        id: "animationTimelineCanvas",
-        style: {
-          'display': 'block',
-          'marginTop': '10px',
-          'marginBottom': '10px',
-          'width': '100%',
-          'height': '185px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
-
-        }
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "animationTimelineMarkers"
-      }, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
-        var marker = _this10.state.timelineMarkers[markerKey];
-        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
-          htmlFor: 'marker' + marker.frameNumber + 'Select'
-        }, "marker for frame ", marker.frameNumber, ": \xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
-          id: 'marker' + marker.frameNumber + 'Select',
-          name: 'marker' + marker.frameNumber + 'Select',
-          onChange: function onChange(evt) {
-            marker.speed = evt.target.value;
-          }
-        }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "100"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "200"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "300"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "500"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "1000")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
-          id: 'deleteMarker_' + marker.frameNumber,
-          style: {
-            'color': 'red'
-          },
-          onClick: function onClick() {
-            return _this10._timelineMarkerDelete(marker.frameNumber);
-          }
-        }, " \xA0delete "));
-      }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "footer"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", null, " c.2017 | ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("a", {
-        href: "https://github.com/syncopika/funSketch"
-      }, "source "))));
-    }
-  }]);
-
-  return PresentationWrapper;
-}(react__WEBPACK_IMPORTED_MODULE_6___default.a.Component);
-
-
-
-/***/ }),
-
-/***/ "./components/brushes/BrushTemplate.js":
-/*!*********************************************!*\
-  !*** ./components/brushes/BrushTemplate.js ***!
-  \*********************************************/
-/*! exports provided: BrushTemplate */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrushTemplate", function() { return BrushTemplate; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-// template for brushes
-var BrushTemplate = /*#__PURE__*/function () {
-  function BrushTemplate(brushManager) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, BrushTemplate);
-
-    this.brushManager = brushManager; // a brush will need to use some things the brush manager has
-
-    this.paint = false; // boolean for knowing when brush is active or not
-    // keep track of the pixels drawn on by the mouse.
-    // the redraw function uses this data to connect the dots 
-
-    this.clickX = [];
-    this.clickY = [];
-    this.clickDrag = [];
-    this.clickColor = [];
-    this.clickSize = [];
-    this.clickPressure = []; // cursor type
-
-    this.cursorType = "crosshair";
-  } // assuming a PointerEvent, calculate the brush width based on stylus pressure
-
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BrushTemplate, [{
-    key: "_calculateBrushWidth",
-    value: function _calculateBrushWidth(pointerEvt) {
-      var brushWidth = this.brushManager.getCurrSize();
-
-      if (pointerEvt.pressure) {
-        brushWidth = pointerEvt.pressure * 2 * brushWidth;
-      }
-
-      return brushWidth;
-    } // collect info where each pixel is to be drawn on canvas
-
-  }, {
-    key: "_addClick",
-    value: function _addClick(pointerEvt, dragging) {
-      var x = pointerEvt.offsetX;
-      var y = pointerEvt.offsetY;
-      var pressure = pointerEvt.pressure;
-      var currSize = this.brushManager.getCurrSize();
-      var currColor = this.brushManager.getCurrColorArray();
-      var penPressure = 1; // take into account pen pressure for color if needed (as well as for brush size)
-
-      if (this.brushManager.applyPressureColor() && pressure) {
-        var alpha = pressure * 0.5;
-        currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + alpha + ')';
-        currSize = this._calculateBrushWidth(pointerEvt);
-        penPressure = pressure;
-      } else {
-        currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',255)';
-      }
-
-      this.clickX.push(x);
-      this.clickY.push(y);
-      this.clickDrag.push(dragging);
-      this.clickColor.push(currColor);
-      this.clickSize.push(currSize);
-      this.clickPressure.push(penPressure);
-    }
-  }, {
-    key: "_redraw",
-    value: function _redraw(strokeFunction) {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var context = frame.getCurrCanvas().getContext("2d");
-      context.lineJoin = 'round'; //TODO: make this a brushmanager variable?
-
-      strokeFunction(context);
-    }
-  }, {
-    key: "_clearClick",
-    value: function _clearClick() {
-      this.clickX = [];
-      this.clickY = [];
-      this.clickDrag = [];
-      this.clickColor = [];
-      this.clickSize = [];
-      this.clickPressure = [];
-    }
-  }, {
-    key: "_handleTouchEvent",
-    value: function _handleTouchEvent(evt) {
-      var rect = evt.target.getBoundingClientRect();
-      var x = evt.touches[0].pageX - rect.left;
-      var y = evt.touches[0].pageY - rect.top - window.pageYOffset;
-      return {
-        'x': x,
-        'y': y
-      };
-    } // event listener functions
-
-  }, {
-    key: "brushStart",
-    value: function brushStart(evt) {
-      evt.preventDefault();
-    }
-  }, {
-    key: "brushMove",
-    value: function brushMove(evt) {
-      evt.preventDefault();
-    }
-  }, {
-    key: "brushStop",
-    value: function brushStop(evt) {
-      evt.preventDefault();
-    }
-  }, {
-    key: "brushLeave",
-    value: function brushLeave(evt) {
-      evt.preventDefault();
-    }
-  }, {
-    key: "brushStroke",
-    // this is for determining what the brush stroke looks like
-    value: function brushStroke() {} // equip the brush and set up the current canvas for using the brush
-
-  }, {
-    key: "attachBrush",
-    value: function attachBrush() {}
-  }]);
-
-  return BrushTemplate;
-}();
-
-
-
-/***/ }),
-
-/***/ "./components/brushes/defaultBrush.js":
-/*!********************************************!*\
-  !*** ./components/brushes/defaultBrush.js ***!
-  \********************************************/
-/*! exports provided: DefaultBrush */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DefaultBrush", function() { return DefaultBrush; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./components/brushes/BrushTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-
-
-var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(DefaultBrush, _BrushTemplate);
-
-  var _super = _createSuper(DefaultBrush);
-
-  function DefaultBrush(brushManager) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, DefaultBrush);
-
-    return _super.call(this, brushManager);
-  } // event listener functions
-
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(DefaultBrush, [{
-    key: "brushStart",
-    value: function brushStart(evt) {
-      evt.preventDefault();
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-
-      if (evt.which === 1 || evt.type === 'touchstart') {
-        //when left click only
-        this.paint = true; // offset will be different with mobile
-        // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
-        // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
-
-        if (evt.type === 'touchstart') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y;
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushMove",
-    value: function brushMove(evt) {
-      evt.preventDefault();
-
-      if (this.paint) {
-        if (evt.type === 'touchmove') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushStop",
-    value: function brushStop(evt) {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      evt.preventDefault();
-      var w = currLayer.width;
-      var h = currLayer.height;
-      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
-
-      this._clearClick();
-
-      this.paint = false;
-    } // this is for determining what the brush stroke looks like
-
-  }, {
-    key: "brushStroke",
-    value: function brushStroke(context) {
-      for (var i = 0; i < this.clickX.length; i++) {
-        context.strokeStyle = this.clickColor[i];
-        context.lineWidth = this.clickSize[i];
-        context.beginPath(); // this helps generate a solid line, rather than a line of dots.
-
-        if (this.clickDrag[i] && i) {
-          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
-        } else {
-          // the adding of 1 allows you to make a dot on click
-          context.moveTo(this.clickX[i], this.clickY[i] + 1);
-        }
-
-        context.lineTo(this.clickX[i], this.clickY[i]);
-        context.closePath();
-        context.stroke();
-      }
-    }
-  }, {
-    key: "brushLeave",
-    value: function brushLeave() {
-      this._clearClick();
-
-      this.paint = false;
-    } // equip the brush and set up the current canvas for using the brush
-
-  }, {
-    key: "attachBrush",
-    value: function attachBrush() {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
-
-      var start = this.brushStart.bind(this);
-      currLayer.addEventListener('pointerdown', start);
-      currLayer.addEventListener('touchstart', start);
-      this.brushManager.currentEventListeners['pointerdown'] = start;
-      this.brushManager.currentEventListeners['touchstart'] = start;
-      var move = this.brushMove.bind(this);
-      currLayer.addEventListener('pointermove', move);
-      currLayer.addEventListener('touchmove', move);
-      this.brushManager.currentEventListeners['pointermove'] = move;
-      this.brushManager.currentEventListeners['touchmove'] = move;
-      var stop = this.brushStop.bind(this);
-      currLayer.addEventListener('pointerup', stop);
-      currLayer.addEventListener('touchend', stop);
-      this.brushManager.currentEventListeners['pointerup'] = stop;
-      this.brushManager.currentEventListeners['touchend'] = stop;
-      var leave = this.brushLeave.bind(this);
-      currLayer.addEventListener('pointerleave', leave);
-      this.brushManager.currentEventListeners['pointerleave'] = leave;
-    }
-  }]);
-
-  return DefaultBrush;
-}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/brushes/eraserBrush.js":
-/*!*******************************************!*\
-  !*** ./components/brushes/eraserBrush.js ***!
-  \*******************************************/
-/*! exports provided: EraserBrush */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EraserBrush", function() { return EraserBrush; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./components/brushes/BrushTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
- // basically the only difference between this and default brush is that #fff is mandatory lol
-
-var EraserBrush = /*#__PURE__*/function (_BrushTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(EraserBrush, _BrushTemplate);
-
-  var _super = _createSuper(EraserBrush);
-
-  function EraserBrush(brushManager) {
-    var _this;
-
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, EraserBrush);
-
-    _this = _super.call(this, brushManager);
-    _this.cursorType = "url(" + "\"eraser_cursor1.png\"" + ") 5 5, auto";
-    return _this;
-  } // event listener functions
-
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(EraserBrush, [{
-    key: "brushStart",
-    value: function brushStart(evt) {
-      evt.preventDefault();
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-
-      if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
-        //when left click only		
-        this.paint = true; // offset will be different with mobile
-        // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
-        // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
-
-        if (evt.type === 'touchstart') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y;
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushMove",
-    value: function brushMove(evt) {
-      evt.preventDefault();
-
-      if (this.paint) {
-        if (evt.type === 'touchmove') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushStop",
-    value: function brushStop(evt) {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      evt.preventDefault(); // this is important for the undo feature
-
-      var w = currLayer.width;
-      var h = currLayer.height;
-      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
-
-      this._clearClick();
-
-      this.paint = false;
-    } // this is for determining what the brush stroke looks like
-
-  }, {
-    key: "brushStroke",
-    value: function brushStroke() {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      var context = currLayer.getContext("2d");
-
-      for (var i = 0; i < this.clickX.length; i++) {
-        context.strokeStyle = "#ffffffff"; // #ffffffff because eraser
-
-        context.lineWidth = this.clickSize[i];
-        context.beginPath();
-
-        if (this.clickDrag[i] && i) {
-          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
-        } else {
-          //the adding of 1 allows you to make a dot on click
-          context.moveTo(this.clickX[i], this.clickY[i] + 1);
-        }
-
-        context.lineTo(this.clickX[i], this.clickY[i]);
-        context.closePath();
-        context.stroke();
-      }
-    }
-  }, {
-    key: "brushLeave",
-    value: function brushLeave() {
-      this._clearClick();
-
-      this.paint = false;
-    } // equip the brush and set up the current canvas for using the brush
-
-  }, {
-    key: "attachBrush",
-    value: function attachBrush() {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
-
-      var start = this.brushStart.bind(this);
-      currLayer.addEventListener('mousedown', start);
-      currLayer.addEventListener('touchstart', start);
-      this.brushManager.currentEventListeners['mousedown'] = start;
-      this.brushManager.currentEventListeners['touchstart'] = start;
-      var move = this.brushMove.bind(this);
-      currLayer.addEventListener('mousemove', move);
-      currLayer.addEventListener('touchmove', move);
-      this.brushManager.currentEventListeners['mousemove'] = move;
-      this.brushManager.currentEventListeners['touchmove'] = move;
-      var stop = this.brushStop.bind(this);
-      currLayer.addEventListener('mouseup', stop);
-      currLayer.addEventListener('touchend', stop);
-      this.brushManager.currentEventListeners['mouseup'] = stop;
-      this.brushManager.currentEventListeners['touchend'] = stop;
-      var leave = this.brushLeave.bind(this);
-      currLayer.addEventListener('mouseleave', leave);
-      this.brushManager.currentEventListeners['mouseleave'] = leave;
-    }
-  }]);
-
-  return EraserBrush;
-}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/brushes/floodfillBrush.js":
-/*!**********************************************!*\
-  !*** ./components/brushes/floodfillBrush.js ***!
-  \**********************************************/
-/*! exports provided: FloodfillBrush */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FloodfillBrush", function() { return FloodfillBrush; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./components/brushes/BrushTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-
-
-var FloodfillBrush = /*#__PURE__*/function (_BrushTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(FloodfillBrush, _BrushTemplate);
-
-  var _super = _createSuper(FloodfillBrush);
-
-  function FloodfillBrush(brushManager) {
-    var _this;
-
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, FloodfillBrush);
-
-    _this = _super.call(this, brushManager);
-    _this.cursorType = "url(" + "\"paintbucket.png\"" + "), auto";
-    return _this;
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(FloodfillBrush, [{
-    key: "floodfill",
-    value: function floodfill(currentCanvas, newColor, pixelSelected) {
-      // create a stack 
-      var stack = []; // create visited set 
-      // the format of these entries will be like: {'xCoord,yCoord': 1}
-
-      var visited = new Set(); // the selectedPixel will have the color that needs to be targeted by floodfill 
-
-      var targetColor = pixelSelected.color; // current canvas context 
-
-      var ctx = document.getElementById(currentCanvas.id).getContext('2d'); // get the image data of the entire canvas 
-      // do the floodfill, then put the edited image data back 
-
-      var imageData = ctx.getImageData(0, 0, currentCanvas.width, currentCanvas.height);
-      var data = imageData.data;
-      var originalData = new Uint8ClampedArray(imageData.data);
-      stack.push(pixelSelected);
-
-      while (stack.length !== 0) {
-        // get a pixel
-        var currPixel = stack.pop(); // add to visited set 
-
-        visited.add(currPixel.x + ',' + currPixel.y); // get left, right, top and bottom neighbors 
-
-        var leftNeighborX = currPixel.x - 1;
-        var rightNeighborX = currPixel.x + 1;
-        var topNeighborY = currPixel.y - 1;
-        var bottomNeighborY = currPixel.y + 1;
-        var r = void 0,
-            g = void 0,
-            b = void 0; // top neighbor
-
-        if (topNeighborY >= 0 && !visited.has(currPixel.x + ',' + topNeighborY)) {
-          // index of r, g and b colors in imageData.data
-          r = topNeighborY * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
-          g = r + 1;
-          b = g + 1;
-
-          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
-            // if the neighbor's color is the same as the targetColor, add it to the stack
-            stack.push({
-              'x': currPixel.x,
-              'y': topNeighborY,
-              'color': currPixel.color
-            });
-          }
-        } // right neighbor 
-
-
-        if (rightNeighborX < currentCanvas.width && !visited.has(rightNeighborX + ',' + currPixel.y)) {
-          r = currPixel.y * currentCanvas.width * 4 + (rightNeighborX + 1) * 4;
-          g = r + 1;
-          b = g + 1;
-
-          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
-            // if the neighbor's color is the same as the targetColor, add it to the stack
-            stack.push({
-              'x': rightNeighborX,
-              'y': currPixel.y,
-              'color': currPixel.color
-            });
-          }
-        } // bottom neighbor
-
-
-        if (bottomNeighborY < currentCanvas.height && !visited.has(currPixel.x + ',' + bottomNeighborY)) {
-          r = bottomNeighborY * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
-          g = r + 1;
-          b = g + 1;
-
-          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
-            // if the neighbor's color is the same as the targetColor, add it to the stack
-            stack.push({
-              'x': currPixel.x,
-              'y': bottomNeighborY,
-              'color': currPixel.color
-            });
-          }
-        } // left neighbor
-
-
-        if (leftNeighborX >= 0 && !visited.has(leftNeighborX + ',' + currPixel.y)) {
-          r = currPixel.y * currentCanvas.width * 4 + (leftNeighborX + 1) * 4;
-          g = r + 1;
-          b = g + 1;
-
-          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
-            // if the neighbor's color is the same as the targetColor, add it to the stack
-            stack.push({
-              'x': leftNeighborX,
-              'y': currPixel.y,
-              'color': currPixel.color
-            });
-          }
-        } // finally, update the color of the current pixel 
-
-
-        r = currPixel.y * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
-        g = r + 1;
-        b = g + 1;
-        data[r] = newColor[0];
-        data[g] = newColor[1];
-        data[b] = newColor[2];
-      } // put new edited image back on canvas
-
-
-      ctx.putImageData(imageData, 0, 0);
-    } // event listener functions
-
-  }, {
-    key: "brushStart",
-    value: function brushStart(evt) {
-      evt.preventDefault();
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-
-      if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
-        //when left click only
-        if (evt.type === 'touchstart') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y;
-          evt.preventDefault();
-        } // do floodfill
-        // need to parse the currColor because right now it looks like "rgb(x,y,z)". 
-        // I want it to look like [x, y, z]
-
-
-        var currColor = this.brushManager.currColor;
-        var currColorArray = currColor.substring(currColor.indexOf('(') + 1, currColor.length - 1).split(',');
-        currColorArray = this.brushManager.currColorArray.map(function (a) {
-          return parseInt(a);
-        });
-        var x = evt.offsetX;
-        var y = evt.offsetY;
-        var colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
-        var color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')'; // create an object with the pixel data
-
-        var pixel = {
-          'x': Math.floor(x),
-          'y': Math.floor(y),
-          'color': color
-        };
-        this.floodfill(currLayer, currColorArray, pixel);
-        var w = currLayer.width;
-        var h = currLayer.height;
-        frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
-      }
-    } // equip the brush and set up the current canvas for using the brush
-
-  }, {
-    key: "attachBrush",
-    value: function attachBrush() {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
-
-      var start = this.brushStart.bind(this);
-      currLayer.addEventListener('mousedown', start);
-      currLayer.addEventListener('touchstart', start);
-      this.brushManager.currentEventListeners['mousedown'] = start;
-      this.brushManager.currentEventListeners['touchstart'] = start;
-    }
-  }]);
-
-  return FloodfillBrush;
-}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/brushes/penBrush.js":
-/*!****************************************!*\
-  !*** ./components/brushes/penBrush.js ***!
-  \****************************************/
-/*! exports provided: PenBrush */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PenBrush", function() { return PenBrush; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./components/brushes/BrushTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-/***
-	brush for making shapes
-	inspired by mrdoob's work: https://github.com/mrdoob/harmony/
-***/
-
-
-var PenBrush = /*#__PURE__*/function (_BrushTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(PenBrush, _BrushTemplate);
-
-  var _super = _createSuper(PenBrush);
-
-  function PenBrush(brushManager) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, PenBrush);
-
-    return _super.call(this, brushManager);
-  } // event listener functions
-
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(PenBrush, [{
-    key: "brushStart",
-    value: function brushStart(evt) {
-      evt.preventDefault();
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-
-      if (evt.which === 1 || evt.type === 'touchstart') {
-        //when left click only
-        this.paint = true;
-
-        if (evt.type === 'touchstart') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y;
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushMove",
-    value: function brushMove(evt) {
-      evt.preventDefault();
-
-      if (this.paint) {
-        if (evt.type === 'touchmove') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushStop",
-    value: function brushStop(evt) {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      evt.preventDefault();
-      var w = currLayer.width;
-      var h = currLayer.height;
-      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
-
-      this._clearClick();
-
-      this.paint = false;
-    } // this is for determining what the brush stroke looks like
-
-  }, {
-    key: "brushStroke",
-    value: function brushStroke(context) {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currColor = this.brushManager.getCurrColorArray(); // connect the dots first
-
-      for (var i = 0; i < this.clickX.length; i++) {
-        context.strokeStyle = this.clickColor[i];
-        context.lineWidth = this.clickSize[i];
-        context.beginPath();
-
-        if (this.clickDrag[i] && i) {
-          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
-        } else {
-          context.moveTo(this.clickX[i], this.clickY[i] + 1);
-        }
-
-        context.lineTo(this.clickX[i], this.clickY[i]);
-        context.closePath();
-        context.stroke();
-      } // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
-
-
-      if (this.brushManager.applyPressureColor()) {
-        var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.3 + ')';
-        context.strokeStyle = extraStrokeColor;
-      } // TODO: I think the below stuff should go in the loop above (take the strokeStyle change above along with it).
-      // pick a random point from some of the most recent points drawn so far. adjust that coord slightly based on some random numbers.
-      // then draw a line from that coord to a new coord that is based off the latest drawn point (this point will also be slightly altered based on random nums).
-      // this way we get some random, skewed lines to our strokes to give some texture.
-
-
-      if (this.clickX.length > 7) {
-        var currIndex = this.clickX.length - 1;
-
-        for (var _i = this.clickX.length - 6; _i < this.clickX.length; _i++) {
-          // maybe we can do something neat like take into account the direction of the brush based on
-          // the vector created by the current and previous coordinates?
-          var prevIndex = Math.round(Math.random() * (currIndex - (currIndex - 5)) + (currIndex - 5)); // get rand index from currIndex - 5 to the last index
-
-          context.beginPath();
-          context.moveTo(this.clickX[prevIndex] + Math.random() * 3, this.clickY[prevIndex] + 2 * Math.random());
-          context.lineTo(this.clickX[_i], this.clickY[_i]);
-          context.closePath();
-          context.stroke();
-        }
-      }
-    }
-  }, {
-    key: "brushLeave",
-    value: function brushLeave() {
-      this._clearClick();
-
-      this.paint = false;
-    } // equip the brush and set up the current canvas for using the brush
-
-  }, {
-    key: "attachBrush",
-    value: function attachBrush() {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
-
-      var start = this.brushStart.bind(this);
-      currLayer.addEventListener('pointerdown', start);
-      currLayer.addEventListener('touchstart', start);
-      this.brushManager.currentEventListeners['pointerdown'] = start;
-      this.brushManager.currentEventListeners['touchstart'] = start;
-      var move = this.brushMove.bind(this);
-      currLayer.addEventListener('pointermove', move);
-      currLayer.addEventListener('touchmove', move);
-      this.brushManager.currentEventListeners['pointermove'] = move;
-      this.brushManager.currentEventListeners['touchmove'] = move;
-      var stop = this.brushStop.bind(this);
-      currLayer.addEventListener('pointerup', stop);
-      currLayer.addEventListener('touchend', stop);
-      this.brushManager.currentEventListeners['pointerup'] = stop;
-      this.brushManager.currentEventListeners['touchend'] = stop;
-      var leave = this.brushLeave.bind(this);
-      currLayer.addEventListener('pointerleave', leave);
-      this.brushManager.currentEventListeners['pointerleave'] = leave;
-    }
-  }]);
-
-  return PenBrush;
-}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/brushes/radialBrush.js":
-/*!*******************************************!*\
-  !*** ./components/brushes/radialBrush.js ***!
-  \*******************************************/
-/*! exports provided: RadialBrush */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RadialBrush", function() { return RadialBrush; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./components/brushes/BrushTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-
-
-var RadialBrush = /*#__PURE__*/function (_BrushTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RadialBrush, _BrushTemplate);
-
-  var _super = _createSuper(RadialBrush);
-
-  function RadialBrush(brushManager) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RadialBrush);
-
-    return _super.call(this, brushManager);
-  } // event listener functions
-
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RadialBrush, [{
-    key: "brushStart",
-    value: function brushStart(evt) {
-      evt.preventDefault();
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-
-      if (evt.which === 1 || evt.type === 'touchstart') {
-        //when left click only			
-        this.paint = true; // offset will be different with mobile
-        // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
-        // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
-
-        if (evt.type === 'touchstart') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y;
-          evt.preventDefault();
-        }
-
-        var brushWidth = this._calculateBrushWidth(evt);
-
-        this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushMove",
-    value: function brushMove(evt) {
-      evt.preventDefault();
-
-      if (this.paint) {
-        if (evt.type === 'touchmove') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-          evt.preventDefault();
-        }
-
-        var brushWidth = this._calculateBrushWidth(evt);
-
-        this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushStop",
-    value: function brushStop(evt) {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      evt.preventDefault();
-      var w = currLayer.width;
-      var h = currLayer.height;
-      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
-
-      this._clearClick();
-
-      this.paint = false;
-    } // this is for determining what the brush stroke looks like
-
-  }, {
-    key: "brushStroke",
-    value: function brushStroke() {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      var context = currLayer.getContext("2d");
-
-      for (var i = 0; i < this.clickX.length; i++) {
-        context.strokeStyle = this.clickColor[i];
-        context.lineWidth = this.clickSize[i];
-        context.beginPath();
-
-        if (this.clickDrag[i] && i) {
-          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
-        } else {
-          //the adding of 1 allows you to make a dot on click
-          context.moveTo(this.clickX[i], this.clickY[i] + 1);
-        }
-
-        context.lineTo(this.clickX[i], this.clickY[i]);
-        context.closePath();
-        context.stroke();
-      }
-    }
-  }, {
-    key: "radialGrad",
-    value: function radialGrad(x, y, brushSize) {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      var context = currLayer.getContext("2d");
-      var colorPicked = this.brushManager.getCurrColorArray();
-      var currColor = this.brushManager.getCurrColor();
-      var radGrad = context.createRadialGradient(x, y, brushSize, x, y, brushSize * 1.5);
-      context.lineJoin = context.lineCap = 'round';
-      radGrad.addColorStop(0, currColor);
-
-      if (colorPicked !== undefined) {
-        radGrad.addColorStop(.5, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',.5)');
-        radGrad.addColorStop(1, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',0)');
-      } else {
-        radGrad.addColorStop(.5, 'rgba(0,0,0,.5)');
-        radGrad.addColorStop(1, 'rgba(0,0,0,0)');
-      }
-
-      context.fillStyle = radGrad;
-      context.fillRect(x - 20, y - 20, 40, 40);
-    }
-  }, {
-    key: "brushLeave",
-    value: function brushLeave() {
-      this._clearClick();
-
-      this.paint = false;
-    } // equip the brush and set up the current canvas for using the brush
-
-  }, {
-    key: "attachBrush",
-    value: function attachBrush() {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
-
-      var start = this.brushStart.bind(this);
-      currLayer.addEventListener('pointerdown', start);
-      currLayer.addEventListener('touchstart', start);
-      this.brushManager.currentEventListeners['pointerdown'] = start;
-      this.brushManager.currentEventListeners['touchstart'] = start;
-      var move = this.brushMove.bind(this);
-      currLayer.addEventListener('pointermove', move);
-      currLayer.addEventListener('touchmove', move);
-      this.brushManager.currentEventListeners['pointermove'] = move;
-      this.brushManager.currentEventListeners['touchmove'] = move;
-      var stop = this.brushStop.bind(this);
-      currLayer.addEventListener('pointerup', stop);
-      currLayer.addEventListener('touchend', stop);
-      this.brushManager.currentEventListeners['pointerup'] = stop;
-      this.brushManager.currentEventListeners['touchend'] = stop;
-      var leave = this.brushLeave.bind(this);
-      currLayer.addEventListener('pointerleave', leave);
-      this.brushManager.currentEventListeners['pointerleave'] = leave;
-    }
-  }]);
-
-  return RadialBrush;
-}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/brushes/shapeBrush.js":
-/*!******************************************!*\
-  !*** ./components/brushes/shapeBrush.js ***!
-  \******************************************/
-/*! exports provided: ShapeBrush */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ShapeBrush", function() { return ShapeBrush; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./components/brushes/BrushTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-/***
-	brush for making shapes
-	inspired by mrdoob's work: https://github.com/mrdoob/harmony/
-***/
-
-
-var ShapeBrush = /*#__PURE__*/function (_BrushTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(ShapeBrush, _BrushTemplate);
-
-  var _super = _createSuper(ShapeBrush);
-
-  function ShapeBrush(brushManager) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, ShapeBrush);
-
-    return _super.call(this, brushManager);
-  } // event listener functions
-
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(ShapeBrush, [{
-    key: "brushStart",
-    value: function brushStart(evt) {
-      evt.preventDefault();
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-
-      if (evt.which === 1 || evt.type === 'touchstart') {
-        //when left click only
-        this.paint = true;
-
-        if (evt.type === 'touchstart') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y;
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushMove",
-    value: function brushMove(evt) {
-      evt.preventDefault();
-
-      if (this.paint) {
-        if (evt.type === 'touchmove') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushStop",
-    value: function brushStop(evt) {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      evt.preventDefault();
-      var w = currLayer.width;
-      var h = currLayer.height;
-      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
-
-      this._clearClick();
-
-      this.paint = false;
-    } // this is for determining what the brush stroke looks like
-
-  }, {
-    key: "brushStroke",
-    value: function brushStroke(context) {
-      var frame = this.brushManager.animationProject.getCurrFrame(); // connect current dot with previous dot
-
-      context.strokeStyle = this.clickColor[this.clickColor.length - 1];
-      context.beginPath();
-      context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
-
-      if (this.clickX.length > 1) {
-        context.lineTo(this.clickX[this.clickX.length - 2], this.clickY[this.clickY.length - 2]);
-      }
-
-      context.closePath();
-      context.lineWidth = this.clickSize[this.clickSize.length - 1];
-      context.stroke(); // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
-
-      if (this.brushManager.applyPressureColor()) {
-        var currColor = this.brushManager.getCurrColorArray();
-        var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.1 + ')';
-        context.strokeStyle = extraStrokeColor;
-      }
-
-      for (var i = 0; i < this.clickX.length; i++) {
-        context.beginPath();
-        context.moveTo(this.clickX[this.clickX.length - 1] + Math.random() * 0.1, this.clickY[this.clickY.length - 1] + 0.1 * Math.random());
-        context.lineTo(this.clickX[i] - 0.1 * Math.random(), this.clickY[i] - Math.random() * 0.1);
-        context.closePath();
-        context.stroke();
-      }
-    }
-  }, {
-    key: "brushLeave",
-    value: function brushLeave() {
-      this._clearClick();
-
-      this.paint = false;
-    } // equip the brush and set up the current canvas for using the brush
-
-  }, {
-    key: "attachBrush",
-    value: function attachBrush() {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
-
-      var start = this.brushStart.bind(this);
-      currLayer.addEventListener('pointerdown', start);
-      currLayer.addEventListener('touchstart', start);
-      this.brushManager.currentEventListeners['pointerdown'] = start;
-      this.brushManager.currentEventListeners['touchstart'] = start;
-      var move = this.brushMove.bind(this);
-      currLayer.addEventListener('pointermove', move);
-      currLayer.addEventListener('touchmove', move);
-      this.brushManager.currentEventListeners['pointermove'] = move;
-      this.brushManager.currentEventListeners['touchmove'] = move;
-      var stop = this.brushStop.bind(this);
-      currLayer.addEventListener('pointerup', stop);
-      currLayer.addEventListener('touchend', stop);
-      this.brushManager.currentEventListeners['pointerup'] = stop;
-      this.brushManager.currentEventListeners['touchend'] = stop;
-      var leave = this.brushLeave.bind(this);
-      currLayer.addEventListener('pointerleave', leave);
-      this.brushManager.currentEventListeners['pointerleave'] = leave;
-    }
-  }]);
-
-  return ShapeBrush;
-}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/brushes/sketchyBrush.js":
-/*!********************************************!*\
-  !*** ./components/brushes/sketchyBrush.js ***!
-  \********************************************/
-/*! exports provided: SketchyBrush */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SketchyBrush", function() { return SketchyBrush; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./components/brushes/BrushTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-/***
-	pen-like brush 
-	thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/sketchy.js
-***/
-
-
-var SketchyBrush = /*#__PURE__*/function (_BrushTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(SketchyBrush, _BrushTemplate);
-
-  var _super = _createSuper(SketchyBrush);
-
-  function SketchyBrush(brushManager) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, SketchyBrush);
-
-    return _super.call(this, brushManager);
-  } // event listener functions
-
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(SketchyBrush, [{
-    key: "brushStart",
-    value: function brushStart(evt) {
-      evt.preventDefault();
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-
-      if (evt.which === 1 || evt.type === 'touchstart') {
-        //when left click only
-        this.paint = true;
-
-        if (evt.type === 'touchstart') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y;
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushMove",
-    value: function brushMove(evt) {
-      evt.preventDefault();
-
-      if (this.paint) {
-        if (evt.type === 'touchmove') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushStop",
-    value: function brushStop(evt) {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      evt.preventDefault();
-      var w = currLayer.width;
-      var h = currLayer.height;
-      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
-
-      this._clearClick();
-
-      this.paint = false;
-    } // this is for determining what the brush stroke looks like
-
-  }, {
-    key: "brushStroke",
-    value: function brushStroke(context) {
-      var frame = this.brushManager.animationProject.getCurrFrame(); // connect the dots
-
-      for (var i = 0; i < this.clickX.length; i++) {
-        context.strokeStyle = this.clickColor[i];
-        context.lineWidth = this.clickSize[i];
-        context.beginPath();
-
-        if (this.clickDrag[i] && i) {
-          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
-        } else {
-          context.moveTo(this.clickX[i], this.clickY[i] + 1);
-        }
-
-        context.lineTo(this.clickX[i], this.clickY[i]);
-        context.closePath();
-        context.stroke();
-      } // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
-
-
-      if (this.brushManager.applyPressureColor()) {
-        var currColor = this.brushManager.getCurrColorArray();
-        var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.1 + ')';
-        context.strokeStyle = extraStrokeColor;
-      }
-
-      for (var _i = 0; _i < this.clickX.length; _i++) {
-        var dx = this.clickX[_i] - this.clickX[this.clickX.length - 1];
-        var dy = this.clickY[_i] - this.clickY[this.clickY.length - 1];
-        var d = dx * dx + dy * dy;
-
-        if (d < 4000 && Math.random() > d / 1000) {
-          context.beginPath();
-          context.moveTo(this.clickX[this.clickX.length - 1] + dx * 0.3, this.clickY[this.clickY.length - 1] + dy * 0.3);
-          context.lineTo(this.clickX[_i] - dx * 0.3, this.clickY[_i] - dy * 0.3);
-          context.closePath();
-          context.stroke();
-        }
-      }
-    }
-  }, {
-    key: "brushLeave",
-    value: function brushLeave() {
-      this._clearClick();
-
-      this.paint = false;
-    } // equip the brush and set up the current canvas for using the brush
-
-  }, {
-    key: "attachBrush",
-    value: function attachBrush() {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
-
-      var start = this.brushStart.bind(this);
-      currLayer.addEventListener('pointerdown', start);
-      currLayer.addEventListener('touchstart', start);
-      this.brushManager.currentEventListeners['pointerdown'] = start;
-      this.brushManager.currentEventListeners['touchstart'] = start;
-      var move = this.brushMove.bind(this);
-      currLayer.addEventListener('pointermove', move);
-      currLayer.addEventListener('touchmove', move);
-      this.brushManager.currentEventListeners['pointermove'] = move;
-      this.brushManager.currentEventListeners['touchmove'] = move;
-      var stop = this.brushStop.bind(this);
-      currLayer.addEventListener('pointerup', stop);
-      currLayer.addEventListener('touchend', stop);
-      this.brushManager.currentEventListeners['pointerup'] = stop;
-      this.brushManager.currentEventListeners['touchend'] = stop;
-      var leave = this.brushLeave.bind(this);
-      currLayer.addEventListener('pointerleave', leave);
-      this.brushManager.currentEventListeners['pointerleave'] = leave;
-    }
-  }]);
-
-  return SketchyBrush;
-}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/brushes/webBrush.js":
-/*!****************************************!*\
-  !*** ./components/brushes/webBrush.js ***!
-  \****************************************/
-/*! exports provided: WebBrush */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WebBrush", function() { return WebBrush; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./components/brushes/BrushTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-/***
-	web brush 
-	thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/web.js
-***/
-
-
-var WebBrush = /*#__PURE__*/function (_BrushTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(WebBrush, _BrushTemplate);
-
-  var _super = _createSuper(WebBrush);
-
-  function WebBrush(brushManager) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, WebBrush);
-
-    return _super.call(this, brushManager);
-  } // event listener functions
-
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(WebBrush, [{
-    key: "brushStart",
-    value: function brushStart(evt) {
-      evt.preventDefault();
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-
-      if (evt.which === 1 || evt.type === 'touchstart') {
-        //when left click only
-        this.paint = true;
-
-        if (evt.type === 'touchstart') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y;
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushMove",
-    value: function brushMove(evt) {
-      evt.preventDefault();
-
-      if (this.paint) {
-        if (evt.type === 'touchmove') {
-          var newCoords = this._handleTouchEvent(evt);
-
-          evt.offsetX = newCoords.x;
-          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
-
-          evt.preventDefault();
-        }
-
-        this._addClick(evt, true);
-
-        this._redraw(this.brushStroke.bind(this));
-      }
-    }
-  }, {
-    key: "brushStop",
-    value: function brushStop(evt) {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      evt.preventDefault();
-      var w = currLayer.width;
-      var h = currLayer.height;
-      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
-
-      this._clearClick();
-
-      this.paint = false;
-    } // this is for determining what the brush stroke looks like
-
-  }, {
-    key: "brushStroke",
-    value: function brushStroke(context) {
-      var frame = this.brushManager.animationProject.getCurrFrame(); // connect the dots
-
-      for (var i = 0; i < this.clickX.length; i++) {
-        context.strokeStyle = this.clickColor[i];
-        context.lineWidth = this.clickSize[i];
-        context.beginPath();
-
-        if (this.clickDrag[i] && i) {
-          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
-        } else {
-          context.moveTo(this.clickX[i], this.clickY[i] + 1);
-        }
-
-        context.lineTo(this.clickX[i], this.clickY[i]);
-        context.closePath();
-        context.stroke();
-      } // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
-
-
-      if (this.brushManager.applyPressureColor()) {
-        var currColor = this.brushManager.getCurrColorArray();
-        var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.1 + ')';
-        context.strokeStyle = extraStrokeColor;
-      }
-
-      for (var _i = 0; _i < this.clickX.length; _i++) {
-        var dx = this.clickX[_i] - this.clickX[this.clickX.length - 1];
-        var dy = this.clickY[_i] - this.clickY[this.clickY.length - 1];
-        var d = dx * dx + dy * dy;
-
-        if (d < 2500 && Math.random() > 0.9) {
-          context.beginPath();
-          context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
-          context.lineTo(this.clickX[_i], this.clickY[_i]);
-          context.closePath();
-          context.stroke();
-        }
-      }
-    }
-  }, {
-    key: "brushLeave",
-    value: function brushLeave() {
-      this._clearClick();
-
-      this.paint = false;
-    } // equip the brush and set up the current canvas for using the brush
-
-  }, {
-    key: "attachBrush",
-    value: function attachBrush() {
-      var frame = this.brushManager.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
-
-      var start = this.brushStart.bind(this);
-      currLayer.addEventListener('pointerdown', start);
-      currLayer.addEventListener('touchstart', start);
-      this.brushManager.currentEventListeners['pointerdown'] = start;
-      this.brushManager.currentEventListeners['touchstart'] = start;
-      var move = this.brushMove.bind(this);
-      currLayer.addEventListener('pointermove', move);
-      currLayer.addEventListener('touchmove', move);
-      this.brushManager.currentEventListeners['pointermove'] = move;
-      this.brushManager.currentEventListeners['touchmove'] = move;
-      var stop = this.brushStop.bind(this);
-      currLayer.addEventListener('pointerup', stop);
-      currLayer.addEventListener('touchend', stop);
-      this.brushManager.currentEventListeners['pointerup'] = stop;
-      this.brushManager.currentEventListeners['touchend'] = stop;
-      var leave = this.brushLeave.bind(this);
-      currLayer.addEventListener('pointerleave', leave);
-      this.brushManager.currentEventListeners['pointerleave'] = leave;
-    }
-  }]);
-
-  return WebBrush;
-}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/filters/FilterTemplate.js":
-/*!**********************************************!*\
-  !*** ./components/filters/FilterTemplate.js ***!
-  \**********************************************/
-/*! exports provided: FilterTemplate */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FilterTemplate", function() { return FilterTemplate; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-var FilterTemplate = /*#__PURE__*/function () {
-  function FilterTemplate(params) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, FilterTemplate);
-
-    // params should be an object,
-    // with each key representing a parameter for a filter
-    this.params = params;
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(FilterTemplate, [{
-    key: "filter",
-    value: function filter(imageData) {
-      // all filters should have a filter method that returns imageData
-      console.log("unimplemented filter");
-      return imageData;
-    }
-  }]);
-
-  return FilterTemplate;
-}();
-
-
-
-/***/ }),
-
-/***/ "./components/filters/areacolor.js":
-/*!*****************************************!*\
-  !*** ./components/filters/areacolor.js ***!
-  \*****************************************/
-/*! exports provided: AreaColor */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AreaColor", function() { return AreaColor; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-// area color filter
-
-
-var AreaColor = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(AreaColor, _FilterTemplate);
-
-  var _super = _createSuper(AreaColor);
-
-  function AreaColor() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, AreaColor);
-
-    return _super.call(this, null);
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(AreaColor, [{
-    key: "withinRange",
-    value: function withinRange(r, g, b, or, og, ob, rangeVal) {
-      var red = Math.abs(r - or) <= rangeVal;
-      var green = Math.abs(g - og) <= rangeVal;
-      var blue = Math.abs(b - ob) <= rangeVal;
-
-      if (red && green && blue) {
-        return true;
-      }
-
-      return false;
-    } //the idea is to find an area of pixels that are similarly colored, 
-    //and then making that area one solid color
-
-  }, {
-    key: "filter",
-    value: function filter(pixels) {
-      var width = pixels.width;
-      var d = pixels.data;
-      var copy = new Uint8ClampedArray(d);
-      var maximum = 4 * width;
-
-      for (var i = 0; i < d.length; i += 4) {
-        //current pixel
-        var r = d[i];
-        var g = d[i + 1];
-        var b = d[i + 2]; //left neighbor's color
-
-        var lnr = copy[i - 4];
-        var lng = copy[i - 3];
-        var lnb = copy[i - 2]; //right neighbor's color
-
-        var rnr = copy[i + 4];
-        var rng = copy[i + 5];
-        var rnb = copy[i + 6]; //top neighbor's color
-
-        var tnr = copy[i - maximum];
-        var tng = copy[i - (maximum - 1)];
-        var tnb = copy[i - (maximum - 2)]; //bottom neighbor's color
-
-        var bnr = copy[i + maximum];
-        var bng = copy[i + (maximum + 1)];
-        var bnb = copy[i + (maximum + 2)]; //top right
-
-        var trr = copy[i - (maximum - 4)];
-        var trg = copy[i - (maximum - 5)];
-        var trb = copy[i - (maximum - 6)]; //top left
-
-        var tlr = copy[i - (maximum + 4)];
-        var tlg = copy[i - (maximum + 3)];
-        var tlb = copy[i - (maximum + 2)]; //below left
-
-        var blr = copy[i + (maximum - 4)];
-        var blg = copy[i + (maximum - 3)];
-        var blb = copy[i + (maximum - 2)]; //below right
-
-        var brr = copy[i + (maximum + 4)];
-        var brg = copy[i + (maximum + 5)];
-        var brb = copy[i + (maximum + 6)]; //right pixel
-
-        var cond1 = d[i + 4] === undefined; //left pixel
-
-        var cond2 = d[i - 4] === undefined; //pixel below
-
-        var cond3 = d[i + maximum] === undefined; //pixel above
-
-        var cond4 = d[i - maximum] === undefined; //top left
-
-        var cond5 = d[i - (maximum + 4)] === undefined; //top right
-
-        var cond6 = d[i - (maximum - 4)] === undefined; //below right
-
-        var cond7 = d[i + (maximum + 4)] === undefined; //below left
-
-        var cond8 = d[i + (maximum - 4)] === undefined;
-
-        if (!cond1 && !cond2 && !cond3 && !cond4 && !cond5 && !cond6 && !cond7 && !cond8) {
-          //if next neighbor over is a completely different color, stop and move on
-          var nnr = copy[i + 8];
-          var nng = copy[i + 9];
-          var nnb = copy[i + 10]; //next neighbor over (top right)
-          //using the current data, instead of the copy which holds the original color data,
-          //seems to provide closer to my desired effect
-
-          var trrr = d[i - (maximum - 8)];
-          var trrg = d[i - (maximum - 9)];
-          var trrb = d[i - (maximum - 10)];
-          /*
-          //next neighbor over (bottom right)
-          let brrr = d[i+2808];
-          let brrg = d[i+2809];
-          let brrb = d[i+2810];
-          */
-
-          if (!this.withinRange(r, g, b, nnr, nng, nnb, 18) || !this.withinRange(r, g, b, trrr, trrg, trrb, 16) || //!withinRange(r, g, b, brrr, brrg, brrb, 15)||
-          rnr >= 210 && rng >= 210 && rnb >= 200) {
-            continue;
-          }
-
-          var range = 50; //check neighbors' colors
-
-          if (this.withinRange(r, g, b, lnr, lng, lnb, range) && this.withinRange(r, g, b, rnr, rng, rnb, range) && this.withinRange(r, g, b, tnr, tng, tnb, range) && this.withinRange(r, g, b, bnr, bng, bnb, range) && this.withinRange(r, g, b, trr, trg, trb, range) && this.withinRange(r, g, b, tlr, tlg, tlb, range) && this.withinRange(r, g, b, blr, blg, blb, range) && this.withinRange(r, g, b, brr, brg, brb, range)) {
-            //make all the neighbors the same color
-            //right
-            d[i + 4] = r;
-            d[i + 5] = g;
-            d[i + 6] = b; //left
-
-            d[i - 4] = r;
-            d[i - 3] = g;
-            d[i - 2] = b; //above
-
-            d[i - maximum] = r;
-            d[i - (maximum - 1)] = g;
-            d[i - (maximum - 2)] = b; //below
-
-            d[i + maximum] = r;
-            d[i + (maximum + 1)] = g;
-            d[i + (maximum + 2)] = b; //above left
-
-            d[i - (maximum - 4)] = r;
-            d[i - (maximum - 5)] = g;
-            d[i - (maximum - 6)] = b; //above right
-
-            d[i - (maximum + 4)] = r;
-            d[i - (maximum + 3)] = g;
-            d[i - (maximum + 2)] = b; //below right
-
-            d[i + (maximum + 4)] = r;
-            d[i + (maximum + 5)] = g;
-            d[i + (maximum + 6)] = b; //below left
-
-            d[i + (maximum - 4)] = r;
-            d[i + (maximum - 3)] = g;
-            d[i + (maximum - 2)] = b;
-          }
-        }
-      }
-
-      return pixels;
-    }
-  }]);
-
-  return AreaColor;
-}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/filters/blur.js":
-/*!************************************!*\
-  !*** ./components/filters/blur.js ***!
-  \************************************/
-/*! exports provided: Blur */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Blur", function() { return Blur; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-/***
-	BLUR FILTER
-	this function causes a blurring effect. It takes the pixel itself and
-	its left, right, above and below neighbors (if it has them)
-	and calculates the average of their total R, G, B, and A channels respectively.
-	http://blog.ivank.net/fastest-gaussian-blur.html
-***/
-
-
-var Blur = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Blur, _FilterTemplate);
-
-  var _super = _createSuper(Blur);
-
-  function Blur() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Blur);
-
-    return _super.call(this, null);
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Blur, [{
-    key: "filter",
-    value: function filter(pixels) {
-      var d = pixels.data;
-      var width = pixels.width;
-      var maximum = 4 * width;
-
-      for (var i = 0; i < d.length; i += 4) {
-        //right pixel (check if 4 pixel radius ok)
-        var cond1 = d[i + 4] == undefined; //left pixel
-
-        var cond2 = d[i - 4] == undefined; //pixel below
-
-        var cond3 = d[i + maximum] == undefined; //pixel above
-
-        var cond4 = d[i - maximum] == undefined;
-
-        if (!cond1 && !cond2 && !cond3 && !cond4) {
-          var newR = d[i + 4] * .2 + d[i - 4] * .2 + d[i + maximum] * .2 + d[i - maximum] * .2 + d[i] * .2;
-          var newG = d[i + 5] * .2 + d[i - 3] * .2 + d[i + (maximum + 1)] * .2 + d[i - (maximum - 1)] * .2 + d[i + 1] * .2;
-          var newB = d[i + 6] * .2 + d[i - 2] * .2 + d[i + (maximum + 2)] * .2 + d[i - (maximum - 2)] * .2 + d[i + 2] * .2;
-          var newA = d[i + 7] * .2 + d[i - 1] * .2 + d[i + (maximum + 3)] * .2 + d[i - (maximum - 3)] * .2 + d[i + 3] * .2;
-          d[i] = newR;
-          d[i + 1] = newG;
-          d[i + 2] = newB;
-          d[i + 3] = newA;
-        }
-      }
-
-      return pixels;
-    }
-  }]);
-
-  return Blur;
-}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/filters/edgedetection.js":
-/*!*********************************************!*\
-  !*** ./components/filters/edgedetection.js ***!
-  \*********************************************/
-/*! exports provided: EdgeDetection */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EdgeDetection", function() { return EdgeDetection; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-// edge detection filter
-
-
-var EdgeDetection = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(EdgeDetection, _FilterTemplate);
-
-  var _super = _createSuper(EdgeDetection);
-
-  function EdgeDetection() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, EdgeDetection);
-
-    return _super.call(this, null);
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(EdgeDetection, [{
-    key: "grayscale",
-    value: function grayscale() {// TODO or not TODO? do we actually need this
-    }
-  }, {
-    key: "filter",
-    value: function filter(pixels) {
-      var width = pixels.width;
-      var height = pixels.height;
-      var data = pixels.data;
-      var sourceImageCopy = new Uint8ClampedArray(data); // need to grayscale the image here :/
-
-      this.grayscale(pixels);
-      var xKernel = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
-      var yKernel = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
-
-      for (var i = 1; i < height - 1; i++) {
-        for (var j = 4; j < 4 * width - 4; j += 4) {
-          var left = 4 * i * width + (j - 4);
-          var right = 4 * i * width + (j + 4);
-          var top = 4 * (i - 1) * width + j;
-          var bottom = 4 * (i + 1) * width + j;
-          var topLeft = 4 * (i - 1) * width + (j - 4);
-          var topRight = 4 * (i - 1) * width + (j + 4);
-          var bottomLeft = 4 * (i + 1) * width + (j - 4);
-          var bottomRight = 4 * (i + 1) * width + (j + 4);
-          var center = 4 * width * i + j; // use the xKernel to detect edges horizontally 
-
-          var pX = xKernel[0][0] * sourceImageCopy[topLeft] + xKernel[0][1] * sourceImageCopy[top] + xKernel[0][2] * sourceImageCopy[topRight] + xKernel[1][0] * sourceImageCopy[left] + xKernel[1][1] * sourceImageCopy[center] + xKernel[1][2] * sourceImageCopy[right] + xKernel[2][0] * sourceImageCopy[bottomLeft] + xKernel[2][1] * sourceImageCopy[bottom] + xKernel[2][2] * sourceImageCopy[bottomRight]; // use the yKernel to detect edges vertically 
-
-          var pY = yKernel[0][0] * sourceImageCopy[topLeft] + yKernel[0][1] * sourceImageCopy[top] + yKernel[0][2] * sourceImageCopy[topRight] + yKernel[1][0] * sourceImageCopy[left] + yKernel[1][1] * sourceImageCopy[center] + yKernel[1][2] * sourceImageCopy[right] + yKernel[2][0] * sourceImageCopy[bottomLeft] + yKernel[2][1] * sourceImageCopy[bottom] + yKernel[2][2] * sourceImageCopy[bottomRight]; // finally set the current pixel to the new value based on the formula 
-
-          var newVal = Math.ceil(Math.sqrt(pX * pX + pY * pY));
-          data[center] = newVal;
-          data[center + 1] = newVal;
-          data[center + 2] = newVal;
-          data[center + 3] = 255;
-        }
-      }
-
-      return pixels;
-    }
-  }]);
-
-  return EdgeDetection;
-}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/filters/fisheye.js":
-/*!***************************************!*\
-  !*** ./components/filters/fisheye.js ***!
-  \***************************************/
-/*! exports provided: Fisheye */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Fisheye", function() { return Fisheye; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-/***
-	FISHEYE DISTORTION FILTER
-	this function creates fisheye distortion!
-	source: http://popscan.blogspot.com/2012/04/fisheye-lens-equation-simple-fisheye.html
-	http://paulbourke.net/dome/fisheye/
-***/
-
-
-var Fisheye = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Fisheye, _FilterTemplate);
-
-  var _super = _createSuper(Fisheye);
-
-  function Fisheye() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Fisheye);
-
-    return _super.call(this, null);
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Fisheye, [{
-    key: "fisheye",
-    value: function fisheye(imgData, xPos, yPos, rad, width, height) {
-      var data = imgData.data;
-      var oldData = new Uint8ClampedArray(data);
-      var pixelCounter = 0; //rows
-
-      for (var y = 0; y < height; y++) {
-        //normalize y coordinate to -1...+1
-        var normY = 2 * y / height - 1; //calculate normY squared
-
-        var normY2 = normY * normY; //columns
-
-        for (var x = 0; x < width; x++) {
-          //this counter will make sure that 
-          //the right index for each pixel's color is
-          //being looked at 
-          var start = pixelCounter * 4; //normalize x coordinate to -1...+1
-
-          var normX = 2 * x / width - 1; //calculate normX squared
-
-          var normX2 = normX * normX; //calculate distance from center (the center is always 0,0)
-
-          var dist = Math.sqrt(normX2 + normY2); //only alter pixels inside of radius
-          //changing the dist range affects the scope of the lens. i.e. less range (.5 => .6) gives you a 'telescoping' lens. 
-          //a larger range (0 => 1) gives you a full circle.
-
-          if (0 <= dist && dist <= 1) {
-            var newR = Math.sqrt(1 - dist * dist); //new distance between 0 and 1
-
-            newR = (dist + (1 - newR)) / 2; //discard any radius greater than 1
-
-            if (newR <= 1) {
-              //calculate angle for polar coordinates
-              var theta = Math.atan2(normY, normX); //calculate new X position with new distance in same angle
-
-              var newX = newR * Math.cos(theta); //calculate new Y position with new distance in same angle
-
-              var newY = newR * Math.sin(theta); //get the location of where the pixels should be moved FROM.
-
-              var x2 = Math.floor((newX + 1) * width / 2);
-              var y2 = Math.floor((newY + 1) * height / 2);
-              var srcPos = width * y2 + x2;
-              srcPos *= 4;
-              data[start] = oldData[srcPos];
-              data[start + 1] = oldData[srcPos + 1];
-              data[start + 2] = oldData[srcPos + 2];
-              data[start + 3] = oldData[srcPos + 3];
-            }
-          }
-
-          pixelCounter++;
-        }
-      }
-
-      return imgData;
-    }
-  }, {
-    key: "filter",
-    value: function filter(pixels) {
-      return this.fisheye(pixels, 0, 0, 0, pixels.width, pixels.height);
-    }
-  }]);
-
-  return Fisheye;
-}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/filters/grayscale.js":
-/*!*****************************************!*\
-  !*** ./components/filters/grayscale.js ***!
-  \*****************************************/
-/*! exports provided: Grayscale */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Grayscale", function() { return Grayscale; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-// grayscale filter
-
-
-var Grayscale = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Grayscale, _FilterTemplate);
-
-  var _super = _createSuper(Grayscale);
-
-  function Grayscale() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Grayscale);
-
-    return _super.call(this, null); // no adjustable parameters for this filter
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Grayscale, [{
-    key: "filter",
-    value: function filter(pixels) {
-      var d = pixels.data;
-
-      for (var i = 0; i < d.length; i += 4) {
-        var r = d[i];
-        var g = d[i + 1];
-        var b = d[i + 2]; //the value obtained by (r+g+b)/3 will be the value assigned to d[i], d[i+1], and d[i+2].  
-
-        d[i] = d[i + 1] = d[i + 2] = (r + g + b) / 3;
-      }
-
-      return pixels;
-    }
-  }]);
-
-  return Grayscale;
-}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/filters/invert.js":
-/*!**************************************!*\
-  !*** ./components/filters/invert.js ***!
-  \**************************************/
-/*! exports provided: Invert */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Invert", function() { return Invert; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-// invert filter
-
-
-var Invert = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Invert, _FilterTemplate);
-
-  var _super = _createSuper(Invert);
-
-  function Invert() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Invert);
-
-    return _super.call(this, null);
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Invert, [{
-    key: "filter",
-    value: function filter(pixels) {
-      var d = pixels.data;
-      var r, g, b, x, y, z;
-
-      for (var i = 0; i < d.length; i += 4) {
-        r = d[i];
-        g = d[i + 1];
-        b = d[i + 2];
-        d[i] = 255 - r;
-        d[i + 1] = 255 - g;
-        d[i + 2] = 255 - b;
-      }
-
-      return pixels;
-    }
-  }]);
-
-  return Invert;
-}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/filters/kdtreeutils.js":
-/*!*******************************************!*\
-  !*** ./components/filters/kdtreeutils.js ***!
-  \*******************************************/
-/*! exports provided: Point, Node, getPixelCoords, getDist, getTreeSize, build2dTree, isLeaf, findNearestNeighbor */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Point", function() { return Point; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Node", function() { return Node; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPixelCoords", function() { return getPixelCoords; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDist", function() { return getDist; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTreeSize", function() { return getTreeSize; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "build2dTree", function() { return build2dTree; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLeaf", function() { return isLeaf; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findNearestNeighbor", function() { return findNearestNeighbor; });
-// kd tree to be used in Voronoi function 
-// https://blog.krum.io/k-d-trees/
-// https://github.com/z2oh/chromatic_confinement/blob/master/src/main.rs
-// https://stackoverflow.com/questions/1627305/nearest-neighbor-k-d-tree-wikipedia-proof/37107030#37107030
-// each node takes Point info (x, y, rgb) and a dimension
-function Point(x, y, r, g, b) {
-  this.x = x;
-  this.y = y;
-  this.r = r;
-  this.g = g;
-  this.b = b;
-}
-
-function Node(point, dim) {
-  this.data = [point.x, point.y];
-  this.point = point;
-  this.dim = dim;
-  this.left = null;
-  this.right = null;
-}
-
-function getPixelCoords(index, width, height) {
-  // assuming index represents the r channel of a pixel 
-  // index therefore represents the index of a pixel, since the pixel data 
-  // is laid out like r,g,b,a,r,g,b,a,... in the image data 
-  // so to figure out the x and y coords, take the index and divide by 4,
-  // which gives us the pixel's number. then we need to know its position 
-  // on the canvas.
-  if (width * 4 * height < index) {
-    // if index is out of bounds 
-    return {};
-  }
-
-  var pixelNum = Math.floor(index / 4);
-  var yCoord = Math.floor(pixelNum / width); // find what row this pixel belongs in
-
-  var xCoord = pixelNum - yCoord * width; // find the difference between the pixel number of the pixel at the start of the row and this pixel 
-
-  return {
-    'x': xCoord,
-    'y': yCoord
-  };
-}
-
-function getDist(x1, x2, y1, y2) {
-  // removing Math.sqrt from the equation seemed to be the fix in producing 
-  // the correct output (with sqrt it looks like you get the wrong neighbor choices for some points going along a diagonal in the image)
-  // not sure why? however, with Math.sqrt it's considerably faster...
-  return Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
-} // in this use case our dimensions will be x and y (since each pixel has an x,y coordinate)
-// so only 2 dimensions 
-
-
-function build2dTree(pointsList, currDim) {
-  var maxDim = 2; // sort the current list in ascending order depending on the current dimension
-
-  var dim = currDim === 0 ? 'x' : 'y';
-  pointsList.sort(function (a, b) {
-    if (a[dim] < b[dim]) {
-      return -1;
-    } else if (a[dim] > b[dim]) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }); // base case: if pointsList is size 0, return null. otherwise if size 1, place the point and return 
-
-  if (pointsList.length === 0) {
-    return null;
-  }
-
-  if (pointsList.length === 1) {
-    return new Node(pointsList[0], currDim);
-  }
-
-  if (pointsList.length === 2) {
-    // since it's a BST, the 2nd element (at index 1) will be larger and thus the parent of 
-    // the 1st element, which will go to the left of the parent
-    var newParent = new Node(pointsList[1], currDim);
-    var newChild = new Node(pointsList[0], (currDim + 1) % maxDim);
-    newParent.left = newChild;
-    return newParent;
-  } // take the median point, place it, and recurse on left and right 
-
-
-  var midIndex = Math.floor((pointsList.length - 1) / 2);
-  var newNode = new Node(pointsList[midIndex], currDim);
-  newNode.left = build2dTree(pointsList.slice(0, midIndex), (currDim + 1) % maxDim);
-  newNode.right = build2dTree(pointsList.slice(midIndex + 1, pointsList.length), (currDim + 1) % maxDim);
-  return newNode;
-}
-
-function getTreeSize(tree) {
-  if (tree === null) {
-    return 0;
-  } else {
-    return 1 + getTreeSize(tree.left) + getTreeSize(tree.right);
-  }
-}
-
-function isLeaf(node) {
-  return node.left === null && node.right === null;
-}
-
-function findNearestNeighborHelper(root, record, x, y) {
-  if (isLeaf(root)) {
-    var dist = getDist(root.data[0], x, root.data[1], y);
-
-    if (dist < record.minDist) {
-      record.nearestNeighbor = root.point;
-      record.minDist = dist;
-    }
-  } else {
-    // compare current dist with min dist 
-    var currDist = getDist(root.data[0], x, root.data[1], y);
-
-    if (currDist < record.minDist) {
-      record.nearestNeighbor = root.point;
-      record.minDist = currDist;
-    }
-
-    if (root.left && !root.right) {
-      // if a node has one child, it will always be the left child 
-      findNearestNeighborHelper(root.left, record, x, y);
-    } else {
-      // find the right direction to go in the tree based on dimension //distance
-      var currDimToCompare = root.dim === 0 ? x : y;
-
-      if (currDimToCompare === x) {
-        // is x greater than the current node's x? if so, we want to go right. else left.
-        if (x > root.data[0]) {
-          findNearestNeighborHelper(root.right, record, x, y); // then, we check if the other subtree might actually have an even closer neighbor!
-
-          if (x - record.minDist < root.data[0]) {
-            findNearestNeighborHelper(root.left, record, x, y);
-          }
-        } else {
-          findNearestNeighborHelper(root.left, record, x, y);
-
-          if (x + record.minDist > root.data[0]) {
-            // x + record.minDist forms a circle. the circle in this case
-            // encompasses this current node's coordinates, so we can get closer to the query node 
-            // by checking the right subtree 
-            findNearestNeighborHelper(root.right, record, x, y);
-          }
-        }
-      } else {
-        if (y > root.data[1]) {
-          findNearestNeighborHelper(root.right, record, x, y);
-
-          if (y - record.minDist < root.data[1]) {
-            findNearestNeighborHelper(root.left, record, x, y);
-          }
-        } else {
-          findNearestNeighborHelper(root.left, record, x, y);
-
-          if (y + record.minDist > root.data[1]) {
-            findNearestNeighborHelper(root.right, record, x, y);
-          }
-        }
-      }
-    }
-  }
-} // find nearest neighbor in 2d tree given a point's x and y coords and the tree's root 
-
-
-function findNearestNeighbor(root, x, y) {
-  var record = {}; // set default values 
-
-  record.nearestNeighbor = root.point;
-  record.minDist = getDist(root.data[0], x, root.data[1], y); // pass record to the recursive nearest-neighbor helper function so that it gets updated
-
-  findNearestNeighborHelper(root, record, x, y);
-  return record.nearestNeighbor;
-}
-
-
-
-/***/ }),
-
-/***/ "./components/filters/mosaic.js":
-/*!**************************************!*\
-  !*** ./components/filters/mosaic.js ***!
-  \**************************************/
-/*! exports provided: Mosaic */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Mosaic", function() { return Mosaic; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-// mosaic filter
-
-
-var Mosaic = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Mosaic, _FilterTemplate);
-
-  var _super = _createSuper(Mosaic);
-
-  function Mosaic() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Mosaic);
-
-    var params = {
-      "chunkWidth": {
-        "value": 40,
-        "min": 1,
-        "max": 50,
-        "step": 1
-      },
-      "chunkHeight": {
-        "value": 40,
-        "min": 1,
-        "max": 50,
-        "step": 1
-      }
-    };
-    return _super.call(this, params);
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Mosaic, [{
-    key: "filter",
-    value: function filter(pixels) {
-      var d = pixels.data;
-      var copy = new Uint8ClampedArray(d); // get dimensions 
-
-      var width = pixels.width;
-      var height = pixels.height; // change sampling size here. lower for higher detail preservation, higher for less detail (because larger chunks)
-
-      var chunkWidth = this.params.chunkWidth.value;
-      var chunkHeight = this.params.chunkHeight.value; // when looking at each chunk of the image, for these 2 outer for loops, 
-      // focus on looking at each chunk as if looking at a single pixel first (think bigger picture; abstraction!) 
-      // don't think about selecting single channels yet 
-
-      for (var i = 0; i < width; i += chunkWidth) {
-        for (var j = 0; j < height; j += chunkHeight) {
-          // 4*i + 4*j*width = index of first pixel in chunk 
-          // get the color of the first pixel in this chunk
-          // multiply by 4 because 4 channels per pixel
-          // multiply by width because all the image data is in a single array and a row is dependent on width
-          var r = copy[4 * i + 4 * j * width];
-          var g = copy[4 * i + 4 * j * width + 1];
-          var b = copy[4 * i + 4 * j * width + 2]; // now for all the other pixels in this chunk, set them to this color 
-
-          for (var k = i; k < i + chunkWidth; k++) {
-            for (var l = j; l < j + chunkHeight; l++) {
-              d[4 * k + 4 * l * width] = r;
-              d[4 * k + 4 * l * width + 1] = g;
-              d[4 * k + 4 * l * width + 2] = b;
-            }
-          }
-        }
-      }
-
-      return pixels;
-    }
-  }]);
-
-  return Mosaic;
-}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/filters/outline.js":
-/*!***************************************!*\
-  !*** ./components/filters/outline.js ***!
-  \***************************************/
-/*! exports provided: Outline */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Outline", function() { return Outline; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-// outline filter
-
-
-var Outline = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Outline, _FilterTemplate);
-
-  var _super = _createSuper(Outline);
-
-  function Outline() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Outline);
-
-    return _super.call(this, null);
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Outline, [{
-    key: "withinRange",
-    value: function withinRange(r, g, b, or, og, ob, rangeVal) {
-      var red = Math.abs(r - or) <= rangeVal;
-      var green = Math.abs(g - og) <= rangeVal;
-      var blue = Math.abs(b - ob) <= rangeVal;
-
-      if (red && green && blue) {
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "makePath",
-    value: function makePath(context, col, row) {
-      context.lineJoin = 'round';
-      context.lineWidth = 5;
-      context.beginPath();
-      context.moveTo(col, row);
-      context.lineTo(col + 2, row + 1);
-      context.closePath();
-      context.strokeStyle = '#000';
-      context.stroke();
-    }
-    /***
-        OUTLINE FILTER
-        gets the 'outline' of the main parts of the picture
-        it finds the pixels whose above neighbor is a different color/
-        then a line is drawn from the location of that pixel to the above pixel,
-        forming a small, slightly angled line. all these lines then make up an outline.
-    ***/
-
-  }, {
-    key: "filter",
-    value: function filter(pixels) {
-      var width = pixels.width;
-      var height = pixels.height; // make a temp canvas to draw the result on
-      // then we'll return this temp canvas' image data
-
-      var tempCanvas = document.createElement("canvas");
-      tempCanvas.height = pixels.height;
-      tempCanvas.width = pixels.width;
-      var context = tempCanvas.getContext("2d");
-      context.clearRect(0, 0, width, height);
-      context.fillStyle = "#FFF";
-      context.fillRect(0, 0, width, height);
-      var d = pixels.data;
-      var colCounter = 0;
-      var rowCounter = 0;
-      var maximum = 4 * width;
-
-      for (var i = 0; i < d.length; i += 4) {
-        var r = d[i];
-        var g = d[i + 1];
-        var b = d[i + 2];
-        context.lineJoin = 'round';
-        context.lineWidth = 2;
-        var tnr = d[i - maximum];
-        var tng = d[i - (maximum - 1)];
-        var tnb = d[i - (maximum - 2)];
-
-        if (d[i - maximum] !== undefined && !this.withinRange(r, g, b, tnr, tng, tnb, 5)) {
-          this.makePath(context, colCounter, rowCounter);
-        }
-
-        if (i % maximum == 0) {
-          rowCounter++;
-        }
-
-        if (colCounter >= width) {
-          colCounter = 0;
-        }
-
-        colCounter++;
-      } // return image data of the temp canvas
-
-
-      var imgData = context.getImageData(0, 0, width, height);
-      return imgData;
-    }
-  }]);
-
-  return Outline;
-}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/filters/saturation.js":
-/*!******************************************!*\
-  !*** ./components/filters/saturation.js ***!
-  \******************************************/
-/*! exports provided: Saturation */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Saturation", function() { return Saturation; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-/***
-	SATURATION FILTER
-	source: http://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
-***/
-
-
-var Saturation = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Saturation, _FilterTemplate);
-
-  var _super = _createSuper(Saturation);
-
-  function Saturation() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Saturation);
-
-    var params = {
-      "saturationValue": {
-        "value": 2.5,
-        "min": 0,
-        "max": 5,
-        "step": 0.5
-      },
-      "redLuminance": {
-        //constant for determining luminance of red
-        "value": .3086,
-        "min": 0,
-        "max": 2,
-        "step": .0002
-      },
-      "greenLuminance": {
-        //constant for determining luminance of green
-        "value": .6094,
-        "min": 0,
-        "max": 2,
-        "step": .0002
-      },
-      "blueLuminance": {
-        //constant for determining luminance of blue
-        "value": .0820,
-        "min": 0,
-        "max": 2,
-        "step": .0002
-      }
-    };
-    return _super.call(this, params);
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Saturation, [{
-    key: "filter",
-    value: function filter(pixels) {
-      var saturationValue = this.params.saturationValue.value;
-      var d = pixels.data;
-      var lumR = this.params.redLuminance.value;
-      var lumG = this.params.greenLuminance.value;
-      var lumB = this.params.blueLuminance.value; //one of these equations per r,g,b
-
-      var r1 = (1 - saturationValue) * lumR + saturationValue;
-      var g1 = (1 - saturationValue) * lumG + saturationValue;
-      var b1 = (1 - saturationValue) * lumB + saturationValue; //then one of these for each
-
-      var r2 = (1 - saturationValue) * lumR;
-      var g2 = (1 - saturationValue) * lumG;
-      var b2 = (1 - saturationValue) * lumB;
-
-      for (var i = 0; i < d.length; i += 4) {
-        var r = d[i];
-        var g = d[i + 1];
-        var b = d[i + 2];
-        d[i] = r * r1 + g * g2 + b * b2;
-        d[i + 1] = r * r2 + g * g1 + b * b2;
-        d[i + 2] = r * r2 + g * g2 + b * b1;
-      }
-
-      return pixels;
-    }
-  }]);
-
-  return Saturation;
-}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/filters/voronoi.js":
-/*!***************************************!*\
-  !*** ./components/filters/voronoi.js ***!
-  \***************************************/
-/*! exports provided: Voronoi */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Voronoi", function() { return Voronoi; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./kdtreeutils.js */ "./components/filters/kdtreeutils.js");
-/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./FilterTemplate.js */ "./components/filters/FilterTemplate.js");
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-/***
-	voronoi filter
-	https://softwarebydefault.com/tag/voronoi-diagrams/
-	https://www.codeproject.com/Articles/882739/Simple-approach-to-Voronoi-diagrams
-	
-	- nearest neighbor automatically creates 'boundaries'.
-	- for each pixel, find the nearest neighbor (a collection of pre-selected pixels)
-	- color that pixel whatever the nearest neighbor's color is
-	- evenly spaced neighbors will yield a mosaic! awesome!
-***/
-
-
-
-var Voronoi = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Voronoi, _FilterTemplate);
-
-  var _super = _createSuper(Voronoi);
-
-  function Voronoi() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Voronoi);
-
-    return _super.call(this, null);
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Voronoi, [{
-    key: "filter",
-    value: function filter(pixels) {
-      var width = pixels.width;
-      var height = pixels.height;
-      var data = pixels.data; //imgData.data;
-
-      var neighborList = []; // array of Points 
-
-      for (var i = 0; i < data.length; i += 4) {
-        // get neighbors.
-        // add some offset to each neighbor for randomness (we don't really want evenly spaced neighbors)
-        var offset = Math.floor(Math.random() * 10); // to be applied in x or y direction
-
-        var sign = Math.random() > .5 ? 1 : -1;
-        var c1 = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["getPixelCoords"])(i, width, height);
-
-        if (c1.x % Math.floor(width / 30) === 0 && c1.y % Math.floor(height / 30) === 0 && c1.x !== 0) {
-          var x = sign * offset + c1.x;
-          var y = sign * offset + c1.y;
-          var p1 = new _kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["Point"](x, y, data[i], data[i + 1], data[i + 2]);
-          neighborList.push(p1);
-        }
-      }
-
-      var kdtree = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["build2dTree"])(neighborList, 0);
-
-      for (var _i = 0; _i < data.length; _i += 4) {
-        var currCoords = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["getPixelCoords"])(_i, width, height);
-        var nearestNeighbor = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["findNearestNeighbor"])(kdtree, currCoords.x, currCoords.y); // found nearest neighbor. color the current pixel the color of the nearest neighbor. 
-
-        data[_i] = nearestNeighbor.r;
-        data[_i + 1] = nearestNeighbor.g;
-        data[_i + 2] = nearestNeighbor.b;
-      }
-
-      return pixels;
-    }
-  }]);
-
-  return Voronoi;
-}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_6__["FilterTemplate"]);
-
-
-
-/***/ }),
-
-/***/ "./components/utils/AnimationProject.js":
-/*!**********************************************!*\
-  !*** ./components/utils/AnimationProject.js ***!
-  \**********************************************/
-/*! exports provided: Frame, AnimationProject, createOnionSkinFrame, setCanvas */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Frame", function() { return Frame; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AnimationProject", function() { return AnimationProject; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createOnionSkinFrame", function() { return createOnionSkinFrame; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setCanvas", function() { return setCanvas; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-/***
-    a class representing a frame, containing a list of canvas elements which represent layers of the frame
-***/
-var Frame = /*#__PURE__*/function () {
-  function Frame(containerId, number) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Frame);
-
-    this.currentIndex = 0; // index of currently showing layer
-
-    this.canvasList = []; // keep a list of all canvas instances
-
-    this.currentCanvas; // the current, active canvas being looked at (reference to html element)
-
-    this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
-
-    this.containerId = containerId; // this is the html container id to hold all the layers of this frame
-
-    this.number = number; // this frame's number
-
-    this.count = 0; // current number of layers
-
-    this.width = 0;
-    this.height = 0;
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Frame, [{
-    key: "getMetadata",
-    value: function getMetadata() {
-      return {
-        'width': this.width,
-        'height': this.height,
-        'containerId': this.containerId,
-        'currentIndex': this.currentIndex,
-        'number': this.number
-      };
-    }
-  }, {
-    key: "getContainerId",
-    value: function getContainerId() {
-      return this.containerId;
-    }
-  }, {
-    key: "getCurrCanvasIndex",
-    value: function getCurrCanvasIndex() {
-      return this.currentIndex;
-    }
-  }, {
-    key: "getCurrCanvas",
-    value: function getCurrCanvas() {
-      return this.canvasList[this.currentIndex];
-    }
-  }, {
-    key: "getLayers",
-    value: function getLayers() {
-      return this.canvasList;
-    }
-  }, {
-    key: "addSnapshot",
-    value: function addSnapshot(snapshot) {
-      this.currentCanvasSnapshots.push(snapshot);
-    }
-  }, {
-    key: "getSnapshots",
-    value: function getSnapshots() {
-      return this.currentCanvasSnapshots;
-    }
-  }, {
-    key: "clearSnapshots",
-    value: function clearSnapshots() {
-      this.currentCanvasSnapshots = [];
-    } // canvasList: list of canvas elements
-
-  }, {
-    key: "setLayers",
-    value: function setLayers(canvasList) {
-      this.canvasList = canvasList;
-    }
-  }, {
-    key: "setCurrIndex",
-    value: function setCurrIndex(index) {
-      if (index <= this.canvasList.length - 1 && index >= 0) {
-        this.currentIndex = index;
-        this.currentCanvas = this.canvasList[index];
-      }
-    }
-    /***
-        set up a new canvas element
-        makes the new canvas the current canvas
-    ***/
-
-  }, {
-    key: "setupNewLayer",
-    value: function setupNewLayer() {
-      // create the new canvas element 
-      var newCanvas = document.createElement('canvas');
-      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
-      document.getElementById(this.containerId).appendChild(newCanvas);
-      setCanvas(newCanvas);
-
-      if (this.count === 0) {
-        newCanvas.style.opacity = .97;
-        newCanvas.style.zIndex = 1;
-        this.width = newCanvas.width;
-        this.height = newCanvas.height;
-      } // set new canvas to be the current canvas only initially!
-
-
-      if (this.count === 0) {
-        this.currentCanvas = newCanvas;
-      }
-
-      this.canvasList.push(newCanvas);
-      this.count++;
-    }
-  }, {
-    key: "_showLayer",
-    value: function _showLayer(canvas) {
-      canvas.style.opacity = .97;
-      canvas.style.zIndex = 1;
-    }
-  }, {
-    key: "_hideLayer",
-    value: function _hideLayer(canvas) {
-      canvas.style.opacity = 0;
-      canvas.style.zIndex = 0;
-    } // make current canvas an onion skin
-
-  }, {
-    key: "_makeCurrLayerOnion",
-    value: function _makeCurrLayerOnion(canvas) {
-      canvas.style.opacity = .92; // apply onion skin to current canvas 
-
-      canvas.style.zIndex = 0;
-    }
-  }, {
-    key: "nextLayer",
-    value: function nextLayer() {
-      // this moves the current layer to the next one if exists
-      if (this.currentIndex + 1 < this.canvasList.length) {
-        // move to next canvas and apply onion skin to current canvas
-        var currLayer = this.currentCanvas;
-
-        this._makeCurrLayerOnion(currLayer); // in the special case for when you want to go to the next canvas from the very first one, 
-        // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
-
-
-        if (currLayer.currentIndex > 0) {
-          var prevLayer = this.canvasList[this.currentIndex - 1]; // reset opacity and z-index for previous canvas (because of onionskin)
-
-          this._hideLayer(prevLayer);
-        } // show the next canvas 
-
-
-        var nextLayer = this.canvasList[this.currentIndex + 1];
-
-        this._showLayer(nextLayer);
-
-        this.currentCanvas = nextLayer;
-        this.currentIndex++;
-        this.currentCanvasSnapshots = [];
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "prevLayer",
-    value: function prevLayer() {
-      // this moves the current layer to the previous one if exists
-      if (this.currentIndex - 1 >= 0) {
-        var currLayer = this.currentCanvas;
-
-        this._hideLayer(currLayer); // make previous canvas visible 
-
-
-        var prevLayer = this.canvasList[this.currentIndex - 1];
-
-        this._showLayer(prevLayer); // if there is another canvas before the previous one, apply onion skin
-
-
-        if (this.currentIndex - 2 >= 0) {
-          this.canvasList[this.currentIndex - 2].style.opacity = .92;
-        }
-
-        this.currentCanvas = prevLayer;
-        this.currentIndex--;
-        this.currentCanvasSnapshots = [];
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "hide",
-    value: function hide() {
-      // makes all layers not visible
-      this.canvasList.forEach(function (canvas) {
-        canvas.style.zIndex = -1;
-        canvas.style.visibility = "hidden";
-      });
-    }
-  }, {
-    key: "show",
-    value: function show() {
-      var _this = this;
-
-      // shows active layer of frame
-      var activeLayerOpacity = .97;
-      this.canvasList.forEach(function (canvas) {
-        if (canvas === _this.currentCanvas) {
-          canvas.style.zIndex = 1;
-          canvas.style.opacity = activeLayerOpacity;
-        } else {
-          canvas.style.zIndex = 0;
-          canvas.style.opacity = 0;
-        }
-
-        canvas.style.visibility = "";
-      });
-    } // TODO: why have this and setCurrIndex()??
-    // layerIndex (int) = the index of the layer to make active (current layer)
-    // onionSkin (bool) = whether onionskin should be visible 
-
-  }, {
-    key: "setToLayer",
-    value: function setToLayer(layerIndex, onionSkin) {
-      // note that this does not hide the previous layer + previous onion skin before switching to 
-      // the new layer.
-      var newLayer = this.canvasList[layerIndex];
-      newLayer.style.opacity = 0.97;
-      newLayer.style.zIndex = 1;
-      this.currentCanvas = newLayer;
-      this.currentIndex = layerIndex;
-      this.currentCanvasSnapshots = [];
-
-      if (onionSkin && layerIndex - 1 > 0) {
-        // apply onionskin
-        var prevLayer = this.canvasList[layerIndex - 1];
-        prevLayer.style.opacity = .92;
-        prevLayer.style.zIndex = 0;
-      }
-    }
-  }, {
-    key: "deleteLayer",
-    value: function deleteLayer(layerIndex) {
-      if (layerIndex + 1 < this.canvasList.length) {
-        // move current canvas to the next one if there is one
-        this.nextLayer(); // then remove the old canvas from the array and the DOM!
-
-        this.canvasList.splice(layerIndex, 1); // adjust the current canvas index after the removal 
-
-        this.currentIndex -= 1;
-      } else if (layerIndex - 1 >= 0) {
-        // if there's a canvas behind the current one (and no more ahead)
-        // move current canvas to the previous one 
-        // note that currentIndex doesn't need to be adjusted because removing the 
-        // next canvas doesn't affect the current canvas' index
-        this.prevLayer();
-        this.canvasList.splice(layerIndex, 1);
-      }
-    }
-    /***
-        clone the current canvas
-    this creates a new layer whose image data is the same as the current canvas.
-    		not sure I'm using this?
-    ***/
-
-  }, {
-    key: "copyCanvas",
-    value: function copyCanvas() {
-      var newCanvas = document.createElement('canvas');
-      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
-      setCanvas(newCanvas, this.width, this.height); //newCanvas.style.opacity = 0.97;
-
-      document.getElementById(this.containerId).appendChild(newCanvas);
-      newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
-      this.canvasList.push(newCanvas);
-      this.count++;
-    }
-  }, {
-    key: "clearCurrentLayer",
-    value: function clearCurrentLayer() {
-      var currLayer = this.getCurrCanvas();
-      var context = currLayer.getContext("2d");
-      context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
-      context.fillStyle = "#FFFFFF";
-      context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
-    }
-  }, {
-    key: "resetFrame",
-    value: function resetFrame() {// TODO: remove all layers except first layer, then clear it
-    }
-  }]);
-
-  return Frame;
-}();
-/***
-    an AnimationProject represents a single project containing one or more frames.
-    it also instantiates an onion skin frame.
-***/
-
-
-var AnimationProject = /*#__PURE__*/function () {
-  function AnimationProject(containerId) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, AnimationProject);
-
-    this.name = "";
-    this.currentFrameIndex = 0; // index of current frame
-
-    this.speed = 100; // 100 ms per frame 
-
-    this.frameList = [];
-    this.onionSkinFrame = createOnionSkinFrame(containerId);
-    this.onionSkinFrame.style.display = 'none'; // hide it initially
-
-    this.containerId = containerId; // id of the html element the frames are displayed in
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(AnimationProject, [{
-    key: "getContainerId",
-    value: function getContainerId() {
-      return this.containerId;
-    }
-  }, {
-    key: "getFrames",
-    value: function getFrames() {
-      return this.frameList;
-    }
-  }, {
-    key: "getCurrFrameIndex",
-    value: function getCurrFrameIndex() {
-      return this.currentFrameIndex;
-    }
-  }, {
-    key: "getCurrFrame",
-    value: function getCurrFrame() {
-      return this.frameList[this.currentFrameIndex];
-    }
-  }, {
-    key: "resetProject",
-    value: function resetProject() {
-      this.frameList.forEach(function (frame, frameIndex) {
-        var parent = document.getElementById(frame.getContainerId()); // just keep the first frame
-
-        frame.canvasList.forEach(function (layer, layerIndex) {
-          if (frameIndex > 0 || frameIndex === 0 && layerIndex > 0) {
-            parent.removeChild(layer);
-          }
-        });
-
-        if (frameIndex === 0) {
-          frame.setLayers([frame.getLayers()[0]]);
-          frame.setCurrIndex(0);
-        }
-      });
-      this.frameList = [this.frameList[0]]; // clear the first layer of the first frame!
-
-      this.frameList[0].clearCurrentLayer();
-      this.currentFrameIndex = 0;
-      this.speed = 100;
-      this.frameList[0].getCurrCanvas().style.visibility = "";
-      this.clearOnionSkin();
-    }
-  }, {
-    key: "addNewFrame",
-    value: function addNewFrame(showFlag) {
-      var newFrame = new Frame(this.containerId, this.frameList.length);
-      newFrame.setupNewLayer();
-      this.frameList.push(newFrame);
-
-      if (!showFlag) {
-        newFrame.hide();
-      }
-    }
-  }, {
-    key: "copyCurrFrame",
-    value: function copyCurrFrame() {
-      // get current frame and make a copy of it. append the copy to the end of the list of frames.
-      this.addNewFrame(false);
-      var newCopy = this.frameList[this.frameList.length - 1];
-      var currFrameLayersToCopy = this.getCurrFrame().getLayers();
-      currFrameLayersToCopy.forEach(function (layer, layerIndex) {
-        if (layerIndex + 1 > newCopy.getLayers().length) {
-          newCopy.setupNewLayer();
-        }
-
-        var currLayer = newCopy.getLayers()[layerIndex];
-        currLayer.style.opacity = layer.opacity;
-        currLayer.style.zIndex = layer.zIndex; // add the image data 
-
-        var newCtx = currLayer.getContext("2d");
-        var currImageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height);
-        newCtx.putImageData(currImageData, 0, 0);
-      });
-    }
-  }, {
-    key: "deleteFrame",
-    value: function deleteFrame(index) {
-      // don't allow removal if only one frame exists
-      if (this.frameList.length === 1 || index < 0 || index > this.frameList.length - 1) {
-        return false;
-      }
-
-      var frame = this.frameList[index]; // remove frame from frameList
-
-      this.frameList.splice(index, 1); // remove all layers
-
-      var parentContainer = document.getElementById(frame.getContainerId());
-      frame.getLayers().forEach(function (layer) {
-        parentContainer.removeChild(layer);
-      });
-      return true;
-    }
-  }, {
-    key: "nextFrame",
-    value: function nextFrame() {
-      if (this.frameList.length <= this.currentFrameIndex + 1) {
-        return null; // no more frames to see
-      }
-
-      this.getCurrFrame().clearSnapshots();
-      this.currentFrameIndex += 1;
-      this.updateOnionSkin();
-      return this.frameList[this.currentFrameIndex];
-    }
-  }, {
-    key: "prevFrame",
-    value: function prevFrame() {
-      if (this.currentFrameIndex - 1 < 0) {
-        return null; // no more frames to see
-      }
-
-      this.getCurrFrame().clearSnapshots();
-      this.currentFrameIndex -= 1;
-      this.updateOnionSkin();
-      return this.frameList[this.currentFrameIndex];
-    }
-  }, {
-    key: "goToFrame",
-    value: function goToFrame(frameIndex) {
-      if (frameIndex > this.frameList.length - 1 || frameIndex < 0) {
-        return null;
-      }
-
-      this.currentFrameIndex = frameIndex;
-      this.getCurrFrame().clearSnapshots();
-      this.updateOnionSkin();
-      return this.frameList[this.currentFrameIndex];
-    } // this method takes all the layers of a frame, merges them, and places the resulting image
-    // on a specific 'onionskin' canvas. when moving from one frame to another, the 'onionskin' of the
-    // previous frame will be visible.
-
-  }, {
-    key: "updateOnionSkin",
-    value: function updateOnionSkin() {
-      if (this.currentFrameIndex - 1 < 0) {
-        // no onionskin for very first frame 
-        this.onionSkinFrame.style.opacity = 0;
-        return;
-      }
-
-      this.onionSkinFrame.style.display = ''; // show onion skin
-
-      var onionSkinCtx = this.onionSkinFrame.getContext("2d");
-      onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // take the previous frame, merge all layers, put into onion skin frame
-
-      var onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // build the merged image from the first to last
-
-      var prevFrame = this.frameList[this.currentFrameIndex - 1];
-      prevFrame.getLayers().forEach(function (layer) {
-        var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
-
-        for (var i = 0; i < imageData.length; i += 4) {
-          if (imageData[i] === 255 && imageData[i + 1] === 255 && imageData[i + 2] === 255) {
-            continue;
-          } else {
-            onionSkinImageData.data[i] = imageData[i];
-            onionSkinImageData.data[i + 1] = imageData[i + 1];
-            onionSkinImageData.data[i + 2] = imageData[i + 2];
-            onionSkinImageData.data[i + 3] = 255;
-          }
-        } // apply each layer to the onion skin
-
-
-        onionSkinCtx.putImageData(onionSkinImageData, 0, 0);
-      });
-      this.onionSkinFrame.style.zIndex = 0;
-      this.onionSkinFrame.style.opacity = 0.92;
-    }
-  }, {
-    key: "clearOnionSkin",
-    value: function clearOnionSkin() {
-      var onionSkin = this.onionSkinFrame;
-      var context = this.onionSkinFrame.getContext("2d");
-      context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
-      context.fillStyle = "#FFFFFF";
-      context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
-    }
-  }]);
-
-  return AnimationProject;
-}();
-
-function createOnionSkinFrame(container) {
-  // create the new canvas element 
-  var newCanvas = document.createElement('canvas');
-  newCanvas.id = "onionSkinCanvas";
-  document.getElementById(container).appendChild(newCanvas);
-  setCanvas(newCanvas);
-  newCanvas.style.opacity = .97;
-  newCanvas.style.zIndex = -1; // TODO: come back to this later. make sure it's visible if current frame > 1!
-
-  return newCanvas;
-} // assigns default canvas attributes and styling
-
-
-function setCanvas(canvasElement, width, height) {
-  canvasElement.style.position = "absolute";
-  canvasElement.style.border = '1px #000 solid';
-  canvasElement.style.zIndex = 0;
-  canvasElement.style.opacity = 0;
-  canvasElement.style.width = "100%";
-  canvasElement.style.height = "100%";
-  canvasElement.width = width ? width : canvasElement.offsetWidth;
-  canvasElement.height = height ? height : canvasElement.offsetHeight;
-  canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,255)";
-  canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
-}
-
-
-
-/***/ }),
-
-/***/ "./components/utils/BrushManager.js":
-/*!******************************************!*\
-  !*** ./components/utils/BrushManager.js ***!
-  \******************************************/
-/*! exports provided: BrushManager */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrushManager", function() { return BrushManager; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../brushes/defaultBrush.js */ "./components/brushes/defaultBrush.js");
-/* harmony import */ var _brushes_eraserBrush_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../brushes/eraserBrush.js */ "./components/brushes/eraserBrush.js");
-/* harmony import */ var _brushes_radialBrush_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../brushes/radialBrush.js */ "./components/brushes/radialBrush.js");
-/* harmony import */ var _brushes_sketchyBrush_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../brushes/sketchyBrush.js */ "./components/brushes/sketchyBrush.js");
-/* harmony import */ var _brushes_webBrush_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../brushes/webBrush.js */ "./components/brushes/webBrush.js");
-/* harmony import */ var _brushes_shapeBrush_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../brushes/shapeBrush.js */ "./components/brushes/shapeBrush.js");
-/* harmony import */ var _brushes_penBrush_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../brushes/penBrush.js */ "./components/brushes/penBrush.js");
-/* harmony import */ var _brushes_floodfillBrush_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../brushes/floodfillBrush.js */ "./components/brushes/floodfillBrush.js");
-
-
-
-/***
-    brush manager class
-    pass in an instance of the AnimationProject class as an argument
-	
-	the current canvas element will be the target for the brush
-***/
-
-
-
-
-
-
-
-
-
-var BrushManager = /*#__PURE__*/function () {
-  function BrushManager(animationProj) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, BrushManager);
-
-    // pass in an animation project, from which you can access the current frame and the current canvas
-    this.animationProject = animationProj;
-    this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
-
-    this.selectedBrush = 'default'; // user-selected brush 
-
-    this.currColor = 'rgb(0,0,0)';
-    this.currColorArray = Uint8Array.from([0, 0, 0]);
-    this.currSize = 2;
-    this.pressureColorFlag = false; // whether brush color should depend on pen pressure
-    // brushes map
-
-    this.brushesMap = {};
-    this.brushesMap["default"] = new _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_2__["DefaultBrush"](this);
-    this.brushesMap["radial"] = new _brushes_radialBrush_js__WEBPACK_IMPORTED_MODULE_4__["RadialBrush"](this);
-    this.brushesMap["sketchy"] = new _brushes_sketchyBrush_js__WEBPACK_IMPORTED_MODULE_5__["SketchyBrush"](this);
-    this.brushesMap["web"] = new _brushes_webBrush_js__WEBPACK_IMPORTED_MODULE_6__["WebBrush"](this);
-    this.brushesMap["shape"] = new _brushes_shapeBrush_js__WEBPACK_IMPORTED_MODULE_7__["ShapeBrush"](this);
-    this.brushesMap["pen"] = new _brushes_penBrush_js__WEBPACK_IMPORTED_MODULE_8__["PenBrush"](this);
-    this.brushesMap["floodfill"] = new _brushes_floodfillBrush_js__WEBPACK_IMPORTED_MODULE_9__["FloodfillBrush"](this);
-    this.brushesMap["eraser"] = new _brushes_eraserBrush_js__WEBPACK_IMPORTED_MODULE_3__["EraserBrush"](this);
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BrushManager, [{
-    key: "resetBrush",
-    value: function resetBrush() {
-      // detach any events from mouse actions (reset the events connected with mouse events) from previous layer worked on
-      var frame = this.animationProject.getCurrFrame();
-      var currLayer = frame.getCurrCanvas();
-
-      for (var eventType in this.currentEventListeners) {
-        currLayer.removeEventListener(eventType, this.currentEventListeners[eventType]);
-        delete this.currentEventListeners[eventType];
-      }
-    }
-  }, {
-    key: "changeBrushSize",
-    value: function changeBrushSize(size) {
-      this.currSize = size;
-    }
-  }, {
-    key: "changeBrushColor",
-    value: function changeBrushColor(colorArray) {
-      this.currColor = 'rgba(' + colorArray[0] + ',' + colorArray[1] + ',' + colorArray[2] + ')';
-      this.currColorArray = colorArray;
-    }
-  }, {
-    key: "getBrushType",
-    value: function getBrushType() {
-      return this.selectedBrush;
-    }
-  }, {
-    key: "getCurrColor",
-    value: function getCurrColor() {
-      return this.currColor;
-    }
-  }, {
-    key: "getCurrColorArray",
-    value: function getCurrColorArray() {
-      return this.currColorArray;
-    }
-  }, {
-    key: "getCurrSize",
-    value: function getCurrSize() {
-      return this.currSize;
-    }
-  }, {
-    key: "applyPressureColor",
-    value: function applyPressureColor() {
-      return this.pressureColorFlag;
-    }
-  }, {
-    key: "setBrushType",
-    value: function setBrushType(brushType) {
-      this.selectedBrush = brushType;
-    }
-  }, {
-    key: "togglePressureColorFlag",
-    value: function togglePressureColorFlag() {
-      this.pressureColorFlag = !this.pressureColorFlag;
-    }
-  }, {
-    key: "applyBrush",
-    value: function applyBrush() {
-      this.brushesMap[this.selectedBrush].attachBrush();
-    }
-  }]);
-
-  return BrushManager;
-}();
-
-
-
-/***/ }),
-
-/***/ "./components/utils/FilterManager.js":
-/*!*******************************************!*\
-  !*** ./components/utils/FilterManager.js ***!
-  \*******************************************/
-/*! exports provided: FilterManager */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FilterManager", function() { return FilterManager; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _filters_saturation_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../filters/saturation.js */ "./components/filters/saturation.js");
-/* harmony import */ var _filters_grayscale_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../filters/grayscale.js */ "./components/filters/grayscale.js");
-/* harmony import */ var _filters_areacolor_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../filters/areacolor.js */ "./components/filters/areacolor.js");
-/* harmony import */ var _filters_edgedetection_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../filters/edgedetection.js */ "./components/filters/edgedetection.js");
-/* harmony import */ var _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../filters/invert.js */ "./components/filters/invert.js");
-/* harmony import */ var _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../filters/mosaic.js */ "./components/filters/mosaic.js");
-/* harmony import */ var _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../filters/blur.js */ "./components/filters/blur.js");
-/* harmony import */ var _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../filters/outline.js */ "./components/filters/outline.js");
-/* harmony import */ var _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../filters/voronoi.js */ "./components/filters/voronoi.js");
-/* harmony import */ var _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../filters/fisheye.js */ "./components/filters/fisheye.js");
-
-
-
-
-
-
-
-
-
-
-
-
-
-var FilterManager = /*#__PURE__*/function () {
-  function FilterManager(animationProject, brush) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, FilterManager);
-
-    this.animationProject = animationProject;
-    this.brush = brush;
-    this.filtersMap = {
-      "saturation": new _filters_saturation_js__WEBPACK_IMPORTED_MODULE_2__["Saturation"](),
-      "grayscale": new _filters_grayscale_js__WEBPACK_IMPORTED_MODULE_3__["Grayscale"](),
-      "area_color": new _filters_areacolor_js__WEBPACK_IMPORTED_MODULE_4__["AreaColor"](),
-      "edge_detection": new _filters_edgedetection_js__WEBPACK_IMPORTED_MODULE_5__["EdgeDetection"](),
-      "invert": new _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__["Invert"](),
-      "mosaic": new _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__["Mosaic"](),
-      "blur": new _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__["Blur"](),
-      "outline": new _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__["Outline"](),
-      "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__["Voronoi"](),
-      "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__["Fisheye"]()
-    };
-  } // general filtering function. pass any kind of filter through this function.
-
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(FilterManager, [{
-    key: "filterCanvas",
-    value: function filterCanvas(filter) {
-      var currFrame = this.animationProject.getCurrFrame();
-      var currLayer = currFrame.getCurrCanvas();
-      var context = currLayer.getContext("2d");
-      var width = currLayer.getAttribute('width');
-      var height = currLayer.getAttribute('height');
-      var imgData = context.getImageData(0, 0, width, height); // save current image to snapshots stack for undo
-
-      currFrame.addSnapshot(imgData); // grab a new copy of image data so we don't mess with the snapshot data we just stored
-
-      var filteredImageData = filter(context.getImageData(0, 0, width, height));
-      context.putImageData(filteredImageData, 0, 0);
-    } // use this for select/option elements when picking a filter
-
-  }, {
-    key: "filterCanvasOption",
-    value: function filterCanvasOption(option) {
-      var selectedFilter = this.filtersMap[option];
-      this.filterCanvas(selectedFilter.filter.bind(selectedFilter)); // make sure 'this' context is correct for the filtering function
-    }
-  }]);
-
-  return FilterManager;
-}();
-
-
-
-/***/ }),
-
-/***/ "./components/utils/Toolbar.js":
-/*!*************************************!*\
-  !*** ./components/utils/Toolbar.js ***!
-  \*************************************/
-/*! exports provided: Toolbar */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Toolbar", function() { return Toolbar; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _misc_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./misc.js */ "./components/utils/misc.js");
-
-
-
-
-var Toolbar = /*#__PURE__*/function () {
-  function Toolbar(brush, animationProj) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Toolbar);
-
-    // used as a flag for the animation playback features
-    this.play = null; // used to hold user-indicated time (ms) per frame for animation playback and gif
-
-    this.timePerFrame = 200; // set to 200 be default
-    // should the keyboard keys be affecting the layer or the frame? 2 options only
-    // this is useful for the arrow keys and space bar
-
-    this.layerMode = true;
-    this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
-
-    this.brush = brush;
-    this.animationProj = animationProj;
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Toolbar, [{
-    key: "setCounter",
-    value: function setCounter(elementId) {
-      this.htmlCounter = document.getElementById(elementId);
-    }
-  }, {
-    key: "nextLayer",
-    value: function nextLayer() {
-      this.brush.resetBrush();
-      var frame = this.animationProj.getCurrFrame();
-      var result = frame.nextLayer(); // TODO: can we figure out a better way to handle brushes?
-
-      this.brush.applyBrush(); // apply brush whether or not layer changed because it was reset initially
-
-      return result;
-    }
-  }, {
-    key: "prevLayer",
-    value: function prevLayer() {
-      this.brush.resetBrush();
-      var frame = this.animationProj.getCurrFrame();
-      var result = frame.prevLayer();
-      this.brush.applyBrush();
-      return result;
-    }
-  }, {
-    key: "setCurrLayer",
-    value: function setCurrLayer(layerIndex) {
-      // true to show onion skin of prev layer (when would we not?)
-      this.animationProj.getCurrFrame().setToLayer(layerIndex, true);
-    }
-  }, {
-    key: "nextFrame",
-    value: function nextFrame() {
-      this.brush.resetBrush();
-      var curr = this.animationProj.getCurrFrame();
-      var next = this.animationProj.nextFrame();
-      this.brush.applyBrush();
-
-      if (next !== null) {
-        curr.hide();
-        next.show();
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "prevFrame",
-    value: function prevFrame() {
-      this.brush.resetBrush();
-      var curr = this.animationProj.getCurrFrame();
-      var prev = this.animationProj.prevFrame();
-      this.brush.applyBrush();
-
-      if (prev !== null) {
-        curr.hide();
-        prev.show();
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "goToFrame",
-    value: function goToFrame(frameIndex) {
-      this.brush.resetBrush();
-      var curr = this.animationProj.getCurrFrame();
-      var destFrame = this.animationProj.goToFrame(frameIndex);
-      this.brush.applyBrush();
-
-      if (destFrame !== null) {
-        curr.hide();
-        destFrame.show();
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "addNewLayer",
-    value: function addNewLayer() {
-      var canvas = this.animationProj.getCurrFrame();
-      canvas.setupNewLayer();
-    }
-  }, {
-    key: "insertNewLayer",
-    value: function insertNewLayer() {
-      var canvas = this.animationProj.getCurrFrame(); // add a new canvas first 
-
-      canvas.setupNewLayer(); // then move it after the current canvas 
-
-      var newestCanvas = canvas.canvasList.pop();
-      canvas.canvasList.splice(canvas.currentIndex + 1, 0, newestCanvas);
-      return newestCanvas;
-    }
-    /***
-        insert a new layer after the current layer
-    ***/
-
-  }, {
-    key: "insertLayer",
-    value: function insertLayer(elementId) {
-      var _this = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        _this.insertNewLayer();
-      });
-    }
-    /***
-    	duplicate the current layer
-    	note: the next layer after the current will have identitcal image data
-    ***/
-
-  }, {
-    key: "duplicateLayer",
-    value: function duplicateLayer(elementId) {
-      var _this2 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        var currentCanvas = _this2.animationProj.getCurrFrame().currentCanvas;
-
-        var newLayer = _this2.insertNewLayer();
-
-        newLayer.getContext('2d').drawImage(currentCanvas, 0, 0);
-      });
-    }
-    /***
-        delete current layer
-        shifts the current layer to the next one if there is one.
-        otherwise, the previous layer will become the current one.
-        if there isn't a previous one either, then the layer will just be made blank.
-    ***/
-
-  }, {
-    key: "deleteLayer",
-    value: function deleteLayer(elementId, setStateFunction) {
-      var _this3 = this;
-
-      // elementId here refers to the display that shows current frame and layer
-      document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this3.animationProj.getCurrFrame();
-
-        var oldLayerIndex = frame.getCurrCanvasIndex();
-        var oldLayer = frame.getCurrCanvas();
-        var parentNode = document.getElementById(oldLayer.id).parentNode;
-        var layerList = frame.getLayers();
-
-        if (oldLayerIndex + 1 < layerList.length || oldLayerIndex - 1 >= 0) {
-          frame.deleteLayer(oldLayerIndex);
-          parentNode.removeChild(oldLayer);
-
-          _this3.brush.applyBrush();
-        } else {
-          // otherwise, just blank the canvas 
-          var context = oldLayer.getContext("2d");
-          context.clearRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
-          context.fillStyle = "#fff";
-          context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
-        }
-
-        setStateFunction(frame.getCurrCanvasIndex());
-      });
-    }
-    /***
-    add a new frame
-    ***/
-
-  }, {
-    key: "addNewFrameButton",
-    value: function addNewFrameButton(elementId) {
-      var _this4 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        _this4.animationProj.addNewFrame();
-      });
-    }
-    /***
-    duplicate current frame
-    ***/
-
-  }, {
-    key: "copyCurrFrameButton",
-    value: function copyCurrFrameButton(elementId) {
-      var _this5 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        _this5.animationProj.copyCurrFrame();
-      });
-    }
-    /***
-    	delete current frame
-    ***/
-
-  }, {
-    key: "deleteCurrentFrameButton",
-    value: function deleteCurrentFrameButton(elementId, setStateFunction) {
-      var _this6 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        var currFrameIdx = _this6.animationProj.getCurrFrameIndex(); // move to another frame first before deleting
-
-
-        if (currFrameIdx - 1 >= 0) {
-          _this6.prevFrame();
-        } else {
-          // go forward a frame
-          _this6.nextFrame();
-        }
-
-        if (_this6.animationProj.deleteFrame(currFrameIdx)) {
-          setStateFunction(currFrameIdx); // the index of the frame we deleted
-        }
-      });
-    }
-    /***
-    	change layer order for current frame on button press
-    ***/
-
-  }, {
-    key: "changeCurrentFrameLayerOrder",
-    value: function changeCurrentFrameLayerOrder(elementId, setStateFunction) {
-      document.getElementById(elementId).addEventListener('click', function () {
-        // I'm not sure why right now but something weird happens after calling 
-        // changeCurrentFrameLayerOrder for the first time.
-        // it acts as expected but also I get an error saying setStateFunction is undefined 
-        // in the console. :/ so for now check if setStateFunction is not undefined?
-        if (setStateFunction) {
-          setStateFunction(null);
-        }
-      });
-    }
-    /***
-        color wheel functions
-    ***/
-    // pass in the elementId of the div where the color wheel should be (its container)
-    // pass in the size of the canvas of the color wheel 
-
-  }, {
-    key: "createColorWheel",
-    value: function createColorWheel(elementId, size) {
-      var _this7 = this;
-
-      var colorWheel = Object(_misc_js__WEBPACK_IMPORTED_MODULE_2__["makeColorWheel"])(elementId, size);
-      document.getElementById(colorWheel.id).addEventListener('mousedown', function (evt) {
-        var x = evt.offsetX;
-        var y = evt.offsetY;
-        var colorPicked = document.getElementById(colorWheel.id).getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
-
-        var colorPickedText = document.getElementById('colorPicked');
-
-        if (colorPicked[0] > 10 && colorPicked[1] > 200) {
-          colorPickedText.style.color = "#000";
-        } else {
-          colorPickedText.style.color = "#FFF";
-        }
-
-        colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
-        colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
-
-        _this7.brush.changeBrushColor(colorPicked);
-      });
-    }
-    /***
-        rotate image
-        pass in an element id that will rotate the current canvas image on click
-    ***/
-
-  }, {
-    key: "rotateImage",
-    value: function rotateImage(elementId) {
-      var _this8 = this;
-
-      //rotate image
-      document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this8.animationProj.getCurrFrame(); //using a promise to convert the initial image to a bitmap
-
-
-        var width = canvas.currentCanvas.getAttribute("width");
-        var height = canvas.currentCanvas.getAttribute("height");
-        var context = canvas.currentCanvas.getContext("2d");
-        createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then(function (bitmap) {
-          var tmpCanvas = document.createElement("canvas");
-          tmpCanvas.width = width;
-          tmpCanvas.height = height; // use a temp canvas because translating on the real canvas will mess with mousedown coords
-
-          var tmpCtx = tmpCanvas.getContext("2d");
-          tmpCtx.clearRect(0, 0, width, height);
-          tmpCtx.translate(width / 2, height / 2);
-          tmpCtx.rotate(Math.PI / 180);
-          tmpCtx.translate(-width / 2, -height / 2);
-          tmpCtx.drawImage(bitmap, 0, 0); // then draw image data from tmp canvas to the real one
-
-          context.putImageData(tmpCtx.getImageData(0, 0, width, height), 0, 0);
-        });
-      });
-    }
-    /***
-        clear the current canvas
-        pass in an element id that will execute clear canvas onclick
-    ***/
-
-  }, {
-    key: "setClearCanvas",
-    value: function setClearCanvas(elementId) {
-      var _this9 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this9.animationProj.getCurrFrame();
-
-        var context = frame.currentCanvas.getContext("2d");
-        var width = frame.currentCanvas.getAttribute("width");
-        var height = frame.currentCanvas.getAttribute("height");
-        context.clearRect(0, 0, width, height);
-        context.fillStyle = "#FFFFFF";
-        context.fillRect(0, 0, width, height);
-      });
-    }
-    /***
-        undo a previous drawing operation on the current canvas.
-        still a little incorrect? - TODO: needs work
-    - problem: undo affects all layers and is not specific to one canvas (which it should)
-    maybe the frame class should store layer info for undo
-    ***/
-
-  }, {
-    key: "undo",
-    value: function undo(elementId) {
-      var _this10 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this10.animationProj.getCurrFrame();
-
-        var currLayer = frame.getCurrCanvas();
-        var context = currLayer.getContext("2d");
-        var width = currLayer.getAttribute("width");
-        var height = currLayer.getAttribute("height");
-        var currLayerSnapshots = frame.getSnapshots(); // then put back last image (ignore the one that had just been drawn)
-
-        if (currLayerSnapshots.length > 1) {
-          var mostRecentImage = currLayerSnapshots.pop(); // unfortunately, we might need to pop again b/c if we just finished drawing and want to undo,
-          // the first one on the stack is the image we just finished drawing
-          // but this operation seems fast enough
-
-          var currImgData = context.getImageData(0, 0, width, height).data;
-          var isSameImage = true;
-
-          for (var i = 0; i < currImgData.length; i++) {
-            if (currImgData[i] !== mostRecentImage.data[i]) {
-              isSameImage = false;
-              break;
-            }
-          }
-
-          if (isSameImage) {
-            mostRecentImage = currLayerSnapshots.pop();
-          }
-
-          context.clearRect(0, 0, width, height);
-          context.putImageData(mostRecentImage, 0, 0); // but then put it back on the stack
-
-          frame.addSnapshot(mostRecentImage);
-        } else if (currLayerSnapshots.length === 1) {
-          context.putImageData(currLayerSnapshots[0], 0, 0);
-        }
-      });
-    }
-    /***
-        import an image
-    ***/
-
-  }, {
-    key: "importImage",
-    value: function importImage(elementId) {
-      var _this11 = this;
-
-      var self = this;
-      document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this11.animationProj.getCurrFrame(); // call fileHandler here
-
-
-        fileHandler(); // define fileHandler 
-
-        function fileHandler() {
-          //initiate file choosing after button click
-          var input = document.createElement('input');
-          input.type = 'file';
-          input.addEventListener('change', getFile, false);
-          input.click();
-        }
-
-        function getFile(e) {
-          var img = new Image();
-          var reader = new FileReader();
-          var file = e.target.files[0];
-
-          if (!file.type.match(/image.*/)) {
-            console.log("not a valid image");
-            return;
-          } //when the image loads, put it on the canvas.
-
-
-          img.onload = function () {
-            // change current canvas' width and height according to imported picture
-            var currentCanvas = canvas.currentCanvas;
-            var context = currentCanvas.getContext("2d");
-            var height = canvas.height;
-            var width = canvas.width;
-            currentCanvas.setAttribute('height', height);
-            currentCanvas.setAttribute('width', width);
-            context.drawImage(img, 0, 0, width, height);
-            canvas.addSnapshot(currentCanvas.getContext("2d").getImageData(0, 0, width, height));
-          }; //after reader has loaded file, put the data in the image object.
-
-
-          reader.onloadend = function () {
-            img.src = reader.result;
-          }; //read the file as a URL
-
-
-          reader.readAsDataURL(file);
-        }
-      });
-    }
-    /***
-        reset the canvas to most recent imported image
-    ***/
-
-  }, {
-    key: "resetImage",
-    value: function resetImage() {
-      if (this.recentImage) {
-        var _canvas = this.animationProj.getCurrFrame();
-
-        var context = _canvas.currentCanvas.getContext("2d");
-
-        var height = _canvas.currentCanvas.getAttribute("height");
-
-        var width = _canvas.currentCanvas.getAttribute("width");
-
-        context.drawImage(this.recentImage, 0, 0, width, height);
-      }
-    }
-    /***
-        download a png file of the current layer
-    ***/
-
-  }, {
-    key: "downloadLayer",
-    value: function downloadLayer(elementId) {
-      var _this12 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        // get image data from current canvas as blob
-        var canvas = _this12.animationProj.getCurrFrame();
-
-        var data = document.getElementById(canvas.currentCanvas.id).toBlob(function (blob) {
-          var url = URL.createObjectURL(blob);
-          var link = document.createElement('a');
-          link.href = url;
-          var name = prompt("please enter a name for the file");
-
-          if (name === null) {
-            return;
-          } else {
-            link.download = name; //simulate a click on the blob's url to download it 
-
-            link.click();
-          }
-        });
-      });
-    }
-    /***
-    	download a png file of the current frame
-    ***/
-
-  }, {
-    key: "downloadFrame",
-    value: function downloadFrame(elementId) {
-      var _this13 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this13.animationProj.getCurrFrame();
-
-        var mergedLayers = _this13.mergeFrameLayers(frame);
-
-        var data = mergedLayers.toBlob(function (blob) {
-          var url = URL.createObjectURL(blob);
-          var link = document.createElement('a');
-          link.href = url;
-          var name = prompt("please enter a name for the file");
-
-          if (name === null) {
-            return;
-          } else {
-            link.download = name;
-            link.click();
-          }
-        });
-      });
-    } // for toggling the toolbar's position as sticky or not
-
-  }, {
-    key: "toggleToolbarPosition",
-    value: function toggleToolbarPosition(elementId, toolbarId) {
-      document.getElementById(elementId).addEventListener('click', function () {
-        var toolbar = document.getElementById(toolbarId);
-
-        if (toolbar.style.position === "sticky" || toolbar.style.position === "") {
-          toolbar.style.position = "static";
-        } else {
-          toolbar.style.position = "sticky";
-        }
-      });
-    }
-    /********
-    
-        this section controls the animation playback features
-        
-        note that I specifically added my page counter element to the
-        functions so that they change with the call to up() and down()
-          this will need to be applied for FRAMES, not LAYERS of a frame.
-    
-    *********/
-    //let toolbar = this;
-
-  }, {
-    key: "playFor",
-    value: function playFor() {
-      if (this.nextFrame()) {
-        if (this.htmlCounter) {
-          var counterText = this.htmlCounter;
-          counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-        }
-      }
-    }
-  }, {
-    key: "playBack",
-    value: function playBack() {
-      if (this.prevFrame()) {
-        if (this.htmlCounter) {
-          var counterText = this.htmlCounter;
-          counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-        }
-      }
-    }
-  }, {
-    key: "playForward",
-    value: function playForward() {
-      clearInterval(this.play);
-      this.play = null;
-      this.play = setInterval(this.playFor, this.timePerFrame);
-    }
-  }, {
-    key: "playBackward",
-    value: function playBackward() {
-      clearInterval(this.play);
-      this.play = null;
-      this.play = setInterval(this.playBack, this.timePerFrame);
-    }
-  }, {
-    key: "stop",
-    value: function stop() {
-      clearInterval(this.play);
-      this.play = null;
-    }
-  }, {
-    key: "mergeFrameLayers",
-    value: function mergeFrameLayers(frame) {
-      var tempCanvas = document.createElement('canvas');
-      var tempCtx = tempCanvas.getContext("2d");
-      tempCanvas.width = frame.width;
-      tempCanvas.height = frame.height;
-      tempCtx.fillStyle = "white";
-      tempCtx.fillRect(0, 0, frame.width, frame.height);
-      var tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-
-      for (var j = 0; j < frame.canvasList.length; j++) {
-        var layer = frame.canvasList[j]; // possible issue: this assumes that all layers within a frame share the same dimensions (but it should be that way, right?)
-
-        var imageData = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height).data;
-
-        for (var k = 0; k < imageData.length; k += 4) {
-          if (imageData[k] === 255 && imageData[k + 1] === 255 && imageData[k + 2] === 255) {
-            continue;
-          } else {
-            // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
-            // we might run into index/length issues...
-            tempImageData.data[k] = imageData[k];
-            tempImageData.data[k + 1] = imageData[k + 1];
-            tempImageData.data[k + 2] = imageData[k + 2];
-            tempImageData.data[k + 3] = 255;
-          }
-        } // apply each layer to the onion skin
-
-
-        tempCtx.putImageData(tempImageData, 0, 0);
-      }
-
-      return tempCanvas;
-    }
-    /***
-    
-        create a gif from the frames.
-        using gif.js - https://github.com/jnordberg/gif.js
-    
-        elementId is for the loading message,
-        i.e. a <p> element that says "now loading..."
-        
-        this will need to be applied for FRAMES, not LAYERS of a frame.
-    
-    timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), i.e.
-    {
-    1: 100, // frame 1
-    2: 1000 // frame 2
-    }
-    ***/
-
-  }, {
-    key: "getGif",
-    value: function getGif(elementId, timelineMarkers) {
-      if (elementId) {
-        document.getElementById(elementId).textContent = "now loading...";
-      }
-
-      var gif = new GIF({
-        workers: 2,
-        quality: 10
-      }); // add frames + take into account frame rate given by timelineMarkers
-
-      for (var i = 0; i < this.animationProj.frameList.length; i++) {
-        var tempCanvas = this.mergeFrameLayers(this.animationProj.frameList[i]);
-        var frameTime = timelineMarkers[i + 1] ? timelineMarkers[i + 1] : this.timePerFrame;
-        gif.addFrame(tempCanvas, {
-          delay: frameTime
-        });
-      }
-
-      gif.on('finished', function (blob) {
-        document.getElementById(elementId).textContent = "";
-        var newGif = URL.createObjectURL(blob);
-        window.open(newGif);
-      });
-      gif.render();
-    }
-    /***
-    
-        save/export & import functions
-        check this out: https://stackoverflow.com/questions/22329481/compressing-base64-data-uri-images
-        
-        don't think this is going to work for large projects without some sort of better compression. simply drawing a few lines on
-        a canvas produces a very large base64 string spanning many lines. not very practical for exporting a project
-        that has several frames, especially if you take into account different colors and more detail
-        
-    ***/
-
-  }, {
-    key: "save",
-    value: function save(elementId) {
-      var _this14 = this;
-
-      document.getElementById(elementId).addEventListener('click', function () {
-        // prompt the user to name the file 
-        var name = prompt("name of file: ");
-
-        if (name === "") {
-          name = "funSketch_saveFile";
-        } else if (name === null) {
-          return;
-        }
-
-        var savedData = [];
-
-        _this14.animationProj.frameList.forEach(function (frame) {
-          // get frame metadata
-          var newFrame = frame.getMetadata();
-          newFrame['layers'] = []; // list of objects
-
-          frame.canvasList.forEach(function (layer) {
-            // get layer metadata
-            var newLayer = {
-              'id': layer.id,
-              'width': layer.getAttribute("width"),
-              'height': layer.getAttribute("height"),
-              'zIndex': layer.style.zIndex,
-              'opacity': layer.style.opacity
-            }; // add layer image data
-
-            newLayer['imageData'] = layer.toDataURL();
-            newFrame.layers.push(newLayer);
-          });
-          savedData.push(JSON.stringify(newFrame));
-        });
-
-        var json = "[\n";
-        json += savedData.join(",\n"); // put a line break between each new object, which represents a frame
-
-        json += "\n]"; // make a blob so it can be downloaded 
-
-        var blob = new Blob([json], {
-          type: "application/json"
-        });
-        var url = URL.createObjectURL(blob);
-        var link = document.createElement('a');
-        link.href = url;
-        link.download = name + ".json";
-        link.click();
-      });
-    } // data: JSON data representing a project
-    // updateStateFunction: function that updates state. used in the react component that has the toolbar as a prop
-
-  }, {
-    key: "importData",
-    value: function importData(data, updateStateFunction) {
-      var _this15 = this;
-
-      if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
-        console.log("import failed: it appears to not be a valid project! :<");
-        return;
-      } // clear existing project
-
-
-      this.animationProj.resetProject(); // load saved project
-
-      data.forEach(function (frame, index) {
-        if (index > 0) {
-          // add a new frame
-          _this15.animationProj.addNewFrame();
-        } // overwrite existing frame
-        // TODO: implement an updateFrame method 
-        // something like: animationProj.updateFrame(0, frame);
-
-
-        var currFrame = _this15.animationProj.getFrames()[index];
-
-        var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
-
-        var currFrameLayersFromCurrPrj = currFrame.getLayers();
-        currFrameLayersFromImport.forEach(function (layer, layerIndex) {
-          if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
-            // add new layer to curr project as needed based on import
-            currFrame.setupNewLayer();
-          }
-
-          var currLayer = currFrame.getLayers()[layerIndex]; // add the image data 
-
-          var newCtx = currLayer.getContext("2d");
-          var img = new Image();
-
-          (function (context, image) {
-            image.onload = function () {
-              context.drawImage(image, 0, 0);
-
-              if (index === data.length - 1 && updateStateFunction) {
-                // after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
-                updateStateFunction();
-              }
-            };
-
-            image.src = layer.imageData;
-          })(newCtx, img);
-        });
-        currFrame.setCurrIndex(frame.currentIndex);
-      });
-    }
-  }, {
-    key: "importProject",
-    value: function importProject(elementId, updateStateFunction) {
-      var self = this;
-      document.getElementById(elementId).addEventListener('click', function () {
-        fileHandler(); //import project json file
-
-        function fileHandler() {
-          var input = document.createElement('input');
-          input.type = 'file';
-          input.addEventListener('change', getFile, false);
-          input.click();
-        }
-
-        function getFile(e) {
-          var reader = new FileReader();
-          var file = e.target.files[0]; //when the file loads, put it on the canvas.
-
-          reader.onload = function (theFile) {
-            return function (e) {
-              // parse the JSON using JSON.parse 
-              // check if it can be parsed though first!
-              var data;
-
-              try {
-                data = JSON.parse(e.target.result);
-              } catch (e) {
-                // not valid json file 
-                console.log("import failed: not a valid JSON file");
-                return;
-              }
-
-              self.importData(data, updateStateFunction);
-            };
-          }(file);
-
-          reader.readAsText(file);
-        }
-      });
-    }
-  }]);
-
-  return Toolbar;
-}(); // end of Toolbar 
-
-
-
-
-/***/ }),
-
-/***/ "./components/utils/misc.js":
-/*!**********************************!*\
-  !*** ./components/utils/misc.js ***!
-  \**********************************/
-/*! exports provided: makeColorWheel */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeColorWheel", function() { return makeColorWheel; });
-// catch-all file for functions that might be better suited being in this file
-function makeColorWheel(elementId, size) {
-  var location = document.getElementById(elementId);
-
-  if (location === undefined) {
-    console.log("could not find element with id ".concat(elementId, "!"));
-    return null;
-  }
-
-  var colorWheel = document.createElement('canvas');
-  colorWheel.id = "colorWheel";
-  colorWheel.setAttribute('width', size);
-  colorWheel.setAttribute('height', size);
-  var colorWheelContext = colorWheel.getContext('2d');
-  var x = colorWheel.width / 2;
-  var y = colorWheel.height / 2;
-  var radius = 60; // why 5600??
-
-  for (var angle = 0; angle <= 5600; angle++) {
-    var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
-
-    var endAngle = angle * Math.PI / 180;
-    colorWheelContext.beginPath();
-    colorWheelContext.moveTo(x, y); //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
-
-    colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
-    colorWheelContext.closePath(); //use .createRadialGradient to get a different color for each angle
-    //createRadialGradient(x0, y0, r0, x1, y1, r1)
-
-    var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
-    gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
-    gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
-    colorWheelContext.fillStyle = gradient;
-    colorWheelContext.fill();
-  } // make black a pickable color 
-
-
-  colorWheelContext.fillStyle = "#000";
-  colorWheelContext.beginPath();
-  colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
-  colorWheelContext.fill(); // make white pickable too (and add a black outline)
-
-  colorWheelContext.beginPath();
-  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 
-
-  colorWheelContext.stroke(); // make sure circle is filled with #fff
-
-  colorWheelContext.fillStyle = "#fff";
-  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
-  colorWheelContext.fill();
-  location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
-
-  var showColor = document.createElement('p'); // this element will show the color picked 
-
-  showColor.style.textAlign = 'center';
-  showColor.id = 'colorPicked';
-  showColor.textContent = "pick a color! :)";
-  location.appendChild(showColor);
-  return colorWheel;
-}
-
-/***/ }),
-
 /***/ "./index.js":
 /*!******************!*\
   !*** ./index.js ***!
@@ -6258,11 +99,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _components_PresentationWrapper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/PresentationWrapper.js */ "./components/PresentationWrapper.js");
+/* harmony import */ var _src_PresentationWrapper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/PresentationWrapper.js */ "./src/PresentationWrapper.js");
 
 
 
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_PresentationWrapper_js__WEBPACK_IMPORTED_MODULE_2__["PresentationWrapper"], null), document.getElementById('root'));
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_src_PresentationWrapper_js__WEBPACK_IMPORTED_MODULE_2__["PresentationWrapper"], null), document.getElementById('root'));
 
 /***/ }),
 
@@ -35161,6 +29002,6289 @@ if (false) {} else {
   module.exports = __webpack_require__(/*! ./cjs/scheduler-tracing.development.js */ "./node_modules/scheduler/cjs/scheduler-tracing.development.js");
 }
 
+
+/***/ }),
+
+/***/ "./src/AnimationTimeline.js":
+/*!**********************************!*\
+  !*** ./src/AnimationTimeline.js ***!
+  \**********************************/
+/*! exports provided: AnimationTimeline */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AnimationTimeline", function() { return AnimationTimeline; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+// https://stackoverflow.com/questions/55340888/fast-way-to-resize-imagedata-in-browser
+// https://stackoverflow.com/questions/19262141/resize-image-with-javascript-canvas-smoothly
+// https://stackoverflow.com/questions/13416800/how-to-generate-an-image-from-imagedata-in-javascript
+
+
+var TimelineFrameThumnail = function TimelineFrameThumnail(props) {
+  var frameImgData = props.imgData;
+  var height = '120px'; //props.height;
+
+  var width = '120px'; //props.width;
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+    style: {
+      'display': 'inline-block',
+      'border': '1px solid #000',
+      'margin': '3px'
+    },
+    width: width,
+    height: height,
+    src: frameImgData
+  });
+}; // need to pass in a method from PresentationWrapper to allow updates that may occur 
+// in AnimationTimeline (i.e. changing the fps at a marker or deleting a marker)
+// to persist (these changes should be stored in PresentationWrapper's state)
+
+
+var AnimationTimeline = function AnimationTimeline(props) {
+  var timelineStyle = {
+    'width': '100%',
+    'height': '200px',
+    'border': '1px solid #000',
+    'display': 'block',
+    'backgroundColor': '#fff',
+    'overflowX': 'auto',
+    'whiteSpace': 'nowrap',
+    'marginTop': '10px'
+  };
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    id: "animationTimeline",
+    style: timelineStyle
+  }, props.frames.map(function (frame, index) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(TimelineFrameThumnail, {
+      imgData: frame.data,
+      key: index
+    });
+  }));
+};
+
+
+
+/***/ }),
+
+/***/ "./src/BrushDashboard.js":
+/*!*******************************!*\
+  !*** ./src/BrushDashboard.js ***!
+  \*******************************/
+/*! exports provided: BrushDashboard */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrushDashboard", function() { return BrushDashboard; });
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+
+var BrushDashboard = function BrushDashboard(props) {
+  var brushManager = props.brushManager;
+  var brushes = brushManager ? brushManager.brushesMap : {}; // can be null initially
+
+  var brushNames = Object.keys(brushes);
+  var style = {
+    "textAlign": "center"
+  };
+  var elementStyle = {
+    "width": "85%",
+    "height": "100%",
+    "margin": "1% auto",
+    "textAlign": "center",
+    "display": "grid",
+    "gridTemplateRows": "1fr",
+    "gridTemplateColumns": "1fr 1fr"
+  }; // use a hook to be able to keep track of selected brush
+
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])("default"),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
+      selectedBrush = _useState2[0],
+      setSelectedBrush = _useState2[1];
+
+  var brushSize = brushManager ? "".concat(brushManager.currSize) : "2";
+
+  var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(brushSize),
+      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState3, 2),
+      currBrushSize = _useState4[0],
+      setBrushSize = _useState4[1];
+
+  function equipBrush(brushManager, brushName) {
+    return function (evt) {
+      setSelectedBrush(brushName);
+
+      if (brushManager) {
+        // equip brush
+        brushManager.resetBrush();
+        brushManager.setBrushType(brushName);
+        brushManager.applyBrush();
+      }
+    };
+  }
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: elementStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "gridRow": "1",
+      "gridColumn": "1",
+      "position": "relative",
+      "height": "100%"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "position": "absolute",
+      "overflowY": "auto",
+      "top": "0",
+      "left": "10%",
+      "height": "85%",
+      "width": "85%"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "brushDisplay"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
+    id: "brushChoices",
+    style: {
+      "margin": "0 auto",
+      "padding": "0"
+    }
+  }, brushNames.map(function (brushName, index) {
+    var selectedStyle = JSON.parse(JSON.stringify(style));
+
+    if (selectedBrush === brushName) {
+      selectedStyle["backgroundColor"] = "#c8c8c8";
+    }
+
+    var s = selectedStyle !== null ? selectedStyle : style;
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+      style: s,
+      key: "brush_".concat(index),
+      id: "".concat(brushName, "_").concat(index),
+      onClick: equipBrush(brushManager, brushName),
+      onMouseOver: function onMouseOver(evt) {
+        evt.target.style.color = "#99b5d1";
+      },
+      onMouseOut: function onMouseOut(evt) {
+        evt.target.style.color = "#000";
+      }
+    }, brushName);
+  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "gridRow": "1",
+      "gridColumn": "2"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "adjustBrushSize"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
+    className: "text-info"
+  }, "change brush size"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
+    id: "brushSize",
+    type: "range",
+    min: "1",
+    max: "20",
+    step: ".5",
+    defaultValue: currBrushSize,
+    onChange: function onChange(evt) {
+      brushManager.changeBrushSize(evt.target.value);
+      setBrushSize(evt.target.value);
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
+    id: "brushSizeValue"
+  }, currBrushSize))));
+};
+
+
+
+/***/ }),
+
+/***/ "./src/FilterDashboard.js":
+/*!********************************!*\
+  !*** ./src/FilterDashboard.js ***!
+  \********************************/
+/*! exports provided: FilterDashboard */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FilterDashboard", function() { return FilterDashboard; });
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+
+function constructSlider(name, params) {
+  var id = "slider_" + name;
+  var sliderCounterId = name + 'CurrValue';
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("label", {
+    htmlFor: name
+  }, name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
+    type: "range",
+    name: name,
+    id: id,
+    max: params.max,
+    min: params.min,
+    step: params.step,
+    defaultValue: params.value,
+    onChange: function onChange(evt) {
+      var newVal = evt.target.value; // update reference to the filter's parameter object value field,
+      // which is used when applying the filter
+
+      params.value = parseInt(newVal);
+      document.getElementById(sliderCounterId).textContent = params.value;
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("p", {
+    id: sliderCounterId
+  }, params.value));
+}
+
+var FilterDashboard = function FilterDashboard(props) {
+  var filterManager = props.filterManager;
+  var filters = filterManager ? filterManager.filtersMap : {}; // props.filterManager can be null initially
+
+  var filterNames = Object.keys(filters);
+  var style = {
+    "textAlign": "center"
+  };
+  var elementStyle = {
+    "width": "85%",
+    "height": "100%",
+    "margin": "1% auto",
+    "textAlign": "center",
+    "display": "grid",
+    "gridTemplateRows": "1fr",
+    "gridTemplateColumns": "1fr 1fr"
+  }; // use a hook to be able to keep track of selected filter
+
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(""),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
+      selectedFilter = _useState2[0],
+      setSelectedFilter = _useState2[1];
+
+  var parameterSliders = [];
+
+  if (filters[selectedFilter] && filters[selectedFilter].params) {
+    // need to set up sliders for each editable parameter for the selected filter
+    for (var paramName in filters[selectedFilter].params) {
+      var newSlider = constructSlider(paramName, filters[selectedFilter].params[paramName]);
+      parameterSliders.push(newSlider);
+    }
+  }
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: elementStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "gridRow": "1",
+      "gridColumn": "1",
+      "position": "relative",
+      "height": "100%"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "position": "absolute",
+      "overflowY": "auto",
+      "top": "0",
+      "left": "10%",
+      "height": "85%",
+      "width": "85%"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "filtersDisplay"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
+    id: "filterChoices",
+    style: {
+      "margin": "0 auto",
+      "padding": "0"
+    }
+  }, filterNames.map(function (filterName, index) {
+    var selectedStyle = null;
+
+    if (selectedFilter === filterName) {
+      selectedStyle = JSON.parse(JSON.stringify(style));
+      selectedStyle["backgroundColor"] = "#c8c8c8";
+    }
+
+    var s = selectedStyle !== null ? selectedStyle : style;
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+      style: s,
+      key: "filter_".concat(index),
+      id: "".concat(filterName, "_").concat(index),
+      onClick: function onClick(evt) {
+        // show that the filter is selected
+        setSelectedFilter(filterName);
+      },
+      onMouseOver: function onMouseOver(evt) {
+        evt.target.style.color = "#99b5d1";
+      },
+      onMouseOut: function onMouseOut(evt) {
+        evt.target.style.color = "#000";
+      }
+    }, filterName);
+  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    style: {
+      "gridRow": "1",
+      "gridColumn": "2"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("button", {
+    id: "applyFilter",
+    onClick: function onClick() {
+      filterManager.filterCanvasOption(selectedFilter);
+    }
+  }, " apply filter "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    id: "filterParameters"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
+    style: {
+      "margin": "0 auto",
+      "padding": "0"
+    }
+  }, parameterSliders.map(function (slider, index) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+      key: "filter_param_".concat(index)
+    }, slider);
+  })))));
+};
+
+
+
+/***/ }),
+
+/***/ "./src/LayerOrder.js":
+/*!***************************!*\
+  !*** ./src/LayerOrder.js ***!
+  \***************************/
+/*! exports provided: LayerOrder */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LayerOrder", function() { return LayerOrder; });
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+
+
+function saveNewLayerOrder(updateParentStateFunc) {
+  var layers = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(document.querySelectorAll('[id^="layerOrder"]')).map(function (el) {
+    // currently each element's text content is like "layer <number>". 
+    // map the list so that we get the number - 1, because we want list indexes so we can 
+    // rearrange the order of the layers accordingly
+    return parseInt(el.textContent.split(' ')[1]) - 1;
+  });
+
+  updateParentStateFunc(layers); // update parent state.
+}
+
+var LayerOrder = function LayerOrder(props) {
+  var show = props.changingLayerOrder;
+  var updateParentState = props.updateParentStateFunction; // need to pass arg to this function
+
+  var layers = props.layers;
+  var style = {
+    "textAlign": "center"
+  };
+  var elementStyle = {
+    "margin": "2px auto",
+    "textAlign": "center",
+    "border": "1px solid #000",
+    "width": "10%"
+  }; // use a hook to be able to drag and drop with 
+
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_2__["useState"])(0),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
+      dragSourceEl = _useState2[0],
+      setDragSourceEl = _useState2[1];
+
+  if (show) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
+      style: style
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("h4", null, " layer order for current frame: "), layers.map(function (layerIndex) {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", {
+        style: elementStyle,
+        key: layerIndex,
+        id: "layerOrder_".concat(layerIndex),
+        onDragStart: function onDragStart(e) {
+          e.stopPropagation();
+          var thisEl = e.target;
+          thisEl.style.opacity = 0.5;
+          setDragSourceEl(thisEl);
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/html", thisEl.innerHTML);
+        },
+        onDragEnter: function onDragEnter(e) {
+          e.target.style.border = "1px dotted #000";
+        },
+        onDragOver: function onDragOver(e) {
+          e.preventDefault();
+        },
+        onDragLeave: function onDragLeave(e) {
+          e.target.style.border = "1px solid #000";
+        },
+        onDrop: function onDrop(e) {
+          var thisEl = e.target; // e is the target element to drop on
+
+          e.stopPropagation(); // do nothing if target is the same as the element being dragged
+
+          if (dragSourceEl != thisEl) {
+            dragSourceEl.innerHTML = thisEl.innerHTML;
+            thisEl.innerHTML = e.dataTransfer.getData('text/html');
+          } // make sure source goes back to normal opacity
+
+
+          dragSourceEl.style.opacity = 1; // also make sure target has its border style restored
+
+          thisEl.style.border = "1px solid #000";
+          e.preventDefault();
+        },
+        draggable: "true"
+      }, "layer ", layerIndex + 1);
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("button", {
+      id: "doneChangingLayerButton",
+      onClick: function onClick() {
+        saveNewLayerOrder(updateParentState);
+      }
+    }, " done "));
+  } else {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2___default.a.createElement("div", null);
+  }
+};
+
+
+
+/***/ }),
+
+/***/ "./src/PresentationWrapper.js":
+/*!************************************!*\
+  !*** ./src/PresentationWrapper.js ***!
+  \************************************/
+/*! exports provided: PresentationWrapper, FrameCounterDisplay */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PresentationWrapper", function() { return PresentationWrapper; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FrameCounterDisplay", function() { return FrameCounterDisplay; });
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/AnimationProject.js */ "./src/utils/AnimationProject.js");
+/* harmony import */ var _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/Toolbar.js */ "./src/utils/Toolbar.js");
+/* harmony import */ var _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils/BrushManager.js */ "./src/utils/BrushManager.js");
+/* harmony import */ var _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./utils/FilterManager.js */ "./src/utils/FilterManager.js");
+/* harmony import */ var _AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./AnimationTimeline.js */ "./src/AnimationTimeline.js");
+/* harmony import */ var _LayerOrder_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./LayerOrder.js */ "./src/LayerOrder.js");
+/* harmony import */ var _FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./FilterDashboard.js */ "./src/FilterDashboard.js");
+/* harmony import */ var _BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./BrushDashboard.js */ "./src/BrushDashboard.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+
+
+
+
+
+
+
+
+ // for displaying current frame and layer number
+// TODO: importing a project won't update the counter display since it's using the Toolbar class functions
+// and so the PresentationWrapper's state doesn't get updated with the new currentFrame/Layer
+
+var FrameCounterDisplay = function FrameCounterDisplay(props) {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+    id: "pageCount"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
+    id: "prevFrame"
+  }, " \u25C0 \xA0\xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
+    id: "goLeft"
+  }, " < "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
+    id: "count"
+  }, " frame: ", props.currFrame, ", layer: ", props.currLayer, " "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
+    id: "goRight"
+  }, " > "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", {
+    id: "nextFrame"
+  }, "\xA0\xA0 \u25B6"));
+};
+
+var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default()(PresentationWrapper, _React$Component);
+
+  var _super = _createSuper(PresentationWrapper);
+
+  function PresentationWrapper(props) {
+    var _this;
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default()(this, PresentationWrapper);
+
+    _this = _super.call(this, props);
+    _this.state = {
+      'animationProject': null,
+      'brushInstance': null,
+      'toolbarInstance': null,
+      'filtersInstance': null,
+      'currentFrame': 1,
+      'currentLayer': 1,
+      'timelineFrames': [],
+      'timelineMarkers': {},
+      // keep track of where fps should change - not 0-indexed!
+      'changingLayerOrder': false
+    };
+    _this.timelineFramesSet = new Set(); // keep track of what frames have been added to timeline so we don't duplicate - 0-indexed!
+
+    return _this;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(PresentationWrapper, [{
+    key: "_getCoordinates",
+    value: function _getCoordinates(canvas, event) {
+      var rect = canvas.getBoundingClientRect();
+      var scaleX = canvas.width / rect.width;
+      var scaleY = canvas.width / rect.height;
+      var x = (event.clientX - rect.left) * scaleX;
+      var y = (event.clientY - rect.top) * scaleY;
+      return {
+        'x': x,
+        'y': y,
+        'rect': rect
+      };
+    }
+  }, {
+    key: "_timelineMarkerSetup",
+    value: function _timelineMarkerSetup() {
+      var _this2 = this;
+
+      var timelineCanvas = document.getElementById('animationTimelineCanvas'); // make sure pixel width of canvas is the same as the timeline element
+
+      timelineCanvas.width = document.getElementById('animationTimeline').clientWidth;
+      timelineCanvas.height = document.getElementById('animationTimeline').clientHeight - 20; // leave a gap for the scrollbar
+
+      timelineCanvas.addEventListener('mousemove', function (event) {
+        var context = timelineCanvas.getContext('2d'); // clear canvas first
+
+        context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height); // get canvas coordinates
+
+        var coords = _this2._getCoordinates(timelineCanvas, event);
+
+        var x = coords.x;
+        var y = coords.y;
+        var rect = coords.rect;
+        context.beginPath();
+        context.moveTo(x, 0);
+        context.lineTo(x, rect.height);
+        context.stroke(); // just get all y-coords while holding that x coord
+        // draw a line
+        // if click, mark that line in canvas. have to figure out how to not erase that line 
+        // how wide should line be?
+        // also need to figure out how to translate distance between lines as frames per second...
+        // you also can't have half a frame be a different frame rate than the other half...
+      });
+      timelineCanvas.addEventListener('mouseleave', function (event) {
+        var context = timelineCanvas.getContext('2d');
+        context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
+      });
+      timelineCanvas.addEventListener('click', function (event) {
+        // also take into account horizontal scroll distance, if any
+        var scrollDistance = document.getElementById('animationTimeline').scrollLeft;
+
+        var coords = _this2._getCoordinates(timelineCanvas, event);
+
+        var x = coords.x + scrollDistance;
+        var y = coords.y; // which frame does this coordinate match to?
+
+        if (_this2.state.timelineFrames.length > 0) {
+          var width = 123; // don't hardcode this? it should be based on img width in the timeline
+
+          var frameGuess = Math.floor(x / width) + 1;
+
+          if (frameGuess <= _this2.state.timelineFrames.length) {
+            // update markers in state
+            var markers = _this2.state.timelineMarkers; // use frame number as the key
+
+            markers[frameGuess] = {
+              'xCoord': x,
+              'frameNumber': frameGuess,
+              'speed': 100,
+              'frame': _this2.state.timelineFrames[frameGuess - 1]
+            };
+
+            _this2.state.toolbarInstance.goToFrame(frameGuess - 1);
+
+            _this2.setState({
+              'timelineMarkers': markers,
+              'currentFrame': frameGuess,
+              'currentLayer': 1
+            });
+          }
+        }
+      });
+    }
+  }, {
+    key: "_timelineMarkerDelete",
+    value: function _timelineMarkerDelete(frameNumToDelete) {
+      var currentMarkers = this.state.timelineMarkers;
+
+      if (!delete currentMarkers[frameNumToDelete]) {
+        console.log("couldn't delete frame marker for frame: " + frameNumToDelete);
+      }
+
+      this.setState({
+        'timelineMarkers': currentMarkers
+      });
+    }
+  }, {
+    key: "_moveToFrame",
+    value: function _moveToFrame(direction) {
+      var animationProj = this.state.animationProject;
+      var toolbar = this.state.toolbarInstance;
+      var brush = this.state.brushInstance;
+      var currFrameIndex = animationProj.getCurrFrameIndex();
+      var frame = toolbar.mergeFrameLayers(animationProj.getCurrFrame());
+      var currFrameData = frame.toDataURL();
+
+      var newFrames = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(this.state.timelineFrames);
+
+      if (!this.timelineFramesSet.has(currFrameIndex)) {
+        // if the animation timeline doesn't have the current frame, add it
+        newFrames.push({
+          "data": currFrameData,
+          "height": frame.height,
+          "width": frame.width
+        });
+        this.timelineFramesSet.add(currFrameIndex);
+      } else {
+        // update image data in the animation timeline
+        newFrames[currFrameIndex].data = currFrameData;
+      }
+
+      this.setState({
+        'timelineFrames': newFrames,
+        'changingLayerOrder': false
+      });
+
+      if (direction === "prev") {
+        if (toolbar.prevFrame()) {
+          return true;
+        }
+      } else {
+        if (toolbar.nextFrame()) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+  }, {
+    key: "_setKeyDown",
+    value: function _setKeyDown(doc) {
+      var toolbar = this.state.toolbarInstance;
+      var animationProj = this.state.animationProject;
+      var self = this;
+      doc.addEventListener('keydown', function (evt) {
+        var updateStateFlag = false;
+        var frame = null;
+
+        switch (evt.which) {
+          case 37:
+            //left arrow key
+            if (toolbar.prevLayer()) {
+              frame = animationProj.getCurrFrame();
+              updateStateFlag = true;
+            }
+
+            break;
+
+          case 39:
+            //right arrow key
+            if (toolbar.nextLayer()) {
+              frame = animationProj.getCurrFrame();
+              updateStateFlag = true;
+            }
+
+            break;
+
+          case 32:
+            //space bar
+            if (toolbar.layerMode) {
+              toolbar.addNewLayer();
+            } else {
+              animationProj.addNewFrame(false);
+            }
+
+            break;
+
+          case 65:
+            // a key 
+            {
+              updateStateFlag = self._moveToFrame("prev");
+              frame = animationProj.getCurrFrame();
+              break;
+            }
+
+          case 68:
+            // d key 
+            {
+              updateStateFlag = self._moveToFrame("next");
+              frame = animationProj.getCurrFrame();
+              break;
+            }
+
+          default:
+            break;
+        }
+
+        evt.preventDefault();
+
+        if (updateStateFlag) {
+          self.setState({
+            'currentFrame': animationProj.getCurrFrameIndex() + 1,
+            'currentLayer': frame.getCurrCanvasIndex() + 1
+          });
+          frame = null;
+          updateStateFlag = false;
+        }
+      });
+    }
+  }, {
+    key: "_setupToolbar",
+    value: function _setupToolbar() {
+      var _this3 = this;
+
+      var newToolbar = this.state.toolbarInstance;
+      var project = this.state.animationProject;
+      newToolbar.setCounter("count");
+      newToolbar.createColorWheel('colorPicker', 170);
+      newToolbar.insertLayer('insertCanvas');
+      newToolbar.deleteLayer('deleteCanvas', function (newLayerIndex) {
+        _this3.setState({
+          'currentLayer': newLayerIndex + 1
+        });
+      });
+      newToolbar.deleteCurrentFrameButton('deleteCurrFrame', function (frameIndexToRemove) {
+        var newTimelineFrames = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(_this3.state.timelineFrames);
+
+        newTimelineFrames.splice(frameIndexToRemove, 1);
+        _this3.timelineFramesSet = new Set(Array.from(newTimelineFrames, function (x, idx) {
+          return idx;
+        }));
+        var newTimelineMarkers = {};
+        Object.keys(_this3.state.timelineMarkers).forEach(function (key, index) {
+          // since we removed a frame, reassign new frame indexes to each entry in the object
+          if (parseInt(key) !== frameIndexToRemove + 1) {
+            newTimelineMarkers[index + 1] = _this3.state.timelineMarkers[key];
+          }
+        });
+
+        _this3.setState({
+          'currentFrame': project.getCurrFrameIndex() + 1,
+          'currentLayer': project.getCurrFrame().getCurrCanvasIndex() + 1,
+          'timelineFrames': newTimelineFrames,
+          'timelineMarkers': newTimelineMarkers
+        });
+      }); // change layer order for current frame
+
+      newToolbar.changeCurrentFrameLayerOrder('changeLayerOrder', function (someArg) {
+        // update state to show layer order currently
+        _this3.setState({
+          "changingLayerOrder": true
+        });
+      });
+      newToolbar.duplicateLayer('duplicateCanvas');
+      newToolbar.setClearCanvas('clearCanvas');
+      newToolbar.downloadLayer('downloadLayer');
+      newToolbar.addNewFrameButton('addNewFrame');
+      newToolbar.copyCurrFrameButton('copyCurrFrame');
+      newToolbar.changeCurrentFrameLayerOrder('changeLayerOrder');
+      newToolbar.downloadFrame('downloadFrame');
+      newToolbar.rotateImage('rotateCanvasImage');
+      newToolbar.undo('undo');
+      newToolbar.importImage('importImage');
+      newToolbar.save('saveWork');
+      newToolbar.toggleToolbarPosition('toggleToolbarPos', 'toolbar');
+      newToolbar.importProject('importProject', this._importProjectUpdateFunc.bind(this)); // make the goLeft and goRight arrows clickable FOR LAYERS
+      // note: this is for clicking the icons with a mouse!
+
+      document.getElementById('goLeft').addEventListener('click', function () {
+        if (newToolbar.prevLayer()) {
+          var curr = project.getCurrFrame();
+
+          _this3.setState({
+            'currentFrame': project.getCurrFrameIndex() + 1,
+            'currentLayer': curr.getCurrCanvasIndex() + 1
+          });
+        }
+      });
+      document.getElementById('goRight').addEventListener('click', function () {
+        if (newToolbar.nextLayer()) {
+          var curr = project.getCurrFrame();
+
+          _this3.setState({
+            'currentFrame': project.getCurrFrameIndex() + 1,
+            'currentLayer': curr.getCurrCanvasIndex() + 1
+          });
+        }
+      }); // left and right arrows for FRAMES
+
+      document.getElementById('prevFrame').addEventListener('click', function () {
+        if (_this3._moveToFrame("prev")) {
+          var curr = project.getCurrFrame();
+
+          _this3.setState({
+            'currentFrame': project.getCurrFrameIndex() + 1,
+            'currentLayer': curr.getCurrCanvasIndex() + 1
+          });
+        }
+      });
+      document.getElementById('nextFrame').addEventListener('click', function () {
+        if (_this3._moveToFrame("next")) {
+          var curr = project.getCurrFrame();
+
+          _this3.setState({
+            'currentFrame': project.getCurrFrameIndex() + 1,
+            'currentLayer': curr.getCurrCanvasIndex() + 1
+          });
+        }
+      });
+      document.getElementById('generateGif').addEventListener('click', function () {
+        var frameSpeedMarkers = {}; // if there's at least one timeline marker, we need to apply frame speed for each frame 
+        // based on the marker
+        // the initial speed will be whatever speed is currently selected (if no marker on the first frame)
+
+        if (Object.keys(_this3.state.timelineFrames).length > 0) {
+          var currFrameSpeed = parseInt(document.getElementById('timePerFrame').selectedOptions[0].value);
+
+          _this3.state.timelineFrames.forEach(function (frame, index) {
+            if (_this3.state.timelineMarkers[index + 1]) {
+              currFrameSpeed = _this3.state.timelineMarkers[index + 1].speed;
+            }
+
+            frameSpeedMarkers[index + 1] = currFrameSpeed;
+          });
+        }
+
+        newToolbar.getGif("loadingScreen", frameSpeedMarkers);
+      });
+      document.getElementById('toggleLayerOrFrame').addEventListener('click', function () {
+        var element = document.getElementById("toggleLayerOrFrame");
+
+        if (newToolbar.layerMode) {
+          newToolbar.layerMode = false;
+          element.textContent = "toggle layer addition on spacebar press";
+        } else {
+          newToolbar.layerMode = true;
+          element.textContent = "toggle frame addition on spacebar press";
+        }
+      }); // toggle pen pressure for brush color
+
+      document.getElementById('togglePenPressureColor').addEventListener('click', function (evt) {
+        if (evt.target.style.border === "1px solid rgb(255, 0, 0)") {
+          evt.target.style.border = "1px solid rgb(0, 255, 0)"; // green
+        } else {
+          evt.target.style.border = "1px solid rgb(255, 0, 0)";
+        }
+
+        _this3.state.brushInstance.togglePressureColorFlag();
+      });
+      document.getElementById('togglePenPressureColor').style.border = "1px solid rgb(255, 0, 0)"; // red for off by default
+    }
+  }, {
+    key: "_setupAnimationControl",
+    value: function _setupAnimationControl() {
+      var _this4 = this;
+
+      document.getElementById('timePerFrame').addEventListener('onchange', function (evt) {
+        _this4.state.toolbarInstance.timePerFrame = parseInt(evt.target.selectedOptions[0].value);
+      });
+    }
+  }, {
+    key: "_linkDemos",
+    value: function _linkDemos() {
+      var _this5 = this;
+
+      var demoSelect = document.getElementById("chooseDemo");
+      demoSelect.addEventListener("change", function (evt) {
+        _this5._getDemo(evt.target.selectedOptions[0].value);
+      });
+    }
+  }, {
+    key: "_showOptions",
+    value: function _showOptions(category) {
+      var el = document.getElementById(category);
+      var child = el.children[1]; // skip the p element and get the ul element
+
+      if (child.style.display !== "block") {
+        child.style.display = "block";
+      } else {
+        child.style.display = "none";
+        el.style.marginBottom = 0;
+      }
+    }
+  }, {
+    key: "_playAnimation",
+    value: function _playAnimation() {
+      var _this6 = this;
+
+      var timelineFrames = this.state.timelineFrames;
+
+      if (Object.keys(timelineFrames).length === 0) {
+        return;
+      }
+
+      var currFrame = this.state.animationProject.getCurrFrame();
+      var animationDisplay = document.createElement('canvas'); // all frames should have the same dimensions
+
+      animationDisplay.width = currFrame.currentCanvas.width;
+      animationDisplay.height = currFrame.currentCanvas.height;
+      animationDisplay.style.zIndex = 200;
+      animationDisplay.style.border = '1px solid #000';
+      animationDisplay.style.position = 'absolute';
+      animationDisplay.style.opacity = 1.0;
+      animationDisplay.id = "animationDisplay";
+      document.getElementById("canvasArea").appendChild(animationDisplay);
+      var displayContext = animationDisplay.getContext('2d');
+      displayContext.fillStyle = "#ffffff";
+      displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
+      var totalElapsedTime = 0;
+      var lastSpeed = this.state.toolbarInstance.timePerFrame;
+      timelineFrames.forEach(function (frame, index) {
+        if (_this6.state.timelineMarkers[index + 1]) {
+          lastSpeed = parseInt(_this6.state.timelineMarkers[index + 1].speed);
+        }
+
+        setTimeout(function () {
+          // set the animation canvas to white instead of clearRect 
+          // we don't want transparency otherwise we'll see our current frame we were working on flash between animation frames
+          displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
+          var image = new Image();
+
+          image.onload = function () {
+            displayContext.drawImage(image, 0, 0); // remove animationDisplay after last frame
+
+            if (index + 1 === timelineFrames.length) {
+              setTimeout(function () {
+                document.getElementById("canvasArea").removeChild(animationDisplay);
+              }, lastSpeed);
+            }
+
+            ;
+          };
+
+          image.src = frame.data;
+        }, totalElapsedTime + lastSpeed);
+        totalElapsedTime += lastSpeed;
+      });
+    }
+  }, {
+    key: "_importProjectUpdateFunc",
+    value: function _importProjectUpdateFunc() {
+      var _this7 = this;
+
+      // update state when loading in a project
+      var project = this.state.animationProject;
+      var toolbar = this.state.toolbarInstance;
+      this.setState({
+        'currentFrame': 1,
+        'currentLayer': 1,
+        'timelineFrames': [],
+        'timelineMarkers': {}
+      });
+      this.timelineFramesSet = new Set(); // update animation timeline after project is loaded
+
+      var newFrames = [];
+      project.frameList.forEach(function (frame, index) {
+        var mergedLayersFrame = toolbar.mergeFrameLayers(frame);
+        var currFrameData = mergedLayersFrame.toDataURL();
+        var currFrameIndex = index;
+
+        if (!_this7.timelineFramesSet.has(currFrameIndex)) {
+          newFrames.push({
+            "data": currFrameData,
+            "height": mergedLayersFrame.height,
+            "width": mergedLayersFrame.width
+          });
+
+          _this7.timelineFramesSet.add(currFrameIndex);
+        } else {
+          // update image data
+          newFrames[currFrameIndex].data = currFrameData;
+        }
+      }); // figure out which layer is the one that should be visible for the first frame
+
+      var layers = project.frameList[0].canvasList;
+      var visibleLayerIndex = 0;
+
+      for (var i = 0; i < layers.length; i++) {
+        if (layers[i].style.opacity >= .97) {
+          visibleLayerIndex = i;
+          break;
+        }
+      }
+
+      project.getFrames()[0].show();
+      this.setState({
+        'currentLayer': visibleLayerIndex + 1,
+        'timelineFrames': newFrames
+      });
+    }
+  }, {
+    key: "_getDemo",
+    value: function _getDemo(selected) {
+      var _this8 = this;
+
+      // case for the blank option 
+      if (selected === "") {
+        return;
+      }
+
+      var selectedDemo = "demos/" + selected + ".json";
+      var httpRequest = new XMLHttpRequest();
+
+      if (!httpRequest) {
+        return;
+      }
+
+      httpRequest.open("GET", selectedDemo);
+
+      httpRequest.onload = function () {
+        var data = JSON.parse(httpRequest.responseText);
+
+        _this8.state.toolbarInstance.importData(data, _this8._importProjectUpdateFunc.bind(_this8));
+      };
+
+      httpRequest.send();
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this9 = this;
+
+      var animationProj = new _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__["AnimationProject"]('canvasArea');
+      animationProj.addNewFrame(true);
+      var newBrush = new _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_9__["BrushManager"](animationProj);
+      newBrush.brushesMap["default"].attachBrush();
+      var newFilters = new _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_10__["FilterManager"](animationProj, newBrush);
+      var newToolbar = new _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__["Toolbar"](newBrush, animationProj);
+      this.setState({
+        'animationProject': animationProj,
+        'brushInstance': newBrush,
+        'toolbarInstance': newToolbar,
+        'filtersInstance': newFilters
+      }, function () {
+        _this9._setupToolbar();
+
+        _this9._linkDemos();
+
+        _this9._setKeyDown(document);
+
+        _this9._timelineMarkerSetup();
+      });
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {// make the active canvas shown reflect the state's current frame and layer? instead of toggling it in different places
+    }
+  }, {
+    key: "_clickOption",
+    value: function _clickOption(evt) {
+      var id = evt.target.id; // map caret id to div id of option that should show up in the 2nd column of the toolbar
+
+      var options = {
+        "instructionsOption": "instructions",
+        "frameLayerCtrlOption": "frameLayerSection",
+        "animationCtrlOption": "animControlSection",
+        "otherOption": "otherSection",
+        "brushesOption": "brushSection",
+        "filtersOption": "filterSection",
+        "demosOption": "showDemos"
+      };
+      Array.from(Object.keys(options)).forEach(function (section) {
+        var contentToToggle = document.getElementById(options[section]);
+        contentToToggle.classList.remove("toolbarSection2");
+
+        if (section === id) {
+          contentToToggle.classList.add("toolbarSection2");
+          contentToToggle.classList.remove("tbar");
+        } else {
+          contentToToggle.classList.add("tbar");
+        }
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this10 = this;
+
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        className: "container"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "toolbar",
+        style: {
+          "position": "static"
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "toolbarArea"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "toolbarOptions",
+        className: "toolbarSection"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "instructionsOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "frameLayerCtrlOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " frame/layer control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "animationCtrlOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " animation control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "brushesOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " brushes "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "filtersOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " filters "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "otherOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " other "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("li", {
+        id: "demosOption",
+        onMouseOver: function onMouseOver(evt) {
+          evt.target.style.color = "#99b5d1";
+        },
+        onMouseOut: function onMouseOut(evt) {
+          evt.target.style.color = "#000";
+        },
+        onClick: this._clickOption
+      }, " demos "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "instructions",
+        className: "toolbarSection2"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
+        className: "instructions"
+      }, " Use the spacebar to append a new layer or frame. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
+        className: "instructions"
+      }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
+        className: "instructions"
+      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
+        className: "instructions"
+      }, " The toolbar can be static or sticky (so that it follows the scrollbar). You can toggle this via the 'toggle toolbar position' button in the 'other' section. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "frameLayerSection",
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "displayLayerStuff"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "insertCanvas"
+      }, "add new layer after"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "deleteCanvas"
+      }, "delete current layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "duplicateCanvas"
+      }, "duplicate layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "clearCanvas"
+      }, "clear layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "downloadLayer"
+      }, "download current layer")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "displayFrameStuff"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "addNewFrame"
+      }, "add new frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "copyCurrFrame"
+      }, "duplicate frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "deleteCurrFrame"
+      }, "delete current frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "changeLayerOrder"
+      }, "change layer order"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "downloadFrame"
+      }, "download current frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_LayerOrder_js__WEBPACK_IMPORTED_MODULE_12__["LayerOrder"], {
+        changingLayerOrder: this.state.changingLayerOrder,
+        layers: this.state.animationProject ? this.state.animationProject.getCurrFrame().getLayers().map(function (x, idx) {
+          return idx;
+        }) : [],
+        updateParentStateFunction: function updateParentStateFunction(newLayerOrder) {
+          // 1. update layer order of current frame
+          // 2. set changingLayerOrder in state to false
+          var newLayerList = [];
+
+          var currFrame = _this10.state.animationProject.getCurrFrame();
+
+          var currLayerIndex = currFrame.getCurrCanvasIndex();
+          var currFrameLayerList = currFrame.getLayers();
+          currFrame.getCurrCanvas().style.opacity = 0;
+          currFrame.getCurrCanvas().style.zIndex = 0;
+
+          if (currLayerIndex - 1 > 0) {
+            currFrame.getLayers()[currLayerIndex - 1].style.opacity = 0;
+            currFrame.getLayers()[currLayerIndex - 1].style.zIndex = 0;
+          }
+
+          newLayerOrder.forEach(function (index) {
+            newLayerList.push(currFrameLayerList[index]);
+          });
+          currFrame.setLayers(newLayerList); // update the currently shown layer to reflect the re-ordering
+
+          _this10.state.toolbarInstance.setCurrLayer(currLayerIndex);
+
+          _this10.setState({
+            "changingLayerOrder": false
+          });
+        }
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "otherSection",
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " other "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "displayOtherStuff"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "toggleToolbarPos"
+      }, "toggle toolbar position"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "importImage"
+      }, " import image "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "rotateCanvasImage"
+      }, "rotate image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "undo"
+      }, "undo"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "saveWork"
+      }, "save project (.json)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "importProject"
+      }, "import project "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "togglePenPressureColor"
+      }, " toggle pen pressure for color "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "toggleLayerOrFrame"
+      }, " toggle frame addition on spacebar press "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "animControlSection",
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "animationControl"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " animation control: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("ul", {
+        id: "timeOptions"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
+        htmlFor: "timePerFrame"
+      }, "time per frame (ms):"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
+        name: "timePerFrame",
+        id: "timePerFrame",
+        onChange: function onChange(evt) {
+          _this10.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
+        value: "100"
+      }, "100"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
+        value: "200"
+      }, "200"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
+        value: "500"
+      }, "500"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
+        value: "700"
+      }, "700"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
+        value: "1000"
+      }, "1000"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        onClick: function onClick() {
+          _this10._playAnimation();
+        }
+      }, " play animation "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("button", {
+        id: "generateGif"
+      }, " generate gif! ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
+        id: "loadingScreen"
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "filterSection",
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__["FilterDashboard"], {
+        filterManager: this.state.filtersInstance
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "brushSection",
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__["BrushDashboard"], {
+        brushManager: this.state.brushInstance
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "showDemos",
+        className: "tbar"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h3", null, " demos "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
+        id: "chooseDemo"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
+        label: ""
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
+        className: "demo"
+      }, "run_demo"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
+        className: "demo"
+      }, "floaty_thingy"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "colorPickerSection",
+        className: "toolbarSection3"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "colorPicker"
+      })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "screen"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "screenContainer"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(FrameCounterDisplay, {
+        currFrame: this.state.currentFrame,
+        currLayer: this.state.currentLayer
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "canvasArea"
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "animationTimelineArea"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__["AnimationTimeline"], {
+        frames: this.state.timelineFrames
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("canvas", {
+        id: "animationTimelineCanvas",
+        style: {
+          'display': 'block',
+          'marginTop': '10px',
+          'marginBottom': '10px',
+          'width': '100%',
+          'height': '185px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
+
+        }
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "animationTimelineMarkers"
+      }, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
+        var marker = _this10.state.timelineMarkers[markerKey];
+        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
+          htmlFor: 'marker' + marker.frameNumber + 'Select'
+        }, "marker for frame ", marker.frameNumber, ": \xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
+          id: 'marker' + marker.frameNumber + 'Select',
+          name: 'marker' + marker.frameNumber + 'Select',
+          onChange: function onChange(evt) {
+            marker.speed = evt.target.value;
+          }
+        }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "100"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "200"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "300"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "500"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "1000")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
+          id: 'deleteMarker_' + marker.frameNumber,
+          style: {
+            'color': 'red'
+          },
+          onClick: function onClick() {
+            return _this10._timelineMarkerDelete(marker.frameNumber);
+          }
+        }, " \xA0delete "));
+      }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+        id: "footer"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", null, " c.2017 | ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("a", {
+        href: "https://github.com/syncopika/funSketch"
+      }, "source "))));
+    }
+  }]);
+
+  return PresentationWrapper;
+}(react__WEBPACK_IMPORTED_MODULE_6___default.a.Component);
+
+
+
+/***/ }),
+
+/***/ "./src/brushes/BrushTemplate.js":
+/*!**************************************!*\
+  !*** ./src/brushes/BrushTemplate.js ***!
+  \**************************************/
+/*! exports provided: BrushTemplate */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrushTemplate", function() { return BrushTemplate; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+// template for brushes
+var BrushTemplate = /*#__PURE__*/function () {
+  function BrushTemplate(brushManager) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, BrushTemplate);
+
+    this.brushManager = brushManager; // a brush will need to use some things the brush manager has
+
+    this.paint = false; // boolean for knowing when brush is active or not
+    // keep track of the pixels drawn on by the mouse.
+    // the redraw function uses this data to connect the dots 
+
+    this.clickX = [];
+    this.clickY = [];
+    this.clickDrag = [];
+    this.clickColor = [];
+    this.clickSize = [];
+    this.clickPressure = []; // cursor type
+
+    this.cursorType = "crosshair";
+  } // assuming a PointerEvent, calculate the brush width based on stylus pressure
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BrushTemplate, [{
+    key: "_calculateBrushWidth",
+    value: function _calculateBrushWidth(pointerEvt) {
+      var brushWidth = this.brushManager.getCurrSize();
+
+      if (pointerEvt.pressure) {
+        brushWidth = pointerEvt.pressure * 2 * brushWidth;
+      }
+
+      return brushWidth;
+    } // collect info where each pixel is to be drawn on canvas
+
+  }, {
+    key: "_addClick",
+    value: function _addClick(pointerEvt, dragging) {
+      var x = pointerEvt.offsetX;
+      var y = pointerEvt.offsetY;
+      var pressure = pointerEvt.pressure;
+      var currSize = this.brushManager.getCurrSize();
+      var currColor = this.brushManager.getCurrColorArray();
+      var penPressure = 1; // take into account pen pressure for color if needed (as well as for brush size)
+
+      if (this.brushManager.applyPressureColor() && pressure) {
+        var alpha = pressure * 0.5;
+        currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + alpha + ')';
+        currSize = this._calculateBrushWidth(pointerEvt);
+        penPressure = pressure;
+      } else {
+        currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',255)';
+      }
+
+      this.clickX.push(x);
+      this.clickY.push(y);
+      this.clickDrag.push(dragging);
+      this.clickColor.push(currColor);
+      this.clickSize.push(currSize);
+      this.clickPressure.push(penPressure);
+    }
+  }, {
+    key: "_redraw",
+    value: function _redraw(strokeFunction) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var context = frame.getCurrCanvas().getContext("2d");
+      context.lineJoin = 'round'; //TODO: make this a brushmanager variable?
+
+      strokeFunction(context);
+    }
+  }, {
+    key: "_clearClick",
+    value: function _clearClick() {
+      this.clickX = [];
+      this.clickY = [];
+      this.clickDrag = [];
+      this.clickColor = [];
+      this.clickSize = [];
+      this.clickPressure = [];
+    }
+  }, {
+    key: "_handleTouchEvent",
+    value: function _handleTouchEvent(evt) {
+      var rect = evt.target.getBoundingClientRect();
+      var x = evt.touches[0].pageX - rect.left;
+      var y = evt.touches[0].pageY - rect.top - window.pageYOffset;
+      return {
+        'x': x,
+        'y': y
+      };
+    } // event listener functions
+
+  }, {
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+    }
+  }, {
+    key: "brushMove",
+    value: function brushMove(evt) {
+      evt.preventDefault();
+    }
+  }, {
+    key: "brushStop",
+    value: function brushStop(evt) {
+      evt.preventDefault();
+    }
+  }, {
+    key: "brushLeave",
+    value: function brushLeave(evt) {
+      evt.preventDefault();
+    }
+  }, {
+    key: "brushStroke",
+    // this is for determining what the brush stroke looks like
+    value: function brushStroke() {} // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {}
+  }]);
+
+  return BrushTemplate;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/brushes/defaultBrush.js":
+/*!*************************************!*\
+  !*** ./src/brushes/defaultBrush.js ***!
+  \*************************************/
+/*! exports provided: DefaultBrush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DefaultBrush", function() { return DefaultBrush; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./src/brushes/BrushTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+
+
+var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(DefaultBrush, _BrushTemplate);
+
+  var _super = _createSuper(DefaultBrush);
+
+  function DefaultBrush(brushManager) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, DefaultBrush);
+
+    return _super.call(this, brushManager);
+  } // event listener functions
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(DefaultBrush, [{
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      if (evt.which === 1 || evt.type === 'touchstart') {
+        //when left click only
+        this.paint = true; // offset will be different with mobile
+        // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
+        // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
+
+        if (evt.type === 'touchstart') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushMove",
+    value: function brushMove(evt) {
+      evt.preventDefault();
+
+      if (this.paint) {
+        if (evt.type === 'touchmove') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushStop",
+    value: function brushStop(evt) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      evt.preventDefault();
+      var w = currLayer.width;
+      var h = currLayer.height;
+      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+
+      this._clearClick();
+
+      this.paint = false;
+    } // this is for determining what the brush stroke looks like
+
+  }, {
+    key: "brushStroke",
+    value: function brushStroke(context) {
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.strokeStyle = this.clickColor[i];
+        context.lineWidth = this.clickSize[i];
+        context.beginPath(); // this helps generate a solid line, rather than a line of dots.
+
+        if (this.clickDrag[i] && i) {
+          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+        } else {
+          // the adding of 1 allows you to make a dot on click
+          context.moveTo(this.clickX[i], this.clickY[i] + 1);
+        }
+
+        context.lineTo(this.clickX[i], this.clickY[i]);
+        context.closePath();
+        context.stroke();
+      }
+    }
+  }, {
+    key: "brushLeave",
+    value: function brushLeave() {
+      this._clearClick();
+
+      this.paint = false;
+    } // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+
+      var start = this.brushStart.bind(this);
+      currLayer.addEventListener('pointerdown', start);
+      currLayer.addEventListener('touchstart', start);
+      this.brushManager.currentEventListeners['pointerdown'] = start;
+      this.brushManager.currentEventListeners['touchstart'] = start;
+      var move = this.brushMove.bind(this);
+      currLayer.addEventListener('pointermove', move);
+      currLayer.addEventListener('touchmove', move);
+      this.brushManager.currentEventListeners['pointermove'] = move;
+      this.brushManager.currentEventListeners['touchmove'] = move;
+      var stop = this.brushStop.bind(this);
+      currLayer.addEventListener('pointerup', stop);
+      currLayer.addEventListener('touchend', stop);
+      this.brushManager.currentEventListeners['pointerup'] = stop;
+      this.brushManager.currentEventListeners['touchend'] = stop;
+      var leave = this.brushLeave.bind(this);
+      currLayer.addEventListener('pointerleave', leave);
+      this.brushManager.currentEventListeners['pointerleave'] = leave;
+    }
+  }]);
+
+  return DefaultBrush;
+}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/brushes/eraserBrush.js":
+/*!************************************!*\
+  !*** ./src/brushes/eraserBrush.js ***!
+  \************************************/
+/*! exports provided: EraserBrush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EraserBrush", function() { return EraserBrush; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./src/brushes/BrushTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+ // basically the only difference between this and default brush is that #fff is mandatory lol
+
+var EraserBrush = /*#__PURE__*/function (_BrushTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(EraserBrush, _BrushTemplate);
+
+  var _super = _createSuper(EraserBrush);
+
+  function EraserBrush(brushManager) {
+    var _this;
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, EraserBrush);
+
+    _this = _super.call(this, brushManager);
+    _this.cursorType = "url(" + "\"eraser_cursor1.png\"" + ") 5 5, auto";
+    return _this;
+  } // event listener functions
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(EraserBrush, [{
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
+        //when left click only		
+        this.paint = true; // offset will be different with mobile
+        // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
+        // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
+
+        if (evt.type === 'touchstart') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushMove",
+    value: function brushMove(evt) {
+      evt.preventDefault();
+
+      if (this.paint) {
+        if (evt.type === 'touchmove') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushStop",
+    value: function brushStop(evt) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      evt.preventDefault(); // this is important for the undo feature
+
+      var w = currLayer.width;
+      var h = currLayer.height;
+      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+
+      this._clearClick();
+
+      this.paint = false;
+    } // this is for determining what the brush stroke looks like
+
+  }, {
+    key: "brushStroke",
+    value: function brushStroke() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      var context = currLayer.getContext("2d");
+
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.strokeStyle = "#ffffffff"; // #ffffffff because eraser
+
+        context.lineWidth = this.clickSize[i];
+        context.beginPath();
+
+        if (this.clickDrag[i] && i) {
+          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+        } else {
+          //the adding of 1 allows you to make a dot on click
+          context.moveTo(this.clickX[i], this.clickY[i] + 1);
+        }
+
+        context.lineTo(this.clickX[i], this.clickY[i]);
+        context.closePath();
+        context.stroke();
+      }
+    }
+  }, {
+    key: "brushLeave",
+    value: function brushLeave() {
+      this._clearClick();
+
+      this.paint = false;
+    } // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+
+      var start = this.brushStart.bind(this);
+      currLayer.addEventListener('mousedown', start);
+      currLayer.addEventListener('touchstart', start);
+      this.brushManager.currentEventListeners['mousedown'] = start;
+      this.brushManager.currentEventListeners['touchstart'] = start;
+      var move = this.brushMove.bind(this);
+      currLayer.addEventListener('mousemove', move);
+      currLayer.addEventListener('touchmove', move);
+      this.brushManager.currentEventListeners['mousemove'] = move;
+      this.brushManager.currentEventListeners['touchmove'] = move;
+      var stop = this.brushStop.bind(this);
+      currLayer.addEventListener('mouseup', stop);
+      currLayer.addEventListener('touchend', stop);
+      this.brushManager.currentEventListeners['mouseup'] = stop;
+      this.brushManager.currentEventListeners['touchend'] = stop;
+      var leave = this.brushLeave.bind(this);
+      currLayer.addEventListener('mouseleave', leave);
+      this.brushManager.currentEventListeners['mouseleave'] = leave;
+    }
+  }]);
+
+  return EraserBrush;
+}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/brushes/floodfillBrush.js":
+/*!***************************************!*\
+  !*** ./src/brushes/floodfillBrush.js ***!
+  \***************************************/
+/*! exports provided: FloodfillBrush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FloodfillBrush", function() { return FloodfillBrush; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./src/brushes/BrushTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+
+
+var FloodfillBrush = /*#__PURE__*/function (_BrushTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(FloodfillBrush, _BrushTemplate);
+
+  var _super = _createSuper(FloodfillBrush);
+
+  function FloodfillBrush(brushManager) {
+    var _this;
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, FloodfillBrush);
+
+    _this = _super.call(this, brushManager);
+    _this.cursorType = "url(" + "\"paintbucket.png\"" + "), auto";
+    return _this;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(FloodfillBrush, [{
+    key: "floodfill",
+    value: function floodfill(currentCanvas, newColor, pixelSelected) {
+      // create a stack 
+      var stack = []; // create visited set 
+      // the format of these entries will be like: {'xCoord,yCoord': 1}
+
+      var visited = new Set(); // the selectedPixel will have the color that needs to be targeted by floodfill 
+
+      var targetColor = pixelSelected.color; // current canvas context 
+
+      var ctx = document.getElementById(currentCanvas.id).getContext('2d'); // get the image data of the entire canvas 
+      // do the floodfill, then put the edited image data back 
+
+      var imageData = ctx.getImageData(0, 0, currentCanvas.width, currentCanvas.height);
+      var data = imageData.data;
+      var originalData = new Uint8ClampedArray(imageData.data);
+      stack.push(pixelSelected);
+
+      while (stack.length !== 0) {
+        // get a pixel
+        var currPixel = stack.pop(); // add to visited set 
+
+        visited.add(currPixel.x + ',' + currPixel.y); // get left, right, top and bottom neighbors 
+
+        var leftNeighborX = currPixel.x - 1;
+        var rightNeighborX = currPixel.x + 1;
+        var topNeighborY = currPixel.y - 1;
+        var bottomNeighborY = currPixel.y + 1;
+        var r = void 0,
+            g = void 0,
+            b = void 0; // top neighbor
+
+        if (topNeighborY >= 0 && !visited.has(currPixel.x + ',' + topNeighborY)) {
+          // index of r, g and b colors in imageData.data
+          r = topNeighborY * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
+          g = r + 1;
+          b = g + 1;
+
+          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
+            // if the neighbor's color is the same as the targetColor, add it to the stack
+            stack.push({
+              'x': currPixel.x,
+              'y': topNeighborY,
+              'color': currPixel.color
+            });
+          }
+        } // right neighbor 
+
+
+        if (rightNeighborX < currentCanvas.width && !visited.has(rightNeighborX + ',' + currPixel.y)) {
+          r = currPixel.y * currentCanvas.width * 4 + (rightNeighborX + 1) * 4;
+          g = r + 1;
+          b = g + 1;
+
+          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
+            // if the neighbor's color is the same as the targetColor, add it to the stack
+            stack.push({
+              'x': rightNeighborX,
+              'y': currPixel.y,
+              'color': currPixel.color
+            });
+          }
+        } // bottom neighbor
+
+
+        if (bottomNeighborY < currentCanvas.height && !visited.has(currPixel.x + ',' + bottomNeighborY)) {
+          r = bottomNeighborY * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
+          g = r + 1;
+          b = g + 1;
+
+          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
+            // if the neighbor's color is the same as the targetColor, add it to the stack
+            stack.push({
+              'x': currPixel.x,
+              'y': bottomNeighborY,
+              'color': currPixel.color
+            });
+          }
+        } // left neighbor
+
+
+        if (leftNeighborX >= 0 && !visited.has(leftNeighborX + ',' + currPixel.y)) {
+          r = currPixel.y * currentCanvas.width * 4 + (leftNeighborX + 1) * 4;
+          g = r + 1;
+          b = g + 1;
+
+          if (targetColor === 'rgb(' + originalData[r] + ',' + originalData[g] + ',' + originalData[b] + ')') {
+            // if the neighbor's color is the same as the targetColor, add it to the stack
+            stack.push({
+              'x': leftNeighborX,
+              'y': currPixel.y,
+              'color': currPixel.color
+            });
+          }
+        } // finally, update the color of the current pixel 
+
+
+        r = currPixel.y * currentCanvas.width * 4 + (currPixel.x + 1) * 4;
+        g = r + 1;
+        b = g + 1;
+        data[r] = newColor[0];
+        data[g] = newColor[1];
+        data[b] = newColor[2];
+      } // put new edited image back on canvas
+
+
+      ctx.putImageData(imageData, 0, 0);
+    } // event listener functions
+
+  }, {
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
+        //when left click only
+        if (evt.type === 'touchstart') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
+          evt.preventDefault();
+        } // do floodfill
+        // need to parse the currColor because right now it looks like "rgb(x,y,z)". 
+        // I want it to look like [x, y, z]
+
+
+        var currColor = this.brushManager.currColor;
+        var currColorArray = currColor.substring(currColor.indexOf('(') + 1, currColor.length - 1).split(',');
+        currColorArray = this.brushManager.currColorArray.map(function (a) {
+          return parseInt(a);
+        });
+        var x = evt.offsetX;
+        var y = evt.offsetY;
+        var colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
+        var color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')'; // create an object with the pixel data
+
+        var pixel = {
+          'x': Math.floor(x),
+          'y': Math.floor(y),
+          'color': color
+        };
+        this.floodfill(currLayer, currColorArray, pixel);
+        var w = currLayer.width;
+        var h = currLayer.height;
+        frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+      }
+    } // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+
+      var start = this.brushStart.bind(this);
+      currLayer.addEventListener('mousedown', start);
+      currLayer.addEventListener('touchstart', start);
+      this.brushManager.currentEventListeners['mousedown'] = start;
+      this.brushManager.currentEventListeners['touchstart'] = start;
+    }
+  }]);
+
+  return FloodfillBrush;
+}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/brushes/penBrush.js":
+/*!*********************************!*\
+  !*** ./src/brushes/penBrush.js ***!
+  \*********************************/
+/*! exports provided: PenBrush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PenBrush", function() { return PenBrush; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./src/brushes/BrushTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+	brush for making shapes
+	inspired by mrdoob's work: https://github.com/mrdoob/harmony/
+***/
+
+
+var PenBrush = /*#__PURE__*/function (_BrushTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(PenBrush, _BrushTemplate);
+
+  var _super = _createSuper(PenBrush);
+
+  function PenBrush(brushManager) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, PenBrush);
+
+    return _super.call(this, brushManager);
+  } // event listener functions
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(PenBrush, [{
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      if (evt.which === 1 || evt.type === 'touchstart') {
+        //when left click only
+        this.paint = true;
+
+        if (evt.type === 'touchstart') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushMove",
+    value: function brushMove(evt) {
+      evt.preventDefault();
+
+      if (this.paint) {
+        if (evt.type === 'touchmove') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushStop",
+    value: function brushStop(evt) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      evt.preventDefault();
+      var w = currLayer.width;
+      var h = currLayer.height;
+      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+
+      this._clearClick();
+
+      this.paint = false;
+    } // this is for determining what the brush stroke looks like
+
+  }, {
+    key: "brushStroke",
+    value: function brushStroke(context) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currColor = this.brushManager.getCurrColorArray(); // connect the dots first
+
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.strokeStyle = this.clickColor[i];
+        context.lineWidth = this.clickSize[i];
+        context.beginPath();
+
+        if (this.clickDrag[i] && i) {
+          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+        } else {
+          context.moveTo(this.clickX[i], this.clickY[i] + 1);
+        }
+
+        context.lineTo(this.clickX[i], this.clickY[i]);
+        context.closePath();
+        context.stroke();
+      } // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+
+
+      if (this.brushManager.applyPressureColor()) {
+        var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.3 + ')';
+        context.strokeStyle = extraStrokeColor;
+      } // TODO: I think the below stuff should go in the loop above (take the strokeStyle change above along with it).
+      // pick a random point from some of the most recent points drawn so far. adjust that coord slightly based on some random numbers.
+      // then draw a line from that coord to a new coord that is based off the latest drawn point (this point will also be slightly altered based on random nums).
+      // this way we get some random, skewed lines to our strokes to give some texture.
+
+
+      if (this.clickX.length > 7) {
+        var currIndex = this.clickX.length - 1;
+
+        for (var _i = this.clickX.length - 6; _i < this.clickX.length; _i++) {
+          // maybe we can do something neat like take into account the direction of the brush based on
+          // the vector created by the current and previous coordinates?
+          var prevIndex = Math.round(Math.random() * (currIndex - (currIndex - 5)) + (currIndex - 5)); // get rand index from currIndex - 5 to the last index
+
+          context.beginPath();
+          context.moveTo(this.clickX[prevIndex] + Math.random() * 3, this.clickY[prevIndex] + 2 * Math.random());
+          context.lineTo(this.clickX[_i], this.clickY[_i]);
+          context.closePath();
+          context.stroke();
+        }
+      }
+    }
+  }, {
+    key: "brushLeave",
+    value: function brushLeave() {
+      this._clearClick();
+
+      this.paint = false;
+    } // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+
+      var start = this.brushStart.bind(this);
+      currLayer.addEventListener('pointerdown', start);
+      currLayer.addEventListener('touchstart', start);
+      this.brushManager.currentEventListeners['pointerdown'] = start;
+      this.brushManager.currentEventListeners['touchstart'] = start;
+      var move = this.brushMove.bind(this);
+      currLayer.addEventListener('pointermove', move);
+      currLayer.addEventListener('touchmove', move);
+      this.brushManager.currentEventListeners['pointermove'] = move;
+      this.brushManager.currentEventListeners['touchmove'] = move;
+      var stop = this.brushStop.bind(this);
+      currLayer.addEventListener('pointerup', stop);
+      currLayer.addEventListener('touchend', stop);
+      this.brushManager.currentEventListeners['pointerup'] = stop;
+      this.brushManager.currentEventListeners['touchend'] = stop;
+      var leave = this.brushLeave.bind(this);
+      currLayer.addEventListener('pointerleave', leave);
+      this.brushManager.currentEventListeners['pointerleave'] = leave;
+    }
+  }]);
+
+  return PenBrush;
+}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/brushes/radialBrush.js":
+/*!************************************!*\
+  !*** ./src/brushes/radialBrush.js ***!
+  \************************************/
+/*! exports provided: RadialBrush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RadialBrush", function() { return RadialBrush; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./src/brushes/BrushTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+
+
+var RadialBrush = /*#__PURE__*/function (_BrushTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(RadialBrush, _BrushTemplate);
+
+  var _super = _createSuper(RadialBrush);
+
+  function RadialBrush(brushManager) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, RadialBrush);
+
+    return _super.call(this, brushManager);
+  } // event listener functions
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RadialBrush, [{
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      if (evt.which === 1 || evt.type === 'touchstart') {
+        //when left click only			
+        this.paint = true; // offset will be different with mobile
+        // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
+        // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
+
+        if (evt.type === 'touchstart') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
+          evt.preventDefault();
+        }
+
+        var brushWidth = this._calculateBrushWidth(evt);
+
+        this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushMove",
+    value: function brushMove(evt) {
+      evt.preventDefault();
+
+      if (this.paint) {
+        if (evt.type === 'touchmove') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+          evt.preventDefault();
+        }
+
+        var brushWidth = this._calculateBrushWidth(evt);
+
+        this.radialGrad(evt.offsetX, evt.offsetY, brushWidth);
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushStop",
+    value: function brushStop(evt) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      evt.preventDefault();
+      var w = currLayer.width;
+      var h = currLayer.height;
+      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+
+      this._clearClick();
+
+      this.paint = false;
+    } // this is for determining what the brush stroke looks like
+
+  }, {
+    key: "brushStroke",
+    value: function brushStroke() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      var context = currLayer.getContext("2d");
+
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.strokeStyle = this.clickColor[i];
+        context.lineWidth = this.clickSize[i];
+        context.beginPath();
+
+        if (this.clickDrag[i] && i) {
+          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+        } else {
+          //the adding of 1 allows you to make a dot on click
+          context.moveTo(this.clickX[i], this.clickY[i] + 1);
+        }
+
+        context.lineTo(this.clickX[i], this.clickY[i]);
+        context.closePath();
+        context.stroke();
+      }
+    }
+  }, {
+    key: "radialGrad",
+    value: function radialGrad(x, y, brushSize) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      var context = currLayer.getContext("2d");
+      var colorPicked = this.brushManager.getCurrColorArray();
+      var currColor = this.brushManager.getCurrColor();
+      var radGrad = context.createRadialGradient(x, y, brushSize, x, y, brushSize * 1.5);
+      context.lineJoin = context.lineCap = 'round';
+      radGrad.addColorStop(0, currColor);
+
+      if (colorPicked !== undefined) {
+        radGrad.addColorStop(.5, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',.5)');
+        radGrad.addColorStop(1, 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',0)');
+      } else {
+        radGrad.addColorStop(.5, 'rgba(0,0,0,.5)');
+        radGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      }
+
+      context.fillStyle = radGrad;
+      context.fillRect(x - 20, y - 20, 40, 40);
+    }
+  }, {
+    key: "brushLeave",
+    value: function brushLeave() {
+      this._clearClick();
+
+      this.paint = false;
+    } // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+
+      var start = this.brushStart.bind(this);
+      currLayer.addEventListener('pointerdown', start);
+      currLayer.addEventListener('touchstart', start);
+      this.brushManager.currentEventListeners['pointerdown'] = start;
+      this.brushManager.currentEventListeners['touchstart'] = start;
+      var move = this.brushMove.bind(this);
+      currLayer.addEventListener('pointermove', move);
+      currLayer.addEventListener('touchmove', move);
+      this.brushManager.currentEventListeners['pointermove'] = move;
+      this.brushManager.currentEventListeners['touchmove'] = move;
+      var stop = this.brushStop.bind(this);
+      currLayer.addEventListener('pointerup', stop);
+      currLayer.addEventListener('touchend', stop);
+      this.brushManager.currentEventListeners['pointerup'] = stop;
+      this.brushManager.currentEventListeners['touchend'] = stop;
+      var leave = this.brushLeave.bind(this);
+      currLayer.addEventListener('pointerleave', leave);
+      this.brushManager.currentEventListeners['pointerleave'] = leave;
+    }
+  }]);
+
+  return RadialBrush;
+}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/brushes/shapeBrush.js":
+/*!***********************************!*\
+  !*** ./src/brushes/shapeBrush.js ***!
+  \***********************************/
+/*! exports provided: ShapeBrush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ShapeBrush", function() { return ShapeBrush; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./src/brushes/BrushTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+	brush for making shapes
+	inspired by mrdoob's work: https://github.com/mrdoob/harmony/
+***/
+
+
+var ShapeBrush = /*#__PURE__*/function (_BrushTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(ShapeBrush, _BrushTemplate);
+
+  var _super = _createSuper(ShapeBrush);
+
+  function ShapeBrush(brushManager) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, ShapeBrush);
+
+    return _super.call(this, brushManager);
+  } // event listener functions
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(ShapeBrush, [{
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      if (evt.which === 1 || evt.type === 'touchstart') {
+        //when left click only
+        this.paint = true;
+
+        if (evt.type === 'touchstart') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushMove",
+    value: function brushMove(evt) {
+      evt.preventDefault();
+
+      if (this.paint) {
+        if (evt.type === 'touchmove') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushStop",
+    value: function brushStop(evt) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      evt.preventDefault();
+      var w = currLayer.width;
+      var h = currLayer.height;
+      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+
+      this._clearClick();
+
+      this.paint = false;
+    } // this is for determining what the brush stroke looks like
+
+  }, {
+    key: "brushStroke",
+    value: function brushStroke(context) {
+      var frame = this.brushManager.animationProject.getCurrFrame(); // connect current dot with previous dot
+
+      context.strokeStyle = this.clickColor[this.clickColor.length - 1];
+      context.beginPath();
+      context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
+
+      if (this.clickX.length > 1) {
+        context.lineTo(this.clickX[this.clickX.length - 2], this.clickY[this.clickY.length - 2]);
+      }
+
+      context.closePath();
+      context.lineWidth = this.clickSize[this.clickSize.length - 1];
+      context.stroke(); // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+
+      if (this.brushManager.applyPressureColor()) {
+        var currColor = this.brushManager.getCurrColorArray();
+        var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.1 + ')';
+        context.strokeStyle = extraStrokeColor;
+      }
+
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.beginPath();
+        context.moveTo(this.clickX[this.clickX.length - 1] + Math.random() * 0.1, this.clickY[this.clickY.length - 1] + 0.1 * Math.random());
+        context.lineTo(this.clickX[i] - 0.1 * Math.random(), this.clickY[i] - Math.random() * 0.1);
+        context.closePath();
+        context.stroke();
+      }
+    }
+  }, {
+    key: "brushLeave",
+    value: function brushLeave() {
+      this._clearClick();
+
+      this.paint = false;
+    } // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+
+      var start = this.brushStart.bind(this);
+      currLayer.addEventListener('pointerdown', start);
+      currLayer.addEventListener('touchstart', start);
+      this.brushManager.currentEventListeners['pointerdown'] = start;
+      this.brushManager.currentEventListeners['touchstart'] = start;
+      var move = this.brushMove.bind(this);
+      currLayer.addEventListener('pointermove', move);
+      currLayer.addEventListener('touchmove', move);
+      this.brushManager.currentEventListeners['pointermove'] = move;
+      this.brushManager.currentEventListeners['touchmove'] = move;
+      var stop = this.brushStop.bind(this);
+      currLayer.addEventListener('pointerup', stop);
+      currLayer.addEventListener('touchend', stop);
+      this.brushManager.currentEventListeners['pointerup'] = stop;
+      this.brushManager.currentEventListeners['touchend'] = stop;
+      var leave = this.brushLeave.bind(this);
+      currLayer.addEventListener('pointerleave', leave);
+      this.brushManager.currentEventListeners['pointerleave'] = leave;
+    }
+  }]);
+
+  return ShapeBrush;
+}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/brushes/sketchyBrush.js":
+/*!*************************************!*\
+  !*** ./src/brushes/sketchyBrush.js ***!
+  \*************************************/
+/*! exports provided: SketchyBrush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SketchyBrush", function() { return SketchyBrush; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./src/brushes/BrushTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+	pen-like brush 
+	thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/sketchy.js
+***/
+
+
+var SketchyBrush = /*#__PURE__*/function (_BrushTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(SketchyBrush, _BrushTemplate);
+
+  var _super = _createSuper(SketchyBrush);
+
+  function SketchyBrush(brushManager) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, SketchyBrush);
+
+    return _super.call(this, brushManager);
+  } // event listener functions
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(SketchyBrush, [{
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      if (evt.which === 1 || evt.type === 'touchstart') {
+        //when left click only
+        this.paint = true;
+
+        if (evt.type === 'touchstart') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushMove",
+    value: function brushMove(evt) {
+      evt.preventDefault();
+
+      if (this.paint) {
+        if (evt.type === 'touchmove') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushStop",
+    value: function brushStop(evt) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      evt.preventDefault();
+      var w = currLayer.width;
+      var h = currLayer.height;
+      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+
+      this._clearClick();
+
+      this.paint = false;
+    } // this is for determining what the brush stroke looks like
+
+  }, {
+    key: "brushStroke",
+    value: function brushStroke(context) {
+      var frame = this.brushManager.animationProject.getCurrFrame(); // connect the dots
+
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.strokeStyle = this.clickColor[i];
+        context.lineWidth = this.clickSize[i];
+        context.beginPath();
+
+        if (this.clickDrag[i] && i) {
+          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+        } else {
+          context.moveTo(this.clickX[i], this.clickY[i] + 1);
+        }
+
+        context.lineTo(this.clickX[i], this.clickY[i]);
+        context.closePath();
+        context.stroke();
+      } // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+
+
+      if (this.brushManager.applyPressureColor()) {
+        var currColor = this.brushManager.getCurrColorArray();
+        var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.1 + ')';
+        context.strokeStyle = extraStrokeColor;
+      }
+
+      for (var _i = 0; _i < this.clickX.length; _i++) {
+        var dx = this.clickX[_i] - this.clickX[this.clickX.length - 1];
+        var dy = this.clickY[_i] - this.clickY[this.clickY.length - 1];
+        var d = dx * dx + dy * dy;
+
+        if (d < 4000 && Math.random() > d / 1000) {
+          context.beginPath();
+          context.moveTo(this.clickX[this.clickX.length - 1] + dx * 0.3, this.clickY[this.clickY.length - 1] + dy * 0.3);
+          context.lineTo(this.clickX[_i] - dx * 0.3, this.clickY[_i] - dy * 0.3);
+          context.closePath();
+          context.stroke();
+        }
+      }
+    }
+  }, {
+    key: "brushLeave",
+    value: function brushLeave() {
+      this._clearClick();
+
+      this.paint = false;
+    } // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+
+      var start = this.brushStart.bind(this);
+      currLayer.addEventListener('pointerdown', start);
+      currLayer.addEventListener('touchstart', start);
+      this.brushManager.currentEventListeners['pointerdown'] = start;
+      this.brushManager.currentEventListeners['touchstart'] = start;
+      var move = this.brushMove.bind(this);
+      currLayer.addEventListener('pointermove', move);
+      currLayer.addEventListener('touchmove', move);
+      this.brushManager.currentEventListeners['pointermove'] = move;
+      this.brushManager.currentEventListeners['touchmove'] = move;
+      var stop = this.brushStop.bind(this);
+      currLayer.addEventListener('pointerup', stop);
+      currLayer.addEventListener('touchend', stop);
+      this.brushManager.currentEventListeners['pointerup'] = stop;
+      this.brushManager.currentEventListeners['touchend'] = stop;
+      var leave = this.brushLeave.bind(this);
+      currLayer.addEventListener('pointerleave', leave);
+      this.brushManager.currentEventListeners['pointerleave'] = leave;
+    }
+  }]);
+
+  return SketchyBrush;
+}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/brushes/webBrush.js":
+/*!*********************************!*\
+  !*** ./src/brushes/webBrush.js ***!
+  \*********************************/
+/*! exports provided: WebBrush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WebBrush", function() { return WebBrush; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./src/brushes/BrushTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+	web brush 
+	thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/web.js
+***/
+
+
+var WebBrush = /*#__PURE__*/function (_BrushTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(WebBrush, _BrushTemplate);
+
+  var _super = _createSuper(WebBrush);
+
+  function WebBrush(brushManager) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, WebBrush);
+
+    return _super.call(this, brushManager);
+  } // event listener functions
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(WebBrush, [{
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      if (evt.which === 1 || evt.type === 'touchstart') {
+        //when left click only
+        this.paint = true;
+
+        if (evt.type === 'touchstart') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushMove",
+    value: function brushMove(evt) {
+      evt.preventDefault();
+
+      if (this.paint) {
+        if (evt.type === 'touchmove') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y; // prevent page scrolling when drawing 
+
+          evt.preventDefault();
+        }
+
+        this._addClick(evt, true);
+
+        this._redraw(this.brushStroke.bind(this));
+      }
+    }
+  }, {
+    key: "brushStop",
+    value: function brushStop(evt) {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      evt.preventDefault();
+      var w = currLayer.width;
+      var h = currLayer.height;
+      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+
+      this._clearClick();
+
+      this.paint = false;
+    } // this is for determining what the brush stroke looks like
+
+  }, {
+    key: "brushStroke",
+    value: function brushStroke(context) {
+      var frame = this.brushManager.animationProject.getCurrFrame(); // connect the dots
+
+      for (var i = 0; i < this.clickX.length; i++) {
+        context.strokeStyle = this.clickColor[i];
+        context.lineWidth = this.clickSize[i];
+        context.beginPath();
+
+        if (this.clickDrag[i] && i) {
+          context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
+        } else {
+          context.moveTo(this.clickX[i], this.clickY[i] + 1);
+        }
+
+        context.lineTo(this.clickX[i], this.clickY[i]);
+        context.closePath();
+        context.stroke();
+      } // then add some extra strokes (and make them more faint than the main stroke line if pen pressure flag)
+
+
+      if (this.brushManager.applyPressureColor()) {
+        var currColor = this.brushManager.getCurrColorArray();
+        var extraStrokeColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + this.clickPressure[this.clickPressure.length - 1] * 0.1 + ')';
+        context.strokeStyle = extraStrokeColor;
+      }
+
+      for (var _i = 0; _i < this.clickX.length; _i++) {
+        var dx = this.clickX[_i] - this.clickX[this.clickX.length - 1];
+        var dy = this.clickY[_i] - this.clickY[this.clickY.length - 1];
+        var d = dx * dx + dy * dy;
+
+        if (d < 2500 && Math.random() > 0.9) {
+          context.beginPath();
+          context.moveTo(this.clickX[this.clickX.length - 1], this.clickY[this.clickY.length - 1]);
+          context.lineTo(this.clickX[_i], this.clickY[_i]);
+          context.closePath();
+          context.stroke();
+        }
+      }
+    }
+  }, {
+    key: "brushLeave",
+    value: function brushLeave() {
+      this._clearClick();
+
+      this.paint = false;
+    } // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+
+      var start = this.brushStart.bind(this);
+      currLayer.addEventListener('pointerdown', start);
+      currLayer.addEventListener('touchstart', start);
+      this.brushManager.currentEventListeners['pointerdown'] = start;
+      this.brushManager.currentEventListeners['touchstart'] = start;
+      var move = this.brushMove.bind(this);
+      currLayer.addEventListener('pointermove', move);
+      currLayer.addEventListener('touchmove', move);
+      this.brushManager.currentEventListeners['pointermove'] = move;
+      this.brushManager.currentEventListeners['touchmove'] = move;
+      var stop = this.brushStop.bind(this);
+      currLayer.addEventListener('pointerup', stop);
+      currLayer.addEventListener('touchend', stop);
+      this.brushManager.currentEventListeners['pointerup'] = stop;
+      this.brushManager.currentEventListeners['touchend'] = stop;
+      var leave = this.brushLeave.bind(this);
+      currLayer.addEventListener('pointerleave', leave);
+      this.brushManager.currentEventListeners['pointerleave'] = leave;
+    }
+  }]);
+
+  return WebBrush;
+}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/filters/FilterTemplate.js":
+/*!***************************************!*\
+  !*** ./src/filters/FilterTemplate.js ***!
+  \***************************************/
+/*! exports provided: FilterTemplate */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FilterTemplate", function() { return FilterTemplate; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+var FilterTemplate = /*#__PURE__*/function () {
+  function FilterTemplate(params) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, FilterTemplate);
+
+    // params should be an object,
+    // with each key representing a parameter for a filter
+    this.params = params;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(FilterTemplate, [{
+    key: "filter",
+    value: function filter(imageData) {
+      // all filters should have a filter method that returns imageData
+      console.log("unimplemented filter");
+      return imageData;
+    }
+  }]);
+
+  return FilterTemplate;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/filters/areacolor.js":
+/*!**********************************!*\
+  !*** ./src/filters/areacolor.js ***!
+  \**********************************/
+/*! exports provided: AreaColor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AreaColor", function() { return AreaColor; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+// area color filter
+
+
+var AreaColor = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(AreaColor, _FilterTemplate);
+
+  var _super = _createSuper(AreaColor);
+
+  function AreaColor() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, AreaColor);
+
+    return _super.call(this, null);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(AreaColor, [{
+    key: "withinRange",
+    value: function withinRange(r, g, b, or, og, ob, rangeVal) {
+      var red = Math.abs(r - or) <= rangeVal;
+      var green = Math.abs(g - og) <= rangeVal;
+      var blue = Math.abs(b - ob) <= rangeVal;
+
+      if (red && green && blue) {
+        return true;
+      }
+
+      return false;
+    } //the idea is to find an area of pixels that are similarly colored, 
+    //and then making that area one solid color
+
+  }, {
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var d = pixels.data;
+      var copy = new Uint8ClampedArray(d);
+      var maximum = 4 * width;
+
+      for (var i = 0; i < d.length; i += 4) {
+        //current pixel
+        var r = d[i];
+        var g = d[i + 1];
+        var b = d[i + 2]; //left neighbor's color
+
+        var lnr = copy[i - 4];
+        var lng = copy[i - 3];
+        var lnb = copy[i - 2]; //right neighbor's color
+
+        var rnr = copy[i + 4];
+        var rng = copy[i + 5];
+        var rnb = copy[i + 6]; //top neighbor's color
+
+        var tnr = copy[i - maximum];
+        var tng = copy[i - (maximum - 1)];
+        var tnb = copy[i - (maximum - 2)]; //bottom neighbor's color
+
+        var bnr = copy[i + maximum];
+        var bng = copy[i + (maximum + 1)];
+        var bnb = copy[i + (maximum + 2)]; //top right
+
+        var trr = copy[i - (maximum - 4)];
+        var trg = copy[i - (maximum - 5)];
+        var trb = copy[i - (maximum - 6)]; //top left
+
+        var tlr = copy[i - (maximum + 4)];
+        var tlg = copy[i - (maximum + 3)];
+        var tlb = copy[i - (maximum + 2)]; //below left
+
+        var blr = copy[i + (maximum - 4)];
+        var blg = copy[i + (maximum - 3)];
+        var blb = copy[i + (maximum - 2)]; //below right
+
+        var brr = copy[i + (maximum + 4)];
+        var brg = copy[i + (maximum + 5)];
+        var brb = copy[i + (maximum + 6)]; //right pixel
+
+        var cond1 = d[i + 4] === undefined; //left pixel
+
+        var cond2 = d[i - 4] === undefined; //pixel below
+
+        var cond3 = d[i + maximum] === undefined; //pixel above
+
+        var cond4 = d[i - maximum] === undefined; //top left
+
+        var cond5 = d[i - (maximum + 4)] === undefined; //top right
+
+        var cond6 = d[i - (maximum - 4)] === undefined; //below right
+
+        var cond7 = d[i + (maximum + 4)] === undefined; //below left
+
+        var cond8 = d[i + (maximum - 4)] === undefined;
+
+        if (!cond1 && !cond2 && !cond3 && !cond4 && !cond5 && !cond6 && !cond7 && !cond8) {
+          //if next neighbor over is a completely different color, stop and move on
+          var nnr = copy[i + 8];
+          var nng = copy[i + 9];
+          var nnb = copy[i + 10]; //next neighbor over (top right)
+          //using the current data, instead of the copy which holds the original color data,
+          //seems to provide closer to my desired effect
+
+          var trrr = d[i - (maximum - 8)];
+          var trrg = d[i - (maximum - 9)];
+          var trrb = d[i - (maximum - 10)];
+          /*
+          //next neighbor over (bottom right)
+          let brrr = d[i+2808];
+          let brrg = d[i+2809];
+          let brrb = d[i+2810];
+          */
+
+          if (!this.withinRange(r, g, b, nnr, nng, nnb, 18) || !this.withinRange(r, g, b, trrr, trrg, trrb, 16) || //!withinRange(r, g, b, brrr, brrg, brrb, 15)||
+          rnr >= 210 && rng >= 210 && rnb >= 200) {
+            continue;
+          }
+
+          var range = 50; //check neighbors' colors
+
+          if (this.withinRange(r, g, b, lnr, lng, lnb, range) && this.withinRange(r, g, b, rnr, rng, rnb, range) && this.withinRange(r, g, b, tnr, tng, tnb, range) && this.withinRange(r, g, b, bnr, bng, bnb, range) && this.withinRange(r, g, b, trr, trg, trb, range) && this.withinRange(r, g, b, tlr, tlg, tlb, range) && this.withinRange(r, g, b, blr, blg, blb, range) && this.withinRange(r, g, b, brr, brg, brb, range)) {
+            //make all the neighbors the same color
+            //right
+            d[i + 4] = r;
+            d[i + 5] = g;
+            d[i + 6] = b; //left
+
+            d[i - 4] = r;
+            d[i - 3] = g;
+            d[i - 2] = b; //above
+
+            d[i - maximum] = r;
+            d[i - (maximum - 1)] = g;
+            d[i - (maximum - 2)] = b; //below
+
+            d[i + maximum] = r;
+            d[i + (maximum + 1)] = g;
+            d[i + (maximum + 2)] = b; //above left
+
+            d[i - (maximum - 4)] = r;
+            d[i - (maximum - 5)] = g;
+            d[i - (maximum - 6)] = b; //above right
+
+            d[i - (maximum + 4)] = r;
+            d[i - (maximum + 3)] = g;
+            d[i - (maximum + 2)] = b; //below right
+
+            d[i + (maximum + 4)] = r;
+            d[i + (maximum + 5)] = g;
+            d[i + (maximum + 6)] = b; //below left
+
+            d[i + (maximum - 4)] = r;
+            d[i + (maximum - 3)] = g;
+            d[i + (maximum - 2)] = b;
+          }
+        }
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return AreaColor;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/filters/blur.js":
+/*!*****************************!*\
+  !*** ./src/filters/blur.js ***!
+  \*****************************/
+/*! exports provided: Blur */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Blur", function() { return Blur; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+	BLUR FILTER
+	this function causes a blurring effect. It takes the pixel itself and
+	its left, right, above and below neighbors (if it has them)
+	and calculates the average of their total R, G, B, and A channels respectively.
+	source: http://blog.ivank.net/fastest-gaussian-blur.html
+***/
+
+
+var Blur = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Blur, _FilterTemplate);
+
+  var _super = _createSuper(Blur);
+
+  function Blur() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Blur);
+
+    var params = {
+      "blurFactor": {
+        "value": 3,
+        "min": 1,
+        "max": 15,
+        "step": 1
+      }
+    };
+    return _super.call(this, params);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Blur, [{
+    key: "generateGaussBoxes",
+    value: function generateGaussBoxes(stdDev, numBoxes) {
+      // I honestly don't know how this works :/ TODO: understand how/why this works
+      // wikipedia is a good start: https://en.wikipedia.org/wiki/Gaussian_blur
+      var wIdeal = Math.sqrt(12 * stdDev * stdDev / numBoxes + 1); // ideal averaging filter width
+
+      var wl = Math.floor(wIdeal);
+
+      if (wl % 2 == 0) {
+        wl--;
+      }
+
+      var wu = wl + 2;
+      var mIdeal = (12 * stdDev * stdDev - numBoxes * wl * wl - 4 * numBoxes * wl - 3 * numBoxes) / (-4 * wl - 4);
+      var m = Math.round(mIdeal);
+      var sizes = [];
+
+      for (var i = 0; i < numBoxes; i++) {
+        sizes.push(i < m ? wl : wu);
+      }
+
+      return sizes;
+    }
+  }, {
+    key: "boxBlurHorz",
+    value: function boxBlurHorz(src, trgt, width, height, stdDev) {
+      var iarr = 1 / (stdDev + stdDev + 1);
+
+      for (var i = 0; i < height; i++) {
+        var ti = i * width;
+        var li = ti;
+        var ri = ti + stdDev;
+        var fv = src[ti];
+        var lv = src[ti + width - 1];
+        var val = (stdDev + 1) * fv;
+
+        for (var j = 0; j < stdDev; j++) {
+          val += src[ti + j];
+        }
+
+        for (var _j = 0; _j <= stdDev; _j++) {
+          val += src[ri++] - fv;
+          trgt[ti++] = Math.round(val * iarr);
+        }
+
+        for (var _j2 = stdDev + 1; _j2 < width - stdDev; _j2++) {
+          val += src[ri++] - src[li++];
+          trgt[ti++] = Math.round(val * iarr);
+        }
+
+        for (var _j3 = width - stdDev; _j3 < width; _j3++) {
+          val += lv - src[li++];
+          trgt[ti++] = Math.round(val * iarr);
+        }
+      }
+    }
+  }, {
+    key: "boxBlurTotal",
+    value: function boxBlurTotal(src, trgt, width, height, stdDev) {
+      var iarr = 1 / (stdDev + stdDev + 1);
+
+      for (var i = 0; i < width; i++) {
+        var ti = i;
+        var li = ti;
+        var ri = ti + stdDev * width;
+        var fv = src[ti];
+        var lv = src[ti + width * (height - 1)];
+        var val = (stdDev + 1) * fv;
+
+        for (var j = 0; j < stdDev; j++) {
+          val += src[ti + j * width];
+        }
+
+        for (var _j4 = 0; _j4 <= stdDev; _j4++) {
+          val += src[ri] - fv;
+          trgt[ti] = Math.round(val * iarr);
+          ri += width;
+          ti += width;
+        }
+
+        for (var _j5 = stdDev + 1; _j5 < height - stdDev; _j5++) {
+          val += src[ri] - src[li];
+          trgt[ti] = Math.round(val * iarr);
+          li += width;
+          ri += width;
+          ti += width;
+        }
+
+        for (var _j6 = height - stdDev; _j6 < height; _j6++) {
+          val += lv - src[li];
+          trgt[ti] = Math.round(val * iarr);
+          li += width;
+          ti += width;
+        }
+      }
+    }
+  }, {
+    key: "boxBlur",
+    value: function boxBlur(src, trgt, width, height, stdDev) {
+      for (var i = 0; i < src.length; i++) {
+        trgt[i] = src[i];
+      }
+
+      this.boxBlurHorz(trgt, src, width, height, stdDev);
+      this.boxBlurTotal(src, trgt, width, height, stdDev);
+    } // source channel, target channel, width, height, stdDev
+
+  }, {
+    key: "gaussBlur",
+    value: function gaussBlur(src, trgt, width, height, stdDev) {
+      var boxes = this.generateGaussBoxes(stdDev, 3);
+      this.boxBlur(src, trgt, width, height, (boxes[0] - 1) / 2);
+      this.boxBlur(trgt, src, width, height, (boxes[1] - 1) / 2);
+      this.boxBlur(src, trgt, width, height, (boxes[2] - 1) / 2);
+    }
+  }, {
+    key: "filter",
+    value: function filter(pixels) {
+      // run gausBlurr for each color channel, then piece them all back together
+      // see Marc Pérez's comment in http://blog.ivank.net/fastest-gaussian-blur.html
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data;
+      var redChannel = new Uint8ClampedArray(data.length / 4);
+      var greenChannel = new Uint8ClampedArray(data.length / 4);
+      var blueChannel = new Uint8ClampedArray(data.length / 4);
+
+      for (var i = 0; i < data.length; i += 4) {
+        redChannel[i / 4] = data[i];
+        greenChannel[i / 4] = data[i + 1];
+        blueChannel[i / 4] = data[i + 2];
+      }
+
+      var blurFactor = this.params.blurFactor.value;
+      this.gaussBlur(redChannel, redChannel, width, height, blurFactor);
+      this.gaussBlur(greenChannel, greenChannel, width, height, blurFactor);
+      this.gaussBlur(blueChannel, blueChannel, width, height, blurFactor);
+
+      for (var _i = 0; _i < data.length; _i += 4) {
+        data[_i] = redChannel[_i / 4];
+        data[_i + 1] = greenChannel[_i / 4];
+        data[_i + 2] = blueChannel[_i / 4];
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return Blur;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/filters/edgedetection.js":
+/*!**************************************!*\
+  !*** ./src/filters/edgedetection.js ***!
+  \**************************************/
+/*! exports provided: EdgeDetection */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EdgeDetection", function() { return EdgeDetection; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+// edge detection filter
+
+
+var EdgeDetection = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(EdgeDetection, _FilterTemplate);
+
+  var _super = _createSuper(EdgeDetection);
+
+  function EdgeDetection() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, EdgeDetection);
+
+    return _super.call(this, null);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(EdgeDetection, [{
+    key: "grayscale",
+    value: function grayscale() {// TODO or not TODO? do we actually need this
+    }
+  }, {
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data;
+      var sourceImageCopy = new Uint8ClampedArray(data); // need to grayscale the image here :/
+
+      this.grayscale(pixels);
+      var xKernel = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
+      var yKernel = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
+
+      for (var i = 1; i < height - 1; i++) {
+        for (var j = 4; j < 4 * width - 4; j += 4) {
+          var left = 4 * i * width + (j - 4);
+          var right = 4 * i * width + (j + 4);
+          var top = 4 * (i - 1) * width + j;
+          var bottom = 4 * (i + 1) * width + j;
+          var topLeft = 4 * (i - 1) * width + (j - 4);
+          var topRight = 4 * (i - 1) * width + (j + 4);
+          var bottomLeft = 4 * (i + 1) * width + (j - 4);
+          var bottomRight = 4 * (i + 1) * width + (j + 4);
+          var center = 4 * width * i + j; // use the xKernel to detect edges horizontally 
+
+          var pX = xKernel[0][0] * sourceImageCopy[topLeft] + xKernel[0][1] * sourceImageCopy[top] + xKernel[0][2] * sourceImageCopy[topRight] + xKernel[1][0] * sourceImageCopy[left] + xKernel[1][1] * sourceImageCopy[center] + xKernel[1][2] * sourceImageCopy[right] + xKernel[2][0] * sourceImageCopy[bottomLeft] + xKernel[2][1] * sourceImageCopy[bottom] + xKernel[2][2] * sourceImageCopy[bottomRight]; // use the yKernel to detect edges vertically 
+
+          var pY = yKernel[0][0] * sourceImageCopy[topLeft] + yKernel[0][1] * sourceImageCopy[top] + yKernel[0][2] * sourceImageCopy[topRight] + yKernel[1][0] * sourceImageCopy[left] + yKernel[1][1] * sourceImageCopy[center] + yKernel[1][2] * sourceImageCopy[right] + yKernel[2][0] * sourceImageCopy[bottomLeft] + yKernel[2][1] * sourceImageCopy[bottom] + yKernel[2][2] * sourceImageCopy[bottomRight]; // finally set the current pixel to the new value based on the formula 
+
+          var newVal = Math.ceil(Math.sqrt(pX * pX + pY * pY));
+          data[center] = newVal;
+          data[center + 1] = newVal;
+          data[center + 2] = newVal;
+          data[center + 3] = 255;
+        }
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return EdgeDetection;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/filters/fisheye.js":
+/*!********************************!*\
+  !*** ./src/filters/fisheye.js ***!
+  \********************************/
+/*! exports provided: Fisheye */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Fisheye", function() { return Fisheye; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+	FISHEYE DISTORTION FILTER
+	this function creates fisheye distortion!
+	source: http://popscan.blogspot.com/2012/04/fisheye-lens-equation-simple-fisheye.html
+	http://paulbourke.net/dome/fisheye/
+***/
+
+
+var Fisheye = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Fisheye, _FilterTemplate);
+
+  var _super = _createSuper(Fisheye);
+
+  function Fisheye() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Fisheye);
+
+    return _super.call(this, null);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Fisheye, [{
+    key: "fisheye",
+    value: function fisheye(imgData, xPos, yPos, rad, width, height) {
+      var data = imgData.data;
+      var oldData = new Uint8ClampedArray(data);
+      var pixelCounter = 0; //rows
+
+      for (var y = 0; y < height; y++) {
+        //normalize y coordinate to -1...+1
+        var normY = 2 * y / height - 1; //calculate normY squared
+
+        var normY2 = normY * normY; //columns
+
+        for (var x = 0; x < width; x++) {
+          //this counter will make sure that 
+          //the right index for each pixel's color is
+          //being looked at 
+          var start = pixelCounter * 4; //normalize x coordinate to -1...+1
+
+          var normX = 2 * x / width - 1; //calculate normX squared
+
+          var normX2 = normX * normX; //calculate distance from center (the center is always 0,0)
+
+          var dist = Math.sqrt(normX2 + normY2); //only alter pixels inside of radius
+          //changing the dist range affects the scope of the lens. i.e. less range (.5 => .6) gives you a 'telescoping' lens. 
+          //a larger range (0 => 1) gives you a full circle.
+
+          if (0 <= dist && dist <= 1) {
+            var newR = Math.sqrt(1 - dist * dist); //new distance between 0 and 1
+
+            newR = (dist + (1 - newR)) / 2; //discard any radius greater than 1
+
+            if (newR <= 1) {
+              //calculate angle for polar coordinates
+              var theta = Math.atan2(normY, normX); //calculate new X position with new distance in same angle
+
+              var newX = newR * Math.cos(theta); //calculate new Y position with new distance in same angle
+
+              var newY = newR * Math.sin(theta); //get the location of where the pixels should be moved FROM.
+
+              var x2 = Math.floor((newX + 1) * width / 2);
+              var y2 = Math.floor((newY + 1) * height / 2);
+              var srcPos = width * y2 + x2;
+              srcPos *= 4;
+              data[start] = oldData[srcPos];
+              data[start + 1] = oldData[srcPos + 1];
+              data[start + 2] = oldData[srcPos + 2];
+              data[start + 3] = oldData[srcPos + 3];
+            }
+          }
+
+          pixelCounter++;
+        }
+      }
+
+      return imgData;
+    }
+  }, {
+    key: "filter",
+    value: function filter(pixels) {
+      return this.fisheye(pixels, 0, 0, 0, pixels.width, pixels.height);
+    }
+  }]);
+
+  return Fisheye;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/filters/grayscale.js":
+/*!**********************************!*\
+  !*** ./src/filters/grayscale.js ***!
+  \**********************************/
+/*! exports provided: Grayscale */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Grayscale", function() { return Grayscale; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+// grayscale filter
+
+
+var Grayscale = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Grayscale, _FilterTemplate);
+
+  var _super = _createSuper(Grayscale);
+
+  function Grayscale() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Grayscale);
+
+    return _super.call(this, null); // no adjustable parameters for this filter
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Grayscale, [{
+    key: "filter",
+    value: function filter(pixels) {
+      var d = pixels.data;
+
+      for (var i = 0; i < d.length; i += 4) {
+        var r = d[i];
+        var g = d[i + 1];
+        var b = d[i + 2]; //the value obtained by (r+g+b)/3 will be the value assigned to d[i], d[i+1], and d[i+2].  
+
+        d[i] = d[i + 1] = d[i + 2] = (r + g + b) / 3;
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return Grayscale;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/filters/invert.js":
+/*!*******************************!*\
+  !*** ./src/filters/invert.js ***!
+  \*******************************/
+/*! exports provided: Invert */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Invert", function() { return Invert; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+// invert filter
+
+
+var Invert = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Invert, _FilterTemplate);
+
+  var _super = _createSuper(Invert);
+
+  function Invert() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Invert);
+
+    return _super.call(this, null);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Invert, [{
+    key: "filter",
+    value: function filter(pixels) {
+      var d = pixels.data;
+      var r, g, b, x, y, z;
+
+      for (var i = 0; i < d.length; i += 4) {
+        r = d[i];
+        g = d[i + 1];
+        b = d[i + 2];
+        d[i] = 255 - r;
+        d[i + 1] = 255 - g;
+        d[i + 2] = 255 - b;
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return Invert;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/filters/kdtreeutils.js":
+/*!************************************!*\
+  !*** ./src/filters/kdtreeutils.js ***!
+  \************************************/
+/*! exports provided: Point, Node, getPixelCoords, getDist, getTreeSize, build2dTree, isLeaf, findNearestNeighbor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Point", function() { return Point; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Node", function() { return Node; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPixelCoords", function() { return getPixelCoords; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDist", function() { return getDist; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTreeSize", function() { return getTreeSize; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "build2dTree", function() { return build2dTree; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLeaf", function() { return isLeaf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findNearestNeighbor", function() { return findNearestNeighbor; });
+// kd tree to be used in Voronoi function 
+// https://blog.krum.io/k-d-trees/
+// https://github.com/z2oh/chromatic_confinement/blob/master/src/main.rs
+// https://stackoverflow.com/questions/1627305/nearest-neighbor-k-d-tree-wikipedia-proof/37107030#37107030
+// each node takes Point info (x, y, rgb) and a dimension
+function Point(x, y, r, g, b) {
+  this.x = x;
+  this.y = y;
+  this.r = r;
+  this.g = g;
+  this.b = b;
+}
+
+function Node(point, dim) {
+  this.data = [point.x, point.y];
+  this.point = point;
+  this.dim = dim;
+  this.left = null;
+  this.right = null;
+}
+
+function getPixelCoords(index, width, height) {
+  // assuming index represents the r channel of a pixel 
+  // index therefore represents the index of a pixel, since the pixel data 
+  // is laid out like r,g,b,a,r,g,b,a,... in the image data 
+  // so to figure out the x and y coords, take the index and divide by 4,
+  // which gives us the pixel's number. then we need to know its position 
+  // on the canvas.
+  if (width * 4 * height < index) {
+    // if index is out of bounds 
+    return {};
+  }
+
+  var pixelNum = Math.floor(index / 4);
+  var yCoord = Math.floor(pixelNum / width); // find what row this pixel belongs in
+
+  var xCoord = pixelNum - yCoord * width; // find the difference between the pixel number of the pixel at the start of the row and this pixel 
+
+  return {
+    'x': xCoord,
+    'y': yCoord
+  };
+}
+
+function getDist(x1, x2, y1, y2) {
+  // removing Math.sqrt from the equation seemed to be the fix in producing 
+  // the correct output (with sqrt it looks like you get the wrong neighbor choices for some points going along a diagonal in the image)
+  // not sure why? however, with Math.sqrt it's considerably faster...
+  return Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
+} // in this use case our dimensions will be x and y (since each pixel has an x,y coordinate)
+// so only 2 dimensions 
+
+
+function build2dTree(pointsList, currDim) {
+  var maxDim = 2; // sort the current list in ascending order depending on the current dimension
+
+  var dim = currDim === 0 ? 'x' : 'y';
+  pointsList.sort(function (a, b) {
+    if (a[dim] < b[dim]) {
+      return -1;
+    } else if (a[dim] > b[dim]) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }); // base case: if pointsList is size 0, return null. otherwise if size 1, place the point and return 
+
+  if (pointsList.length === 0) {
+    return null;
+  }
+
+  if (pointsList.length === 1) {
+    return new Node(pointsList[0], currDim);
+  }
+
+  if (pointsList.length === 2) {
+    // since it's a BST, the 2nd element (at index 1) will be larger and thus the parent of 
+    // the 1st element, which will go to the left of the parent
+    var newParent = new Node(pointsList[1], currDim);
+    var newChild = new Node(pointsList[0], (currDim + 1) % maxDim);
+    newParent.left = newChild;
+    return newParent;
+  } // take the median point, place it, and recurse on left and right 
+
+
+  var midIndex = Math.floor((pointsList.length - 1) / 2);
+  var newNode = new Node(pointsList[midIndex], currDim);
+  newNode.left = build2dTree(pointsList.slice(0, midIndex), (currDim + 1) % maxDim);
+  newNode.right = build2dTree(pointsList.slice(midIndex + 1, pointsList.length), (currDim + 1) % maxDim);
+  return newNode;
+}
+
+function getTreeSize(tree) {
+  if (tree === null) {
+    return 0;
+  } else {
+    return 1 + getTreeSize(tree.left) + getTreeSize(tree.right);
+  }
+}
+
+function isLeaf(node) {
+  return node.left === null && node.right === null;
+}
+
+function findNearestNeighborHelper(root, record, x, y) {
+  if (isLeaf(root)) {
+    var dist = getDist(root.data[0], x, root.data[1], y);
+
+    if (dist < record.minDist) {
+      record.nearestNeighbor = root.point;
+      record.minDist = dist;
+    }
+  } else {
+    // compare current dist with min dist 
+    var currDist = getDist(root.data[0], x, root.data[1], y);
+
+    if (currDist < record.minDist) {
+      record.nearestNeighbor = root.point;
+      record.minDist = currDist;
+    }
+
+    if (root.left && !root.right) {
+      // if a node has one child, it will always be the left child 
+      findNearestNeighborHelper(root.left, record, x, y);
+    } else {
+      // find the right direction to go in the tree based on dimension //distance
+      var currDimToCompare = root.dim === 0 ? x : y;
+
+      if (currDimToCompare === x) {
+        // is x greater than the current node's x? if so, we want to go right. else left.
+        if (x > root.data[0]) {
+          findNearestNeighborHelper(root.right, record, x, y); // then, we check if the other subtree might actually have an even closer neighbor!
+
+          if (x - record.minDist < root.data[0]) {
+            findNearestNeighborHelper(root.left, record, x, y);
+          }
+        } else {
+          findNearestNeighborHelper(root.left, record, x, y);
+
+          if (x + record.minDist > root.data[0]) {
+            // x + record.minDist forms a circle. the circle in this case
+            // encompasses this current node's coordinates, so we can get closer to the query node 
+            // by checking the right subtree 
+            findNearestNeighborHelper(root.right, record, x, y);
+          }
+        }
+      } else {
+        if (y > root.data[1]) {
+          findNearestNeighborHelper(root.right, record, x, y);
+
+          if (y - record.minDist < root.data[1]) {
+            findNearestNeighborHelper(root.left, record, x, y);
+          }
+        } else {
+          findNearestNeighborHelper(root.left, record, x, y);
+
+          if (y + record.minDist > root.data[1]) {
+            findNearestNeighborHelper(root.right, record, x, y);
+          }
+        }
+      }
+    }
+  }
+} // find nearest neighbor in 2d tree given a point's x and y coords and the tree's root 
+
+
+function findNearestNeighbor(root, x, y) {
+  var record = {}; // set default values 
+
+  record.nearestNeighbor = root.point;
+  record.minDist = getDist(root.data[0], x, root.data[1], y); // pass record to the recursive nearest-neighbor helper function so that it gets updated
+
+  findNearestNeighborHelper(root, record, x, y);
+  return record.nearestNeighbor;
+}
+
+
+
+/***/ }),
+
+/***/ "./src/filters/mosaic.js":
+/*!*******************************!*\
+  !*** ./src/filters/mosaic.js ***!
+  \*******************************/
+/*! exports provided: Mosaic */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Mosaic", function() { return Mosaic; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+// mosaic filter
+
+
+var Mosaic = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Mosaic, _FilterTemplate);
+
+  var _super = _createSuper(Mosaic);
+
+  function Mosaic() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Mosaic);
+
+    var params = {
+      "chunkWidth": {
+        "value": 40,
+        "min": 1,
+        "max": 50,
+        "step": 1
+      },
+      "chunkHeight": {
+        "value": 40,
+        "min": 1,
+        "max": 50,
+        "step": 1
+      }
+    };
+    return _super.call(this, params);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Mosaic, [{
+    key: "filter",
+    value: function filter(pixels) {
+      var d = pixels.data;
+      var copy = new Uint8ClampedArray(d); // get dimensions 
+
+      var width = pixels.width;
+      var height = pixels.height; // change sampling size here. lower for higher detail preservation, higher for less detail (because larger chunks)
+
+      var chunkWidth = this.params.chunkWidth.value;
+      var chunkHeight = this.params.chunkHeight.value; // when looking at each chunk of the image, for these 2 outer for loops, 
+      // focus on looking at each chunk as if looking at a single pixel first (think bigger picture; abstraction!) 
+      // don't think about selecting single channels yet 
+
+      for (var i = 0; i < width; i += chunkWidth) {
+        for (var j = 0; j < height; j += chunkHeight) {
+          // 4*i + 4*j*width = index of first pixel in chunk 
+          // get the color of the first pixel in this chunk
+          // multiply by 4 because 4 channels per pixel
+          // multiply by width because all the image data is in a single array and a row is dependent on width
+          var r = copy[4 * i + 4 * j * width];
+          var g = copy[4 * i + 4 * j * width + 1];
+          var b = copy[4 * i + 4 * j * width + 2]; // now for all the other pixels in this chunk, set them to this color 
+
+          for (var k = i; k < i + chunkWidth; k++) {
+            for (var l = j; l < j + chunkHeight; l++) {
+              d[4 * k + 4 * l * width] = r;
+              d[4 * k + 4 * l * width + 1] = g;
+              d[4 * k + 4 * l * width + 2] = b;
+            }
+          }
+        }
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return Mosaic;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/filters/outline.js":
+/*!********************************!*\
+  !*** ./src/filters/outline.js ***!
+  \********************************/
+/*! exports provided: Outline */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Outline", function() { return Outline; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+// outline filter
+
+
+var Outline = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Outline, _FilterTemplate);
+
+  var _super = _createSuper(Outline);
+
+  function Outline() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Outline);
+
+    return _super.call(this, null);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Outline, [{
+    key: "withinRange",
+    value: function withinRange(r, g, b, or, og, ob, rangeVal) {
+      var red = Math.abs(r - or) <= rangeVal;
+      var green = Math.abs(g - og) <= rangeVal;
+      var blue = Math.abs(b - ob) <= rangeVal;
+
+      if (red && green && blue) {
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "makePath",
+    value: function makePath(context, col, row) {
+      context.lineJoin = 'round';
+      context.lineWidth = 5;
+      context.beginPath();
+      context.moveTo(col, row);
+      context.lineTo(col + 2, row + 1);
+      context.closePath();
+      context.strokeStyle = '#000';
+      context.stroke();
+    }
+    /***
+        OUTLINE FILTER
+        gets the 'outline' of the main parts of the picture
+        it finds the pixels whose above neighbor is a different color/
+        then a line is drawn from the location of that pixel to the above pixel,
+        forming a small, slightly angled line. all these lines then make up an outline.
+    ***/
+
+  }, {
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height; // make a temp canvas to draw the result on
+      // then we'll return this temp canvas' image data
+
+      var tempCanvas = document.createElement("canvas");
+      tempCanvas.height = pixels.height;
+      tempCanvas.width = pixels.width;
+      var context = tempCanvas.getContext("2d");
+      context.clearRect(0, 0, width, height);
+      context.fillStyle = "#FFF";
+      context.fillRect(0, 0, width, height);
+      var d = pixels.data;
+      var colCounter = 0;
+      var rowCounter = 0;
+      var maximum = 4 * width;
+
+      for (var i = 0; i < d.length; i += 4) {
+        var r = d[i];
+        var g = d[i + 1];
+        var b = d[i + 2];
+        context.lineJoin = 'round';
+        context.lineWidth = 2;
+        var tnr = d[i - maximum];
+        var tng = d[i - (maximum - 1)];
+        var tnb = d[i - (maximum - 2)];
+
+        if (d[i - maximum] !== undefined && !this.withinRange(r, g, b, tnr, tng, tnb, 5)) {
+          this.makePath(context, colCounter, rowCounter);
+        }
+
+        if (i % maximum == 0) {
+          rowCounter++;
+        }
+
+        if (colCounter >= width) {
+          colCounter = 0;
+        }
+
+        colCounter++;
+      } // return image data of the temp canvas
+
+
+      var imgData = context.getImageData(0, 0, width, height);
+      return imgData;
+    }
+  }]);
+
+  return Outline;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/filters/saturation.js":
+/*!***********************************!*\
+  !*** ./src/filters/saturation.js ***!
+  \***********************************/
+/*! exports provided: Saturation */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Saturation", function() { return Saturation; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+	SATURATION FILTER
+	source: http://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
+***/
+
+
+var Saturation = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Saturation, _FilterTemplate);
+
+  var _super = _createSuper(Saturation);
+
+  function Saturation() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Saturation);
+
+    var params = {
+      "saturationValue": {
+        "value": 2.5,
+        "min": 0,
+        "max": 5,
+        "step": 0.5
+      },
+      "redLuminance": {
+        //constant for determining luminance of red
+        "value": .3086,
+        "min": 0,
+        "max": 2,
+        "step": .0002
+      },
+      "greenLuminance": {
+        //constant for determining luminance of green
+        "value": .6094,
+        "min": 0,
+        "max": 2,
+        "step": .0002
+      },
+      "blueLuminance": {
+        //constant for determining luminance of blue
+        "value": .0820,
+        "min": 0,
+        "max": 2,
+        "step": .0002
+      }
+    };
+    return _super.call(this, params);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Saturation, [{
+    key: "filter",
+    value: function filter(pixels) {
+      var saturationValue = this.params.saturationValue.value;
+      var d = pixels.data;
+      var lumR = this.params.redLuminance.value;
+      var lumG = this.params.greenLuminance.value;
+      var lumB = this.params.blueLuminance.value; //one of these equations per r,g,b
+
+      var r1 = (1 - saturationValue) * lumR + saturationValue;
+      var g1 = (1 - saturationValue) * lumG + saturationValue;
+      var b1 = (1 - saturationValue) * lumB + saturationValue; //then one of these for each
+
+      var r2 = (1 - saturationValue) * lumR;
+      var g2 = (1 - saturationValue) * lumG;
+      var b2 = (1 - saturationValue) * lumB;
+
+      for (var i = 0; i < d.length; i += 4) {
+        var r = d[i];
+        var g = d[i + 1];
+        var b = d[i + 2];
+        d[i] = r * r1 + g * g2 + b * b2;
+        d[i + 1] = r * r2 + g * g1 + b * b2;
+        d[i + 2] = r * r2 + g * g2 + b * b1;
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return Saturation;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/filters/voronoi.js":
+/*!********************************!*\
+  !*** ./src/filters/voronoi.js ***!
+  \********************************/
+/*! exports provided: Voronoi */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Voronoi", function() { return Voronoi; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./kdtreeutils.js */ "./src/filters/kdtreeutils.js");
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+	voronoi filter
+	https://softwarebydefault.com/tag/voronoi-diagrams/
+	https://www.codeproject.com/Articles/882739/Simple-approach-to-Voronoi-diagrams
+	
+	- nearest neighbor automatically creates 'boundaries'.
+	- for each pixel, find the nearest neighbor (a collection of pre-selected pixels)
+	- color that pixel whatever the nearest neighbor's color is
+	- evenly spaced neighbors will yield a mosaic! awesome!
+***/
+
+
+
+var Voronoi = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Voronoi, _FilterTemplate);
+
+  var _super = _createSuper(Voronoi);
+
+  function Voronoi() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Voronoi);
+
+    return _super.call(this, null);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Voronoi, [{
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data; //imgData.data;
+
+      var neighborList = []; // array of Points 
+
+      for (var i = 0; i < data.length; i += 4) {
+        // get neighbors.
+        // add some offset to each neighbor for randomness (we don't really want evenly spaced neighbors)
+        var offset = Math.floor(Math.random() * 10); // to be applied in x or y direction
+
+        var sign = Math.random() > .5 ? 1 : -1;
+        var c1 = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["getPixelCoords"])(i, width, height);
+
+        if (c1.x % Math.floor(width / 30) === 0 && c1.y % Math.floor(height / 30) === 0 && c1.x !== 0) {
+          var x = sign * offset + c1.x;
+          var y = sign * offset + c1.y;
+          var p1 = new _kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["Point"](x, y, data[i], data[i + 1], data[i + 2]);
+          neighborList.push(p1);
+        }
+      }
+
+      var kdtree = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["build2dTree"])(neighborList, 0);
+
+      for (var _i = 0; _i < data.length; _i += 4) {
+        var currCoords = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["getPixelCoords"])(_i, width, height);
+        var nearestNeighbor = Object(_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__["findNearestNeighbor"])(kdtree, currCoords.x, currCoords.y); // found nearest neighbor. color the current pixel the color of the nearest neighbor. 
+
+        data[_i] = nearestNeighbor.r;
+        data[_i + 1] = nearestNeighbor.g;
+        data[_i + 2] = nearestNeighbor.b;
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return Voronoi;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_6__["FilterTemplate"]);
+
+
+
+/***/ }),
+
+/***/ "./src/utils/AnimationProject.js":
+/*!***************************************!*\
+  !*** ./src/utils/AnimationProject.js ***!
+  \***************************************/
+/*! exports provided: Frame, AnimationProject, createOnionSkinFrame, setCanvas */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Frame", function() { return Frame; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AnimationProject", function() { return AnimationProject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createOnionSkinFrame", function() { return createOnionSkinFrame; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setCanvas", function() { return setCanvas; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+/***
+    a class representing a frame, containing a list of canvas elements which represent layers of the frame
+***/
+var Frame = /*#__PURE__*/function () {
+  function Frame(containerId, number) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Frame);
+
+    this.currentIndex = 0; // index of currently showing layer
+
+    this.canvasList = []; // keep a list of all canvas instances
+
+    this.currentCanvas; // the current, active canvas being looked at (reference to html element)
+
+    this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
+
+    this.containerId = containerId; // this is the html container id to hold all the layers of this frame
+
+    this.number = number; // this frame's number
+
+    this.count = 0; // current number of layers
+
+    this.width = 0;
+    this.height = 0;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Frame, [{
+    key: "getMetadata",
+    value: function getMetadata() {
+      return {
+        'width': this.width,
+        'height': this.height,
+        'containerId': this.containerId,
+        'currentIndex': this.currentIndex,
+        'number': this.number
+      };
+    }
+  }, {
+    key: "getContainerId",
+    value: function getContainerId() {
+      return this.containerId;
+    }
+  }, {
+    key: "getCurrCanvasIndex",
+    value: function getCurrCanvasIndex() {
+      return this.currentIndex;
+    }
+  }, {
+    key: "getCurrCanvas",
+    value: function getCurrCanvas() {
+      return this.canvasList[this.currentIndex];
+    }
+  }, {
+    key: "getLayers",
+    value: function getLayers() {
+      return this.canvasList;
+    }
+  }, {
+    key: "addSnapshot",
+    value: function addSnapshot(snapshot) {
+      this.currentCanvasSnapshots.push(snapshot);
+    }
+  }, {
+    key: "getSnapshots",
+    value: function getSnapshots() {
+      return this.currentCanvasSnapshots;
+    }
+  }, {
+    key: "clearSnapshots",
+    value: function clearSnapshots() {
+      this.currentCanvasSnapshots = [];
+    } // canvasList: list of canvas elements
+
+  }, {
+    key: "setLayers",
+    value: function setLayers(canvasList) {
+      this.canvasList = canvasList;
+    }
+  }, {
+    key: "setCurrIndex",
+    value: function setCurrIndex(index) {
+      if (index <= this.canvasList.length - 1 && index >= 0) {
+        this.currentIndex = index;
+        this.currentCanvas = this.canvasList[index];
+      }
+    }
+    /***
+        set up a new canvas element
+        makes the new canvas the current canvas
+    ***/
+
+  }, {
+    key: "setupNewLayer",
+    value: function setupNewLayer() {
+      // create the new canvas element 
+      var newCanvas = document.createElement('canvas');
+      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
+      document.getElementById(this.containerId).appendChild(newCanvas);
+      setCanvas(newCanvas);
+
+      if (this.count === 0) {
+        newCanvas.style.opacity = .97;
+        newCanvas.style.zIndex = 1;
+        this.width = newCanvas.width;
+        this.height = newCanvas.height;
+      } // set new canvas to be the current canvas only initially!
+
+
+      if (this.count === 0) {
+        this.currentCanvas = newCanvas;
+      }
+
+      this.canvasList.push(newCanvas);
+      this.count++;
+    }
+  }, {
+    key: "_showLayer",
+    value: function _showLayer(canvas) {
+      canvas.style.opacity = .97;
+      canvas.style.zIndex = 1;
+    }
+  }, {
+    key: "_hideLayer",
+    value: function _hideLayer(canvas) {
+      canvas.style.opacity = 0;
+      canvas.style.zIndex = 0;
+    } // make current canvas an onion skin
+
+  }, {
+    key: "_makeCurrLayerOnion",
+    value: function _makeCurrLayerOnion(canvas) {
+      canvas.style.opacity = .92; // apply onion skin to current canvas 
+
+      canvas.style.zIndex = 0;
+    }
+  }, {
+    key: "nextLayer",
+    value: function nextLayer() {
+      // this moves the current layer to the next one if exists
+      if (this.currentIndex + 1 < this.canvasList.length) {
+        // move to next canvas and apply onion skin to current canvas
+        var currLayer = this.currentCanvas;
+
+        this._makeCurrLayerOnion(currLayer); // in the special case for when you want to go to the next canvas from the very first one, 
+        // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
+
+
+        if (currLayer.currentIndex > 0) {
+          var prevLayer = this.canvasList[this.currentIndex - 1]; // reset opacity and z-index for previous canvas (because of onionskin)
+
+          this._hideLayer(prevLayer);
+        } // show the next canvas 
+
+
+        var nextLayer = this.canvasList[this.currentIndex + 1];
+
+        this._showLayer(nextLayer);
+
+        this.currentCanvas = nextLayer;
+        this.currentIndex++;
+        this.currentCanvasSnapshots = [];
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "prevLayer",
+    value: function prevLayer() {
+      // this moves the current layer to the previous one if exists
+      if (this.currentIndex - 1 >= 0) {
+        var currLayer = this.currentCanvas;
+
+        this._hideLayer(currLayer); // make previous canvas visible 
+
+
+        var prevLayer = this.canvasList[this.currentIndex - 1];
+
+        this._showLayer(prevLayer); // if there is another canvas before the previous one, apply onion skin
+
+
+        if (this.currentIndex - 2 >= 0) {
+          this.canvasList[this.currentIndex - 2].style.opacity = .92;
+        }
+
+        this.currentCanvas = prevLayer;
+        this.currentIndex--;
+        this.currentCanvasSnapshots = [];
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      // makes all layers not visible
+      this.canvasList.forEach(function (canvas) {
+        canvas.style.zIndex = -1;
+        canvas.style.visibility = "hidden";
+      });
+    }
+  }, {
+    key: "show",
+    value: function show() {
+      var _this = this;
+
+      // shows active layer of frame
+      var activeLayerOpacity = .97;
+      this.canvasList.forEach(function (canvas) {
+        if (canvas === _this.currentCanvas) {
+          canvas.style.zIndex = 1;
+          canvas.style.opacity = activeLayerOpacity;
+        } else {
+          canvas.style.zIndex = 0;
+          canvas.style.opacity = 0;
+        }
+
+        canvas.style.visibility = "";
+      });
+    } // TODO: why have this and setCurrIndex()??
+    // layerIndex (int) = the index of the layer to make active (current layer)
+    // onionSkin (bool) = whether onionskin should be visible 
+
+  }, {
+    key: "setToLayer",
+    value: function setToLayer(layerIndex, onionSkin) {
+      // note that this does not hide the previous layer + previous onion skin before switching to 
+      // the new layer.
+      var newLayer = this.canvasList[layerIndex];
+      newLayer.style.opacity = 0.97;
+      newLayer.style.zIndex = 1;
+      this.currentCanvas = newLayer;
+      this.currentIndex = layerIndex;
+      this.currentCanvasSnapshots = [];
+
+      if (onionSkin && layerIndex - 1 > 0) {
+        // apply onionskin
+        var prevLayer = this.canvasList[layerIndex - 1];
+        prevLayer.style.opacity = .92;
+        prevLayer.style.zIndex = 0;
+      }
+    }
+  }, {
+    key: "deleteLayer",
+    value: function deleteLayer(layerIndex) {
+      if (layerIndex + 1 < this.canvasList.length) {
+        // move current canvas to the next one if there is one
+        this.nextLayer(); // then remove the old canvas from the array and the DOM!
+
+        this.canvasList.splice(layerIndex, 1); // adjust the current canvas index after the removal 
+
+        this.currentIndex -= 1;
+      } else if (layerIndex - 1 >= 0) {
+        // if there's a canvas behind the current one (and no more ahead)
+        // move current canvas to the previous one 
+        // note that currentIndex doesn't need to be adjusted because removing the 
+        // next canvas doesn't affect the current canvas' index
+        this.prevLayer();
+        this.canvasList.splice(layerIndex, 1);
+      }
+    }
+    /***
+        clone the current canvas
+    this creates a new layer whose image data is the same as the current canvas.
+    		not sure I'm using this?
+    ***/
+
+  }, {
+    key: "copyCanvas",
+    value: function copyCanvas() {
+      var newCanvas = document.createElement('canvas');
+      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
+      setCanvas(newCanvas, this.width, this.height); //newCanvas.style.opacity = 0.97;
+
+      document.getElementById(this.containerId).appendChild(newCanvas);
+      newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
+      this.canvasList.push(newCanvas);
+      this.count++;
+    }
+  }, {
+    key: "clearCurrentLayer",
+    value: function clearCurrentLayer() {
+      var currLayer = this.getCurrCanvas();
+      var context = currLayer.getContext("2d");
+      context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
+      context.fillStyle = "#FFFFFF";
+      context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
+    }
+  }, {
+    key: "resetFrame",
+    value: function resetFrame() {// TODO: remove all layers except first layer, then clear it
+    }
+  }]);
+
+  return Frame;
+}();
+/***
+    an AnimationProject represents a single project containing one or more frames.
+    it also instantiates an onion skin frame.
+***/
+
+
+var AnimationProject = /*#__PURE__*/function () {
+  function AnimationProject(containerId) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, AnimationProject);
+
+    this.name = "";
+    this.currentFrameIndex = 0; // index of current frame
+
+    this.speed = 100; // 100 ms per frame 
+
+    this.frameList = [];
+    this.onionSkinFrame = createOnionSkinFrame(containerId);
+    this.onionSkinFrame.style.display = 'none'; // hide it initially
+
+    this.containerId = containerId; // id of the html element the frames are displayed in
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(AnimationProject, [{
+    key: "getContainerId",
+    value: function getContainerId() {
+      return this.containerId;
+    }
+  }, {
+    key: "getFrames",
+    value: function getFrames() {
+      return this.frameList;
+    }
+  }, {
+    key: "getCurrFrameIndex",
+    value: function getCurrFrameIndex() {
+      return this.currentFrameIndex;
+    }
+  }, {
+    key: "getCurrFrame",
+    value: function getCurrFrame() {
+      return this.frameList[this.currentFrameIndex];
+    }
+  }, {
+    key: "resetProject",
+    value: function resetProject() {
+      this.frameList.forEach(function (frame, frameIndex) {
+        var parent = document.getElementById(frame.getContainerId()); // just keep the first frame
+
+        frame.canvasList.forEach(function (layer, layerIndex) {
+          if (frameIndex > 0 || frameIndex === 0 && layerIndex > 0) {
+            parent.removeChild(layer);
+          }
+        });
+
+        if (frameIndex === 0) {
+          frame.setLayers([frame.getLayers()[0]]);
+          frame.setCurrIndex(0);
+        }
+      });
+      this.frameList = [this.frameList[0]]; // clear the first layer of the first frame!
+
+      this.frameList[0].clearCurrentLayer();
+      this.currentFrameIndex = 0;
+      this.speed = 100;
+      this.frameList[0].getCurrCanvas().style.visibility = "";
+      this.clearOnionSkin();
+    }
+  }, {
+    key: "addNewFrame",
+    value: function addNewFrame(showFlag) {
+      var newFrame = new Frame(this.containerId, this.frameList.length);
+      newFrame.setupNewLayer();
+      this.frameList.push(newFrame);
+
+      if (!showFlag) {
+        newFrame.hide();
+      }
+    }
+  }, {
+    key: "copyCurrFrame",
+    value: function copyCurrFrame() {
+      // get current frame and make a copy of it. append the copy to the end of the list of frames.
+      this.addNewFrame(false);
+      var newCopy = this.frameList[this.frameList.length - 1];
+      var currFrameLayersToCopy = this.getCurrFrame().getLayers();
+      currFrameLayersToCopy.forEach(function (layer, layerIndex) {
+        if (layerIndex + 1 > newCopy.getLayers().length) {
+          newCopy.setupNewLayer();
+        }
+
+        var currLayer = newCopy.getLayers()[layerIndex];
+        currLayer.style.opacity = layer.opacity;
+        currLayer.style.zIndex = layer.zIndex; // add the image data 
+
+        var newCtx = currLayer.getContext("2d");
+        var currImageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height);
+        newCtx.putImageData(currImageData, 0, 0);
+      });
+    }
+  }, {
+    key: "deleteFrame",
+    value: function deleteFrame(index) {
+      // don't allow removal if only one frame exists
+      if (this.frameList.length === 1 || index < 0 || index > this.frameList.length - 1) {
+        return false;
+      }
+
+      var frame = this.frameList[index]; // remove frame from frameList
+
+      this.frameList.splice(index, 1); // remove all layers
+
+      var parentContainer = document.getElementById(frame.getContainerId());
+      frame.getLayers().forEach(function (layer) {
+        parentContainer.removeChild(layer);
+      });
+      return true;
+    }
+  }, {
+    key: "nextFrame",
+    value: function nextFrame() {
+      if (this.frameList.length <= this.currentFrameIndex + 1) {
+        return null; // no more frames to see
+      }
+
+      this.getCurrFrame().clearSnapshots();
+      this.currentFrameIndex += 1;
+      this.updateOnionSkin();
+      return this.frameList[this.currentFrameIndex];
+    }
+  }, {
+    key: "prevFrame",
+    value: function prevFrame() {
+      if (this.currentFrameIndex - 1 < 0) {
+        return null; // no more frames to see
+      }
+
+      this.getCurrFrame().clearSnapshots();
+      this.currentFrameIndex -= 1;
+      this.updateOnionSkin();
+      return this.frameList[this.currentFrameIndex];
+    }
+  }, {
+    key: "goToFrame",
+    value: function goToFrame(frameIndex) {
+      if (frameIndex > this.frameList.length - 1 || frameIndex < 0) {
+        return null;
+      }
+
+      this.currentFrameIndex = frameIndex;
+      this.getCurrFrame().clearSnapshots();
+      this.updateOnionSkin();
+      return this.frameList[this.currentFrameIndex];
+    } // this method takes all the layers of a frame, merges them, and places the resulting image
+    // on a specific 'onionskin' canvas. when moving from one frame to another, the 'onionskin' of the
+    // previous frame will be visible.
+
+  }, {
+    key: "updateOnionSkin",
+    value: function updateOnionSkin() {
+      if (this.currentFrameIndex - 1 < 0) {
+        // no onionskin for very first frame 
+        this.onionSkinFrame.style.opacity = 0;
+        return;
+      }
+
+      this.onionSkinFrame.style.display = ''; // show onion skin
+
+      var onionSkinCtx = this.onionSkinFrame.getContext("2d");
+      onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // take the previous frame, merge all layers, put into onion skin frame
+
+      var onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height); // build the merged image from the first to last
+
+      var prevFrame = this.frameList[this.currentFrameIndex - 1];
+      prevFrame.getLayers().forEach(function (layer) {
+        var imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
+
+        for (var i = 0; i < imageData.length; i += 4) {
+          if (imageData[i] === 255 && imageData[i + 1] === 255 && imageData[i + 2] === 255) {
+            continue;
+          } else {
+            onionSkinImageData.data[i] = imageData[i];
+            onionSkinImageData.data[i + 1] = imageData[i + 1];
+            onionSkinImageData.data[i + 2] = imageData[i + 2];
+            onionSkinImageData.data[i + 3] = 255;
+          }
+        } // apply each layer to the onion skin
+
+
+        onionSkinCtx.putImageData(onionSkinImageData, 0, 0);
+      });
+      this.onionSkinFrame.style.zIndex = 0;
+      this.onionSkinFrame.style.opacity = 0.92;
+    }
+  }, {
+    key: "clearOnionSkin",
+    value: function clearOnionSkin() {
+      var onionSkin = this.onionSkinFrame;
+      var context = this.onionSkinFrame.getContext("2d");
+      context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
+      context.fillStyle = "#FFFFFF";
+      context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
+    }
+  }]);
+
+  return AnimationProject;
+}();
+
+function createOnionSkinFrame(container) {
+  // create the new canvas element 
+  var newCanvas = document.createElement('canvas');
+  newCanvas.id = "onionSkinCanvas";
+  document.getElementById(container).appendChild(newCanvas);
+  setCanvas(newCanvas);
+  newCanvas.style.opacity = .97;
+  newCanvas.style.zIndex = -1; // TODO: come back to this later. make sure it's visible if current frame > 1!
+
+  return newCanvas;
+} // assigns default canvas attributes and styling
+
+
+function setCanvas(canvasElement, width, height) {
+  canvasElement.style.position = "absolute";
+  canvasElement.style.border = '1px #000 solid';
+  canvasElement.style.zIndex = 0;
+  canvasElement.style.opacity = 0;
+  canvasElement.style.width = "100%";
+  canvasElement.style.height = "100%";
+  canvasElement.width = width ? width : canvasElement.offsetWidth;
+  canvasElement.height = height ? height : canvasElement.offsetHeight;
+  canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,255)";
+  canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+}
+
+
+
+/***/ }),
+
+/***/ "./src/utils/BrushManager.js":
+/*!***********************************!*\
+  !*** ./src/utils/BrushManager.js ***!
+  \***********************************/
+/*! exports provided: BrushManager */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrushManager", function() { return BrushManager; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../brushes/defaultBrush.js */ "./src/brushes/defaultBrush.js");
+/* harmony import */ var _brushes_eraserBrush_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../brushes/eraserBrush.js */ "./src/brushes/eraserBrush.js");
+/* harmony import */ var _brushes_radialBrush_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../brushes/radialBrush.js */ "./src/brushes/radialBrush.js");
+/* harmony import */ var _brushes_sketchyBrush_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../brushes/sketchyBrush.js */ "./src/brushes/sketchyBrush.js");
+/* harmony import */ var _brushes_webBrush_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../brushes/webBrush.js */ "./src/brushes/webBrush.js");
+/* harmony import */ var _brushes_shapeBrush_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../brushes/shapeBrush.js */ "./src/brushes/shapeBrush.js");
+/* harmony import */ var _brushes_penBrush_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../brushes/penBrush.js */ "./src/brushes/penBrush.js");
+/* harmony import */ var _brushes_floodfillBrush_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../brushes/floodfillBrush.js */ "./src/brushes/floodfillBrush.js");
+
+
+
+/***
+    brush manager class
+    pass in an instance of the AnimationProject class as an argument
+	
+	the current canvas element will be the target for the brush
+***/
+
+
+
+
+
+
+
+
+
+var BrushManager = /*#__PURE__*/function () {
+  function BrushManager(animationProj) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, BrushManager);
+
+    // pass in an animation project, from which you can access the current frame and the current canvas
+    this.animationProject = animationProj;
+    this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
+
+    this.selectedBrush = 'default'; // user-selected brush 
+
+    this.currColor = 'rgb(0,0,0)';
+    this.currColorArray = Uint8Array.from([0, 0, 0]);
+    this.currSize = 2;
+    this.pressureColorFlag = false; // whether brush color should depend on pen pressure
+    // brushes map
+
+    this.brushesMap = {};
+    this.brushesMap["default"] = new _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_2__["DefaultBrush"](this);
+    this.brushesMap["radial"] = new _brushes_radialBrush_js__WEBPACK_IMPORTED_MODULE_4__["RadialBrush"](this);
+    this.brushesMap["sketchy"] = new _brushes_sketchyBrush_js__WEBPACK_IMPORTED_MODULE_5__["SketchyBrush"](this);
+    this.brushesMap["web"] = new _brushes_webBrush_js__WEBPACK_IMPORTED_MODULE_6__["WebBrush"](this);
+    this.brushesMap["shape"] = new _brushes_shapeBrush_js__WEBPACK_IMPORTED_MODULE_7__["ShapeBrush"](this);
+    this.brushesMap["pen"] = new _brushes_penBrush_js__WEBPACK_IMPORTED_MODULE_8__["PenBrush"](this);
+    this.brushesMap["floodfill"] = new _brushes_floodfillBrush_js__WEBPACK_IMPORTED_MODULE_9__["FloodfillBrush"](this);
+    this.brushesMap["eraser"] = new _brushes_eraserBrush_js__WEBPACK_IMPORTED_MODULE_3__["EraserBrush"](this);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BrushManager, [{
+    key: "resetBrush",
+    value: function resetBrush() {
+      // detach any events from mouse actions (reset the events connected with mouse events) from previous layer worked on
+      var frame = this.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      for (var eventType in this.currentEventListeners) {
+        currLayer.removeEventListener(eventType, this.currentEventListeners[eventType]);
+        delete this.currentEventListeners[eventType];
+      }
+    }
+  }, {
+    key: "changeBrushSize",
+    value: function changeBrushSize(size) {
+      this.currSize = size;
+    }
+  }, {
+    key: "changeBrushColor",
+    value: function changeBrushColor(colorArray) {
+      this.currColor = 'rgba(' + colorArray[0] + ',' + colorArray[1] + ',' + colorArray[2] + ')';
+      this.currColorArray = colorArray;
+    }
+  }, {
+    key: "getBrushType",
+    value: function getBrushType() {
+      return this.selectedBrush;
+    }
+  }, {
+    key: "getCurrColor",
+    value: function getCurrColor() {
+      return this.currColor;
+    }
+  }, {
+    key: "getCurrColorArray",
+    value: function getCurrColorArray() {
+      return this.currColorArray;
+    }
+  }, {
+    key: "getCurrSize",
+    value: function getCurrSize() {
+      return this.currSize;
+    }
+  }, {
+    key: "applyPressureColor",
+    value: function applyPressureColor() {
+      return this.pressureColorFlag;
+    }
+  }, {
+    key: "setBrushType",
+    value: function setBrushType(brushType) {
+      this.selectedBrush = brushType;
+    }
+  }, {
+    key: "togglePressureColorFlag",
+    value: function togglePressureColorFlag() {
+      this.pressureColorFlag = !this.pressureColorFlag;
+    }
+  }, {
+    key: "applyBrush",
+    value: function applyBrush() {
+      this.brushesMap[this.selectedBrush].attachBrush();
+    }
+  }]);
+
+  return BrushManager;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/utils/FilterManager.js":
+/*!************************************!*\
+  !*** ./src/utils/FilterManager.js ***!
+  \************************************/
+/*! exports provided: FilterManager */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FilterManager", function() { return FilterManager; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _filters_saturation_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../filters/saturation.js */ "./src/filters/saturation.js");
+/* harmony import */ var _filters_grayscale_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../filters/grayscale.js */ "./src/filters/grayscale.js");
+/* harmony import */ var _filters_areacolor_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../filters/areacolor.js */ "./src/filters/areacolor.js");
+/* harmony import */ var _filters_edgedetection_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../filters/edgedetection.js */ "./src/filters/edgedetection.js");
+/* harmony import */ var _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../filters/invert.js */ "./src/filters/invert.js");
+/* harmony import */ var _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../filters/mosaic.js */ "./src/filters/mosaic.js");
+/* harmony import */ var _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../filters/blur.js */ "./src/filters/blur.js");
+/* harmony import */ var _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../filters/outline.js */ "./src/filters/outline.js");
+/* harmony import */ var _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../filters/voronoi.js */ "./src/filters/voronoi.js");
+/* harmony import */ var _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../filters/fisheye.js */ "./src/filters/fisheye.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+var FilterManager = /*#__PURE__*/function () {
+  function FilterManager(animationProject, brush) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, FilterManager);
+
+    this.animationProject = animationProject;
+    this.brush = brush;
+    this.filtersMap = {
+      "saturation": new _filters_saturation_js__WEBPACK_IMPORTED_MODULE_2__["Saturation"](),
+      "grayscale": new _filters_grayscale_js__WEBPACK_IMPORTED_MODULE_3__["Grayscale"](),
+      "area_color": new _filters_areacolor_js__WEBPACK_IMPORTED_MODULE_4__["AreaColor"](),
+      "edge_detection": new _filters_edgedetection_js__WEBPACK_IMPORTED_MODULE_5__["EdgeDetection"](),
+      "invert": new _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__["Invert"](),
+      "mosaic": new _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__["Mosaic"](),
+      "blur": new _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__["Blur"](),
+      "outline": new _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__["Outline"](),
+      "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__["Voronoi"](),
+      "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__["Fisheye"]()
+    };
+  } // general filtering function. pass any kind of filter through this function.
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(FilterManager, [{
+    key: "filterCanvas",
+    value: function filterCanvas(filter) {
+      var currFrame = this.animationProject.getCurrFrame();
+      var currLayer = currFrame.getCurrCanvas();
+      var context = currLayer.getContext("2d");
+      var width = currLayer.getAttribute('width');
+      var height = currLayer.getAttribute('height');
+      var imgData = context.getImageData(0, 0, width, height); // save current image to snapshots stack for undo
+
+      currFrame.addSnapshot(imgData); // grab a new copy of image data so we don't mess with the snapshot data we just stored
+
+      var filteredImageData = filter(context.getImageData(0, 0, width, height));
+      context.putImageData(filteredImageData, 0, 0);
+    } // use this for select/option elements when picking a filter
+
+  }, {
+    key: "filterCanvasOption",
+    value: function filterCanvasOption(option) {
+      var selectedFilter = this.filtersMap[option];
+      this.filterCanvas(selectedFilter.filter.bind(selectedFilter)); // make sure 'this' context is correct for the filtering function
+    }
+  }]);
+
+  return FilterManager;
+}();
+
+
+
+/***/ }),
+
+/***/ "./src/utils/Toolbar.js":
+/*!******************************!*\
+  !*** ./src/utils/Toolbar.js ***!
+  \******************************/
+/*! exports provided: Toolbar */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Toolbar", function() { return Toolbar; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _misc_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./misc.js */ "./src/utils/misc.js");
+
+
+
+
+var Toolbar = /*#__PURE__*/function () {
+  function Toolbar(brush, animationProj) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Toolbar);
+
+    // used as a flag for the animation playback features
+    this.play = null; // used to hold user-indicated time (ms) per frame for animation playback and gif
+
+    this.timePerFrame = 200; // set to 200 be default
+    // should the keyboard keys be affecting the layer or the frame? 2 options only
+    // this is useful for the arrow keys and space bar
+
+    this.layerMode = true;
+    this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
+
+    this.brush = brush;
+    this.animationProj = animationProj;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Toolbar, [{
+    key: "setCounter",
+    value: function setCounter(elementId) {
+      this.htmlCounter = document.getElementById(elementId);
+    }
+  }, {
+    key: "nextLayer",
+    value: function nextLayer() {
+      this.brush.resetBrush();
+      var frame = this.animationProj.getCurrFrame();
+      var result = frame.nextLayer(); // TODO: can we figure out a better way to handle brushes?
+
+      this.brush.applyBrush(); // apply brush whether or not layer changed because it was reset initially
+
+      return result;
+    }
+  }, {
+    key: "prevLayer",
+    value: function prevLayer() {
+      this.brush.resetBrush();
+      var frame = this.animationProj.getCurrFrame();
+      var result = frame.prevLayer();
+      this.brush.applyBrush();
+      return result;
+    }
+  }, {
+    key: "setCurrLayer",
+    value: function setCurrLayer(layerIndex) {
+      // true to show onion skin of prev layer (when would we not?)
+      this.animationProj.getCurrFrame().setToLayer(layerIndex, true);
+    }
+  }, {
+    key: "nextFrame",
+    value: function nextFrame() {
+      this.brush.resetBrush();
+      var curr = this.animationProj.getCurrFrame();
+      var next = this.animationProj.nextFrame();
+      this.brush.applyBrush();
+
+      if (next !== null) {
+        curr.hide();
+        next.show();
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "prevFrame",
+    value: function prevFrame() {
+      this.brush.resetBrush();
+      var curr = this.animationProj.getCurrFrame();
+      var prev = this.animationProj.prevFrame();
+      this.brush.applyBrush();
+
+      if (prev !== null) {
+        curr.hide();
+        prev.show();
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "goToFrame",
+    value: function goToFrame(frameIndex) {
+      this.brush.resetBrush();
+      var curr = this.animationProj.getCurrFrame();
+      var destFrame = this.animationProj.goToFrame(frameIndex);
+      this.brush.applyBrush();
+
+      if (destFrame !== null) {
+        curr.hide();
+        destFrame.show();
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "addNewLayer",
+    value: function addNewLayer() {
+      var canvas = this.animationProj.getCurrFrame();
+      canvas.setupNewLayer();
+    }
+  }, {
+    key: "insertNewLayer",
+    value: function insertNewLayer() {
+      var canvas = this.animationProj.getCurrFrame(); // add a new canvas first 
+
+      canvas.setupNewLayer(); // then move it after the current canvas 
+
+      var newestCanvas = canvas.canvasList.pop();
+      canvas.canvasList.splice(canvas.currentIndex + 1, 0, newestCanvas);
+      return newestCanvas;
+    }
+    /***
+        insert a new layer after the current layer
+    ***/
+
+  }, {
+    key: "insertLayer",
+    value: function insertLayer(elementId) {
+      var _this = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        _this.insertNewLayer();
+      });
+    }
+    /***
+    	duplicate the current layer
+    	note: the next layer after the current will have identitcal image data
+    ***/
+
+  }, {
+    key: "duplicateLayer",
+    value: function duplicateLayer(elementId) {
+      var _this2 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        var currentCanvas = _this2.animationProj.getCurrFrame().currentCanvas;
+
+        var newLayer = _this2.insertNewLayer();
+
+        newLayer.getContext('2d').drawImage(currentCanvas, 0, 0);
+      });
+    }
+    /***
+        delete current layer
+        shifts the current layer to the next one if there is one.
+        otherwise, the previous layer will become the current one.
+        if there isn't a previous one either, then the layer will just be made blank.
+    ***/
+
+  }, {
+    key: "deleteLayer",
+    value: function deleteLayer(elementId, setStateFunction) {
+      var _this3 = this;
+
+      // elementId here refers to the display that shows current frame and layer
+      document.getElementById(elementId).addEventListener('click', function () {
+        var frame = _this3.animationProj.getCurrFrame();
+
+        var oldLayerIndex = frame.getCurrCanvasIndex();
+        var oldLayer = frame.getCurrCanvas();
+        var parentNode = document.getElementById(oldLayer.id).parentNode;
+        var layerList = frame.getLayers();
+
+        if (oldLayerIndex + 1 < layerList.length || oldLayerIndex - 1 >= 0) {
+          frame.deleteLayer(oldLayerIndex);
+          parentNode.removeChild(oldLayer);
+
+          _this3.brush.applyBrush();
+        } else {
+          // otherwise, just blank the canvas 
+          var context = oldLayer.getContext("2d");
+          context.clearRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
+          context.fillStyle = "#fff";
+          context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
+        }
+
+        setStateFunction(frame.getCurrCanvasIndex());
+      });
+    }
+    /***
+    add a new frame
+    ***/
+
+  }, {
+    key: "addNewFrameButton",
+    value: function addNewFrameButton(elementId) {
+      var _this4 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        _this4.animationProj.addNewFrame();
+      });
+    }
+    /***
+    duplicate current frame
+    ***/
+
+  }, {
+    key: "copyCurrFrameButton",
+    value: function copyCurrFrameButton(elementId) {
+      var _this5 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        _this5.animationProj.copyCurrFrame();
+      });
+    }
+    /***
+    	delete current frame
+    ***/
+
+  }, {
+    key: "deleteCurrentFrameButton",
+    value: function deleteCurrentFrameButton(elementId, setStateFunction) {
+      var _this6 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        var currFrameIdx = _this6.animationProj.getCurrFrameIndex(); // move to another frame first before deleting
+
+
+        if (currFrameIdx - 1 >= 0) {
+          _this6.prevFrame();
+        } else {
+          // go forward a frame
+          _this6.nextFrame();
+        }
+
+        if (_this6.animationProj.deleteFrame(currFrameIdx)) {
+          setStateFunction(currFrameIdx); // the index of the frame we deleted
+        }
+      });
+    }
+    /***
+    	change layer order for current frame on button press
+    ***/
+
+  }, {
+    key: "changeCurrentFrameLayerOrder",
+    value: function changeCurrentFrameLayerOrder(elementId, setStateFunction) {
+      document.getElementById(elementId).addEventListener('click', function () {
+        // I'm not sure why right now but something weird happens after calling 
+        // changeCurrentFrameLayerOrder for the first time.
+        // it acts as expected but also I get an error saying setStateFunction is undefined 
+        // in the console. :/ so for now check if setStateFunction is not undefined?
+        if (setStateFunction) {
+          setStateFunction(null);
+        }
+      });
+    }
+    /***
+        color wheel functions
+    ***/
+    // pass in the elementId of the div where the color wheel should be (its container)
+    // pass in the size of the canvas of the color wheel 
+
+  }, {
+    key: "createColorWheel",
+    value: function createColorWheel(elementId, size) {
+      var _this7 = this;
+
+      var colorWheel = Object(_misc_js__WEBPACK_IMPORTED_MODULE_2__["makeColorWheel"])(elementId, size);
+      document.getElementById(colorWheel.id).addEventListener('mousedown', function (evt) {
+        var x = evt.offsetX;
+        var y = evt.offsetY;
+        var colorPicked = document.getElementById(colorWheel.id).getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
+
+        var colorPickedText = document.getElementById('colorPicked');
+
+        if (colorPicked[0] > 10 && colorPicked[1] > 200) {
+          colorPickedText.style.color = "#000";
+        } else {
+          colorPickedText.style.color = "#FFF";
+        }
+
+        colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
+        colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
+
+        _this7.brush.changeBrushColor(colorPicked);
+      });
+    }
+    /***
+        rotate image
+        pass in an element id that will rotate the current canvas image on click
+    ***/
+
+  }, {
+    key: "rotateImage",
+    value: function rotateImage(elementId) {
+      var _this8 = this;
+
+      //rotate image
+      document.getElementById(elementId).addEventListener('click', function () {
+        var canvas = _this8.animationProj.getCurrFrame(); //using a promise to convert the initial image to a bitmap
+
+
+        var width = canvas.currentCanvas.getAttribute("width");
+        var height = canvas.currentCanvas.getAttribute("height");
+        var context = canvas.currentCanvas.getContext("2d");
+        createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then(function (bitmap) {
+          var tmpCanvas = document.createElement("canvas");
+          tmpCanvas.width = width;
+          tmpCanvas.height = height; // use a temp canvas because translating on the real canvas will mess with mousedown coords
+
+          var tmpCtx = tmpCanvas.getContext("2d");
+          tmpCtx.clearRect(0, 0, width, height);
+          tmpCtx.translate(width / 2, height / 2);
+          tmpCtx.rotate(Math.PI / 180);
+          tmpCtx.translate(-width / 2, -height / 2);
+          tmpCtx.drawImage(bitmap, 0, 0); // then draw image data from tmp canvas to the real one
+
+          context.putImageData(tmpCtx.getImageData(0, 0, width, height), 0, 0);
+        });
+      });
+    }
+    /***
+        clear the current canvas
+        pass in an element id that will execute clear canvas onclick
+    ***/
+
+  }, {
+    key: "setClearCanvas",
+    value: function setClearCanvas(elementId) {
+      var _this9 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        var frame = _this9.animationProj.getCurrFrame();
+
+        var context = frame.currentCanvas.getContext("2d");
+        var width = frame.currentCanvas.getAttribute("width");
+        var height = frame.currentCanvas.getAttribute("height");
+        context.clearRect(0, 0, width, height);
+        context.fillStyle = "#FFFFFF";
+        context.fillRect(0, 0, width, height);
+      });
+    }
+    /***
+        undo a previous drawing operation on the current canvas.
+        still a little incorrect? - TODO: needs work
+    - problem: undo affects all layers and is not specific to one canvas (which it should)
+    maybe the frame class should store layer info for undo
+    ***/
+
+  }, {
+    key: "undo",
+    value: function undo(elementId) {
+      var _this10 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        var frame = _this10.animationProj.getCurrFrame();
+
+        var currLayer = frame.getCurrCanvas();
+        var context = currLayer.getContext("2d");
+        var width = currLayer.getAttribute("width");
+        var height = currLayer.getAttribute("height");
+        var currLayerSnapshots = frame.getSnapshots(); // then put back last image (ignore the one that had just been drawn)
+
+        if (currLayerSnapshots.length > 1) {
+          var mostRecentImage = currLayerSnapshots.pop(); // unfortunately, we might need to pop again b/c if we just finished drawing and want to undo,
+          // the first one on the stack is the image we just finished drawing
+          // but this operation seems fast enough
+
+          var currImgData = context.getImageData(0, 0, width, height).data;
+          var isSameImage = true;
+
+          for (var i = 0; i < currImgData.length; i++) {
+            if (currImgData[i] !== mostRecentImage.data[i]) {
+              isSameImage = false;
+              break;
+            }
+          }
+
+          if (isSameImage) {
+            mostRecentImage = currLayerSnapshots.pop();
+          }
+
+          context.clearRect(0, 0, width, height);
+          context.putImageData(mostRecentImage, 0, 0); // but then put it back on the stack
+
+          frame.addSnapshot(mostRecentImage);
+        } else if (currLayerSnapshots.length === 1) {
+          context.putImageData(currLayerSnapshots[0], 0, 0);
+        }
+      });
+    }
+    /***
+        import an image
+    ***/
+
+  }, {
+    key: "importImage",
+    value: function importImage(elementId) {
+      var _this11 = this;
+
+      var self = this;
+      document.getElementById(elementId).addEventListener('click', function () {
+        var canvas = _this11.animationProj.getCurrFrame(); // call fileHandler here
+
+
+        fileHandler(); // define fileHandler 
+
+        function fileHandler() {
+          //initiate file choosing after button click
+          var input = document.createElement('input');
+          input.type = 'file';
+          input.addEventListener('change', getFile, false);
+          input.click();
+        }
+
+        function getFile(e) {
+          var img = new Image();
+          var reader = new FileReader();
+          var file = e.target.files[0];
+
+          if (!file.type.match(/image.*/)) {
+            console.log("not a valid image");
+            return;
+          } //when the image loads, put it on the canvas.
+
+
+          img.onload = function () {
+            // change current canvas' width and height according to imported picture
+            var currentCanvas = canvas.currentCanvas;
+            var context = currentCanvas.getContext("2d");
+            var height = canvas.height;
+            var width = canvas.width;
+            currentCanvas.setAttribute('height', height);
+            currentCanvas.setAttribute('width', width);
+            context.drawImage(img, 0, 0, width, height);
+            canvas.addSnapshot(currentCanvas.getContext("2d").getImageData(0, 0, width, height));
+          }; //after reader has loaded file, put the data in the image object.
+
+
+          reader.onloadend = function () {
+            img.src = reader.result;
+          }; //read the file as a URL
+
+
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+    /***
+        reset the canvas to most recent imported image
+    ***/
+
+  }, {
+    key: "resetImage",
+    value: function resetImage() {
+      if (this.recentImage) {
+        var _canvas = this.animationProj.getCurrFrame();
+
+        var context = _canvas.currentCanvas.getContext("2d");
+
+        var height = _canvas.currentCanvas.getAttribute("height");
+
+        var width = _canvas.currentCanvas.getAttribute("width");
+
+        context.drawImage(this.recentImage, 0, 0, width, height);
+      }
+    }
+    /***
+        download a png file of the current layer
+    ***/
+
+  }, {
+    key: "downloadLayer",
+    value: function downloadLayer(elementId) {
+      var _this12 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        // get image data from current canvas as blob
+        var canvas = _this12.animationProj.getCurrFrame();
+
+        var data = document.getElementById(canvas.currentCanvas.id).toBlob(function (blob) {
+          var url = URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = url;
+          var name = prompt("please enter a name for the file");
+
+          if (name === null) {
+            return;
+          } else {
+            link.download = name; //simulate a click on the blob's url to download it 
+
+            link.click();
+          }
+        });
+      });
+    }
+    /***
+    	download a png file of the current frame
+    ***/
+
+  }, {
+    key: "downloadFrame",
+    value: function downloadFrame(elementId) {
+      var _this13 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        var frame = _this13.animationProj.getCurrFrame();
+
+        var mergedLayers = _this13.mergeFrameLayers(frame);
+
+        var data = mergedLayers.toBlob(function (blob) {
+          var url = URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = url;
+          var name = prompt("please enter a name for the file");
+
+          if (name === null) {
+            return;
+          } else {
+            link.download = name;
+            link.click();
+          }
+        });
+      });
+    } // for toggling the toolbar's position as sticky or not
+
+  }, {
+    key: "toggleToolbarPosition",
+    value: function toggleToolbarPosition(elementId, toolbarId) {
+      document.getElementById(elementId).addEventListener('click', function () {
+        var toolbar = document.getElementById(toolbarId);
+
+        if (toolbar.style.position === "sticky" || toolbar.style.position === "") {
+          toolbar.style.position = "static";
+        } else {
+          toolbar.style.position = "sticky";
+        }
+      });
+    }
+    /********
+    
+        this section controls the animation playback features
+        
+        note that I specifically added my page counter element to the
+        functions so that they change with the call to up() and down()
+          this will need to be applied for FRAMES, not LAYERS of a frame.
+    
+    *********/
+    //let toolbar = this;
+
+  }, {
+    key: "playFor",
+    value: function playFor() {
+      if (this.nextFrame()) {
+        if (this.htmlCounter) {
+          var counterText = this.htmlCounter;
+          counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
+        }
+      }
+    }
+  }, {
+    key: "playBack",
+    value: function playBack() {
+      if (this.prevFrame()) {
+        if (this.htmlCounter) {
+          var counterText = this.htmlCounter;
+          counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
+        }
+      }
+    }
+  }, {
+    key: "playForward",
+    value: function playForward() {
+      clearInterval(this.play);
+      this.play = null;
+      this.play = setInterval(this.playFor, this.timePerFrame);
+    }
+  }, {
+    key: "playBackward",
+    value: function playBackward() {
+      clearInterval(this.play);
+      this.play = null;
+      this.play = setInterval(this.playBack, this.timePerFrame);
+    }
+  }, {
+    key: "stop",
+    value: function stop() {
+      clearInterval(this.play);
+      this.play = null;
+    }
+  }, {
+    key: "mergeFrameLayers",
+    value: function mergeFrameLayers(frame) {
+      var tempCanvas = document.createElement('canvas');
+      var tempCtx = tempCanvas.getContext("2d");
+      tempCanvas.width = frame.width;
+      tempCanvas.height = frame.height;
+      tempCtx.fillStyle = "white";
+      tempCtx.fillRect(0, 0, frame.width, frame.height);
+      var tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+
+      for (var j = 0; j < frame.canvasList.length; j++) {
+        var layer = frame.canvasList[j]; // possible issue: this assumes that all layers within a frame share the same dimensions (but it should be that way, right?)
+
+        var imageData = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height).data;
+
+        for (var k = 0; k < imageData.length; k += 4) {
+          if (imageData[k] === 255 && imageData[k + 1] === 255 && imageData[k + 2] === 255) {
+            continue;
+          } else {
+            // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
+            // we might run into index/length issues...
+            tempImageData.data[k] = imageData[k];
+            tempImageData.data[k + 1] = imageData[k + 1];
+            tempImageData.data[k + 2] = imageData[k + 2];
+            tempImageData.data[k + 3] = 255;
+          }
+        } // apply each layer to the onion skin
+
+
+        tempCtx.putImageData(tempImageData, 0, 0);
+      }
+
+      return tempCanvas;
+    }
+    /***
+    
+        create a gif from the frames.
+        using gif.js - https://github.com/jnordberg/gif.js
+    
+        elementId is for the loading message,
+        i.e. a <p> element that says "now loading..."
+        
+        this will need to be applied for FRAMES, not LAYERS of a frame.
+    
+    timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), i.e.
+    {
+    1: 100, // frame 1
+    2: 1000 // frame 2
+    }
+    ***/
+
+  }, {
+    key: "getGif",
+    value: function getGif(elementId, timelineMarkers) {
+      if (elementId) {
+        document.getElementById(elementId).textContent = "now loading...";
+      }
+
+      var gif = new GIF({
+        workers: 2,
+        quality: 10
+      }); // add frames + take into account frame rate given by timelineMarkers
+
+      for (var i = 0; i < this.animationProj.frameList.length; i++) {
+        var tempCanvas = this.mergeFrameLayers(this.animationProj.frameList[i]);
+        var frameTime = timelineMarkers[i + 1] ? timelineMarkers[i + 1] : this.timePerFrame;
+        gif.addFrame(tempCanvas, {
+          delay: frameTime
+        });
+      }
+
+      gif.on('finished', function (blob) {
+        document.getElementById(elementId).textContent = "";
+        var newGif = URL.createObjectURL(blob);
+        window.open(newGif);
+      });
+      gif.render();
+    }
+    /***
+    
+        save/export & import functions
+        check this out: https://stackoverflow.com/questions/22329481/compressing-base64-data-uri-images
+        
+        don't think this is going to work for large projects without some sort of better compression. simply drawing a few lines on
+        a canvas produces a very large base64 string spanning many lines. not very practical for exporting a project
+        that has several frames, especially if you take into account different colors and more detail
+        
+    ***/
+
+  }, {
+    key: "save",
+    value: function save(elementId) {
+      var _this14 = this;
+
+      document.getElementById(elementId).addEventListener('click', function () {
+        // prompt the user to name the file 
+        var name = prompt("name of file: ");
+
+        if (name === "") {
+          name = "funSketch_saveFile";
+        } else if (name === null) {
+          return;
+        }
+
+        var savedData = [];
+
+        _this14.animationProj.frameList.forEach(function (frame) {
+          // get frame metadata
+          var newFrame = frame.getMetadata();
+          newFrame['layers'] = []; // list of objects
+
+          frame.canvasList.forEach(function (layer) {
+            // get layer metadata
+            var newLayer = {
+              'id': layer.id,
+              'width': layer.getAttribute("width"),
+              'height': layer.getAttribute("height"),
+              'zIndex': layer.style.zIndex,
+              'opacity': layer.style.opacity
+            }; // add layer image data
+
+            newLayer['imageData'] = layer.toDataURL();
+            newFrame.layers.push(newLayer);
+          });
+          savedData.push(JSON.stringify(newFrame));
+        });
+
+        var json = "[\n";
+        json += savedData.join(",\n"); // put a line break between each new object, which represents a frame
+
+        json += "\n]"; // make a blob so it can be downloaded 
+
+        var blob = new Blob([json], {
+          type: "application/json"
+        });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = name + ".json";
+        link.click();
+      });
+    } // data: JSON data representing a project
+    // updateStateFunction: function that updates state. used in the react component that has the toolbar as a prop
+
+  }, {
+    key: "importData",
+    value: function importData(data, updateStateFunction) {
+      var _this15 = this;
+
+      if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
+        console.log("import failed: it appears to not be a valid project! :<");
+        return;
+      } // clear existing project
+
+
+      this.animationProj.resetProject(); // load saved project
+
+      data.forEach(function (frame, index) {
+        if (index > 0) {
+          // add a new frame
+          _this15.animationProj.addNewFrame();
+        } // overwrite existing frame
+        // TODO: implement an updateFrame method 
+        // something like: animationProj.updateFrame(0, frame);
+
+
+        var currFrame = _this15.animationProj.getFrames()[index];
+
+        var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
+
+        var currFrameLayersFromCurrPrj = currFrame.getLayers();
+        currFrameLayersFromImport.forEach(function (layer, layerIndex) {
+          if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
+            // add new layer to curr project as needed based on import
+            currFrame.setupNewLayer();
+          }
+
+          var currLayer = currFrame.getLayers()[layerIndex]; // add the image data 
+
+          var newCtx = currLayer.getContext("2d");
+          var img = new Image();
+
+          (function (context, image) {
+            image.onload = function () {
+              context.drawImage(image, 0, 0);
+
+              if (index === data.length - 1 && updateStateFunction) {
+                // after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
+                updateStateFunction();
+              }
+            };
+
+            image.src = layer.imageData;
+          })(newCtx, img);
+        });
+        currFrame.setCurrIndex(frame.currentIndex);
+      });
+    }
+  }, {
+    key: "importProject",
+    value: function importProject(elementId, updateStateFunction) {
+      var self = this;
+      document.getElementById(elementId).addEventListener('click', function () {
+        fileHandler(); //import project json file
+
+        function fileHandler() {
+          var input = document.createElement('input');
+          input.type = 'file';
+          input.addEventListener('change', getFile, false);
+          input.click();
+        }
+
+        function getFile(e) {
+          var reader = new FileReader();
+          var file = e.target.files[0]; //when the file loads, put it on the canvas.
+
+          reader.onload = function (theFile) {
+            return function (e) {
+              // parse the JSON using JSON.parse 
+              // check if it can be parsed though first!
+              var data;
+
+              try {
+                data = JSON.parse(e.target.result);
+              } catch (e) {
+                // not valid json file 
+                console.log("import failed: not a valid JSON file");
+                return;
+              }
+
+              self.importData(data, updateStateFunction);
+            };
+          }(file);
+
+          reader.readAsText(file);
+        }
+      });
+    }
+  }]);
+
+  return Toolbar;
+}(); // end of Toolbar 
+
+
+
+
+/***/ }),
+
+/***/ "./src/utils/misc.js":
+/*!***************************!*\
+  !*** ./src/utils/misc.js ***!
+  \***************************/
+/*! exports provided: makeColorWheel */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeColorWheel", function() { return makeColorWheel; });
+// catch-all file for functions that might be better suited being in this file
+function makeColorWheel(elementId, size) {
+  var location = document.getElementById(elementId);
+
+  if (location === undefined) {
+    console.log("could not find element with id ".concat(elementId, "!"));
+    return null;
+  }
+
+  var colorWheel = document.createElement('canvas');
+  colorWheel.id = "colorWheel";
+  colorWheel.setAttribute('width', size);
+  colorWheel.setAttribute('height', size);
+  var colorWheelContext = colorWheel.getContext('2d');
+  var x = colorWheel.width / 2;
+  var y = colorWheel.height / 2;
+  var radius = 60; // why 5600??
+
+  for (var angle = 0; angle <= 5600; angle++) {
+    var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
+
+    var endAngle = angle * Math.PI / 180;
+    colorWheelContext.beginPath();
+    colorWheelContext.moveTo(x, y); //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+
+    colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
+    colorWheelContext.closePath(); //use .createRadialGradient to get a different color for each angle
+    //createRadialGradient(x0, y0, r0, x1, y1, r1)
+
+    var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
+    gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
+    gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
+    colorWheelContext.fillStyle = gradient;
+    colorWheelContext.fill();
+  } // make black a pickable color 
+
+
+  colorWheelContext.fillStyle = "#000";
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill(); // make white pickable too (and add a black outline)
+
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 
+
+  colorWheelContext.stroke(); // make sure circle is filled with #fff
+
+  colorWheelContext.fillStyle = "#fff";
+  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill();
+  location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
+
+  var showColor = document.createElement('p'); // this element will show the color picked 
+
+  showColor.style.textAlign = 'center';
+  showColor.id = 'colorPicked';
+  showColor.textContent = "pick a color! :)";
+  location.appendChild(showColor);
+  return colorWheel;
+}
 
 /***/ })
 

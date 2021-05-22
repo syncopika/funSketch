@@ -1,6 +1,6 @@
 import 'jest-canvas-mock';
-import { BrushManager } from '../components/utils/BrushManager.js';
-import { AnimationProject } from '../components/utils/AnimationProject.js';
+import { BrushManager } from '../src/utils/BrushManager.js';
+import { AnimationProject } from '../src/utils/AnimationProject.js';
 
 describe("test BrushManager class", () => {
 	

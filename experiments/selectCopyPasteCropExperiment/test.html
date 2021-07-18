@@ -82,10 +82,6 @@ document.getElementById("importImage").addEventListener('click', () => {
 });
 
 
-// crop functionality
-let isCrop = false;
-let isMouseDown = false;
-
 function setUpMainCanvas(){
 	const canvasElement = document.createElement("canvas");
 	document.getElementById("canvasArea").appendChild(canvasElement);
@@ -98,7 +94,7 @@ function setUpMainCanvas(){
 	canvasElement.style.height = "100%";
 	canvasElement.width = canvasElement.offsetWidth;
 	canvasElement.height = canvasElement.offsetHeight;
-    canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,1)";
+    canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
     canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
 }
 setUpMainCanvas();
@@ -121,56 +117,109 @@ function setUpEditCanvas(){
 	return canvasElement;
 }
 
-const cropData = {
+// select functionality
+const selectData = {
 	clickX: [],
 	clickY: [],
 };
+let isSelect = false;
+let isMousedown = false;
+let doneSelectMove = false;
+let editCanvas;
+
+function selectMousemove(evt){
+	if(isMousedown){
+		selectData.clickX.push(evt.offsetX);
+		selectData.clickY.push(evt.offsetY);
+	
+		const ctx = document.getElementById('editCanvas').getContext('2d');
+		
+		// use the inverted color of the pixel of the main context
+		const srcCtx = document.getElementById('main').getContext('2d');
+		const data = srcCtx.getImageData(evt.offsetX, evt.offsetY, 1, 1).data;
+		const color = `rgb(${255-data[0]}, ${255-data[1]}, ${255-data[2]})`;
+		
+		ctx.strokeStyle = color;
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		
+		if(selectData.clickX.length-2 >= 0){
+			ctx.moveTo(selectData.clickX[selectData.clickX.length-2], selectData.clickY[selectData.clickY.length-2]);
+		}else{
+			ctx.moveTo(selectData.clickX[selectData.clickX.length-1], selectData.clickY[selectData.clickY.length-1]);
+		}
+		
+		ctx.lineTo(selectData.clickX[selectData.clickX.length-1], selectData.clickY[selectData.clickY.length-1]);
+		
+		ctx.closePath();
+		ctx.stroke();
+	}
+}
+
+function selectMousedown(evt){
+	isMousedown = true;
+	selectData.clickX = [evt.offsetX];
+	selectData.clickY = [evt.offsetY];
+}
+
+function selectMouseup(evt){
+	//selectData.clickX = [];
+	//selectData.clickY = [];
+	isMousedown = false;
+
+	// allow user to do something with the selection
+	editCanvas.removeEventListener('mousedown', selectMousedown);
+	editCanvas.removeEventListener('mousemove', selectMousemove);
+	editCanvas.removeEventListener('mouseup', selectMouseup);
+	
+	// add the new event listeners to handle moving the selection
+	// interesting: https://stackoverflow.com/questions/12886286/addeventlistener-for-keydown-on-canvas
+	document.addEventListener('keydown', deleteSelectedPixels);
+}
+
+function selectMoveMousedown(evt){
+	// move the selected pixels
+}
+
+function selectMoveMousemove(evt){
+}
+
+function selectMoveMouseup(evt){
+}
+
+function deleteSelectedPixels(evt){
+	if(evt.which === 46 && isSelect){
+		// 46 is the delete button. can also use evt.code which would be "Delete"
+		
+		// remove selected pixels
+		console.log('user wants to delete the selected pixels!');
+		console.log(selectData);
+		
+		// remove edit canvas
+		editCanvas.parentNode.removeChild(editCanvas);
+		
+		isSelect = false;	
+	}
+}
+
+function removePixels(pixelCoordData){
+	// given x and y coords of each point on a line, figure out what pixels make up the area surrounded by the line
+	// and change them to #fff
+	// what if it's a straight line? just connect the first and last points to create an enclosed area
+}
 
 document.getElementById("select").addEventListener('click', () => {
-	// create new invisible canvas on top of current to keep track of crop area
-	const editCanvas = setUpEditCanvas();
+	if(!isSelect){
+		isSelect = true;
 	
-	// attach event listener for mousedown/mouseup when cropping
-	editCanvas.addEventListener('mousedown', (evt) => {
-		isCrop = true;
-		cropData.clickX = [evt.offsetX];
-		cropData.clickY = [evt.offsetY];
-	});
-	
-	editCanvas.addEventListener('mousemove', (evt) => {
-		if(isCrop){
-			cropData.clickX.push(evt.offsetX);
-			cropData.clickY.push(evt.offsetY);
+		// create new invisible canvas on top of current to keep track of crop area
+		editCanvas = setUpEditCanvas();
 		
-			const ctx = document.getElementById('editCanvas').getContext('2d');
-			
-			// use the inverted color of the pixel of the main context
-			const data = document.getElementById('main').getContext('2d').getImageData(evt.offsetX, evt.offsetY, 1, 1).data;
-			const color = `rgb(${255-data[0]}, ${255-data[1]}, ${255-data[2]})`;
-			
-			ctx.strokeStyle = color;
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-			
-			if(cropData.clickX.length-2 >= 0){
-				ctx.moveTo(cropData.clickX[cropData.clickX.length-2], cropData.clickY[cropData.clickY.length-2]);
-			}else{
-				ctx.moveTo(cropData.clickX[cropData.clickX.length-1], cropData.clickY[cropData.clickY.length-1]);
-			}
-			
-            ctx.lineTo(cropData.clickX[cropData.clickX.length-1], cropData.clickY[cropData.clickY.length-1]);
-            
-			ctx.closePath();
-            ctx.stroke();
-		}
-	});
-	
-	editCanvas.addEventListener('mouseup', (evt) => {
-		isCrop = false;
-		
-		// do something
-	});
-	
+		// attach event listener for mousedown/mouseup when cropping
+		editCanvas.addEventListener('mousedown', selectMousedown);
+		editCanvas.addEventListener('mousemove', selectMousemove);
+		editCanvas.addEventListener('mouseup', selectMouseup);
+	}
 });
 
 

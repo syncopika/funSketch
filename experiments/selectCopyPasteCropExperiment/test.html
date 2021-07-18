@@ -121,6 +121,10 @@ function setUpEditCanvas(){
 const selectData = {
 	clickX: [],
 	clickY: [],
+	
+	// this is for when moving the selection
+	mousedown: [],
+	//mouseup: [],
 };
 let isSelect = false;
 let isMousedown = false;
@@ -129,6 +133,26 @@ let editCanvas;
 
 function selectMousemove(evt){
 	if(isMousedown){
+		
+		/* attempted strategy to deal with a gap in logged coordinates but introduces lag and messes up drawing for selection :/
+		if(selectData.clickX.length > 1){
+			let lastY = selectData.clickY[selectData.clickY.length-2];
+			let lastX = selectData.clickX[selectData.clickX.length-2];
+			if(evt.offsetY > lastY+1){
+				// fill in any coordinates in between this one and the previous (based on y-value)
+				// so we can always have a pair of coordinates for the same row if it's passed through twice
+				// this ensures a record of a continuous line
+				// but we also need to consider how x changes from the prev to curr coord.
+				const xInterval = Math.floor( (evt.offsetX - lastX) / (evt.offsetY - lastY) );
+				for(let i = lastY+1; i < evt.offsetY; i++){
+					selectData.clickX.push(lastX + xInterval);
+					selectData.clickY.push(i);
+					lastX += xInterval;
+				}
+			}
+		}
+		*/
+		
 		selectData.clickX.push(evt.offsetX);
 		selectData.clickY.push(evt.offsetY);
 	
@@ -163,8 +187,6 @@ function selectMousedown(evt){
 }
 
 function selectMouseup(evt){
-	//selectData.clickX = [];
-	//selectData.clickY = [];
 	isMousedown = false;
 
 	// allow user to do something with the selection
@@ -178,13 +200,36 @@ function selectMouseup(evt){
 }
 
 function selectMoveMousedown(evt){
-	// move the selected pixels
+	// record the coordinate clicked so we can subtract from the coords of mouseup to create a vector
+	// so we know how much to move the selected pixels left/right and up/down.
+	isMousedown = true;
+	selectData.mousedown = [evt.offsetX, evt.offsetY];
 }
 
 function selectMoveMousemove(evt){
+	// record current coordinate of mouse to create vector from mousedown coordinate to know how to move selected pixels
+	if(isMousedown){
+		const lastX = selectData.mousedown[0];
+		const lastY = selectData.mousedown[1];
+		
+		const currX = evt.offsetX;
+		const currY = evt.offsetY;
+		
+		// get a copy of the selected pixels
+		
+		// remove pixels from src
+		removePixels(selectData);
+		
+		// move selected pixels on edit canvas
+		
+		// update mousedown coords
+		selectData.mousedown = [evt.offsetX, ect.offsetY];
+	}
 }
 
 function selectMoveMouseup(evt){
+	isMousedown = false;
+	selectData.mousedown = [];
 }
 
 function deleteSelectedPixels(evt){
@@ -192,8 +237,7 @@ function deleteSelectedPixels(evt){
 		// 46 is the delete button. can also use evt.code which would be "Delete"
 		
 		// remove selected pixels
-		console.log('user wants to delete the selected pixels!');
-		console.log(selectData);
+		removePixels(selectData);
 		
 		// remove edit canvas
 		editCanvas.parentNode.removeChild(editCanvas);
@@ -205,7 +249,43 @@ function deleteSelectedPixels(evt){
 function removePixels(pixelCoordData){
 	// given x and y coords of each point on a line, figure out what pixels make up the area surrounded by the line
 	// and change them to #fff
-	// what if it's a straight line? just connect the first and last points to create an enclosed area
+	// what if it's a straight line? just connect the first and last points to create an enclosed area like MS Paint?
+	const coords = {};
+	for(let i = 0; i < pixelCoordData.clickY.length; i++){
+		const currY = pixelCoordData.clickY[i];
+		const currX = pixelCoordData.clickX[i];
+		if(!coords[currY]){
+			coords[currY] = {
+				maxX: currX,
+				minX: currX,
+			}
+		}else{
+			if(currX > coords[currY].maxX){
+				coords[currY].maxX = currX;
+			}else if(currX < coords[currY].minX){
+				coords[currY].minX = currX;
+			}
+		}
+	}
+	//console.log(coords);
+	
+	// then change the colors of the pixels that fall in range of minX and maxX of each y-coord in coords
+	const src = document.getElementById("main");
+	const srcCtx = src.getContext('2d');
+	const imgData = srcCtx.getImageData(0,0,src.width,src.height);
+	for(let row in coords){
+		const min = coords[row].minX;
+		const max = coords[row].maxX;
+		const start = src.width*4*row + 4*min;
+		const end = src.width*4*row + 4*max;
+		for(let i = start; i < end; i += 4){
+			imgData.data[i] = 255;
+			imgData.data[i+1] = 255;
+			imgData.data[i+2] = 255;
+		}
+	}
+	
+	srcCtx.putImageData(imgData, 0, 0);
 }
 
 document.getElementById("select").addEventListener('click', () => {

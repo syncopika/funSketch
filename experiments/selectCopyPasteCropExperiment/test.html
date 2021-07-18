@@ -1,0 +1,181 @@
+<!doctype html>
+
+<html>
+
+<head>
+	<title> select/copy/paste/crop experiment </title>
+	<style>
+		body {
+			text-align: center;
+		}
+		#main {
+			border: 1px solid #000;
+		}
+		#canvasArea{
+			position: relative;
+			margin: 0px auto;
+			width: 800px;
+			height: 500px;
+		}
+		#editCanvas{
+			cursor: crosshair;
+		}
+	</style>
+</head>
+
+<body>
+	<h2> select/copy/paste/crop experiment </h2>
+	
+	<div>
+		<button id="select">select</button>
+		<button id="importImage">import image</button>
+	</div>
+	
+	<br />
+
+	<div id='canvasArea'>
+	</div>
+<body>
+
+
+<script>
+document.getElementById("importImage").addEventListener('click', () => {
+	const canvas = document.getElementById("main");
+	
+	// call fileHandler here
+	fileHandler();
+	
+	// define fileHandler 
+	function fileHandler(){
+		//initiate file choosing after button click
+		let input = document.createElement('input');
+		input.type = 'file';
+		input.addEventListener('change', getFile, false);
+		input.click();
+	}
+	
+	function getFile(e){
+		const img = new Image();
+		const reader = new FileReader();
+		const file = e.target.files[0];
+		if(!file.type.match(/image.*/)){
+			console.log("not a valid image");
+			return;
+		}
+		//when the image loads, put it on the canvas.
+		img.onload = () => {
+			// change current canvas' width and height according to imported picture
+			const currentCanvas = canvas.currentCanvas;
+			const context = canvas.getContext("2d");
+			const height = canvas.height;
+			const width = canvas.width;
+			
+			context.drawImage(img, 0, 0, width, height);
+		};
+		//after reader has loaded file, put the data in the image object.
+		reader.onloadend = function(){ 
+			img.src = reader.result;
+		};
+		//read the file as a URL
+		reader.readAsDataURL(file);
+	}
+});
+
+
+// crop functionality
+let isCrop = false;
+let isMouseDown = false;
+
+function setUpMainCanvas(){
+	const canvasElement = document.createElement("canvas");
+	document.getElementById("canvasArea").appendChild(canvasElement);
+	canvasElement.id = "main";
+	//canvasElement.style.position = "absolute";
+    canvasElement.style.border = '1px #000 solid';
+    canvasElement.style.zIndex = 1;
+    canvasElement.style.opacity = 1;
+	canvasElement.style.width = "100%";
+	canvasElement.style.height = "100%";
+	canvasElement.width = canvasElement.offsetWidth;
+	canvasElement.height = canvasElement.offsetHeight;
+    canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,1)";
+    canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+}
+setUpMainCanvas();
+
+function setUpEditCanvas(){
+	const canvasElement = document.createElement("canvas");
+	document.getElementById("canvasArea").appendChild(canvasElement);
+	canvasElement.id = "editCanvas";
+	canvasElement.style.position = "absolute";
+    canvasElement.style.border = '1px #000 solid';
+    canvasElement.style.zIndex = 10;
+	canvasElement.style.width = "100%";
+	canvasElement.style.height = "100%";
+	canvasElement.style.top = 0;
+	canvasElement.style.left = 0;
+	canvasElement.width = canvasElement.offsetWidth;
+	canvasElement.height = canvasElement.offsetHeight;
+    canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,0.1)";
+    canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+	return canvasElement;
+}
+
+const cropData = {
+	clickX: [],
+	clickY: [],
+};
+
+document.getElementById("select").addEventListener('click', () => {
+	// create new invisible canvas on top of current to keep track of crop area
+	const editCanvas = setUpEditCanvas();
+	
+	// attach event listener for mousedown/mouseup when cropping
+	editCanvas.addEventListener('mousedown', (evt) => {
+		isCrop = true;
+		cropData.clickX = [evt.offsetX];
+		cropData.clickY = [evt.offsetY];
+	});
+	
+	editCanvas.addEventListener('mousemove', (evt) => {
+		if(isCrop){
+			cropData.clickX.push(evt.offsetX);
+			cropData.clickY.push(evt.offsetY);
+		
+			const ctx = document.getElementById('editCanvas').getContext('2d');
+			
+			// use the inverted color of the pixel of the main context
+			const data = document.getElementById('main').getContext('2d').getImageData(evt.offsetX, evt.offsetY, 1, 1).data;
+			const color = `rgb(${255-data[0]}, ${255-data[1]}, ${255-data[2]})`;
+			
+			ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+			
+			if(cropData.clickX.length-2 >= 0){
+				ctx.moveTo(cropData.clickX[cropData.clickX.length-2], cropData.clickY[cropData.clickY.length-2]);
+			}else{
+				ctx.moveTo(cropData.clickX[cropData.clickX.length-1], cropData.clickY[cropData.clickY.length-1]);
+			}
+			
+            ctx.lineTo(cropData.clickX[cropData.clickX.length-1], cropData.clickY[cropData.clickY.length-1]);
+            
+			ctx.closePath();
+            ctx.stroke();
+		}
+	});
+	
+	editCanvas.addEventListener('mouseup', (evt) => {
+		isCrop = false;
+		
+		// do something
+	});
+	
+});
+
+
+</script>
+
+
+
+</html>

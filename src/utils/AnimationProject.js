@@ -449,15 +449,15 @@ function createOnionSkinFrame(container){
 // assigns default canvas attributes and styling
 function setCanvas(canvasElement, width, height){
 	canvasElement.style.position = "absolute";
-    canvasElement.style.border = '1px #000 solid';
-    canvasElement.style.zIndex = 0;
-    canvasElement.style.opacity = 0;
+	canvasElement.style.border = '1px #000 solid';
+	canvasElement.style.zIndex = 0;
+	canvasElement.style.opacity = 0;
 	canvasElement.style.width = "100%";
 	canvasElement.style.height = "100%";
 	canvasElement.width = width ? width : canvasElement.offsetWidth;
 	canvasElement.height = height ? height : canvasElement.offsetHeight;
-    canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,255)";
-    canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+	canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
+	canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
 }
 
 export{

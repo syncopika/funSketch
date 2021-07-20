@@ -117,6 +117,93 @@ function setUpEditCanvas(){
 	return canvasElement;
 }
 
+// strategy to deal with a gap in logged coordinates
+function fillInSelectionAreaGaps(){
+	// sort y-coords collected, find an diffs > 1, add new coords based on the diff
+	
+	const yCoords = selectData.clickY.slice();
+	const xCoords = selectData.clickX;
+	
+	for(let idx = 1; idx < yCoords.length; idx++){
+		let lastY = yCoords[idx-1];
+		let lastX = xCoords[idx-1];
+		let currY = yCoords[idx];
+		let currX = xCoords[idx];
+		
+		if(Math.abs(currY - lastY) > 1){
+			// fill in any coordinates in between this one and the previous (based on y-value)
+			// so we can always have a pair of coordinates for the same row if it's passed through twice
+			// this ensures a record of a continuous line
+			// but we also need to consider how x changes from the prev to curr coord.
+			const xInterval = Math.floor( (currX - lastX) / (currY - lastY) );
+			
+			if(currY - lastY < 0){
+				for(let i = currY; i < lastY; i++){
+					selectData.clickX.push(lastX + xInterval);
+					selectData.clickY.push(i);
+					lastX += xInterval;
+				}
+			}else{
+				for(let i = lastY+1; i < currY; i++){
+					selectData.clickX.push(lastX + xInterval);
+					selectData.clickY.push(i);
+					lastX += xInterval;
+				}
+			}
+		}
+	}
+}
+
+// reorganize selection loop coordinate data
+// so that we get an object where each key is a y-value that maps
+// to an array containing the min and max x-values that cover the selection
+function reorgSelectionLoopData(pixelCoordData){
+	const coords = {};
+	for(let i = 0; i < pixelCoordData.clickY.length; i++){
+		const currY = pixelCoordData.clickY[i];
+		const currX = pixelCoordData.clickX[i];
+		if(!coords[currY]){
+			coords[currY] = {
+				maxX: currX,
+				minX: currX,
+			}
+		}else{
+			if(currX > coords[currY].maxX){
+				coords[currY].maxX = currX;
+			}else if(currX < coords[currY].minX){
+				coords[currY].minX = currX;
+			}
+		}
+	}
+	return coords;
+}
+
+function removePixels(pixelCoordData){
+	// given x and y coords of each point on a line, figure out what pixels make up the area surrounded by the line
+	// and change them to #fff
+	const coords = reorgSelectionLoopData(pixelCoordData);
+	
+	// then change the colors of the pixels that fall in range of minX and maxX of each y-coord in coords
+	const src = document.getElementById("main");
+	const srcCtx = src.getContext('2d');
+	const imgData = srcCtx.getImageData(0,0,src.width,src.height);
+	for(let row in coords){
+		const min = coords[row].minX;
+		const max = coords[row].maxX;
+		const start = src.width*4*row + 4*min;
+		const end = src.width*4*row + 4*max;
+		for(let i = start; i < end; i += 4){
+			imgData.data[i] = 255;
+			imgData.data[i+1] = 255;
+			imgData.data[i+2] = 255;
+		}
+	}
+	
+	srcCtx.putImageData(imgData, 0, 0);
+}
+
+
+
 // select functionality
 const selectData = {
 	clickX: [],
@@ -124,7 +211,6 @@ const selectData = {
 	
 	// this is for when moving the selection
 	mousedown: [],
-	//mouseup: [],
 };
 let isSelect = false;
 let isMousedown = false;
@@ -132,27 +218,7 @@ let doneSelectMove = false;
 let editCanvas;
 
 function selectMousemove(evt){
-	if(isMousedown){
-		
-		/* attempted strategy to deal with a gap in logged coordinates but introduces lag and messes up drawing for selection :/
-		if(selectData.clickX.length > 1){
-			let lastY = selectData.clickY[selectData.clickY.length-2];
-			let lastX = selectData.clickX[selectData.clickX.length-2];
-			if(evt.offsetY > lastY+1){
-				// fill in any coordinates in between this one and the previous (based on y-value)
-				// so we can always have a pair of coordinates for the same row if it's passed through twice
-				// this ensures a record of a continuous line
-				// but we also need to consider how x changes from the prev to curr coord.
-				const xInterval = Math.floor( (evt.offsetX - lastX) / (evt.offsetY - lastY) );
-				for(let i = lastY+1; i < evt.offsetY; i++){
-					selectData.clickX.push(lastX + xInterval);
-					selectData.clickY.push(i);
-					lastX += xInterval;
-				}
-			}
-		}
-		*/
-		
+	if(isMousedown){		
 		selectData.clickX.push(evt.offsetX);
 		selectData.clickY.push(evt.offsetY);
 	
@@ -197,6 +263,9 @@ function selectMouseup(evt){
 	// add the new event listeners to handle moving the selection
 	// interesting: https://stackoverflow.com/questions/12886286/addeventlistener-for-keydown-on-canvas
 	document.addEventListener('keydown', deleteSelectedPixels);
+	document.addEventListener('mousedown', selectMoveMousedown);
+	document.addEventListener('mousemove', selectMoveMousemove);
+	document.addEventListener('mouseup', selectMoveMouseup);
 }
 
 function selectMoveMousedown(evt){
@@ -206,24 +275,58 @@ function selectMoveMousedown(evt){
 	selectData.mousedown = [evt.offsetX, evt.offsetY];
 }
 
+let srcCpy = null; // after moving the selected section is done, we have to reset this somehow
 function selectMoveMousemove(evt){
 	// record current coordinate of mouse to create vector from mousedown coordinate to know how to move selected pixels
 	if(isMousedown){
+		if(!srcCpy){
+			// just trying something out. we want a copy or the src image on the main canvas just once
+			// because we're going to delete the selected pixels on the src
+			const mainCanvas = document.getElementById('main');
+			srcCpy = document.getElementById('main').getContext('2d').getImageData(0,0,mainCanvas.width, mainCanvas.height);
+			
+			// remove pixels from src
+			fillInSelectionAreaGaps();
+			removePixels(selectData);
+		}
+	
 		const lastX = selectData.mousedown[0];
 		const lastY = selectData.mousedown[1];
 		
 		const currX = evt.offsetX;
 		const currY = evt.offsetY;
 		
-		// get a copy of the selected pixels
+		// clear edit canvas
+		const editCanvas = document.getElementById('editCanvas');
+		const editCtx = editCanvas.getContext('2d');
 		
-		// remove pixels from src
-		removePixels(selectData);
+		editCtx.fillStyle = "rgba(255,255,255,0.1)"; // need to add some transparency by making alpha channel < 1. doesn't seem to be working quite right atm
+		editCtx.fillRect(0, 0, editCanvas.width, editCanvas.height);
 		
-		// move selected pixels on edit canvas
+		// calculate where all the selected pixels should go (take selectData, translate points)
+		// need to store previous coords of selection?
+		
+		// draw on edit canvas
+		const coords = reorgSelectionLoopData(selectData);
+		
+		// then change the colors of the pixels that fall in range of minX and maxX of each y-coord in coords
+		const imgData = editCtx.getImageData(0, 0, editCanvas.width, editCanvas.height);
+		for(let row in coords){
+			const min = coords[row].minX;
+			const max = coords[row].maxX;
+			const start = editCanvas.width*4*row + 4*min;
+			const end = editCanvas.width*4*row + 4*max;
+			for(let i = start; i < end; i += 4){
+				imgData.data[i] = srcCpy.data[i];
+				imgData.data[i+1] = srcCpy.data[i+1];
+				imgData.data[i+2] = srcCpy.data[i+2];
+			}
+		}
+		
+		editCtx.putImageData(imgData, 0, 0);		
 		
 		// update mousedown coords
-		selectData.mousedown = [evt.offsetX, ect.offsetY];
+		selectData.mousedown = [evt.offsetX, evt.offsetY];
 	}
 }
 
@@ -236,57 +339,25 @@ function deleteSelectedPixels(evt){
 	if(evt.which === 46 && isSelect){
 		// 46 is the delete button. can also use evt.code which would be "Delete"
 		
+		// make sure we get a continuous selection loop since we may miss some coords when drawing
+		fillInSelectionAreaGaps();
+		
 		// remove selected pixels
 		removePixels(selectData);
 		
 		// remove edit canvas
 		editCanvas.parentNode.removeChild(editCanvas);
 		
+		// remove event listeners
+		document.removeEventListener('keydown', deleteSelectedPixels);
+		document.removeEventListener('mousedown', selectMoveMousedown);
+		document.removeEventListener('mousemove', selectMoveMousemove);
+		document.removeEventListener('mouseup', selectMoveMouseup);
+		
 		isSelect = false;	
 	}
 }
 
-function removePixels(pixelCoordData){
-	// given x and y coords of each point on a line, figure out what pixels make up the area surrounded by the line
-	// and change them to #fff
-	// what if it's a straight line? just connect the first and last points to create an enclosed area like MS Paint?
-	const coords = {};
-	for(let i = 0; i < pixelCoordData.clickY.length; i++){
-		const currY = pixelCoordData.clickY[i];
-		const currX = pixelCoordData.clickX[i];
-		if(!coords[currY]){
-			coords[currY] = {
-				maxX: currX,
-				minX: currX,
-			}
-		}else{
-			if(currX > coords[currY].maxX){
-				coords[currY].maxX = currX;
-			}else if(currX < coords[currY].minX){
-				coords[currY].minX = currX;
-			}
-		}
-	}
-	//console.log(coords);
-	
-	// then change the colors of the pixels that fall in range of minX and maxX of each y-coord in coords
-	const src = document.getElementById("main");
-	const srcCtx = src.getContext('2d');
-	const imgData = srcCtx.getImageData(0,0,src.width,src.height);
-	for(let row in coords){
-		const min = coords[row].minX;
-		const max = coords[row].maxX;
-		const start = src.width*4*row + 4*min;
-		const end = src.width*4*row + 4*max;
-		for(let i = start; i < end; i += 4){
-			imgData.data[i] = 255;
-			imgData.data[i+1] = 255;
-			imgData.data[i+2] = 255;
-		}
-	}
-	
-	srcCtx.putImageData(imgData, 0, 0);
-}
 
 document.getElementById("select").addEventListener('click', () => {
 	if(!isSelect){

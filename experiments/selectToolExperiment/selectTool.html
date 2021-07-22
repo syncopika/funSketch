@@ -3,7 +3,7 @@
 <html>
 
 <head>
-	<title> select/copy/paste/crop experiment </title>
+	<title> select tool experiment </title>
 	<style>
 		body {
 			text-align: center;
@@ -24,7 +24,7 @@
 </head>
 
 <body>
-	<h2> select/copy/paste/crop experiment </h2>
+	<h2> select tool experiment </h2>
 	
 	<div>
 		<button id="select">select</button>
@@ -176,28 +176,21 @@ function reorgSelectionLoopData(pixelCoordData){
 	return coords;
 }
 
-/*
-function reorgSelectionLoopDataAndTranslate(pixelCoordData, deltaX, deltaY){
-	const coords = {};
-	for(let i = 0; i < pixelCoordData.clickY.length; i++){
-		const currY = pixelCoordData.clickY[i] + deltaY;
-		const currX = pixelCoordData.clickX[i] + deltaX;
-		if(!coords[currY]){
-			coords[currY] = {
-				maxX: currX + deltaX,
-				minX: currX + deltaX,
-			}
-		}else{
-			if(currX > coords[currY].maxX){
-				coords[currY].maxX = currX + deltaX;
-			}else if(currX < coords[currY].minX){
-				coords[currY].minX = currX + deltaX;
-			}
-		}
+// take as input the output of reorgSelectionLoopData and translate the coords by deltaX and deltaY
+function translateReorgSelectionLoopData(reorgCoordData, deltaX, deltaY){
+	const newCoordData = {};
+	
+	for(let yVal in reorgCoordData){
+		const newY = parseInt(yVal) + deltaY;
+		
+		newCoordData[newY] = {
+			'minX': reorgCoordData[yVal].minX + deltaX, 
+			'maxX': reorgCoordData[yVal].maxX + deltaX
+		};
 	}
-	return coords;
+	
+	return newCoordData;
 }
-*/
 
 function removePixels(pixelCoordData){
 	// given x and y coords of each point on a line, figure out what pixels make up the area surrounded by the line
@@ -223,6 +216,29 @@ function removePixels(pixelCoordData){
 	srcCtx.putImageData(imgData, 0, 0);
 }
 
+function collectSelectedPixels(pixelCoordData, imgData, canvasWidth){
+	const pixelData = {};
+	
+	const coords = reorgSelectionLoopData(pixelCoordData);
+	
+	// have the keys of pixelData just be sequential from 0 so the data isn't based anymore on a certain location. 
+	// we just want the selected pixel data and to know the order of the data
+	let idx = 0;
+	
+	for(let row in coords){
+		pixelData[idx] = [];
+		const min = coords[row].minX;
+		const max = coords[row].maxX;
+		const start = canvasWidth*4*row + 4*min;
+		const end = canvasWidth*4*row + 4*max;
+		for(let i = start; i <= end; i++){
+			pixelData[idx].push(imgData[i]);
+		}
+		idx++;
+	}
+	
+	return pixelData;
+}
 
 
 // select functionality
@@ -278,7 +294,8 @@ function endSelection(evt){
 		document.removeEventListener('keydown', deleteSelectedPixels);
 		document.removeEventListener('mousedown', endSelection);
 		isSelect = false;
-		srcCpy = null; // this is supposed to point to the image data holding the selected pixels
+		srcCpy = null;
+		selectLoopCoords = null;
 	}
 }
 
@@ -306,8 +323,12 @@ function selectMoveMousedown(evt){
 }
 
 let srcCpy = null; // after moving the selected section is done, we have to reset this somehow
+let selectLoopCoords = null;
 function selectMoveMousemove(evt){
 	// record current coordinate of mouse to create vector from mousedown coordinate to know how to move selected pixels
+	//console.log("x: " + evt.offsetX);
+	//console.log("y: " + evt.offsetY);
+	//console.log("=============");
 	if(isMousedown){
 		const editCanvas = document.getElementById('editCanvas');
 		const editCtx = editCanvas.getContext('2d');
@@ -316,10 +337,17 @@ function selectMoveMousemove(evt){
 			// just trying something out. we want a copy or the src image on the main canvas just once
 			// because we're going to delete the selected pixels on the src
 			const mainCanvas = document.getElementById('main');
-			srcCpy = document.getElementById('main').getContext('2d').getImageData(0,0,mainCanvas.width, mainCanvas.height).data.slice();
+			const imgData = mainCanvas.getContext('2d').getImageData(0, 0, mainCanvas.width, mainCanvas.height).data.slice();
+			
+			fillInSelectionAreaGaps();
+			
+			// collect just the selected pixels
+			srcCpy = collectSelectedPixels(selectData, imgData, mainCanvas.width);
+			
+			// log the coordinates of the selection loop 
+			selectLoopCoords = reorgSelectionLoopData(selectData);
 			
 			// remove pixels from src
-			fillInSelectionAreaGaps();
 			removePixels(selectData);
 		}
 		
@@ -327,39 +355,36 @@ function selectMoveMousemove(evt){
 		const lastY = selectData.mousedown[1];
 		const currX = evt.offsetX;
 		const currY = evt.offsetY;
-		const deltaX = currX - lastX;
-		const deltaY = currY - lastY;
 		
 		// clear edit canvas		
 		editCtx.fillStyle = "rgba(255,255,255,0.1)"; // need to add some transparency by making alpha channel < 1. doesn't seem to be working quite right atm
 		editCtx.fillRect(0, 0, editCanvas.width, editCanvas.height);
 		
 		// translate selected pixels
-		const coords = reorgSelectionLoopData(selectData); // we'll always be referring back to the original location of the selected pixels from the main canvas
 		const imgData = editCtx.getImageData(0, 0, editCanvas.width, editCanvas.height);
 		
-		for(let row in coords){
-			// remember these coords are for the original position of the selection - this is actually a bad idea. you need to instead keep track of new coords each mouse move
-			const min = coords[row].minX;
-			const max = coords[row].maxX;
+		let idx = 0;
+		for(let row in selectLoopCoords){
+			// these are the translated coords!
+			const rowImageData = srcCpy[idx++];
+			const min = selectLoopCoords[row].minX;
+			const max = selectLoopCoords[row].maxX;
 			
 			const start = editCanvas.width*4*row + 4*min;
 			const end = editCanvas.width*4*row + 4*max;
 			
+			let imgDataRowIndex = 0;
 			for(let i = start; i < end; i += 4){
-				// need to translate the current index based on deltaX and deltaY to get the selected pixels
-				// to the new location
-				// basically I'm undoing some of the previous calculations to make it easier to figure out stuff with deltaX and deltaY
-				const delta = i - start;
-				const newIdx = Math.floor( ((i - delta - (4*min))/parseInt(row)) * (parseInt(row)+deltaY) + 4*(min+deltaX) + delta );
-				//console.log("old idx: " + i + ", new idx: " + newIdx);
-				imgData.data[newIdx] = srcCpy[i];
-				imgData.data[newIdx+1] = srcCpy[i+1];
-				imgData.data[newIdx+2] = srcCpy[i+2];
+				imgData.data[i] = rowImageData[imgDataRowIndex++];
+				imgData.data[i+1] = rowImageData[imgDataRowIndex++];
+				imgData.data[i+2] = rowImageData[imgDataRowIndex++];
+				imgData.data[i+3] = rowImageData[imgDataRowIndex++];
 			}
 		}
 		
-		editCtx.putImageData(imgData, 0, 0);	
+		editCtx.putImageData(imgData, 0, 0);
+		
+		selectLoopCoords = translateReorgSelectionLoopData(selectLoopCoords, currX - lastX, currY - lastY);
 		
 		// update mousedown coords
 		selectData.mousedown = [currX, currY];

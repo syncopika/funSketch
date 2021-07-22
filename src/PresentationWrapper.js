@@ -689,6 +689,12 @@ class PresentationWrapper extends React.Component {
 								<button id='togglePenPressureColor'> toggle pen pressure for color </button>
 								<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
 							</div>
+							<div>
+								<br />
+								<h4>check out some experiments!</h4>
+								<p><a href="./experiments/floodfillExperiment/floodfillExperiment.html">floodfill with web workers</a></p>
+								<p><a href="./experiments/selectToolExperiment/selectTool.html">selection tool</a></p>
+							</div>
 						</div>
 						
 						<div id="animControlSection" className="tbar">

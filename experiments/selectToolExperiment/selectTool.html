@@ -25,6 +25,7 @@
 
 <body>
 	<h2> select tool experiment </h2>
+	<p> import an image and press 'select' to draw on the canvas and select a part of the image to either move or delete. to delete, press the 'delete' key on your keyboard once you have made your selection. to move, just click and drag your mouse after your selection has been made. </p>
 	
 	<div>
 		<button id="select">select</button>
@@ -39,6 +40,11 @@
 
 
 <script>
+/***
+	the select tool could possibly be another kind of brush for funSketch?
+	since we have a bunch of event listeners we'd need to attach to the canvas
+***/
+
 document.getElementById("importImage").addEventListener('click', () => {
 	const canvas = document.getElementById("main");
 	
@@ -326,9 +332,6 @@ let srcCpy = null; // after moving the selected section is done, we have to rese
 let selectLoopCoords = null;
 function selectMoveMousemove(evt){
 	// record current coordinate of mouse to create vector from mousedown coordinate to know how to move selected pixels
-	//console.log("x: " + evt.offsetX);
-	//console.log("y: " + evt.offsetY);
-	//console.log("=============");
 	if(isMousedown){
 		const editCanvas = document.getElementById('editCanvas');
 		const editCtx = editCanvas.getContext('2d');

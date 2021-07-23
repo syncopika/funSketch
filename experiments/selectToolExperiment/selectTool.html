@@ -25,7 +25,9 @@
 
 <body>
 	<h2> select tool experiment </h2>
-	<p> import an image and press 'select' to draw on the canvas and select a part of the image to either move or delete. to delete, press the 'delete' key on your keyboard once you have made your selection. to move, just click and drag your mouse after your selection has been made. </p>
+	<p> import an image and press 'select' to draw on the canvas and select a part of the image to either move or delete. </p>
+	<p> to delete, press the 'delete' key on your keyboard once you have made your selection. to move, just click and drag your mouse after your selection has been made. </p>
+	<p> to exit out of selection mode, click anywhere outside the canvas. </p>
 	
 	<div>
 		<button id="select">select</button>
@@ -36,7 +38,7 @@
 
 	<div id='canvasArea'>
 	</div>
-<body>
+</body>
 
 
 <script>
@@ -296,6 +298,32 @@ function selectMousedown(evt){
 function endSelection(evt){
 	// assume user is done with selection
 	if(evt.target !== document.getElementById('editCanvas')){
+	
+		// place the selected pixels onto the main canvas
+		const mainCanvas = document.getElementById('main');
+		const mainCtx = mainCanvas.getContext('2d');
+		const imgData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+		
+		let idx = 0;
+		for(let row in selectLoopCoords){
+			const rowImageData = srcCpy[idx++];
+			const min = selectLoopCoords[row].minX;
+			const max = selectLoopCoords[row].maxX;
+			
+			const start = editCanvas.width*4*row + 4*min;
+			const end = editCanvas.width*4*row + 4*max;
+			
+			let imgDataRowIndex = 0;
+			for(let i = start; i < end; i += 4){
+				imgData.data[i] = rowImageData[imgDataRowIndex++];
+				imgData.data[i+1] = rowImageData[imgDataRowIndex++];
+				imgData.data[i+2] = rowImageData[imgDataRowIndex++];
+				imgData.data[i+3] = rowImageData[imgDataRowIndex++];
+			}
+		}
+		
+		mainCtx.putImageData(imgData, 0, 0);		
+	
 		editCanvas.parentNode.removeChild(editCanvas);
 		document.removeEventListener('keydown', deleteSelectedPixels);
 		document.removeEventListener('mousedown', endSelection);

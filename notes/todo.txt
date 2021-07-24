@@ -19,7 +19,7 @@ short-term
 long-term
 ---------
 - be able to change frame order
-- acutally make some decent animation to prove its usability
+- actually make some decent animation to prove its usability
 - copy and paste?
 - loopcut/move parts of canvas?
 - be able to blur a section of the canvas?

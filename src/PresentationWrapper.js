@@ -61,9 +61,7 @@ class PresentationWrapper extends React.Component {
 		timelineCanvas.addEventListener('mousemove', (event) => {
 			
 			const context = timelineCanvas.getContext('2d');
-			// clear canvas first
 			context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
-			// get canvas coordinates
 			
 			const coords = this._getCoordinates(timelineCanvas, event);
 			const x = coords.x;
@@ -364,14 +362,14 @@ class PresentationWrapper extends React.Component {
 		// toggle pen pressure for brush color
 		document.getElementById('togglePenPressureColor').addEventListener('click', (evt) => {
 			if(evt.target.style.border === "1px solid rgb(255, 0, 0)"){
-				evt.target.style.border = "1px solid rgb(0, 255, 0)"; // green
+				evt.target.style.border = "1px solid rgb(0, 255, 0)";
 			}else{
 				evt.target.style.border = "1px solid rgb(255, 0, 0)";
 			}
 			
 			this.state.brushInstance.togglePressureColorFlag();
 		});
-		document.getElementById('togglePenPressureColor').style.border = "1px solid rgb(255, 0, 0)"; // red for off by default
+		document.getElementById('togglePenPressureColor').style.border = "1px solid rgb(255, 0, 0)";
 	}
 	
 	_setupAnimationControl(){
@@ -688,6 +686,13 @@ class PresentationWrapper extends React.Component {
 								<button id='importProject'>import project </button>
 								<button id='togglePenPressureColor'> toggle pen pressure for color </button>
 								<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
+							</div>
+							<div>
+								<br />
+								<h4>check out some experiments for new feature ideas:</h4>
+								<p><a href="./experiments/floodfillExperiment/floodfillExperiment.html">floodfill with web workers</a></p>
+								<p><a href="./experiments/selectToolExperiment/selectTool.html">selection tool</a></p>
+								<p><a href="./experiments/pasteToolExperiment/pasteTest.html">image paste tool</a></p>
 							</div>
 						</div>
 						

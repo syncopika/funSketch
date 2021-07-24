@@ -24,7 +24,7 @@
 
 <body>
 	<h2> paste tool experiment </h2>
-	<p> copy an image from somewhere and try pasting it on the canvas. </p>
+	<p> copy an image from somewhere and paste it (via CTRL+V) on the canvas. after pasting, you can move it around to place it in a specific location. </p>
 	
 	<br />
 
@@ -58,20 +58,127 @@ function addPasteCanvas(imgData, width, height){
 	canvasElement.style.position = "absolute";
     canvasElement.style.border = '1px #000 solid';
     canvasElement.style.zIndex = 10;
-	//canvasElement.style.width = "100%";
-	//canvasElement.style.height = "100%";
 	canvasElement.style.top = 0;
 	canvasElement.style.left = 0;
-	
-	canvasElement.width = width; //canvasElement.offsetWidth;
-	canvasElement.height = height; //canvasElement.offsetHeight;
+	canvasElement.width = width;
+	canvasElement.height = height;
     const ctx = canvasElement.getContext('2d');
 	ctx.drawImage(imgData, 0, 0);
+	return canvasElement;
+}
+
+let isMovingPasteCanvas = false;
+let lastOffsetHeight = 0;
+let lastOffsetWidth = 0;
+let initialOffsetX = 0;
+let initialOffsetY = 0;
+function addPastCanvasEventListeners(pasteCanvas){
+	pasteCanvas.addEventListener('mousedown', (evt) => {
+		isMovingPasteCanvas = true;
+		initialOffsetX = evt.offsetX;
+		initialOffsetY = evt.offsetY;
+	});
 	
-	//ctx.fillStyle = "rgba(255,255,255,0.1)";
-    //ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+	pasteCanvas.addEventListener('mousemove', (evt) => {
+		if(isMovingPasteCanvas){
+			const currX = evt.offsetX;
+			const currY = evt.offsetY;
+			
+			const offsetY = Math.abs(currY - initialOffsetY);
+			const offsetX = Math.abs(currX - initialOffsetX);
+			
+			if(currY < lastOffsetHeight){
+				pasteCanvas.style.top = (parseInt(pasteCanvas.style.top) - offsetY) + "px";
+			}else{
+				pasteCanvas.style.top = (parseInt(pasteCanvas.style.top) + offsetY) + "px";
+			}
+			lastOffsetHeight = currY;
+			
+			if(currX < lastOffsetWidth){
+				pasteCanvas.style.left = (parseInt(pasteCanvas.style.left) - offsetX) + "px";
+			}else{
+				pasteCanvas.style.left = (parseInt(pasteCanvas.style.left) + offsetX) + "px";
+			}
+			lastOffsetWidth = currX;
+		}
+	});
 	
-	//return canvasElement;
+	pasteCanvas.addEventListener('mouseup', (evt) => {
+		isMovingPasteCanvas = false;
+		
+		const mainCanvas = document.getElementById('main');
+		const mainCtx = mainCanvas.getContext('2d');
+		
+		// figure out how much of the pasted image is visible and can be placed on the main canvas
+		const pasteLeft = parseInt(pasteCanvas.style.left);
+		const pasteTop = parseInt(pasteCanvas.style.top);
+		
+		let pasteImgRowStart = 0;
+		let pasteImgRowEnd = pasteCanvas.height;
+		let pasteImgColStart = 0;
+		let pasteImgColEnd = pasteCanvas.width;
+		
+		let width;
+		if(pasteLeft < 0){
+			// image goes past the left side of the main canvas
+			width = pasteCanvas.width + pasteLeft;
+			pasteImgColStart = Math.abs(pasteLeft);
+		}else if(pasteLeft + pasteCanvas.width <= mainCanvas.width){
+			// if pasted image falls within the mainCanvas completely width-wise
+			width = pasteCanvas.width;
+		}else{
+			// image goes past the right side of the main canvas
+			width = mainCanvas.width - pasteLeft;
+			pasteImgColEnd = width;
+		}
+		
+		let height;
+		if(pasteTop < 0){
+			height = pasteCanvas.height + pasteTop;
+			pasteImgRowStart = Math.abs(pasteTop);
+		}else if(pasteTop + pasteCanvas.height <= mainCanvas.height){
+			height = pasteCanvas.height;
+		}else{
+			height = mainCanvas.height - pasteTop;
+			pasteImgRowEnd = height;
+		}
+		
+		// isolate just the section of image data that should be pasted
+		const pasteData = pasteCanvas.getContext('2d').getImageData(0,0,pasteCanvas.width,pasteCanvas.height).data;
+		const pasteImgSectionData = [];
+		for(let row = pasteImgRowStart*4*pasteCanvas.width; row < pasteImgRowEnd*4*pasteCanvas.width; row += (4*pasteCanvas.width)){
+			for(let col = 4*pasteImgColStart; col < 4*pasteImgColEnd; col += 4){
+				pasteImgSectionData.push(pasteData[row+col]);
+				pasteImgSectionData.push(pasteData[row+col+1]);
+				pasteImgSectionData.push(pasteData[row+col+2]);
+				pasteImgSectionData.push(pasteData[row+col+3]);
+			}
+		}
+		
+		// the location on the main canvas where to start pasting the image
+		const locX = (pasteLeft < 0) ? 0 : pasteLeft;
+		const locY = (pasteTop < 0) ? 0 : pasteTop;
+		
+		const imgData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+		const rowStartMain = mainCanvas.width*4*locY;
+		const rowEndMain = mainCanvas.width*4*(locY+height);
+		const colStart = locX*4;
+		const colEnd = 4*(locX+width);
+		let pasteImgDataIdx = 0;
+		
+		for(let i = rowStartMain; i < rowEndMain; i += (mainCanvas.width*4)){
+			for(let j = colStart; j < colEnd; j+=4){
+				imgData.data[i+j] = pasteImgSectionData[pasteImgDataIdx++];
+				imgData.data[i+j+1] = pasteImgSectionData[pasteImgDataIdx++];
+				imgData.data[i+j+2] = pasteImgSectionData[pasteImgDataIdx++];
+				imgData.data[i+j+3] = pasteImgSectionData[pasteImgDataIdx++];
+			}
+		}
+		
+		mainCtx.putImageData(imgData, 0, 0);
+		
+		pasteCanvas.parentNode.removeChild(pasteCanvas);
+	});
 }
 
 // need to add the event listener on the document
@@ -87,7 +194,8 @@ document.addEventListener("paste", (evt) => {
 			// place the image on a new canvas (so we can allow moving it around for placement)
 			const img = new Image();
 			img.onload = () => {
-				addPasteCanvas(img, img.width, img.height);
+				const pasteCanvas = addPasteCanvas(img, img.width, img.height);
+				addPastCanvasEventListeners(pasteCanvas);
 			};
 			img.src = url;
 			
@@ -97,7 +205,10 @@ document.addEventListener("paste", (evt) => {
 });
 
 // TODO
-// add event listeners to the paste canvas so we can move it around (and maybe resize!?)
+// resize? allow moving the pasted image until user clicks outside of canvas?
+
+// moving the pasted image is jittery when chrome console is not up. when the console is up, performance improves :0
+// https://stackoverflow.com/questions/27367448/why-do-i-get-better-performance-in-chrome-when-dev-console-is-up
 
 </script>
 

@@ -557,7 +557,6 @@ class PresentationWrapper extends React.Component {
 			"frameLayerCtrlOption": "frameLayerSection",
 			"animationCtrlOption": "animControlSection",
 			"otherOption": "otherSection",
-			"brushesOption": "brushSection",
 			"filtersOption": "filterSection",
 			"demosOption": "showDemos",
 		};
@@ -573,6 +572,15 @@ class PresentationWrapper extends React.Component {
 				contentToToggle.classList.add("tbar");
 			}
 		});
+	}
+	
+	_showBrushes(evt){
+		const dispBrushes = document.getElementById("brushes");
+		if(dispBrushes.style.display === "none" || !dispBrushes.style.display){
+			dispBrushes.style.display = "block";
+		}else{
+			dispBrushes.style.display = "none";
+		}
 	}
 	
 	render(){
@@ -597,10 +605,6 @@ class PresentationWrapper extends React.Component {
 									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
 									onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
 									onClick={this._clickOption}> animation control </li>
-								<li id="brushesOption" 
-									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
-									onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
-									onClick={this._clickOption}> brushes </li>
 								<li id="filtersOption" 
 									onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
 									onMouseOut={(evt) => {evt.target.style.color = "#000"}}
@@ -616,7 +620,7 @@ class PresentationWrapper extends React.Component {
 							</ul>
 						</div>					
 						
-						<div id="instructions" className="toolbarSection2">
+						<div id="instructions" className="tbar">
 							<h4> instructions </h4>
 							<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
 							<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames! </p>
@@ -726,10 +730,6 @@ class PresentationWrapper extends React.Component {
 						<div id="filterSection" className="tbar">
 							<FilterDashboard filterManager={this.state.filtersInstance} />
 						</div>
-					
-						<div id="brushSection" className="tbar">
-							<BrushDashboard brushManager={this.state.brushInstance} />
-						</div>
 						
 						<div id='showDemos' className="tbar">
 							<h3> demos </h3>
@@ -738,11 +738,6 @@ class PresentationWrapper extends React.Component {
 								<option className='demo'>run_demo</option>
 								<option className='demo'>floaty_thingy</option>
 							</select>
-						</div>
-						
-						<div id="colorPickerSection" className="toolbarSection3">
-							<div id='colorPicker'>
-							</div>
 						</div>
 							
 					</div>
@@ -800,6 +795,23 @@ class PresentationWrapper extends React.Component {
 							}
 							</div>
 						</div>
+					</div>
+				</div>
+				
+				<div id="brushSection">
+					<div id='colorPicker'>
+					</div>
+					
+					<ul>
+						<li id="brushesOption" 
+							onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
+							onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+							onClick={this._showBrushes}> brushes 
+						</li>
+					</ul>
+					
+					<div id="brushes" className="tbar">
+						<BrushDashboard brushManager={this.state.brushInstance} />
 					</div>
 				</div>
 				

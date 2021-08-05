@@ -42,13 +42,13 @@ const FilterDashboard = (props) => {
 	};
 	
 	const elementStyle = {
-		"width": "85%",
+		"width": "100%",
 		"height": "100%",
 		"margin": "1% auto",
 		"textAlign": "center",
 		"display": "grid",
-		"gridTemplateRows": "1fr",
-		"gridTemplateColumns": "1fr 1fr",
+		"gridTemplateRows": "1fr 1fr",
+		"gridTemplateColumns": "3fr",
 	};
 	
 	// use a hook to be able to keep track of selected filter
@@ -69,18 +69,13 @@ const FilterDashboard = (props) => {
 				{
 					"gridRow": "1",
 					"gridColumn": "1",
-					"position": "relative",
 					"height": "100%"
 				}
 			}>
 				<div style={
 					{
-						"position": "absolute",
-						"overflowY": "auto",
-						"top": "0",
-						"left": "10%",
-						"height": "85%",
-						"width": "85%"
+						"height": "100%",
+						"width": "100%"
 					}
 				}>
 					<div id='filtersDisplay'>
@@ -123,8 +118,8 @@ const FilterDashboard = (props) => {
 			
 			<div style={
 				{
-					"gridRow": "1",
-					"gridColumn": "2"
+					"gridRow": "2",
+					"gridColumn": "1"
 				}
 			}>
 				<button

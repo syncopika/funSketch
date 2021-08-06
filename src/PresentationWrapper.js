@@ -583,9 +583,7 @@ class PresentationWrapper extends React.Component {
 	render(){
 		return(
 			<div className='container'>
-				<div id='toolbar'
-					style={{"position": "static"}}
-				>
+				<div id='toolbar'>
 					<div id="toolbarOptions" className="toolbarSection">
 						<h3> funSketch </h3>
 						<ul>
@@ -786,7 +784,7 @@ class PresentationWrapper extends React.Component {
 				</div>
 				
 				<div id="brushSection">
-					<div id='colorPicker'>
+					<div id="colorPicker">
 					</div>
 					
 					<hr />
@@ -814,9 +812,9 @@ class PresentationWrapper extends React.Component {
 					</div>
 				</div>
 				
-				<div id='footer'>
+				<div id="footer">
 					<hr />
-					<p> c.2017 | <a href='https://github.com/syncopika/funSketch'>source </a></p>
+					<p> c.2017 | <a href='https://github.com/syncopika/funSketch'> source </a></p>
 				</div>
 				
 			</div> 

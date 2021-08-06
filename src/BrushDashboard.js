@@ -16,8 +16,8 @@ const BrushDashboard = (props) => {
 		"margin": "1% auto",
 		"textAlign": "center",
 		"display": "grid",
-		"gridTemplateRows": "1fr 1fr",
-		"gridTemplateColumns": "3fr",
+		"gridTemplateRows": "auto auto",
+		"gridTemplateColumns": "auto",
 	};
 	
 	// use a hook to be able to keep track of selected brush
@@ -93,6 +93,7 @@ const BrushDashboard = (props) => {
 				}
 			}>
 				<div id='adjustBrushSize'>
+					<hr />
 					<p className="text-info">change brush size</p>
 						<input
 							id='brushSize' 

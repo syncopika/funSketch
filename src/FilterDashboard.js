@@ -47,8 +47,8 @@ const FilterDashboard = (props) => {
 		"margin": "1% auto",
 		"textAlign": "center",
 		"display": "grid",
-		"gridTemplateRows": "1fr 1fr",
-		"gridTemplateColumns": "3fr",
+		"gridTemplateRows": "auto auto",
+		"gridTemplateColumns": "auto",
 	};
 	
 	// use a hook to be able to keep track of selected filter
@@ -122,6 +122,8 @@ const FilterDashboard = (props) => {
 					"gridColumn": "1"
 				}
 			}>
+				<hr />
+			
 				<button
 					id={"applyFilter"}
 					onClick={
@@ -130,8 +132,6 @@ const FilterDashboard = (props) => {
 						}
 					}
 				> apply filter </button>
-				
-				<hr />
 				
 				<div id='filterParameters'>
 					<ul style={{"margin": "0 auto", "padding": "0"}}>

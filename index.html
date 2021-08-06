@@ -20,16 +20,6 @@
 		font-size: 13px;
 	}
 	
-	#toolbarArea{
-		width: 100%;
-		text-align: center;
-		padding-top: 10px;
-		margin: 0 auto;
-		display: grid;
-		grid-template-rows: 1fr;
-		grid-template-columns: 1fr 3fr 1fr;
-	}
-	
 	#canvasArea{
 		position: relative;
 		margin: 0px auto;
@@ -75,44 +65,42 @@
 		text-align: center;
 	}
 	
-	.toolbarSection, .toolbarSection2, .toolbarSection3{
+	.toolbarSection2, .toolbarSection3{
 		border: 1px solid #000;
-		display: inline-block;
+		border-radius: 12px;
+		box-shadow: 2px 5px 5px #ccc;
+		padding: 2px;
+		text-align: center;
 	}
 	
 	.tbar{
 		display: none;
 	}
-	
-	.toolbarSection2{
-		grid-row: 1;
-		grid-column: 2;
-		display: block;
-		padding: 5px;
-	}
-	
-	.toolbarSection3{
-		grid-row: 1;
-		grid-column: 3;
-	}
-	
+
 	.container{
 		display: grid;
-		grid-template-rows: auto 1fr 2em;
+		grid-template-rows: 1fr 1em;
+		grid-template-columns: 15% 75% 10%;
 		width: 100%;
+	}
+	
+	#brushSection{
+		grid-row: 1;
+		grid-column: 3;
+		width: 100%;
+		margin-top: 30%;
 	}
 	
 	#toolbar{
 		grid-row: 1;
+		grid-column: 1;
 		width: 100%;
-		position: sticky;
-		top: 0;
-		z-index: 100;
-		background-color: #fff;
+		margin-top: 15%;
 	}
 	
 	#toolbarOptions{
 		text-align: center;
+		margin: 0 auto;
 	}
 	
 	#toolbarOptions ul{
@@ -120,22 +108,23 @@
 	}
 	
 	#screen{
-		grid-row: 2;
-		width: 80%;
+		grid-row: 1;
+		grid-column: 2;
+		width: 85%;
 		margin: 0 auto;
 	}
 	
 	#screenContainer{
 		display: grid;
 		grid-template-columns: 1fr;
-		grid-template-rows: 6% 2.5fr 1fr;
+		grid-template-rows: 5% 2.6fr 1fr;
 	}
 	
 	/* want to overlay the timelinecanvas over the timeline */
 	#animationTimelineArea{
 		display: grid;
 		grid-template-columns: 1fr;
-		grid-template-rows: 1fr 3em;
+		grid-template-rows: 1fr 5em;
 		padding-bottom: 3%;
 	}
 	
@@ -156,7 +145,9 @@
 	}
 	
 	#footer{
-		grid-row: 3;
+		grid-row: 2;
+		grid-column: 2; /* place in middle column */
+		width: 100%;
 		text-align: center;
 	}
 	

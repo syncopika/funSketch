@@ -16,6 +16,8 @@ https://stackoverflow.com/questions/19560878/css-change-custom-cursor-image-orig
 https://stackoverflow.com/questions/40477245/is-it-possible-to-use-if-else-statement-in-react-render-function
 https://sighack.com/ -> really cool stuff to learn about here
 https://stackoverflow.com/questions/54812239/expanding-to-fill-remaining-space-in-a-css-grid-layout
+https://stackoverflow.com/questions/17411991/html5-canvas-rotate-image
+https://stackoverflow.com/questions/11352450/why-do-images-lose-quality-after-the-context-has-been-rotated
 
 // pressure-sensitivity for pen
 https://github.com/amoshydra/draw/blob/master/js/libs/Pen.js

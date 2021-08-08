@@ -232,29 +232,36 @@ class Toolbar {
 	
     /***
         rotate image
-        pass in an element id that will rotate the current canvas image on click
+        pass in an element id for a button that will rotate the current canvas image on click
+		
+		this is mostly for experimental purposes as the effect is not quite good (blurry and loss of pixels).
+		
+		there are a couple StackOverflow posts out there that explain why rotating
+		an image leads to blurriness since the pixels are getting repositioned and their locations
+		are approximated, which I think makes sense
+		
+		How do other drawing applications achieve arbitrary rotations without weirdness? 
+		I think Paint.NET has that feature, maybe Krita does too?)
     ***/
     rotateImage(elementId){
-        //rotate image
         document.getElementById(elementId).addEventListener('click', () => {
             const canvas = this.animationProj.getCurrFrame();
-            //using a promise to convert the initial image to a bitmap
-            const width = canvas.currentCanvas.getAttribute("width");
-            const height = canvas.currentCanvas.getAttribute("height");
+            const width = canvas.currentCanvas.width;
+            const height = canvas.currentCanvas.height;
             const context = canvas.currentCanvas.getContext("2d");
-            createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then(function(bitmap){
+            createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then((bitmap) => {
 				const tmpCanvas = document.createElement("canvas");
 				tmpCanvas.width = width;
 				tmpCanvas.height = height;
 				
-				// use a temp canvas because translating on the real canvas will mess with mousedown coords
 				const tmpCtx = tmpCanvas.getContext("2d");
-				tmpCtx.clearRect(0, 0, width, height);
-				tmpCtx.translate(width / 2, height / 2);
-				tmpCtx.rotate((Math.PI) / 180);
-				tmpCtx.translate(-width / 2, -height / 2);
 				
-				tmpCtx.drawImage(bitmap, 0, 0);
+				// use a temp canvas because translating on the real canvas will mess with mousedown coords
+				tmpCtx.clearRect(0, 0, width, height);
+				tmpCtx.translate(width/2, height/2); // move origin to middle of canvas
+				tmpCtx.rotate(Math.PI/180); // rotate 1 degree
+				tmpCtx.drawImage(bitmap, -bitmap.width/2, -bitmap.height/2);
+				tmpCtx.translate(-width/2, -height/2); // move origin back
 				
 				// then draw image data from tmp canvas to the real one
 				context.putImageData(tmpCtx.getImageData(0, 0, width, height), 0, 0);

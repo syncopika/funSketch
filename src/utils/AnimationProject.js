@@ -435,11 +435,10 @@ class AnimationProject {
 	
 }
 
-function createOnionSkinFrame(container){
-    // create the new canvas element 
-    let newCanvas = document.createElement('canvas');
+function createOnionSkinFrame(containerId){
+    const newCanvas = document.createElement('canvas');
     newCanvas.id = "onionSkinCanvas";
-	document.getElementById(container).appendChild(newCanvas);
+	document.getElementById(containerId).appendChild(newCanvas);
     setCanvas(newCanvas);
     newCanvas.style.opacity = .97;
     newCanvas.style.zIndex = -1; // TODO: come back to this later. make sure it's visible if current frame > 1!

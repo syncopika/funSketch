@@ -38,12 +38,20 @@ class BrushTemplate {
 		
 		// take into account pen pressure for color if needed (as well as for brush size)
 		if(this.brushManager.applyPressureColor() && pressure){
-			const alpha = pressure * 0.5;
-			currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + alpha + ')';
+			// pressure ranges from 0 to 1
+			//console.log(pressure);
+			
+			// special case: if curr color is black, don't alter based on pressure
+			// note that if curr color is white, more pressure goes towards black (which is expected)
+			if(currColor[0] !== 0 && currColor[1] !== 0 && currColor[2] !== 0){
+				currColor = 'rgb(' + (currColor[0]*(1-pressure)) + ',' + (currColor[1]*(1-pressure)) + ',' + (currColor[2]*(1-pressure)) + ')';
+				//console.log(currColor);
+			}
+			
 			currSize = this._calculateBrushWidth(pointerEvt);
 			penPressure = pressure;
 		}else{
-			currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',255)';
+			currColor = 'rgb(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ')';
 		}
 		
         this.clickX.push(x);
@@ -71,9 +79,9 @@ class BrushTemplate {
     }
 	
 	_handleTouchEvent(evt){
-		let rect = evt.target.getBoundingClientRect();
-		let x = evt.touches[0].pageX - rect.left;
-		let y = evt.touches[0].pageY - rect.top - window.pageYOffset;
+		const rect = evt.target.getBoundingClientRect();
+		const x = evt.touches[0].pageX - rect.left;
+		const y = evt.touches[0].pageY - rect.top - window.pageYOffset;
 		return {'x': x, 'y': y};
 	}
 	

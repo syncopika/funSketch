@@ -511,14 +511,12 @@ class Toolbar {
 
 		for(let j = 0; j < frame.canvasList.length; j++){
 			let layer = frame.canvasList[j];
-			// possible issue: this assumes that all layers within a frame share the same dimensions (but it should be that way, right?)
+			// this assumes that all layers within a frame share the same dimensions
 			let imageData = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height).data;
 			for(let k = 0; k < imageData.length; k += 4){
 				if(imageData[k] === 255 && imageData[k+1] === 255 && imageData[k+2] === 255){
 					continue;
 				}else{
-					// what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
-					// we might run into index/length issues...
 					tempImageData.data[k] = imageData[k];
 					tempImageData.data[k+1] = imageData[k+1];
 					tempImageData.data[k+2] = imageData[k+2];

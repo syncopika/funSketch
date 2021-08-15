@@ -219,10 +219,10 @@ class Toolbar {
 			if(colorPicked[0] > 10 && colorPicked[1] > 200){
                 colorPickedText.style.color = "#000";
             }else{
-                colorPickedText.style.color = "#FFF";
+                colorPickedText.style.color = "#fff";
             }
 			
-            colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
+            colorPickedText.textContent = 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',' + colorPicked[3] + ')';
             colorPickedText.style.backgroundColor = colorPickedText.textContent;
             
 			// update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
@@ -463,12 +463,10 @@ class Toolbar {
 
         this will need to be applied for FRAMES, not LAYERS of a frame.
     
-    *********/
-    //let toolbar = this;
     playFor(){
         if(this.nextFrame()){
             if(this.htmlCounter){
-                let counterText = this.htmlCounter;
+                const counterText = this.htmlCounter;
                 counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
             }
         }
@@ -477,7 +475,7 @@ class Toolbar {
     playBack(){
         if(this.prevFrame()){
             if(this.htmlCounter){
-                let counterText = this.htmlCounter;
+                const counterText = this.htmlCounter;
                 counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
             }
         }
@@ -500,30 +498,37 @@ class Toolbar {
         this.play = null;
     }
 	
+	*********/
+	
 	mergeFrameLayers(frame){
-		let tempCanvas = document.createElement('canvas');
-		let tempCtx = tempCanvas.getContext("2d");
+		const tempCanvas = document.createElement('canvas');
+		const tempCtx = tempCanvas.getContext("2d");
 		tempCanvas.width = frame.width;
 		tempCanvas.height = frame.height;
-		tempCtx.fillStyle = "white";
+		tempCtx.fillStyle = "#fff";
+		tempCtx.globalCompositeOperation = "xor";
 		tempCtx.fillRect(0, 0, frame.width, frame.height);
-		let tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+		const tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
 
 		for(let j = 0; j < frame.canvasList.length; j++){
-			let layer = frame.canvasList[j];
+			const layer = frame.canvasList[j];
+			
 			// this assumes that all layers within a frame share the same dimensions
-			let imageData = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height).data;
-			for(let k = 0; k < imageData.length; k += 4){
-				if(imageData[k] === 255 && imageData[k+1] === 255 && imageData[k+2] === 255){
+			const currImageLayer = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height);
+			const imageData = currImageLayer.data;
+			
+			for(let k = 0; k <= imageData.length - 4; k += 4){
+				if(imageData[k] === 255 && imageData[k+1] === 255 && imageData[k+2] === 255 && imageData[k+3] !== 128){
+					// TODO: seems a bit unintuitive that the more transparent white is being treated as opaque in this way
+					// make canvas use white with alpha as 128 by default and regular, opaque white as 255?
 					continue;
-				}else{
-					tempImageData.data[k] = imageData[k];
-					tempImageData.data[k+1] = imageData[k+1];
-					tempImageData.data[k+2] = imageData[k+2];
-					tempImageData.data[k+3] = 255;
 				}
+				tempImageData.data[k] = imageData[k];
+				tempImageData.data[k+1] = imageData[k+1];
+				tempImageData.data[k+2] = imageData[k+2];
+				tempImageData.data[k+3] = 255;
 			}
-			// apply each layer to the onion skin
+			
 			tempCtx.putImageData(tempImageData, 0, 0);
 		}
 		return tempCanvas;
@@ -536,11 +541,11 @@ class Toolbar {
         using gif.js - https://github.com/jnordberg/gif.js
     
         elementId is for the loading message,
-        i.e. a <p> element that says "now loading..."
+        e.g. a <p> element that says "now loading..."
         
         this will need to be applied for FRAMES, not LAYERS of a frame.
     
-		timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), i.e.
+		timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), e.g.
 		{
 			1: 100, // frame 1
 			2: 1000 // frame 2

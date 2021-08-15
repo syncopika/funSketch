@@ -193,7 +193,7 @@ class Frame {
 		
 		if(onionSkin && (layerIndex-1 > 0)){
 			// apply onionskin
-			let prevLayer = this.canvasList[layerIndex-1];
+			const prevLayer = this.canvasList[layerIndex-1];
             prevLayer.style.opacity = .92;
 			prevLayer.style.zIndex = 0;
 		}

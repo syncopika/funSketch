@@ -39,19 +39,16 @@ class BrushTemplate {
 		// take into account pen pressure for color if needed (as well as for brush size)
 		if(this.brushManager.applyPressureColor() && pressure){
 			// pressure ranges from 0 to 1
-			//console.log(pressure);
-			
 			// special case: if curr color is black, don't alter based on pressure
 			// note that if curr color is white, more pressure goes towards black (which is expected)
 			if(currColor[0] !== 0 && currColor[1] !== 0 && currColor[2] !== 0){
-				currColor = 'rgb(' + (currColor[0]*(1-pressure)) + ',' + (currColor[1]*(1-pressure)) + ',' + (currColor[2]*(1-pressure)) + ')';
-				//console.log(currColor);
+				currColor = 'rgba(' + (currColor[0]*(1-pressure)) + ',' + (currColor[1]*(1-pressure)) + ',' + (currColor[2]*(1-pressure)) + ',' + currColor[3] + ')';
 			}
 			
 			currSize = this._calculateBrushWidth(pointerEvt);
 			penPressure = pressure;
 		}else{
-			currColor = 'rgb(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ')';
+			currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + currColor[3] + ')';
 		}
 		
         this.clickX.push(x);

@@ -4,9 +4,9 @@
 import React from 'react';
 
 const TimelineFrameThumnail = (props) => {
-	let frameImgData = props.imgData;
-	let height = '120px'; //props.height;
-	let width = '120px'; //props.width;
+	const frameImgData = props.imgData;
+	const height = '120px'; //props.height;
+	const width = '120px'; //props.width;
 	return(
 		<img style={{
 			'display': 'inline-block', 
@@ -24,10 +24,9 @@ const TimelineFrameThumnail = (props) => {
 // in AnimationTimeline (i.e. changing the fps at a marker or deleting a marker)
 // to persist (these changes should be stored in PresentationWrapper's state)
 const AnimationTimeline = (props) => {
-	
-	let timelineStyle = {
+	const timelineStyle = {
 		'width': '100%',
-		'height': '200px',
+		'height': '80%',
 		'border': '1px solid #000',
 		'display': 'block',
 		'backgroundColor': '#fff',

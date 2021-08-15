@@ -45,3 +45,7 @@ https://medium.com/@DavideRama/testing-global-event-listener-within-a-react-comp
 https://stackoverflow.com/questions/54234515/get-by-html-element-with-react-testing-library
 https://stackoverflow.com/questions/53003594/find-element-by-id-in-react-testing-library
 https://github.com/testing-library/react-testing-library/issues/629
+
+// other
+https://stackoverflow.com/questions/36588722/html-canvas-putimagedata-with-transparency-causes-incorrect-rgb-to-be-saved
+https://stackoverflow.com/questions/43582546/what-is-colorspace-in-imagedata

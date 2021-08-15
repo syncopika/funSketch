@@ -29046,7 +29046,7 @@ var TimelineFrameThumnail = function TimelineFrameThumnail(props) {
 var AnimationTimeline = function AnimationTimeline(props) {
   var timelineStyle = {
     'width': '100%',
-    'height': '200px',
+    'height': '80%',
     'border': '1px solid #000',
     'display': 'block',
     'backgroundColor': '#fff',
@@ -29947,6 +29947,13 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
     value: function _playAnimation() {
       var _this6 = this;
 
+      /*
+      	plays all the timeline frames in sequence.
+      	note that even if a frame exists, if it's not in the timeline
+      	playAnimation will not do anything
+      	
+      	TODO: backwards animation?, pause?
+      */
       var timelineFrames = this.state.timelineFrames;
 
       if (Object.keys(timelineFrames).length === 0) {
@@ -30203,7 +30210,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "toolbarSection2"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
-      }, " Use the spacebar to append a new layer or frame. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
+      }, " Use the spacebar to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar). "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
       }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("p", {
         className: "instructions"
@@ -30490,17 +30497,16 @@ var BrushTemplate = /*#__PURE__*/function () {
 
       if (this.brushManager.applyPressureColor() && pressure) {
         // pressure ranges from 0 to 1
-        //console.log(pressure);
         // special case: if curr color is black, don't alter based on pressure
         // note that if curr color is white, more pressure goes towards black (which is expected)
         if (currColor[0] !== 0 && currColor[1] !== 0 && currColor[2] !== 0) {
-          currColor = 'rgb(' + currColor[0] * (1 - pressure) + ',' + currColor[1] * (1 - pressure) + ',' + currColor[2] * (1 - pressure) + ')'; //console.log(currColor);
+          currColor = 'rgba(' + currColor[0] * (1 - pressure) + ',' + currColor[1] * (1 - pressure) + ',' + currColor[2] * (1 - pressure) + ',' + currColor[3] + ')';
         }
 
         currSize = this._calculateBrushWidth(pointerEvt);
         penPressure = pressure;
       } else {
-        currColor = 'rgb(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ')';
+        currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + currColor[3] + ')';
       }
 
       this.clickX.push(x);
@@ -30573,6 +30579,114 @@ var BrushTemplate = /*#__PURE__*/function () {
 
   return BrushTemplate;
 }();
+
+
+
+/***/ }),
+
+/***/ "./src/brushes/colorPickerBrush.js":
+/*!*****************************************!*\
+  !*** ./src/brushes/colorPickerBrush.js ***!
+  \*****************************************/
+/*! exports provided: ColorPickerBrush */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ColorPickerBrush", function() { return ColorPickerBrush; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./BrushTemplate.js */ "./src/brushes/BrushTemplate.js");
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+
+
+var ColorPickerBrush = /*#__PURE__*/function (_BrushTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(ColorPickerBrush, _BrushTemplate);
+
+  var _super = _createSuper(ColorPickerBrush);
+
+  function ColorPickerBrush(brushManager) {
+    var _this;
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, ColorPickerBrush);
+
+    _this = _super.call(this, brushManager);
+    _this.cursorType = "pointer"; // TODO: make an icon //"url(" + "\"paintbucket.png\"" + "), auto";
+
+    return _this;
+  } // event listener functions
+
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(ColorPickerBrush, [{
+    key: "brushStart",
+    value: function brushStart(evt) {
+      evt.preventDefault();
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+
+      if (evt.which === 1 && evt.type === 'mousedown' || evt.type === 'touchstart') {
+        //when left click only
+        if (evt.type === 'touchstart') {
+          var newCoords = this._handleTouchEvent(evt);
+
+          evt.offsetX = newCoords.x;
+          evt.offsetY = newCoords.y;
+          evt.preventDefault();
+        } // do floodfill
+        // need to parse the currColor because right now it looks like "rgb(x,y,z)". 
+        // I want it to look like [x, y, z]
+
+
+        var currColor = this.brushManager.currColor;
+        var currColorArray = currColor.substring(currColor.indexOf('(') + 1, currColor.length - 1).split(',');
+        currColorArray = this.brushManager.currColorArray.map(function (a) {
+          return parseInt(a);
+        });
+        var x = evt.offsetX;
+        var y = evt.offsetY; // ruh roh: https://stackoverflow.com/questions/27961537/why-function-returns-wrong-color-in-canvas
+        // so this data might not be accurate... :/
+
+        var colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
+        var color = 'rgba(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ',' + colorData[3] + ')'; // TODO: set the brush color to this color
+
+        console.log(colorData);
+      }
+    } // equip the brush and set up the current canvas for using the brush
+
+  }, {
+    key: "attachBrush",
+    value: function attachBrush() {
+      var frame = this.brushManager.animationProject.getCurrFrame();
+      var currLayer = frame.getCurrCanvas();
+      currLayer.style.cursor = this.cursorType; // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+
+      var start = this.brushStart.bind(this);
+      currLayer.addEventListener('mousedown', start);
+      currLayer.addEventListener('touchstart', start);
+      this.brushManager.currentEventListeners['mousedown'] = start;
+      this.brushManager.currentEventListeners['touchstart'] = start;
+    }
+  }]);
+
+  return ColorPickerBrush;
+}(_BrushTemplate_js__WEBPACK_IMPORTED_MODULE_5__["BrushTemplate"]);
 
 
 
@@ -30674,10 +30788,28 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
     value: function brushStop(evt) {
       var frame = this.brushManager.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
+      var currCtx = currLayer.getContext("2d");
       evt.preventDefault();
       var w = currLayer.width;
-      var h = currLayer.height;
-      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+      var h = currLayer.height; //const currImgData = currCtx.getImageData(0, 0, w, h);
+      //const data = currImgData.data;
+      // idea: if we want to have transparency with white, let's try manipulating the alpha channel manually
+      // for the pixels via image data (since strokeStyle with an alpha value set does not seem to change the image data :/)
+      // this way we can have a version of white that we can treat as opaque and should not be treated as transparent
+
+      /*for(let i = 0; i < this.clickColor.length; i++){
+      	const [r,g,b,a] = this.clickColor[i].match(/\d+/g);
+      	const isTransparent = (r == 255 && g == 255 && b == 255 && a == 128);
+      	if(isTransparent){
+      		const x = this.clickX[i];
+      		const y = this.clickY[i];
+      		const pixelData = currCtx.getImageData(x, y, 1, 1);
+      		pixelData.data[3] = 128; // alpha channel
+      		currCtx.putImageData(pixelData, x, y);
+      	}
+      }*/
+
+      frame.addSnapshot();
 
       this._clearClick();
 
@@ -34156,6 +34288,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _brushes_shapeBrush_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../brushes/shapeBrush.js */ "./src/brushes/shapeBrush.js");
 /* harmony import */ var _brushes_penBrush_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../brushes/penBrush.js */ "./src/brushes/penBrush.js");
 /* harmony import */ var _brushes_floodfillBrush_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../brushes/floodfillBrush.js */ "./src/brushes/floodfillBrush.js");
+/* harmony import */ var _brushes_colorPickerBrush_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../brushes/colorPickerBrush.js */ "./src/brushes/colorPickerBrush.js");
 
 
 
@@ -34165,6 +34298,7 @@ __webpack_require__.r(__webpack_exports__);
 	
 	the current canvas element will be the target for the brush
 ***/
+
 
 
 
@@ -34184,8 +34318,8 @@ var BrushManager = /*#__PURE__*/function () {
 
     this.selectedBrush = 'default'; // user-selected brush 
 
-    this.currColor = 'rgb(0,0,0)';
-    this.currColorArray = Uint8Array.from([0, 0, 0]);
+    this.currColor = 'rgba(0,0,0,1)';
+    this.currColorArray = Uint8Array.from([0, 0, 0, 1]);
     this.currSize = 2;
     this.pressureColorFlag = false; // whether brush color should depend on pen pressure
     // brushes map
@@ -34198,6 +34332,7 @@ var BrushManager = /*#__PURE__*/function () {
     this.brushesMap["shape"] = new _brushes_shapeBrush_js__WEBPACK_IMPORTED_MODULE_7__["ShapeBrush"](this);
     this.brushesMap["pen"] = new _brushes_penBrush_js__WEBPACK_IMPORTED_MODULE_8__["PenBrush"](this);
     this.brushesMap["floodfill"] = new _brushes_floodfillBrush_js__WEBPACK_IMPORTED_MODULE_9__["FloodfillBrush"](this);
+    this.brushesMap["colorpicker"] = new _brushes_colorPickerBrush_js__WEBPACK_IMPORTED_MODULE_10__["ColorPickerBrush"](this);
     this.brushesMap["eraser"] = new _brushes_eraserBrush_js__WEBPACK_IMPORTED_MODULE_3__["EraserBrush"](this);
   }
 
@@ -34221,7 +34356,7 @@ var BrushManager = /*#__PURE__*/function () {
   }, {
     key: "changeBrushColor",
     value: function changeBrushColor(colorArray) {
-      this.currColor = 'rgba(' + colorArray[0] + ',' + colorArray[1] + ',' + colorArray[2] + ')';
+      this.currColor = 'rgba(' + colorArray[0] + ',' + colorArray[1] + ',' + colorArray[2] + ',' + colorArray[3] + ')';
       this.currColorArray = colorArray;
     }
   }, {
@@ -34653,10 +34788,10 @@ var Toolbar = /*#__PURE__*/function () {
         if (colorPicked[0] > 10 && colorPicked[1] > 200) {
           colorPickedText.style.color = "#000";
         } else {
-          colorPickedText.style.color = "#FFF";
+          colorPickedText.style.color = "#fff";
         }
 
-        colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
+        colorPickedText.textContent = 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',' + colorPicked[3] + ')';
         colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
 
         _this7.brush.changeBrushColor(colorPicked);
@@ -34838,14 +34973,10 @@ var Toolbar = /*#__PURE__*/function () {
     key: "resetImage",
     value: function resetImage() {
       if (this.recentImage) {
-        var _canvas = this.animationProj.getCurrFrame();
-
-        var context = _canvas.currentCanvas.getContext("2d");
-
-        var height = _canvas.currentCanvas.getAttribute("height");
-
-        var width = _canvas.currentCanvas.getAttribute("width");
-
+        var canvas = this.animationProj.getCurrFrame();
+        var context = canvas.currentCanvas.getContext("2d");
+        var height = canvas.currentCanvas.getAttribute("height");
+        var width = canvas.currentCanvas.getAttribute("width");
         context.drawImage(this.recentImage, 0, 0, width, height);
       }
     }
@@ -34929,49 +35060,38 @@ var Toolbar = /*#__PURE__*/function () {
         functions so that they change with the call to up() and down()
           this will need to be applied for FRAMES, not LAYERS of a frame.
     
+    playFor(){
+        if(this.nextFrame()){
+            if(this.htmlCounter){
+                const counterText = this.htmlCounter;
+                counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
+            }
+        }
+    }
+       playBack(){
+        if(this.prevFrame()){
+            if(this.htmlCounter){
+                const counterText = this.htmlCounter;
+                counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
+            }
+        }
+    }
+       playForward(){
+        clearInterval(this.play);
+        this.play = null;
+        this.play = setInterval(this.playFor, this.timePerFrame);
+    }
+       playBackward(){
+        clearInterval(this.play);
+        this.play = null;
+        this.play = setInterval(this.playBack, this.timePerFrame);
+    }
+       stop(){
+        clearInterval(this.play);
+        this.play = null;
+    }
     *********/
-    //let toolbar = this;
 
-  }, {
-    key: "playFor",
-    value: function playFor() {
-      if (this.nextFrame()) {
-        if (this.htmlCounter) {
-          var counterText = this.htmlCounter;
-          counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-        }
-      }
-    }
-  }, {
-    key: "playBack",
-    value: function playBack() {
-      if (this.prevFrame()) {
-        if (this.htmlCounter) {
-          var counterText = this.htmlCounter;
-          counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-        }
-      }
-    }
-  }, {
-    key: "playForward",
-    value: function playForward() {
-      clearInterval(this.play);
-      this.play = null;
-      this.play = setInterval(this.playFor, this.timePerFrame);
-    }
-  }, {
-    key: "playBackward",
-    value: function playBackward() {
-      clearInterval(this.play);
-      this.play = null;
-      this.play = setInterval(this.playBack, this.timePerFrame);
-    }
-  }, {
-    key: "stop",
-    value: function stop() {
-      clearInterval(this.play);
-      this.play = null;
-    }
   }, {
     key: "mergeFrameLayers",
     value: function mergeFrameLayers(frame) {
@@ -34979,28 +35099,29 @@ var Toolbar = /*#__PURE__*/function () {
       var tempCtx = tempCanvas.getContext("2d");
       tempCanvas.width = frame.width;
       tempCanvas.height = frame.height;
-      tempCtx.fillStyle = "white";
+      tempCtx.fillStyle = "#fff";
+      tempCtx.globalCompositeOperation = "xor";
       tempCtx.fillRect(0, 0, frame.width, frame.height);
       var tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
 
       for (var j = 0; j < frame.canvasList.length; j++) {
-        var layer = frame.canvasList[j]; // possible issue: this assumes that all layers within a frame share the same dimensions (but it should be that way, right?)
+        var layer = frame.canvasList[j]; // this assumes that all layers within a frame share the same dimensions
 
-        var imageData = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height).data;
+        var currImageLayer = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height);
+        var imageData = currImageLayer.data;
 
-        for (var k = 0; k < imageData.length; k += 4) {
-          if (imageData[k] === 255 && imageData[k + 1] === 255 && imageData[k + 2] === 255) {
+        for (var k = 0; k <= imageData.length - 4; k += 4) {
+          if (imageData[k] === 255 && imageData[k + 1] === 255 && imageData[k + 2] === 255 && imageData[k + 3] !== 128) {
+            // TODO: seems a bit unintuitive that the more transparent white is being treated as opaque in this way
+            // make canvas use white with alpha as 128 by default and regular, opaque white as 255?
             continue;
-          } else {
-            // what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
-            // we might run into index/length issues...
-            tempImageData.data[k] = imageData[k];
-            tempImageData.data[k + 1] = imageData[k + 1];
-            tempImageData.data[k + 2] = imageData[k + 2];
-            tempImageData.data[k + 3] = 255;
           }
-        } // apply each layer to the onion skin
 
+          tempImageData.data[k] = imageData[k];
+          tempImageData.data[k + 1] = imageData[k + 1];
+          tempImageData.data[k + 2] = imageData[k + 2];
+          tempImageData.data[k + 3] = 255;
+        }
 
         tempCtx.putImageData(tempImageData, 0, 0);
       }
@@ -35013,11 +35134,11 @@ var Toolbar = /*#__PURE__*/function () {
         using gif.js - https://github.com/jnordberg/gif.js
     
         elementId is for the loading message,
-        i.e. a <p> element that says "now loading..."
+        e.g. a <p> element that says "now loading..."
         
         this will need to be applied for FRAMES, not LAYERS of a frame.
     
-    timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), i.e.
+    timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), e.g.
     {
     1: 100, // frame 1
     2: 1000 // frame 2
@@ -35268,7 +35389,7 @@ function makeColorWheel(elementId, size) {
   } // make black a pickable color 
 
 
-  colorWheelContext.fillStyle = "#000";
+  colorWheelContext.fillStyle = "rgba(0,0,0,1)";
   colorWheelContext.beginPath();
   colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
   colorWheelContext.fill(); // make white pickable too (and add a black outline)
@@ -35278,8 +35399,17 @@ function makeColorWheel(elementId, size) {
 
   colorWheelContext.stroke(); // make sure circle is filled with #fff
 
-  colorWheelContext.fillStyle = "#fff";
+  colorWheelContext.fillStyle = "rgba(255,255,255,1)";
   colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill(); // make transparent white pickable too (and add a black outline)
+
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI); // border around the white 
+
+  colorWheelContext.stroke(); // make sure circle is filled with transparent white
+
+  colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
+  colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI);
   colorWheelContext.fill();
   location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
 
@@ -35287,7 +35417,7 @@ function makeColorWheel(elementId, size) {
 
   showColor.style.textAlign = 'center';
   showColor.id = 'colorPicked';
-  showColor.textContent = "pick a color! :)";
+  showColor.textContent = "pick a color!";
   location.appendChild(showColor);
   return colorWheel;
 }

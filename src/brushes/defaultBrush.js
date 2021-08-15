@@ -45,11 +45,31 @@ class DefaultBrush extends BrushTemplate {
 	brushStop(evt){
         const frame = this.brushManager.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
+		const currCtx = currLayer.getContext("2d");
 		evt.preventDefault();
 
 		const w = currLayer.width;
 		const h = currLayer.height;
-		frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+		
+		//const currImgData = currCtx.getImageData(0, 0, w, h);
+		//const data = currImgData.data;
+		
+		// idea: if we want to have transparency with white, let's try manipulating the alpha channel manually
+		// for the pixels via image data (since strokeStyle with an alpha value set does not seem to change the image data :/)
+		// this way we can have a version of white that we can treat as opaque and should not be treated as transparent
+		/*for(let i = 0; i < this.clickColor.length; i++){
+			const [r,g,b,a] = this.clickColor[i].match(/\d+/g);
+			const isTransparent = (r == 255 && g == 255 && b == 255 && a == 128);
+			if(isTransparent){
+				const x = this.clickX[i];
+				const y = this.clickY[i];
+				const pixelData = currCtx.getImageData(x, y, 1, 1);
+				pixelData.data[3] = 128; // alpha channel
+				currCtx.putImageData(pixelData, x, y);
+			}
+		}*/
+		
+		frame.addSnapshot();
 		
 		this._clearClick();
 		this.paint = false;

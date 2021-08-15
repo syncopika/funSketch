@@ -20,7 +20,7 @@ class BrushTemplate {
 	
 	// assuming a PointerEvent, calculate the brush width based on stylus pressure
 	_calculateBrushWidth(pointerEvt){
-		let brushWidth = this.brushManager.getCurrSize();
+		const brushWidth = this.brushManager.getCurrSize();
 		if(pointerEvt.pressure){
 			brushWidth = (pointerEvt.pressure*2) * brushWidth;
 		}
@@ -100,7 +100,7 @@ class BrushTemplate {
 	};
 	
 	// this is for determining what the brush stroke looks like
-	brushStroke(){
+	brushStroke(context){
 	}
 	
 	// equip the brush and set up the current canvas for using the brush

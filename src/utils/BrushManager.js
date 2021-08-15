@@ -54,7 +54,7 @@ class BrushManager {
     }
 	
 	changeBrushColor(colorArray){
-		this.currColor = 'rgba(' + colorArray[0] + ',' + colorArray[1] + ',' + colorArray[2] + ',' + colorArray[3] + ')';
+		this.currColor = 'rgba(' + colorArray.join(",") + ')';
 		this.currColorArray = colorArray;
 	}
 	

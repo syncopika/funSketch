@@ -375,6 +375,21 @@ module.exports = _possibleConstructorReturn;
 
 /***/ }),
 
+/***/ "./node_modules/@babel/runtime/helpers/readOnlyError.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/readOnlyError.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _readOnlyError(name) {
+  throw new TypeError("\"" + name + "\" is read-only");
+}
+
+module.exports = _readOnlyError;
+
+/***/ }),
+
 /***/ "./node_modules/@babel/runtime/helpers/setPrototypeOf.js":
 /*!***************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/setPrototypeOf.js ***!
@@ -30444,17 +30459,20 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrushTemplate", function() { return BrushTemplate; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_readOnlyError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/readOnlyError */ "./node_modules/@babel/runtime/helpers/readOnlyError.js");
+/* harmony import */ var _babel_runtime_helpers_readOnlyError__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_readOnlyError__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
 // template for brushes
 var BrushTemplate = /*#__PURE__*/function () {
   function BrushTemplate(brushManager) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, BrushTemplate);
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default()(this, BrushTemplate);
 
     this.brushManager = brushManager; // a brush will need to use some things the brush manager has
 
@@ -30473,13 +30491,13 @@ var BrushTemplate = /*#__PURE__*/function () {
   } // assuming a PointerEvent, calculate the brush width based on stylus pressure
 
 
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BrushTemplate, [{
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(BrushTemplate, [{
     key: "_calculateBrushWidth",
     value: function _calculateBrushWidth(pointerEvt) {
       var brushWidth = this.brushManager.getCurrSize();
 
       if (pointerEvt.pressure) {
-        brushWidth = pointerEvt.pressure * 2 * brushWidth;
+        brushWidth = (_babel_runtime_helpers_readOnlyError__WEBPACK_IMPORTED_MODULE_0___default()("brushWidth"), pointerEvt.pressure * 2 * brushWidth);
       }
 
       return brushWidth;
@@ -30570,7 +30588,7 @@ var BrushTemplate = /*#__PURE__*/function () {
   }, {
     key: "brushStroke",
     // this is for determining what the brush stroke looks like
-    value: function brushStroke() {} // equip the brush and set up the current canvas for using the brush
+    value: function brushStroke(context) {} // equip the brush and set up the current canvas for using the brush
 
   }, {
     key: "attachBrush",
@@ -30743,6 +30761,18 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       evt.preventDefault();
       var frame = this.brushManager.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
+      var currCtx = currLayer.getContext('2d'); // if using a color with alpha != 255 (so some transparency), change globalAlpha
+
+      if (this.brushManager.currColorArray[3] !== 255) {
+        // fortunately this doesn't affect things already drawn on the canvas
+        // so we can toggle it when we need to draw semi-opaque things
+        console.log("got a transparent color!");
+        currCtx.globalAlpha = this.brushManager.currColorArray[3] / 255; // needs to be between 0 and 1
+
+        console.log(currCtx.globalAlpha);
+      } else {
+        currCtx.globalAlpha = 1.0;
+      }
 
       if (evt.which === 1 || evt.type === 'touchstart') {
         //when left click only
@@ -30784,6 +30814,39 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       }
     }
   }, {
+    key: "modifyAlphas",
+    value: function modifyAlphas(currCanvas) {
+      // make a temp canvas and redraw the current stroke on it (black on white background)
+      // go through the temp canvas image data and look for the black pixels.
+      // wherever we see a black pixel we look in the same index in the current layer image data
+      // and manually set its alpha to whatever it should be based on current color
+      var currCtx = currCanvas.getContext("2d");
+      var tempCanvas = document.createElement('canvas');
+      var tempCtx = tempCanvas.getContext("2d");
+      tempCanvas.width = currCanvas.width;
+      tempCanvas.height = currCanvas.height;
+      tempCtx.fillStyle = "#fff";
+      tempCtx.strokeStyle = "#000";
+      tempCtx.fillRect(0, 0, currCanvas.width, currCanvas.height);
+      this.brushStroke(tempCtx, "#000");
+      var tmpImgData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height).data;
+      var currLayerImgData = currCtx.getImageData(0, 0, currCanvas.width, currCanvas.height);
+      var imgData = currLayerImgData.data;
+
+      for (var i = 0; i <= tmpImgData.length - 4; i += 4) {
+        var r = tmpImgData[i];
+        var g = tmpImgData[i + 1];
+        var b = tmpImgData[i + 2];
+
+        if (r == 0 && g == 0 && b == 0) {
+          console.log("hello");
+          imgData[i + 3] = 128; // set alpha value in the original image data
+        }
+      }
+
+      currCtx.putImageData(currLayerImgData, 0, 0);
+    }
+  }, {
     key: "brushStop",
     value: function brushStop(evt) {
       var frame = this.brushManager.animationProject.getCurrFrame();
@@ -30795,19 +30858,28 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       //const data = currImgData.data;
       // idea: if we want to have transparency with white, let's try manipulating the alpha channel manually
       // for the pixels via image data (since strokeStyle with an alpha value set does not seem to change the image data :/)
-      // this way we can have a version of white that we can treat as opaque and should not be treated as transparent
 
-      /*for(let i = 0; i < this.clickColor.length; i++){
+      /* this way we can have a version of white that we can treat as opaque and should not be treated as transparent
+      for(let i = 0; i < this.clickColor.length; i++){
       	const [r,g,b,a] = this.clickColor[i].match(/\d+/g);
       	const isTransparent = (r == 255 && g == 255 && b == 255 && a == 128);
       	if(isTransparent){
       		const x = this.clickX[i];
       		const y = this.clickY[i];
+      		
       		const pixelData = currCtx.getImageData(x, y, 1, 1);
-      		pixelData.data[3] = 128; // alpha channel
-      		currCtx.putImageData(pixelData, x, y);
+      		console.log(currCtx.globalAlpha);
+      		console.log(pixelData);
+      		
+      		//pixelData.data[3] = 128; // alpha channel
+      		//currCtx.putImageData(pixelData, x, y);
       	}
       }*/
+
+      if (this.brushManager.currColorArray[3] !== 255) {
+        // we need to apply some transparency via alpha
+        this.modifyAlphas(currLayer);
+      }
 
       frame.addSnapshot();
 
@@ -30819,8 +30891,10 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
   }, {
     key: "brushStroke",
     value: function brushStroke(context) {
+      var strokeColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
       for (var i = 0; i < this.clickX.length; i++) {
-        context.strokeStyle = this.clickColor[i];
+        context.strokeStyle = strokeColor ? strokeColor : this.clickColor[i];
         context.lineWidth = this.clickSize[i];
         context.beginPath(); // this helps generate a solid line, rather than a line of dots.
 
@@ -34356,7 +34430,7 @@ var BrushManager = /*#__PURE__*/function () {
   }, {
     key: "changeBrushColor",
     value: function changeBrushColor(colorArray) {
-      this.currColor = 'rgba(' + colorArray[0] + ',' + colorArray[1] + ',' + colorArray[2] + ',' + colorArray[3] + ')';
+      this.currColor = 'rgba(' + colorArray.join(",") + ')';
       this.currColorArray = colorArray;
     }
   }, {
@@ -35100,7 +35174,6 @@ var Toolbar = /*#__PURE__*/function () {
       tempCanvas.width = frame.width;
       tempCanvas.height = frame.height;
       tempCtx.fillStyle = "#fff";
-      tempCtx.globalCompositeOperation = "xor";
       tempCtx.fillRect(0, 0, frame.width, frame.height);
       var tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
 

@@ -12,6 +12,7 @@ import { WebBrush } from '../brushes/webBrush.js';
 import { ShapeBrush } from '../brushes/shapeBrush.js';
 import { PenBrush } from '../brushes/penBrush.js';
 import { FloodfillBrush } from '../brushes/floodfillBrush.js';
+import { ColorPickerBrush } from '../brushes/colorPickerBrush.js';
 
 class BrushManager {
 	constructor(animationProj){
@@ -19,8 +20,8 @@ class BrushManager {
 		this.animationProject = animationProj;
 		this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
 		this.selectedBrush = 'default'; // user-selected brush 
-		this.currColor = 'rgb(0,0,0)';
-		this.currColorArray = Uint8Array.from([0, 0, 0]);
+		this.currColor = 'rgba(0,0,0,255)';
+		this.currColorArray = Uint8Array.from([0, 0, 0, 255]);
 		this.currSize = 2;
 		this.pressureColorFlag = false; // whether brush color should depend on pen pressure
 		
@@ -33,6 +34,7 @@ class BrushManager {
 		this.brushesMap["shape"] = new ShapeBrush(this);
 		this.brushesMap["pen"] = new PenBrush(this);
 		this.brushesMap["floodfill"] = new FloodfillBrush(this);
+		this.brushesMap["colorpicker"] = new ColorPickerBrush(this);
 		this.brushesMap["eraser"] = new EraserBrush(this);
 	}
 	
@@ -52,7 +54,7 @@ class BrushManager {
     }
 	
 	changeBrushColor(colorArray){
-		this.currColor = 'rgba(' + colorArray[0] + ',' + colorArray[1] + ',' + colorArray[2] + ')';
+		this.currColor = 'rgba(' + colorArray.join(",") + ')';
 		this.currColorArray = colorArray;
 	}
 	

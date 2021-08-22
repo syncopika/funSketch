@@ -16,6 +16,9 @@ https://stackoverflow.com/questions/19560878/css-change-custom-cursor-image-orig
 https://stackoverflow.com/questions/40477245/is-it-possible-to-use-if-else-statement-in-react-render-function
 https://sighack.com/ -> really cool stuff to learn about here
 https://stackoverflow.com/questions/54812239/expanding-to-fill-remaining-space-in-a-css-grid-layout
+https://stackoverflow.com/questions/17411991/html5-canvas-rotate-image
+https://stackoverflow.com/questions/11352450/why-do-images-lose-quality-after-the-context-has-been-rotated
+https://dzone.com/articles/sketching-html5-canvas-and
 
 // pressure-sensitivity for pen
 https://github.com/amoshydra/draw/blob/master/js/libs/Pen.js
@@ -42,3 +45,9 @@ https://medium.com/@DavideRama/testing-global-event-listener-within-a-react-comp
 https://stackoverflow.com/questions/54234515/get-by-html-element-with-react-testing-library
 https://stackoverflow.com/questions/53003594/find-element-by-id-in-react-testing-library
 https://github.com/testing-library/react-testing-library/issues/629
+
+// other
+https://stackoverflow.com/questions/36588722/html-canvas-putimagedata-with-transparency-causes-incorrect-rgb-to-be-saved
+https://stackoverflow.com/questions/43582546/what-is-colorspace-in-imagedata
+https://stackoverflow.com/questions/53523837/html5-canvas-stroke-with-consistent-alpha-values
+https://stackoverflow.com/questions/60093686/how-do-i-draw-in-a-canvas-with-consistent-opacity

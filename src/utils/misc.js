@@ -36,7 +36,7 @@ export function makeColorWheel(elementId, size){
 	}
 	
 	// make black a pickable color 
-	colorWheelContext.fillStyle = "#000";
+	colorWheelContext.fillStyle = "rgba(0,0,0,1)";
 	colorWheelContext.beginPath();
 	colorWheelContext.arc(10, 10, 8, 0, 2*Math.PI);
 	colorWheelContext.fill();
@@ -47,8 +47,18 @@ export function makeColorWheel(elementId, size){
 	colorWheelContext.stroke();
 	
 	// make sure circle is filled with #fff
-	colorWheelContext.fillStyle = "#fff";
+	colorWheelContext.fillStyle = "rgba(255,255,255,1)";
 	colorWheelContext.arc(30, 10, 8, 0, 2*Math.PI);
+	colorWheelContext.fill();
+	
+	// make transparent white pickable too (and add a black outline)
+	colorWheelContext.beginPath();
+	colorWheelContext.arc(50, 10, 8, 0, 2*Math.PI); // border around the white 
+	colorWheelContext.stroke();
+	
+	// make sure circle is filled with transparent white
+	colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
+	colorWheelContext.arc(50, 10, 8, 0, 2*Math.PI);
 	colorWheelContext.fill();
 	
 	location.appendChild(colorWheel);
@@ -57,7 +67,7 @@ export function makeColorWheel(elementId, size){
 	const showColor = document.createElement('p'); // this element will show the color picked 
 	showColor.style.textAlign = 'center';
 	showColor.id = 'colorPicked';
-	showColor.textContent = "pick a color! :)";
+	showColor.textContent = "pick a color!";
 	location.appendChild(showColor);
 	
 	return colorWheel;

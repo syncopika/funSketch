@@ -11,6 +11,8 @@ class DefaultBrush extends BrushTemplate {
 		evt.preventDefault();
 		const frame = this.brushManager.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
+		const currCtx = currLayer.getContext('2d');
+		
 		if(evt.which === 1 || evt.type === 'touchstart'){ //when left click only
 			this.paint = true;
 			// offset will be different with mobile
@@ -42,25 +44,67 @@ class DefaultBrush extends BrushTemplate {
 		}
 	}
 	
+	modifyAlphas(currCanvas){
+		// make a temp canvas and redraw the current stroke on it (black on white background)
+		// go through the temp canvas image data and look for the black pixels.
+		// wherever we see a black pixel we look in the same index in the current layer image data
+		// and manually set its alpha to whatever it should be based on current color
+        const currCtx = currCanvas.getContext("2d");
+		
+		const tempCanvas = document.createElement('canvas');
+		const tempCtx = tempCanvas.getContext("2d");
+		tempCanvas.width = currCanvas.width;
+		tempCanvas.height = currCanvas.height;
+		tempCtx.lineJoin = "round";
+		tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
+		tempCtx.fillRect(0, 0, currCanvas.width, currCanvas.height);
+		
+		this.brushStroke(tempCtx, "rgba(0,0,0,1)");
+		
+		const tmpImgData = tempCtx.getImageData(0, 0, currCanvas.width, currCanvas.height).data;
+		
+		const currLayerImg = currCtx.getImageData(0, 0, currCanvas.width, currCanvas.height);
+		const imgData = currLayerImg.data;
+		
+		for(let i = 0; i <= tmpImgData.length-4; i += 4){
+			const r = tmpImgData[i];
+			const g = tmpImgData[i+1];
+			const b = tmpImgData[i+2];
+			if(!(r === 255 && g === 255 && b === 255)){
+				imgData[i+3] = 128; // set alpha value in the original image data
+			}
+		}
+		
+		currCtx.putImageData(currLayerImg, 0, 0);
+	}
+	
 	brushStop(evt){
         const frame = this.brushManager.animationProject.getCurrFrame();	
 		const currLayer = frame.getCurrCanvas();
+		const currCtx = currLayer.getContext("2d");
 		evt.preventDefault();
 
 		const w = currLayer.width;
 		const h = currLayer.height;
-		frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+		
+		// idea: if we want to have transparency with white, let's try manipulating the alpha channel manually
+		// for the pixels via image data (since strokeStyle with an alpha value set does not seem to change the image data :/)
+		// this kinda gets me what I want but it's still not good
+		if(this.brushManager.currColorArray[3] !== 255){
+			// we need to apply some transparency via alpha
+			this.modifyAlphas(currLayer);
+		}
 		
 		this._clearClick();
 		this.paint = false;
 	}
 	
 	// this is for determining what the brush stroke looks like
-	brushStroke(context){
+	brushStroke(context, strokeColor=null){
 		for(let i = 0; i < this.clickX.length; i++){
-			context.strokeStyle = this.clickColor[i];
+			//this.clickColor[i] = this.clickColor[i].replace("128", "0.5"); // alpha needs to be between 0 and 1 for strokeStyle!
+			context.strokeStyle = strokeColor ? strokeColor : this.clickColor[i];
             context.lineWidth = this.clickSize[i];
-			
             context.beginPath();
 			
             // this helps generate a solid line, rather than a line of dots.

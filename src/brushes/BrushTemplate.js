@@ -32,18 +32,24 @@ class BrushTemplate {
 		const x = pointerEvt.offsetX;
 		const y = pointerEvt.offsetY;
 		const pressure = pointerEvt.pressure;
-		let currSize = this.brushManager.getCurrSize();
-		let currColor = this.brushManager.getCurrColorArray();
+		const currColorArr = this.brushManager.getCurrColorArray();
+		
 		let penPressure = 1;
+		let currSize = this.brushManager.getCurrSize();
+		let currColor = this.brushManager.getCurrColor();
 		
 		// take into account pen pressure for color if needed (as well as for brush size)
 		if(this.brushManager.applyPressureColor() && pressure){
-			const alpha = pressure * 0.5;
-			currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + alpha + ')';
+			// pressure ranges from 0 to 1
+			const newR = currColorArr[0]*(1-pressure);
+			const newG = currColorArr[1]*(1-pressure);
+			const newB = currColorArr[2]*(1-pressure);
+			currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
+			
 			currSize = this._calculateBrushWidth(pointerEvt);
 			penPressure = pressure;
 		}else{
-			currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',255)';
+			currColor = 'rgba(' + currColorArr.join(",") + ')';
 		}
 		
         this.clickX.push(x);
@@ -57,7 +63,7 @@ class BrushTemplate {
     _redraw(strokeFunction){
         const frame = this.brushManager.animationProject.getCurrFrame();
 		const context = frame.getCurrCanvas().getContext("2d");
-        context.lineJoin = 'round'; //TODO: make this a brushmanager variable?
+        context.lineJoin = "round"; //TODO: make this a brushmanager variable?
 		strokeFunction(context);
     }
 	
@@ -71,9 +77,9 @@ class BrushTemplate {
     }
 	
 	_handleTouchEvent(evt){
-		let rect = evt.target.getBoundingClientRect();
-		let x = evt.touches[0].pageX - rect.left;
-		let y = evt.touches[0].pageY - rect.top - window.pageYOffset;
+		const rect = evt.target.getBoundingClientRect();
+		const x = evt.touches[0].pageX - rect.left;
+		const y = evt.touches[0].pageY - rect.top - window.pageYOffset;
 		return {'x': x, 'y': y};
 	}
 	
@@ -95,7 +101,7 @@ class BrushTemplate {
 	};
 	
 	// this is for determining what the brush stroke looks like
-	brushStroke(){
+	brushStroke(context){
 	}
 	
 	// equip the brush and set up the current canvas for using the brush

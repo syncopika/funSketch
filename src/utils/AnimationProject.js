@@ -67,13 +67,17 @@ class Frame {
     /***
         set up a new canvas element
         makes the new canvas the current canvas
+		
+		prefill should be false when importing a project
+		this is so that we don't prefill the canvas with rgba(255,255,255,1)
+		and mess up any alpha transparency the imported layers might have
     ***/
-    setupNewLayer(){
+    setupNewLayer(prefill=true){
         // create the new canvas element 
         const newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
         document.getElementById(this.containerId).appendChild(newCanvas);
-        setCanvas(newCanvas);
+        setCanvas(prefill, newCanvas);
         if(this.count === 0){
             newCanvas.style.opacity = .97;
             newCanvas.style.zIndex = 1;
@@ -193,7 +197,7 @@ class Frame {
 		
 		if(onionSkin && (layerIndex-1 > 0)){
 			// apply onionskin
-			let prevLayer = this.canvasList[layerIndex-1];
+			const prevLayer = this.canvasList[layerIndex-1];
             prevLayer.style.opacity = .92;
 			prevLayer.style.zIndex = 0;
 		}
@@ -226,8 +230,11 @@ class Frame {
     copyCanvas(){
         const newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
-        setCanvas(newCanvas, this.width, this.height);
-        //newCanvas.style.opacity = 0.97;
+        
+		const prefill = true;
+		setCanvas(prefill, newCanvas, this.width, this.height);
+        
+		//newCanvas.style.opacity = 0.97;
         document.getElementById(this.containerId).appendChild(newCanvas);
 		newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
         this.canvasList.push(newCanvas);
@@ -435,19 +442,22 @@ class AnimationProject {
 	
 }
 
-function createOnionSkinFrame(container){
-    // create the new canvas element 
-    let newCanvas = document.createElement('canvas');
+function createOnionSkinFrame(containerId){
+    const newCanvas = document.createElement('canvas');
     newCanvas.id = "onionSkinCanvas";
-	document.getElementById(container).appendChild(newCanvas);
-    setCanvas(newCanvas);
-    newCanvas.style.opacity = .97;
+	document.getElementById(containerId).appendChild(newCanvas);
+    
+	const prefill = true;
+	setCanvas(prefill, newCanvas);
+    
+	newCanvas.style.opacity = .97;
     newCanvas.style.zIndex = -1; // TODO: come back to this later. make sure it's visible if current frame > 1!
     return newCanvas;
 }
 
 // assigns default canvas attributes and styling
-function setCanvas(canvasElement, width, height){
+// prefill should be false when importing a project
+function setCanvas(prefill, canvasElement, width, height){
 	canvasElement.style.position = "absolute";
 	canvasElement.style.border = '1px #000 solid';
 	canvasElement.style.zIndex = 0;
@@ -456,8 +466,11 @@ function setCanvas(canvasElement, width, height){
 	canvasElement.style.height = "100%";
 	canvasElement.width = width ? width : canvasElement.offsetWidth;
 	canvasElement.height = height ? height : canvasElement.offsetHeight;
-	canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
-	canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+	
+	if(prefill){
+		canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
+		canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+	}
 }
 
 export{

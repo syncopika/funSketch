@@ -43,11 +43,11 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_getCoordinates(canvas, event){
-		let rect = canvas.getBoundingClientRect();
-		let scaleX = canvas.width / rect.width;
-		let scaleY = canvas.width / rect.height;
-		let x = (event.clientX - rect.left) * scaleX;
-		let y = (event.clientY - rect.top) * scaleY;
+		const rect = canvas.getBoundingClientRect();
+		const scaleX = canvas.width / rect.width;
+		const scaleY = canvas.width / rect.height;
+		const x = (event.clientX - rect.left) * scaleX;
+		const y = (event.clientY - rect.top) * scaleY;
 		return {'x': x, 'y': y, 'rect': rect};
 	}
 	
@@ -378,15 +378,15 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_linkDemos(){
-		let demoSelect = document.getElementById("chooseDemo");
+		const demoSelect = document.getElementById("chooseDemo");
 		demoSelect.addEventListener("change", (evt) => {
 			this._getDemo(evt.target.selectedOptions[0].value);
 		});
 	}
 	
 	_showOptions(category){
-		let el = document.getElementById(category);
-		let child = el.children[1]; // skip the p element and get the ul element
+		const el = document.getElementById(category);
+		const child = el.children[1]; // skip the p element and get the ul element
 		if(child.style.display !== "block" ){
 			child.style.display = "block";
 		}else{
@@ -396,13 +396,20 @@ class PresentationWrapper extends React.Component {
 	}
 	
 	_playAnimation(){
-		let timelineFrames = this.state.timelineFrames;
+		/*
+			plays all the timeline frames in sequence.
+			note that even if a frame exists, if it's not in the timeline
+			playAnimation will not do anything
+			
+			TODO: backwards animation?, pause?
+		*/
+		const timelineFrames = this.state.timelineFrames;
 		if(Object.keys(timelineFrames).length === 0){
 			return;
 		}
 
-		let currFrame = this.state.animationProject.getCurrFrame();
-		let animationDisplay = document.createElement('canvas');
+		const currFrame = this.state.animationProject.getCurrFrame();
+		const animationDisplay = document.createElement('canvas');
 		
 		// all frames should have the same dimensions
 		animationDisplay.width = currFrame.currentCanvas.width; 
@@ -415,7 +422,7 @@ class PresentationWrapper extends React.Component {
 		animationDisplay.id = "animationDisplay";
 		document.getElementById("canvasArea").appendChild(animationDisplay);
 
-		let displayContext = animationDisplay.getContext('2d');
+		const displayContext = animationDisplay.getContext('2d');
 		displayContext.fillStyle = "#ffffff";
 		displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
 		
@@ -423,7 +430,6 @@ class PresentationWrapper extends React.Component {
 		let lastSpeed = this.state.toolbarInstance.timePerFrame;
 		
 		timelineFrames.forEach((frame, index) => {
-			
 			if(this.state.timelineMarkers[index+1]){
 				lastSpeed = parseInt(this.state.timelineMarkers[index+1].speed);
 			}
@@ -433,7 +439,7 @@ class PresentationWrapper extends React.Component {
 				// we don't want transparency otherwise we'll see our current frame we were working on flash between animation frames
 				displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
 				
-				let image = new Image();
+				const image = new Image();
 				image.onload = () => {
 					displayContext.drawImage(image, 0, 0);
 					// remove animationDisplay after last frame
@@ -447,7 +453,6 @@ class PresentationWrapper extends React.Component {
 			}, totalElapsedTime + lastSpeed);
 			
 			totalElapsedTime += lastSpeed;
-			
 		});
 	}
 	
@@ -612,7 +617,7 @@ class PresentationWrapper extends React.Component {
 					
 					<div id="instructions" className="toolbarSection2">
 						<h4> instructions </h4>
-						<p className='instructions'> Use the spacebar to append a new layer or frame. </p>
+						<p className='instructions'> Use the spacebar to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar). </p>
 						<p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames. </p>
 						<p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
 					</div>
@@ -724,6 +729,8 @@ class PresentationWrapper extends React.Component {
 							<option label=""></option>
 							<option className='demo'>run_demo</option>
 							<option className='demo'>floaty_thingy</option>
+							<option className='demo'>cake_cut</option>
+							<option className='demo'>basketball_blur</option>
 						</select>
 					</div>	
 				</div>

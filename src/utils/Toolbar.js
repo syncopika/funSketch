@@ -219,10 +219,10 @@ class Toolbar {
 			if(colorPicked[0] > 10 && colorPicked[1] > 200){
                 colorPickedText.style.color = "#000";
             }else{
-                colorPickedText.style.color = "#FFF";
+                colorPickedText.style.color = "#fff";
             }
 			
-            colorPickedText.textContent = 'rgb(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ')';
+            colorPickedText.textContent = 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',' + colorPicked[3] + ')';
             colorPickedText.style.backgroundColor = colorPickedText.textContent;
             
 			// update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
@@ -232,29 +232,36 @@ class Toolbar {
 	
     /***
         rotate image
-        pass in an element id that will rotate the current canvas image on click
+        pass in an element id for a button that will rotate the current canvas image on click
+		
+		this is mostly for experimental purposes as the effect is not quite good (blurry and loss of pixels).
+		
+		there are a couple StackOverflow posts out there that explain why rotating
+		an image leads to blurriness since the pixels are getting repositioned and their locations
+		are approximated, which I think makes sense
+		
+		How do other drawing applications achieve arbitrary rotations without weirdness? 
+		I think Paint.NET has that feature, maybe Krita does too?)
     ***/
     rotateImage(elementId){
-        //rotate image
         document.getElementById(elementId).addEventListener('click', () => {
             const canvas = this.animationProj.getCurrFrame();
-            //using a promise to convert the initial image to a bitmap
-            const width = canvas.currentCanvas.getAttribute("width");
-            const height = canvas.currentCanvas.getAttribute("height");
+            const width = canvas.currentCanvas.width;
+            const height = canvas.currentCanvas.height;
             const context = canvas.currentCanvas.getContext("2d");
-            createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then(function(bitmap){
+            createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then((bitmap) => {
 				const tmpCanvas = document.createElement("canvas");
 				tmpCanvas.width = width;
 				tmpCanvas.height = height;
 				
-				// use a temp canvas because translating on the real canvas will mess with mousedown coords
 				const tmpCtx = tmpCanvas.getContext("2d");
-				tmpCtx.clearRect(0, 0, width, height);
-				tmpCtx.translate(width / 2, height / 2);
-				tmpCtx.rotate((Math.PI) / 180);
-				tmpCtx.translate(-width / 2, -height / 2);
 				
-				tmpCtx.drawImage(bitmap, 0, 0);
+				// use a temp canvas because translating on the real canvas will mess with mousedown coords
+				tmpCtx.clearRect(0, 0, width, height);
+				tmpCtx.translate(width/2, height/2); // move origin to middle of canvas
+				tmpCtx.rotate(Math.PI/180); // rotate 1 degree
+				tmpCtx.drawImage(bitmap, -bitmap.width/2, -bitmap.height/2);
+				tmpCtx.translate(-width/2, -height/2); // move origin back
 				
 				// then draw image data from tmp canvas to the real one
 				context.putImageData(tmpCtx.getImageData(0, 0, width, height), 0, 0);
@@ -456,12 +463,10 @@ class Toolbar {
 
         this will need to be applied for FRAMES, not LAYERS of a frame.
     
-    *********/
-    //let toolbar = this;
     playFor(){
         if(this.nextFrame()){
             if(this.htmlCounter){
-                let counterText = this.htmlCounter;
+                const counterText = this.htmlCounter;
                 counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
             }
         }
@@ -470,7 +475,7 @@ class Toolbar {
     playBack(){
         if(this.prevFrame()){
             if(this.htmlCounter){
-                let counterText = this.htmlCounter;
+                const counterText = this.htmlCounter;
                 counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
             }
         }
@@ -493,32 +498,37 @@ class Toolbar {
         this.play = null;
     }
 	
+	*********/
+	
 	mergeFrameLayers(frame){
-		let tempCanvas = document.createElement('canvas');
-		let tempCtx = tempCanvas.getContext("2d");
+		const tempCanvas = document.createElement('canvas');
+		const tempCtx = tempCanvas.getContext("2d");
 		tempCanvas.width = frame.width;
 		tempCanvas.height = frame.height;
-		tempCtx.fillStyle = "white";
+		tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
 		tempCtx.fillRect(0, 0, frame.width, frame.height);
-		let tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+		const tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
 
 		for(let j = 0; j < frame.canvasList.length; j++){
-			let layer = frame.canvasList[j];
-			// possible issue: this assumes that all layers within a frame share the same dimensions (but it should be that way, right?)
-			let imageData = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height).data;
-			for(let k = 0; k < imageData.length; k += 4){
-				if(imageData[k] === 255 && imageData[k+1] === 255 && imageData[k+2] === 255){
+			const layer = frame.canvasList[j];
+			
+			// this assumes that all layers within a frame share the same dimensions
+			const currImageLayer = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height);
+			const imageData = currImageLayer.data;
+			
+			for(let k = 0; k <= imageData.length - 4; k += 4){
+				if(imageData[k] === 255 && imageData[k+1] === 255 && imageData[k+2] === 255 && imageData[k+3] !== 128){
+					// if a pixel is rgba(255,255,255,255), we skip it as if we're treating it as transparent
+					// TODO: seems a bit unintuitive that slightly transparent white is being treated as opaque in this way
+					// make canvas use white with alpha as 128 by default and regular, opaque white as 255?
 					continue;
-				}else{
-					// what if the canvas we're getting image data from to draw on the onion skin is LARGER than the onion skin canvas.
-					// we might run into index/length issues...
-					tempImageData.data[k] = imageData[k];
-					tempImageData.data[k+1] = imageData[k+1];
-					tempImageData.data[k+2] = imageData[k+2];
-					tempImageData.data[k+3] = 255;
 				}
+				tempImageData.data[k] = imageData[k];
+				tempImageData.data[k+1] = imageData[k+1];
+				tempImageData.data[k+2] = imageData[k+2];
+				tempImageData.data[k+3] = 255;
 			}
-			// apply each layer to the onion skin
+			
 			tempCtx.putImageData(tempImageData, 0, 0);
 		}
 		return tempCanvas;
@@ -531,11 +541,11 @@ class Toolbar {
         using gif.js - https://github.com/jnordberg/gif.js
     
         elementId is for the loading message,
-        i.e. a <p> element that says "now loading..."
+        e.g. a <p> element that says "now loading..."
         
         this will need to be applied for FRAMES, not LAYERS of a frame.
     
-		timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), i.e.
+		timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), e.g.
 		{
 			1: 100, // frame 1
 			2: 1000 // frame 2
@@ -578,18 +588,19 @@ class Toolbar {
             // prompt the user to name the file 
             let name = prompt("name of file: ");
             if(name === ""){
-                name = "funSketch_saveFile";
+                const date = new Date(); 
+				name = date.toISOString() + "_funSketch_saveFile";
             }else if(name === null){
                 return;
             }
-            let savedData = [];
+            const savedData = [];
             this.animationProj.frameList.forEach(function(frame){
                 // get frame metadata
-                let newFrame = frame.getMetadata();
+                const newFrame = frame.getMetadata();
                 newFrame['layers'] = []; // list of objects
                 frame.canvasList.forEach(function(layer){
                     // get layer metadata
-                    let newLayer = {
+                    const newLayer = {
                         'id': layer.id,
                         'width': layer.getAttribute("width"),
                         'height': layer.getAttribute("height"),
@@ -606,9 +617,9 @@ class Toolbar {
             json += savedData.join(",\n"); // put a line break between each new object, which represents a frame
             json += "\n]";
             // make a blob so it can be downloaded 
-            let blob = new Blob([json], { type: "application/json" });
-            let url = URL.createObjectURL(blob);
-            let link = document.createElement('a');
+            const blob = new Blob([json], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
             link.href = url;
             link.download = name + ".json";
             link.click();
@@ -639,10 +650,11 @@ class Toolbar {
 			const currFrameLayersFromCurrPrj = currFrame.getLayers();
 			
 			currFrameLayersFromImport.forEach((layer, layerIndex) => {
-				
 				if((layerIndex + 1) > currFrameLayersFromCurrPrj.length){
 					// add new layer to curr project as needed based on import
-					currFrame.setupNewLayer();
+					// we want to make sure we don't prefill the layers so we don't interfere with transparency
+					const prefill = false; // use a var so the argument's purpose is clearer
+					currFrame.setupNewLayer(prefill);
 				}
 				
 				const currLayer = currFrame.getLayers()[layerIndex];
@@ -653,8 +665,9 @@ class Toolbar {
 				(function(context, image){
 					image.onload = function(){
 						context.drawImage(image, 0, 0);
+						
+						// after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
 						if(index === data.length-1 && updateStateFunction){
-							// after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
 							updateStateFunction();
 						}
 					};

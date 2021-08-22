@@ -518,7 +518,8 @@ class Toolbar {
 			
 			for(let k = 0; k <= imageData.length - 4; k += 4){
 				if(imageData[k] === 255 && imageData[k+1] === 255 && imageData[k+2] === 255 && imageData[k+3] !== 128){
-					// TODO: seems a bit unintuitive that the more transparent white is being treated as opaque in this way
+					// if a pixel is rgba(255,255,255,255), we skip it as if we're treating it as transparent
+					// TODO: seems a bit unintuitive that slightly transparent white is being treated as opaque in this way
 					// make canvas use white with alpha as 128 by default and regular, opaque white as 255?
 					continue;
 				}
@@ -587,18 +588,19 @@ class Toolbar {
             // prompt the user to name the file 
             let name = prompt("name of file: ");
             if(name === ""){
-                name = "funSketch_saveFile";
+                const date = new Date(); 
+				name = date.toISOString() + "_funSketch_saveFile";
             }else if(name === null){
                 return;
             }
-            let savedData = [];
+            const savedData = [];
             this.animationProj.frameList.forEach(function(frame){
                 // get frame metadata
-                let newFrame = frame.getMetadata();
+                const newFrame = frame.getMetadata();
                 newFrame['layers'] = []; // list of objects
                 frame.canvasList.forEach(function(layer){
                     // get layer metadata
-                    let newLayer = {
+                    const newLayer = {
                         'id': layer.id,
                         'width': layer.getAttribute("width"),
                         'height': layer.getAttribute("height"),
@@ -615,9 +617,9 @@ class Toolbar {
             json += savedData.join(",\n"); // put a line break between each new object, which represents a frame
             json += "\n]";
             // make a blob so it can be downloaded 
-            let blob = new Blob([json], { type: "application/json" });
-            let url = URL.createObjectURL(blob);
-            let link = document.createElement('a');
+            const blob = new Blob([json], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
             link.href = url;
             link.download = name + ".json";
             link.click();
@@ -648,10 +650,11 @@ class Toolbar {
 			const currFrameLayersFromCurrPrj = currFrame.getLayers();
 			
 			currFrameLayersFromImport.forEach((layer, layerIndex) => {
-				
 				if((layerIndex + 1) > currFrameLayersFromCurrPrj.length){
 					// add new layer to curr project as needed based on import
-					currFrame.setupNewLayer();
+					// we want to make sure we don't prefill the layers so we don't interfere with transparency
+					const prefill = false; // use a var so the argument's purpose is clearer
+					currFrame.setupNewLayer(prefill);
 				}
 				
 				const currLayer = currFrame.getLayers()[layerIndex];
@@ -662,8 +665,9 @@ class Toolbar {
 				(function(context, image){
 					image.onload = function(){
 						context.drawImage(image, 0, 0);
+						
+						// after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
 						if(index === data.length-1 && updateStateFunction){
-							// after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
 							updateStateFunction();
 						}
 					};

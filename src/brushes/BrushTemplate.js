@@ -20,7 +20,7 @@ class BrushTemplate {
 	
 	// assuming a PointerEvent, calculate the brush width based on stylus pressure
 	_calculateBrushWidth(pointerEvt){
-		const brushWidth = this.brushManager.getCurrSize();
+		let brushWidth = this.brushManager.getCurrSize();
 		if(pointerEvt.pressure){
 			brushWidth = (pointerEvt.pressure*2) * brushWidth;
 		}
@@ -32,23 +32,24 @@ class BrushTemplate {
 		const x = pointerEvt.offsetX;
 		const y = pointerEvt.offsetY;
 		const pressure = pointerEvt.pressure;
-		let currSize = this.brushManager.getCurrSize();
-		let currColor = this.brushManager.getCurrColorArray();
+		const currColorArr = this.brushManager.getCurrColorArray();
+		
 		let penPressure = 1;
+		let currSize = this.brushManager.getCurrSize();
+		let currColor = this.brushManager.getCurrColor();
 		
 		// take into account pen pressure for color if needed (as well as for brush size)
 		if(this.brushManager.applyPressureColor() && pressure){
 			// pressure ranges from 0 to 1
-			// special case: if curr color is black, don't alter based on pressure
-			// note that if curr color is white, more pressure goes towards black (which is expected)
-			if(currColor[0] !== 0 && currColor[1] !== 0 && currColor[2] !== 0){
-				currColor = 'rgba(' + (currColor[0]*(1-pressure)) + ',' + (currColor[1]*(1-pressure)) + ',' + (currColor[2]*(1-pressure)) + ',' + currColor[3] + ')';
-			}
+			const newR = currColorArr[0]*(1-pressure);
+			const newG = currColorArr[1]*(1-pressure);
+			const newB = currColorArr[2]*(1-pressure);
+			currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
 			
 			currSize = this._calculateBrushWidth(pointerEvt);
 			penPressure = pressure;
 		}else{
-			currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + currColor[3] + ')';
+			currColor = 'rgba(' + currColorArr.join(",") + ')';
 		}
 		
         this.clickX.push(x);

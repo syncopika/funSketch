@@ -729,6 +729,8 @@ class PresentationWrapper extends React.Component {
 							<option label=""></option>
 							<option className='demo'>run_demo</option>
 							<option className='demo'>floaty_thingy</option>
+							<option className='demo'>cake_cut</option>
+							<option className='demo'>basketball_blur</option>
 						</select>
 					</div>	
 				</div>

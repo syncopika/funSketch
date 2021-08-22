@@ -375,21 +375,6 @@ module.exports = _possibleConstructorReturn;
 
 /***/ }),
 
-/***/ "./node_modules/@babel/runtime/helpers/readOnlyError.js":
-/*!**************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/readOnlyError.js ***!
-  \**************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _readOnlyError(name) {
-  throw new TypeError("\"" + name + "\" is read-only");
-}
-
-module.exports = _readOnlyError;
-
-/***/ }),
-
 /***/ "./node_modules/@babel/runtime/helpers/setPrototypeOf.js":
 /*!***************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/setPrototypeOf.js ***!
@@ -30358,7 +30343,11 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "demo"
       }, "run_demo"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
         className: "demo"
-      }, "floaty_thingy")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }, "floaty_thingy"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
+        className: "demo"
+      }, "cake_cut"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", {
+        className: "demo"
+      }, "basketball_blur")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "screen"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "screenContainer"
@@ -30459,20 +30448,17 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BrushTemplate", function() { return BrushTemplate; });
-/* harmony import */ var _babel_runtime_helpers_readOnlyError__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/readOnlyError */ "./node_modules/@babel/runtime/helpers/readOnlyError.js");
-/* harmony import */ var _babel_runtime_helpers_readOnlyError__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_readOnlyError__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__);
-
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
 
 
 
 // template for brushes
 var BrushTemplate = /*#__PURE__*/function () {
   function BrushTemplate(brushManager) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default()(this, BrushTemplate);
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, BrushTemplate);
 
     this.brushManager = brushManager; // a brush will need to use some things the brush manager has
 
@@ -30491,13 +30477,13 @@ var BrushTemplate = /*#__PURE__*/function () {
   } // assuming a PointerEvent, calculate the brush width based on stylus pressure
 
 
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(BrushTemplate, [{
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(BrushTemplate, [{
     key: "_calculateBrushWidth",
     value: function _calculateBrushWidth(pointerEvt) {
       var brushWidth = this.brushManager.getCurrSize();
 
       if (pointerEvt.pressure) {
-        brushWidth = (_babel_runtime_helpers_readOnlyError__WEBPACK_IMPORTED_MODULE_0___default()("brushWidth"), pointerEvt.pressure * 2 * brushWidth);
+        brushWidth = pointerEvt.pressure * 2 * brushWidth;
       }
 
       return brushWidth;
@@ -30509,22 +30495,21 @@ var BrushTemplate = /*#__PURE__*/function () {
       var x = pointerEvt.offsetX;
       var y = pointerEvt.offsetY;
       var pressure = pointerEvt.pressure;
+      var currColorArr = this.brushManager.getCurrColorArray();
+      var penPressure = 1;
       var currSize = this.brushManager.getCurrSize();
-      var currColor = this.brushManager.getCurrColorArray();
-      var penPressure = 1; // take into account pen pressure for color if needed (as well as for brush size)
+      var currColor = this.brushManager.getCurrColor(); // take into account pen pressure for color if needed (as well as for brush size)
 
       if (this.brushManager.applyPressureColor() && pressure) {
         // pressure ranges from 0 to 1
-        // special case: if curr color is black, don't alter based on pressure
-        // note that if curr color is white, more pressure goes towards black (which is expected)
-        if (currColor[0] !== 0 && currColor[1] !== 0 && currColor[2] !== 0) {
-          currColor = 'rgba(' + currColor[0] * (1 - pressure) + ',' + currColor[1] * (1 - pressure) + ',' + currColor[2] * (1 - pressure) + ',' + currColor[3] + ')';
-        }
-
+        var newR = currColorArr[0] * (1 - pressure);
+        var newG = currColorArr[1] * (1 - pressure);
+        var newB = currColorArr[2] * (1 - pressure);
+        currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
         currSize = this._calculateBrushWidth(pointerEvt);
         penPressure = pressure;
       } else {
-        currColor = 'rgba(' + currColor[0] + ',' + currColor[1] + ',' + currColor[2] + ',' + currColor[3] + ')';
+        currColor = 'rgba(' + currColorArr.join(",") + ')';
       }
 
       this.clickX.push(x);
@@ -33865,16 +33850,20 @@ var Frame = /*#__PURE__*/function () {
     /***
         set up a new canvas element
         makes the new canvas the current canvas
+    		prefill should be false when importing a project
+    this is so that we don't prefill the canvas with rgba(255,255,255,1)
+    and mess up any alpha transparency the imported layers might have
     ***/
 
   }, {
     key: "setupNewLayer",
     value: function setupNewLayer() {
+      var prefill = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       // create the new canvas element 
       var newCanvas = document.createElement('canvas');
       newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
       document.getElementById(this.containerId).appendChild(newCanvas);
-      setCanvas(newCanvas);
+      setCanvas(prefill, newCanvas);
 
       if (this.count === 0) {
         newCanvas.style.opacity = .97;
@@ -34049,7 +34038,8 @@ var Frame = /*#__PURE__*/function () {
     value: function copyCanvas() {
       var newCanvas = document.createElement('canvas');
       newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
-      setCanvas(newCanvas, this.width, this.height); //newCanvas.style.opacity = 0.97;
+      var prefill = true;
+      setCanvas(prefill, newCanvas, this.width, this.height); //newCanvas.style.opacity = 0.97;
 
       document.getElementById(this.containerId).appendChild(newCanvas);
       newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
@@ -34284,15 +34274,17 @@ function createOnionSkinFrame(containerId) {
   var newCanvas = document.createElement('canvas');
   newCanvas.id = "onionSkinCanvas";
   document.getElementById(containerId).appendChild(newCanvas);
-  setCanvas(newCanvas);
+  var prefill = true;
+  setCanvas(prefill, newCanvas);
   newCanvas.style.opacity = .97;
   newCanvas.style.zIndex = -1; // TODO: come back to this later. make sure it's visible if current frame > 1!
 
   return newCanvas;
 } // assigns default canvas attributes and styling
+// prefill should be false when importing a project
 
 
-function setCanvas(canvasElement, width, height) {
+function setCanvas(prefill, canvasElement, width, height) {
   canvasElement.style.position = "absolute";
   canvasElement.style.border = '1px #000 solid';
   canvasElement.style.zIndex = 0;
@@ -34301,8 +34293,11 @@ function setCanvas(canvasElement, width, height) {
   canvasElement.style.height = "100%";
   canvasElement.width = width ? width : canvasElement.offsetWidth;
   canvasElement.height = height ? height : canvasElement.offsetHeight;
-  canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
-  canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+
+  if (prefill) {
+    canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
+    canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+  }
 }
 
 
@@ -34361,8 +34356,8 @@ var BrushManager = /*#__PURE__*/function () {
 
     this.selectedBrush = 'default'; // user-selected brush 
 
-    this.currColor = 'rgba(0,0,0,1)';
-    this.currColorArray = Uint8Array.from([0, 0, 0, 1]);
+    this.currColor = 'rgba(0,0,0,255)';
+    this.currColorArray = Uint8Array.from([0, 0, 0, 255]);
     this.currSize = 2;
     this.pressureColorFlag = false; // whether brush color should depend on pen pressure
     // brushes map
@@ -35154,7 +35149,8 @@ var Toolbar = /*#__PURE__*/function () {
 
         for (var k = 0; k <= imageData.length - 4; k += 4) {
           if (imageData[k] === 255 && imageData[k + 1] === 255 && imageData[k + 2] === 255 && imageData[k + 3] !== 128) {
-            // TODO: seems a bit unintuitive that the more transparent white is being treated as opaque in this way
+            // if a pixel is rgba(255,255,255,255), we skip it as if we're treating it as transparent
+            // TODO: seems a bit unintuitive that slightly transparent white is being treated as opaque in this way
             // make canvas use white with alpha as 128 by default and regular, opaque white as 255?
             continue;
           }
@@ -35235,7 +35231,8 @@ var Toolbar = /*#__PURE__*/function () {
         var name = prompt("name of file: ");
 
         if (name === "") {
-          name = "funSketch_saveFile";
+          var date = new Date();
+          name = date.toISOString() + "_funSketch_saveFile";
         } else if (name === null) {
           return;
         }
@@ -35310,7 +35307,10 @@ var Toolbar = /*#__PURE__*/function () {
         currFrameLayersFromImport.forEach(function (layer, layerIndex) {
           if (layerIndex + 1 > currFrameLayersFromCurrPrj.length) {
             // add new layer to curr project as needed based on import
-            currFrame.setupNewLayer();
+            // we want to make sure we don't prefill the layers so we don't interfere with transparency
+            var prefill = false; // use a var so the argument's purpose is clearer
+
+            currFrame.setupNewLayer(prefill);
           }
 
           var currLayer = currFrame.getLayers()[layerIndex]; // add the image data 
@@ -35320,10 +35320,9 @@ var Toolbar = /*#__PURE__*/function () {
 
           (function (context, image) {
             image.onload = function () {
-              context.drawImage(image, 0, 0);
+              context.drawImage(image, 0, 0); // after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
 
               if (index === data.length - 1 && updateStateFunction) {
-                // after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
                 updateStateFunction();
               }
             };

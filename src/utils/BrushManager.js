@@ -20,8 +20,8 @@ class BrushManager {
 		this.animationProject = animationProj;
 		this.currentEventListeners = {}; // keep track of current brush's event listeners so we can detach when switching
 		this.selectedBrush = 'default'; // user-selected brush 
-		this.currColor = 'rgba(0,0,0,1)';
-		this.currColorArray = Uint8Array.from([0, 0, 0, 1]);
+		this.currColor = 'rgba(0,0,0,255)';
+		this.currColorArray = Uint8Array.from([0, 0, 0, 255]);
 		this.currSize = 2;
 		this.pressureColorFlag = false; // whether brush color should depend on pen pressure
 		

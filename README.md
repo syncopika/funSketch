@@ -11,6 +11,13 @@ current look:
 animation demo:    
 ![animation demo](notes/animation_demo.gif)    
     
+### notes:    
+You'll notice with the color wheel there are 2 white color options.    
+![2 different white color options](notes/opaque-white.png)    
+    
+The one to the right has an alpha value of 128 whereas the other has an alpha value of 255.    
+Because of the way I have things set up, the white with alpha as 128 can be used to create an opaque white color when the layers are merged to create a final frame.    
+Otherwise, any white color with 255 as the alpha value is treated as transparent (so those pixels are ignored when merging layers). By default, every canvas is filled with `rgba(255,255,255,255)`.    
     
 ### installation:    
 You'll need node.js and npm. `cd` into this repo and run `npm install` to install all the dependencies. Then run `node server.js` to serve the application. To run the tests, run `npm test`.    
@@ -24,4 +31,3 @@ thanks to mr.doob's <a href='https://github.com/mrdoob/harmony'>harmony project<
     
 and much thanks to the many authors of various blogs, StackOverflow posts and other sources of related information I referred to, which helped save me a ton of time :).    
     
-please note: this application is not meant to be supported on mobile devices.    

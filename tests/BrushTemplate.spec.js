@@ -65,9 +65,15 @@ describe("test brush template", () => {
 		
 		brush._addClick(mockEvt, true);
 		expect(brush.clickX.length).toEqual(1);
-		expect(brush.clickColor[0]).toEqual("rgba(0,0,0,0.25)");
+		expect(brush.clickColor[0]).toEqual("rgba(0,0,0,255)"); // don't change alpha when color is #000
 		expect(brush.clickPressure[0]).toEqual(.5);
 		expect(brush.clickSize[0]).toEqual(2);
+		
+		// change color
+		brushMan.changeBrushColor([120,120,255,255]);
+		brush._addClick(mockEvt, true);
+		expect(brush.clickX.length).toEqual(2);
+		expect(brush.clickColor[1]).toEqual("rgba(60,60,127.5,255)");
 	});
 	
 });

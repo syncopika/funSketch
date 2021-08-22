@@ -17,7 +17,8 @@ describe("test other utility functions in AnimationProject", () => {
 
 	it("test setCanvas", () => {
 		const canvas = document.createElement('canvas');
-		setCanvas(canvas);
+		const prefill = true;
+		setCanvas(prefill, canvas);
 		
 		const expectedParams = {
 			position: "absolute",

@@ -505,7 +505,7 @@ class Toolbar {
 		const tempCtx = tempCanvas.getContext("2d");
 		tempCanvas.width = frame.width;
 		tempCanvas.height = frame.height;
-		tempCtx.fillStyle = "#fff";
+		tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
 		tempCtx.fillRect(0, 0, frame.width, frame.height);
 		const tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
 

@@ -13,17 +13,6 @@ class DefaultBrush extends BrushTemplate {
 		const currLayer = frame.getCurrCanvas();
 		const currCtx = currLayer.getContext('2d');
 		
-		// if using a color with alpha != 255 (so some transparency), change globalAlpha
-		if(this.brushManager.currColorArray[3] !== 255){
-			// fortunately this doesn't affect things already drawn on the canvas
-			// so we can toggle it when we need to draw semi-opaque things
-			console.log("got a transparent color!");
-			currCtx.globalAlpha = this.brushManager.currColorArray[3]/255; // needs to be between 0 and 1
-			console.log(currCtx.globalAlpha);
-		}else{
-			currCtx.globalAlpha = 1.0;
-		}
-		
 		if(evt.which === 1 || evt.type === 'touchstart'){ //when left click only
 			this.paint = true;
 			// offset will be different with mobile
@@ -66,27 +55,27 @@ class DefaultBrush extends BrushTemplate {
 		const tempCtx = tempCanvas.getContext("2d");
 		tempCanvas.width = currCanvas.width;
 		tempCanvas.height = currCanvas.height;
-		tempCtx.fillStyle = "#fff";
-		tempCtx.strokeStyle = "#000";
+		tempCtx.lineJoin = "round";
+		tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
 		tempCtx.fillRect(0, 0, currCanvas.width, currCanvas.height);
 		
-		this.brushStroke(tempCtx, "#000");
+		this.brushStroke(tempCtx, "rgba(0,0,0,1)");
 		
-		const tmpImgData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height).data;
+		const tmpImgData = tempCtx.getImageData(0, 0, currCanvas.width, currCanvas.height).data;
 		
-		const currLayerImgData = currCtx.getImageData(0, 0, currCanvas.width, currCanvas.height);
-		const imgData = currLayerImgData.data;
+		const currLayerImg = currCtx.getImageData(0, 0, currCanvas.width, currCanvas.height);
+		const imgData = currLayerImg.data;
 		
 		for(let i = 0; i <= tmpImgData.length-4; i += 4){
 			const r = tmpImgData[i];
 			const g = tmpImgData[i+1];
 			const b = tmpImgData[i+2];
-			if(r == 0 && g == 0 && b == 0){
+			if(!(r === 255 && g === 255 && b === 255)){
 				imgData[i+3] = 128; // set alpha value in the original image data
 			}
 		}
 		
-		currCtx.putImageData(currLayerImgData, 0, 0);
+		currCtx.putImageData(currLayerImg, 0, 0);
 	}
 	
 	brushStop(evt){
@@ -106,8 +95,6 @@ class DefaultBrush extends BrushTemplate {
 			this.modifyAlphas(currLayer);
 		}
 		
-		frame.addSnapshot();
-		
 		this._clearClick();
 		this.paint = false;
 	}
@@ -115,9 +102,9 @@ class DefaultBrush extends BrushTemplate {
 	// this is for determining what the brush stroke looks like
 	brushStroke(context, strokeColor=null){
 		for(let i = 0; i < this.clickX.length; i++){
+			//this.clickColor[i] = this.clickColor[i].replace("128", "0.5"); // alpha needs to be between 0 and 1 for strokeStyle!
 			context.strokeStyle = strokeColor ? strokeColor : this.clickColor[i];
             context.lineWidth = this.clickSize[i];
-			
             context.beginPath();
 			
             // this helps generate a solid line, rather than a line of dots.

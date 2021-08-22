@@ -49,3 +49,5 @@ https://github.com/testing-library/react-testing-library/issues/629
 // other
 https://stackoverflow.com/questions/36588722/html-canvas-putimagedata-with-transparency-causes-incorrect-rgb-to-be-saved
 https://stackoverflow.com/questions/43582546/what-is-colorspace-in-imagedata
+https://stackoverflow.com/questions/53523837/html5-canvas-stroke-with-consistent-alpha-values
+https://stackoverflow.com/questions/60093686/how-do-i-draw-in-a-canvas-with-consistent-opacity

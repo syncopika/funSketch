@@ -62,7 +62,7 @@ class BrushTemplate {
     _redraw(strokeFunction){
         const frame = this.brushManager.animationProject.getCurrFrame();
 		const context = frame.getCurrCanvas().getContext("2d");
-        context.lineJoin = 'round'; //TODO: make this a brushmanager variable?
+        context.lineJoin = "round"; //TODO: make this a brushmanager variable?
 		strokeFunction(context);
     }
 	

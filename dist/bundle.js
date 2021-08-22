@@ -30539,7 +30539,7 @@ var BrushTemplate = /*#__PURE__*/function () {
     value: function _redraw(strokeFunction) {
       var frame = this.brushManager.animationProject.getCurrFrame();
       var context = frame.getCurrCanvas().getContext("2d");
-      context.lineJoin = 'round'; //TODO: make this a brushmanager variable?
+      context.lineJoin = "round"; //TODO: make this a brushmanager variable?
 
       strokeFunction(context);
     }
@@ -30761,18 +30761,7 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       evt.preventDefault();
       var frame = this.brushManager.animationProject.getCurrFrame();
       var currLayer = frame.getCurrCanvas();
-      var currCtx = currLayer.getContext('2d'); // if using a color with alpha != 255 (so some transparency), change globalAlpha
-
-      if (this.brushManager.currColorArray[3] !== 255) {
-        // fortunately this doesn't affect things already drawn on the canvas
-        // so we can toggle it when we need to draw semi-opaque things
-        console.log("got a transparent color!");
-        currCtx.globalAlpha = this.brushManager.currColorArray[3] / 255; // needs to be between 0 and 1
-
-        console.log(currCtx.globalAlpha);
-      } else {
-        currCtx.globalAlpha = 1.0;
-      }
+      var currCtx = currLayer.getContext('2d');
 
       if (evt.which === 1 || evt.type === 'touchstart') {
         //when left click only
@@ -30825,26 +30814,25 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       var tempCtx = tempCanvas.getContext("2d");
       tempCanvas.width = currCanvas.width;
       tempCanvas.height = currCanvas.height;
-      tempCtx.fillStyle = "#fff";
-      tempCtx.strokeStyle = "#000";
+      tempCtx.lineJoin = "round";
+      tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
       tempCtx.fillRect(0, 0, currCanvas.width, currCanvas.height);
-      this.brushStroke(tempCtx, "#000");
-      var tmpImgData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height).data;
-      var currLayerImgData = currCtx.getImageData(0, 0, currCanvas.width, currCanvas.height);
-      var imgData = currLayerImgData.data;
+      this.brushStroke(tempCtx, "rgba(0,0,0,1)");
+      var tmpImgData = tempCtx.getImageData(0, 0, currCanvas.width, currCanvas.height).data;
+      var currLayerImg = currCtx.getImageData(0, 0, currCanvas.width, currCanvas.height);
+      var imgData = currLayerImg.data;
 
       for (var i = 0; i <= tmpImgData.length - 4; i += 4) {
         var r = tmpImgData[i];
         var g = tmpImgData[i + 1];
         var b = tmpImgData[i + 2];
 
-        if (r == 0 && g == 0 && b == 0) {
-          console.log("hello");
+        if (!(r === 255 && g === 255 && b === 255)) {
           imgData[i + 3] = 128; // set alpha value in the original image data
         }
       }
 
-      currCtx.putImageData(currLayerImgData, 0, 0);
+      currCtx.putImageData(currLayerImg, 0, 0);
     }
   }, {
     key: "brushStop",
@@ -30854,34 +30842,14 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       var currCtx = currLayer.getContext("2d");
       evt.preventDefault();
       var w = currLayer.width;
-      var h = currLayer.height; //const currImgData = currCtx.getImageData(0, 0, w, h);
-      //const data = currImgData.data;
-      // idea: if we want to have transparency with white, let's try manipulating the alpha channel manually
+      var h = currLayer.height; // idea: if we want to have transparency with white, let's try manipulating the alpha channel manually
       // for the pixels via image data (since strokeStyle with an alpha value set does not seem to change the image data :/)
-
-      /* this way we can have a version of white that we can treat as opaque and should not be treated as transparent
-      for(let i = 0; i < this.clickColor.length; i++){
-      	const [r,g,b,a] = this.clickColor[i].match(/\d+/g);
-      	const isTransparent = (r == 255 && g == 255 && b == 255 && a == 128);
-      	if(isTransparent){
-      		const x = this.clickX[i];
-      		const y = this.clickY[i];
-      		
-      		const pixelData = currCtx.getImageData(x, y, 1, 1);
-      		console.log(currCtx.globalAlpha);
-      		console.log(pixelData);
-      		
-      		//pixelData.data[3] = 128; // alpha channel
-      		//currCtx.putImageData(pixelData, x, y);
-      	}
-      }*/
+      // this kinda gets me what I want but it's still not good
 
       if (this.brushManager.currColorArray[3] !== 255) {
         // we need to apply some transparency via alpha
         this.modifyAlphas(currLayer);
       }
-
-      frame.addSnapshot();
 
       this._clearClick();
 
@@ -30894,6 +30862,7 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       var strokeColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
       for (var i = 0; i < this.clickX.length; i++) {
+        //this.clickColor[i] = this.clickColor[i].replace("128", "0.5"); // alpha needs to be between 0 and 1 for strokeStyle!
         context.strokeStyle = strokeColor ? strokeColor : this.clickColor[i];
         context.lineWidth = this.clickSize[i];
         context.beginPath(); // this helps generate a solid line, rather than a line of dots.
@@ -35173,7 +35142,7 @@ var Toolbar = /*#__PURE__*/function () {
       var tempCtx = tempCanvas.getContext("2d");
       tempCanvas.width = frame.width;
       tempCanvas.height = frame.height;
-      tempCtx.fillStyle = "#fff";
+      tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
       tempCtx.fillRect(0, 0, frame.width, frame.height);
       var tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
 

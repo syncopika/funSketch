@@ -65,7 +65,7 @@ describe("test brush template", () => {
 		
 		brush._addClick(mockEvt, true);
 		expect(brush.clickX.length).toEqual(1);
-		expect(brush.clickColor[0]).toEqual("rgba(0,0,0,255)"); // don't change alpha when color is #000
+		expect(brush.clickColor[0]).toEqual("rgba(0,0,0,255)");
 		expect(brush.clickPressure[0]).toEqual(.5);
 		expect(brush.clickSize[0]).toEqual(2);
 		

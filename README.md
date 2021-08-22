@@ -17,6 +17,7 @@ You'll notice with the color wheel there are 2 white color options.
     
 The one to the right has an alpha value of 128 whereas the other has an alpha value of 255.    
 Because of the way I have things set up, the white with alpha as 128 can be used to create an opaque white color when the layers are merged to create a final frame.    
+    
 Otherwise, any white color with 255 as the alpha value is treated as transparent (so those pixels are ignored when merging layers). By default, every canvas is filled with `rgba(255,255,255,255)`.    
     
 ### installation:    

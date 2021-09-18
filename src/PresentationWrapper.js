@@ -395,23 +395,32 @@ class PresentationWrapper extends React.Component {
 		}
 	}
 	
-	_playAnimation(){
+	_playAnimation(direction){
 		/*
-			plays all the timeline frames in sequence.
-			note that even if a frame exists, if it's not in the timeline
-			playAnimation will not do anything
+			plays all the timeline frames in sequence by merging each frame's layers on a separate canvas.
+			note that even if a frame exists, if it's not in the timeline playAnimation will not do anything.
 			
-			TODO: backwards animation?, pause?
+			TODO: pause? stop? just a segment?
 		*/
-		const timelineFrames = this.state.timelineFrames;
+		if(direction !== "forward" && direction !== "backward"){
+			console.log("not a valid direction for animation");
+			return;
+		}
+		
+		let timelineFrames = Array.from(this.state.timelineFrames); // make a copy
 		if(Object.keys(timelineFrames).length === 0){
 			return;
 		}
+		
+		if(direction === "backward"){
+			// reverse alters the original array so we needed a copy
+			timelineFrames = timelineFrames.reverse();
+		}
 
-		const currFrame = this.state.animationProject.getCurrFrame();
 		const animationDisplay = document.createElement('canvas');
 		
 		// all frames should have the same dimensions
+		const currFrame = this.state.animationProject.getCurrFrame();
 		animationDisplay.width = currFrame.currentCanvas.width; 
 		animationDisplay.height = currFrame.currentCanvas.height;
 		
@@ -434,6 +443,7 @@ class PresentationWrapper extends React.Component {
 				lastSpeed = parseInt(this.state.timelineMarkers[index+1].speed);
 			}
 			
+			// TODO: use requestAnimationFrame?
 			setTimeout(() => {
 				// set the animation canvas to white instead of clearRect 
 				// we don't want transparency otherwise we'll see our current frame we were working on flash between animation frames
@@ -626,20 +636,24 @@ class PresentationWrapper extends React.Component {
 						<h4> frame/layer controls </h4>
 						<div id="displayLayerStuff">
 							<p> layer: </p>
-							<button id='insertCanvas'>add new layer after</button>
-							<button id='deleteCanvas'>delete current layer</button>
-							<button id='duplicateCanvas'>duplicate layer</button>
-							<button id='clearCanvas'>clear layer</button>
-							<button id='downloadLayer'>download current layer</button>
+							<ul>
+								<li><button id='insertCanvas'>add new layer after</button></li>
+								<li><button id='deleteCanvas'>delete current layer</button></li>
+								<li><button id='duplicateCanvas'>duplicate layer</button></li>
+								<li><button id='clearCanvas'>clear layer</button></li>
+								<li><button id='downloadLayer'>download current layer</button></li>
+							</ul>
 						</div>
 						<hr />
 						<div id="displayFrameStuff">
 							<p> frame: </p>
-							<button id='addNewFrame'>add new frame</button>
-							<button id='copyCurrFrame'>duplicate frame</button>
-							<button id='deleteCurrFrame'>delete current frame</button>
-							<button id='changeLayerOrder'>change layer order</button>
-							<button id='downloadFrame'>download current frame</button>
+							<ul>
+								<li><button id='addNewFrame'>add new frame</button></li>
+								<li><button id='copyCurrFrame'>duplicate frame</button></li>
+								<li><button id='deleteCurrFrame'>delete current frame</button></li>
+								<li><button id='changeLayerOrder'>change layer order</button></li>
+								<li><button id='downloadFrame'>download current frame</button></li>
+							</ul>
 						
 							<LayerOrder 
 								changingLayerOrder={this.state.changingLayerOrder}
@@ -679,13 +693,15 @@ class PresentationWrapper extends React.Component {
 					<div id="otherSection" className="tbar">
 						<h4> other </h4>
 						<div id="displayOtherStuff">
-							<button id='importImage'> import image </button>
-							<button id='rotateCanvasImage'>rotate image</button>
-							<button id='undo'>undo</button>
-							<button id='saveWork'>save project (.json)</button> 
-							<button id='importProject'>import project </button>
-							<button id='togglePenPressureColor'> toggle pen pressure for color </button>
-							<button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button>
+							<ul>
+								<li><button id='importImage'> import image </button></li>
+								<li><button id='rotateCanvasImage'>rotate image</button></li>
+								<li><button id='undo'>undo</button></li>
+								<li><button id='saveWork'>save project (.json)</button></li> 
+								<li><button id='importProject'>import project </button></li>
+								<li><button id='togglePenPressureColor'> toggle pen pressure for color </button></li>
+								<li><button id='toggleLayerOrFrame'> toggle frame addition on spacebar press </button></li>
+							</ul>
 						</div>
 						<div>
 							<br />
@@ -699,7 +715,7 @@ class PresentationWrapper extends React.Component {
 					<div id="animControlSection" className="tbar">
 						<div id='animationControl'>
 							<h4> animation control: </h4>
-							<ul id='timeOptions'>
+							<div id='timeOptions'>
 								<label htmlFor='timePerFrame'>time per frame (ms):</label>
 								<select name='timePerFrame' id='timePerFrame' onChange={
 									(evt) => {
@@ -712,13 +728,20 @@ class PresentationWrapper extends React.Component {
 									<option value='700'>700</option>
 									<option value='1000'>1000</option>
 								</select>
+							</div>
+							<ul>
+								<li><button onClick={
+									() => {
+										this._playAnimation("forward");
+									}
+								}> play animation forward </button></li>
+								<li><button onClick={
+									() => {
+										this._playAnimation("backward");
+									}
+								}> play animation backward </button></li>
+								<li><button id='generateGif'> generate gif! </button></li>
 							</ul>
-							<button onClick={
-								() => {
-									this._playAnimation();
-								}
-							}> play animation </button>
-							<button id='generateGif'> generate gif! </button>
 						</div>
 						<p id='loadingScreen'></p>
 					</div>

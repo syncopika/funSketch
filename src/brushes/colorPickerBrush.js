@@ -5,24 +5,13 @@ class ColorPickerBrush extends BrushTemplate {
 	constructor(brushManager){
 		super(brushManager);
 		
-		this.cursorType = "pointer"; // TODO: make an icon //"url(" + "\"paintbucket.png\"" + "), auto";
+		this.cursorType = "pointer"; // TODO: make an icon
 	}
 	
 	// event listener functions
 	brushStart(evt){
 		evt.preventDefault();
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		
-		if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart'){ //when left click only
-			if(evt.type === 'touchstart'){
-				const newCoords = this._handleTouchEvent(evt);
-				evt.offsetX = newCoords.x;
-				evt.offsetY = newCoords.y;
-				evt.preventDefault();
-			}
-			
-			// do floodfill
+		if(this.isStartBrush(evt)){
 			// need to parse the currColor because right now it looks like "rgb(x,y,z)". 
 			// I want it to look like [x, y, z]
 			const currColor = this.brushManager.currColor;
@@ -34,6 +23,8 @@ class ColorPickerBrush extends BrushTemplate {
 
 			// ruh roh: https://stackoverflow.com/questions/27961537/why-function-returns-wrong-color-in-canvas
 			// so this data might not be accurate... :/
+			const frame = this.brushManager.animationProject.getCurrFrame();	
+			const currLayer = frame.getCurrCanvas();
 			const colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
 			const color = 'rgba(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ',' + colorData[3] + ')';
 
@@ -50,10 +41,8 @@ class ColorPickerBrush extends BrushTemplate {
 
 		// TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 		let start = this.brushStart.bind(this);
-		currLayer.addEventListener('mousedown', start);
-		currLayer.addEventListener('touchstart', start);
-		this.brushManager.currentEventListeners['mousedown'] = start;
-		this.brushManager.currentEventListeners['touchstart'] = start;
+		currLayer.addEventListener('pointerdown', start);
+		this.brushManager.currentEventListeners['pointerdown'] = start;
 	}
 }
 

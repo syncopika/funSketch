@@ -14,47 +14,25 @@ class ShapeBrush extends BrushTemplate {
 	// event listener functions
 	brushStart(evt){
 		evt.preventDefault();
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		if(evt.which === 1 || evt.type === 'touchstart'){ //when left click only
+		if(this.isStartBrush(evt)){
 			this.paint = true;
-			
-			if(evt.type === 'touchstart'){
-				let newCoords = this._handleTouchEvent(evt);
-				evt.offsetX = newCoords.x;
-				evt.offsetY = newCoords.y;
-				evt.preventDefault();
-			}
-			this._addClick(evt, true);
-			this._redraw(this.brushStroke.bind(this));
+			this.addClick(evt, true);
+			this.redraw(this.brushStroke.bind(this));
 		}		
 	}
 	
 	brushMove(evt){
 		evt.preventDefault();
 		if(this.paint){
-			if(evt.type === 'touchmove'){
-				const newCoords = this._handleTouchEvent(evt);
-				evt.offsetX = newCoords.x;
-				evt.offsetY = newCoords.y;
-				// prevent page scrolling when drawing 
-				evt.preventDefault();
-			}
-			this._addClick(evt, true);
-			this._redraw(this.brushStroke.bind(this));
+			this.addClick(evt, true);
+			this.redraw(this.brushStroke.bind(this));
 		}
 	}
 	
 	brushStop(evt){
-        const frame = this.brushManager.animationProject.getCurrFrame();
-		const currLayer = frame.getCurrCanvas();
 		evt.preventDefault();
-		
-		const w = currLayer.width;
-		const h = currLayer.height;		
-		frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
-		
-		this._clearClick();
+		this.brushManager.saveSnapshot();
+		this.clearClick();
 		this.paint = false;
 	}
 	
@@ -90,38 +68,17 @@ class ShapeBrush extends BrushTemplate {
 	}
 	
 	brushLeave(){
-		this._clearClick();
+		this.clearClick();
 		this.paint = false;
 	}
 	
 	// equip the brush and set up the current canvas for using the brush
 	attachBrush(){
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		currLayer.style.cursor = this.cursorType;
-
-		// TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 		let start = this.brushStart.bind(this);
-		currLayer.addEventListener('pointerdown', start);
-		currLayer.addEventListener('touchstart', start);
-		this.brushManager.currentEventListeners['pointerdown'] = start;
-		this.brushManager.currentEventListeners['touchstart'] = start;
-		
 		let move = this.brushMove.bind(this);
-		currLayer.addEventListener('pointermove', move);
-		currLayer.addEventListener('touchmove', move);
-		this.brushManager.currentEventListeners['pointermove'] = move;
-		this.brushManager.currentEventListeners['touchmove'] = move;
-		
 		let stop = this.brushStop.bind(this);
-		currLayer.addEventListener('pointerup', stop);
-		currLayer.addEventListener('touchend', stop);
-		this.brushManager.currentEventListeners['pointerup'] = stop;
-		this.brushManager.currentEventListeners['touchend'] = stop;
-		
 		let leave = this.brushLeave.bind(this);
-		currLayer.addEventListener('pointerleave', leave);
-		this.brushManager.currentEventListeners['pointerleave'] = leave;
+		this.brushManager.updateEventListeners(start, move, stop, leave, this.cursorType);
 	}
 }
 

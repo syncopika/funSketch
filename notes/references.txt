@@ -51,3 +51,4 @@ https://stackoverflow.com/questions/36588722/html-canvas-putimagedata-with-trans
 https://stackoverflow.com/questions/43582546/what-is-colorspace-in-imagedata
 https://stackoverflow.com/questions/53523837/html5-canvas-stroke-with-consistent-alpha-values
 https://stackoverflow.com/questions/60093686/how-do-i-draw-in-a-canvas-with-consistent-opacity
+https://stackoverflow.com/questions/19552765/html5-canvas-drawing-becomes-jagged-on-tablet

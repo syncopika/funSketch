@@ -29948,11 +29948,10 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var _this6 = this;
 
       /*
-      	plays all the timeline frames in sequence.
-      	note that even if a frame exists, if it's not in the timeline
-      	playAnimation will not do anything
+      	plays all the timeline frames in sequence by merging each frame's layers on a separate canvas.
+      	note that even if a frame exists, if it's not in the timeline playAnimation will not do anything.
       	
-      	TODO: pause? just a segment?
+      	TODO: pause? stop? just a segment?
       */
       if (direction !== "forward" && direction !== "backward") {
         console.log("not a valid direction for animation");
@@ -29989,7 +29988,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       timelineFrames.forEach(function (frame, index) {
         if (_this6.state.timelineMarkers[index + 1]) {
           lastSpeed = parseInt(_this6.state.timelineMarkers[index + 1].speed);
-        } // TODO: use requestAnimationFrame? for this it might not matter too much though
+        } // TODO: use requestAnimationFrame?
 
 
         setTimeout(function () {
@@ -30763,7 +30762,7 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       var currLayer = frame.getCurrCanvas();
       var currCtx = currLayer.getContext('2d');
 
-      if (evt.which === 1 || evt.type === 'touchstart') {
+      if (evt.which === 1 || evt.pointerType === 'touch' || evt.pointerType === 'pen') {
         //when left click only
         this.paint = true; // offset will be different with mobile
         // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
@@ -30788,7 +30787,7 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       evt.preventDefault();
 
       if (this.paint) {
-        if (evt.type === 'touchmove') {
+        if (evt.pointerType === 'touch' || evt.pointerType === 'pen') {
           var newCoords = this._handleTouchEvent(evt);
 
           evt.offsetX = newCoords.x;
@@ -30896,19 +30895,13 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
 
       var start = this.brushStart.bind(this);
       currLayer.addEventListener('pointerdown', start);
-      currLayer.addEventListener('touchstart', start);
       this.brushManager.currentEventListeners['pointerdown'] = start;
-      this.brushManager.currentEventListeners['touchstart'] = start;
       var move = this.brushMove.bind(this);
       currLayer.addEventListener('pointermove', move);
-      currLayer.addEventListener('touchmove', move);
       this.brushManager.currentEventListeners['pointermove'] = move;
-      this.brushManager.currentEventListeners['touchmove'] = move;
       var stop = this.brushStop.bind(this);
       currLayer.addEventListener('pointerup', stop);
-      currLayer.addEventListener('touchend', stop);
       this.brushManager.currentEventListeners['pointerup'] = stop;
-      this.brushManager.currentEventListeners['touchend'] = stop;
       var leave = this.brushLeave.bind(this);
       currLayer.addEventListener('pointerleave', leave);
       this.brushManager.currentEventListeners['pointerleave'] = leave;

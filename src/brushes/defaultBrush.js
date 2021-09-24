@@ -13,7 +13,7 @@ class DefaultBrush extends BrushTemplate {
 		const currLayer = frame.getCurrCanvas();
 		const currCtx = currLayer.getContext('2d');
 		
-		if(evt.which === 1 || evt.type === 'touchstart'){ //when left click only
+		if(evt.which === 1 || evt.pointerType === 'touch' || evt.pointerType === 'pen'){ //when left click only
 			this.paint = true;
 			// offset will be different with mobile
 			// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
@@ -32,7 +32,7 @@ class DefaultBrush extends BrushTemplate {
 	brushMove(evt){
 		evt.preventDefault();
 		if(this.paint){
-			if(evt.type === 'touchmove'){
+			if(evt.pointerType === 'touch' || evt.pointerType === 'pen'){
 				const newCoords = this._handleTouchEvent(evt);
 				evt.offsetX = newCoords.x;
 				evt.offsetY = newCoords.y;
@@ -135,21 +135,15 @@ class DefaultBrush extends BrushTemplate {
 		// TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 		let start = this.brushStart.bind(this);
 		currLayer.addEventListener('pointerdown', start);
-		currLayer.addEventListener('touchstart', start);
 		this.brushManager.currentEventListeners['pointerdown'] = start;
-		this.brushManager.currentEventListeners['touchstart'] = start;
 		
 		let move = this.brushMove.bind(this);
 		currLayer.addEventListener('pointermove', move);
-		currLayer.addEventListener('touchmove', move);
 		this.brushManager.currentEventListeners['pointermove'] = move;
-		this.brushManager.currentEventListeners['touchmove'] = move;
 		
 		let stop = this.brushStop.bind(this);
 		currLayer.addEventListener('pointerup', stop);
-		currLayer.addEventListener('touchend', stop);
 		this.brushManager.currentEventListeners['pointerup'] = stop;
-		this.brushManager.currentEventListeners['touchend'] = stop;
 		
 		let leave = this.brushLeave.bind(this);
 		currLayer.addEventListener('pointerleave', leave);

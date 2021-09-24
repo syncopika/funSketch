@@ -464,6 +464,7 @@ function setCanvas(prefill, canvasElement, width, height){
 	canvasElement.style.opacity = 0;
 	canvasElement.style.width = "100%";
 	canvasElement.style.height = "100%";
+	canvasElement.style.touchAction = "none"; // for handling pointer events properly
 	canvasElement.width = width ? width : canvasElement.offsetWidth;
 	canvasElement.height = height ? height : canvasElement.offsetHeight;
 	

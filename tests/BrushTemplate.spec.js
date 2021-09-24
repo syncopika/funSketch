@@ -24,7 +24,7 @@ describe("test brush template", () => {
 	});
 	
 	// TODO: need to mock pointer events!
-	it("test _addClick and _clearClick", () => {
+	it("test addClick and clearClick", () => {
 		const animProj = new AnimationProject(containerId);
 		const brushMan = new BrushManager(animProj);
 		const brush = new BrushTemplate(brushMan);
@@ -34,7 +34,7 @@ describe("test brush template", () => {
 			offsetY: 5,
 		}
 		
-		brush._addClick(mockEvt, true);
+		brush.addClick(mockEvt, true);
 		expect(brush.clickX.length).toEqual(1);
 		expect(brush.clickY.length).toEqual(1);
 		expect(brush.clickDrag.length).toEqual(1);
@@ -48,11 +48,11 @@ describe("test brush template", () => {
 		expect(brush.clickSize[0]).toEqual(2);
 		expect(brush.clickPressure[0]).toEqual(1);
 		
-		brush._addClick(mockEvt, true);
+		brush.addClick(mockEvt, true);
 		expect(brush.clickColor[1]).toEqual("rgba(0,0,0,255)");
 		expect(brush.clickSize[1]).toEqual(2);
 		
-		brush._clearClick();
+		brush.clearClick();
 		expect(brush.clickX.length).toEqual(0);
 		expect(brush.clickY.length).toEqual(0);
 		expect(brush.clickDrag.length).toEqual(0);
@@ -63,7 +63,7 @@ describe("test brush template", () => {
 		mockEvt.pressure = 0.5;
 		brushMan.togglePressureColorFlag();
 		
-		brush._addClick(mockEvt, true);
+		brush.addClick(mockEvt, true);
 		expect(brush.clickX.length).toEqual(1);
 		expect(brush.clickColor[0]).toEqual("rgba(0,0,0,255)");
 		expect(brush.clickPressure[0]).toEqual(.5);
@@ -71,9 +71,9 @@ describe("test brush template", () => {
 		
 		// change color
 		brushMan.changeBrushColor([120,120,255,255]);
-		brush._addClick(mockEvt, true);
+		brush.addClick(mockEvt, true);
 		expect(brush.clickX.length).toEqual(2);
-		expect(brush.clickColor[1]).toEqual("rgba(60,60,127.5,255)");
+		expect(brush.clickColor[1]).toEqual("rgba(60,60,255,255)");
 	});
 	
 });

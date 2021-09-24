@@ -31,6 +31,8 @@ describe("test Frame class", () => {
 		expect(currCanvas.style.opacity).toEqual("0.97");
 		expect(currCanvas.style.zIndex).toEqual("1");
 		expect(currCanvas.style.cursor).toEqual("");
+		expect(currCanvas.style.touchAction).toEqual("none");
+		
 		expect(currCanvas.parentNode).toBe(document.getElementById(containerId));
 		
 		// add a new layer

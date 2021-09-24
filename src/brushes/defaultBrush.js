@@ -8,39 +8,28 @@ class DefaultBrush extends BrushTemplate {
 	
 	// event listener functions
 	brushStart(evt){
-		evt.preventDefault();
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		const currCtx = currLayer.getContext('2d');
-		
-		if(evt.which === 1 || evt.type === 'touchstart'){ //when left click only
+		if(this.isStartBrush(evt)){ //when left click only == (which === 1)
+			evt.preventDefault();
 			this.paint = true;
 			// offset will be different with mobile
 			// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
 			// https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
-			if(evt.type === 'touchstart'){
-				const newCoords = this._handleTouchEvent(evt);
-				evt.offsetX = newCoords.x;
-				evt.offsetY = newCoords.y;
-				evt.preventDefault();
-			}
-			this._addClick(evt, true);
-			this._redraw(this.brushStroke.bind(this));
+			//if(evt.type === 'touchstart'){
+			//	const newCoords = this._handleTouchEvent(evt);
+			//	evt.offsetX = newCoords.x;
+			//	evt.offsetY = newCoords.y;
+			//	evt.preventDefault();
+			//}
+			this.addClick(evt, true);
+			this.redraw(this.brushStroke.bind(this));
 		}
 	}
 	
 	brushMove(evt){
-		evt.preventDefault();
 		if(this.paint){
-			if(evt.type === 'touchmove'){
-				const newCoords = this._handleTouchEvent(evt);
-				evt.offsetX = newCoords.x;
-				evt.offsetY = newCoords.y;
-				// prevent page scrolling when drawing 
-				evt.preventDefault();
-			}
-			this._addClick(evt, true);
-			this._redraw(this.brushStroke.bind(this));
+			evt.preventDefault();
+			this.addClick(evt, true);
+			this.redraw(this.brushStroke.bind(this));
 		}
 	}
 	
@@ -79,31 +68,25 @@ class DefaultBrush extends BrushTemplate {
 	}
 	
 	brushStop(evt){
-        const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		const currCtx = currLayer.getContext("2d");
 		evt.preventDefault();
-
-		const w = currLayer.width;
-		const h = currLayer.height;
+        this.brushManager.saveSnapshot();
 		
 		// idea: if we want to have transparency with white, let's try manipulating the alpha channel manually
 		// for the pixels via image data (since strokeStyle with an alpha value set does not seem to change the image data :/)
-		// this kinda gets me what I want but it's still not good
 		if(this.brushManager.currColorArray[3] !== 255){
 			// we need to apply some transparency via alpha
 			this.modifyAlphas(currLayer);
 		}
 		
-		this._clearClick();
+		this.clearClick();
 		this.paint = false;
 	}
 	
 	// this is for determining what the brush stroke looks like
-	brushStroke(context, strokeColor=null){
+	brushStroke(context){
 		for(let i = 0; i < this.clickX.length; i++){
 			//this.clickColor[i] = this.clickColor[i].replace("128", "0.5"); // alpha needs to be between 0 and 1 for strokeStyle!
-			context.strokeStyle = strokeColor ? strokeColor : this.clickColor[i];
+			context.strokeStyle = this.clickColor[i];
             context.lineWidth = this.clickSize[i];
             context.beginPath();
 			
@@ -122,38 +105,17 @@ class DefaultBrush extends BrushTemplate {
 	}
 	
 	brushLeave(){
-		this._clearClick();
+		this.clearClick();
 		this.paint = false;
 	}
 	
 	// equip the brush and set up the current canvas for using the brush
 	attachBrush(){
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		currLayer.style.cursor = this.cursorType;
-
-		// TODO: refactor this so that we can just call a method from brushManager to do this stuff?
 		let start = this.brushStart.bind(this);
-		currLayer.addEventListener('pointerdown', start);
-		currLayer.addEventListener('touchstart', start);
-		this.brushManager.currentEventListeners['pointerdown'] = start;
-		this.brushManager.currentEventListeners['touchstart'] = start;
-		
 		let move = this.brushMove.bind(this);
-		currLayer.addEventListener('pointermove', move);
-		currLayer.addEventListener('touchmove', move);
-		this.brushManager.currentEventListeners['pointermove'] = move;
-		this.brushManager.currentEventListeners['touchmove'] = move;
-		
 		let stop = this.brushStop.bind(this);
-		currLayer.addEventListener('pointerup', stop);
-		currLayer.addEventListener('touchend', stop);
-		this.brushManager.currentEventListeners['pointerup'] = stop;
-		this.brushManager.currentEventListeners['touchend'] = stop;
-		
 		let leave = this.brushLeave.bind(this);
-		currLayer.addEventListener('pointerleave', leave);
-		this.brushManager.currentEventListeners['pointerleave'] = leave;
+		this.brushManager.updateEventListeners(start, move, stop, leave, this.cursorType);
 	}
 }
 

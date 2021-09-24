@@ -89,6 +89,33 @@ class BrushManager {
 	applyBrush(){
 		this.brushesMap[this.selectedBrush].attachBrush();
 	}
+	
+	// this is for saving the current layer so we can undo easily
+	saveSnapshot(){
+		const frame = this.animationProject.getCurrFrame();	
+		const currLayer = frame.getCurrCanvas();
+		const w = currLayer.width;
+		const h = currLayer.height;
+		frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+	}
+	
+	updateEventListeners(startFunc, moveFunc, stopFunc, leaveFunc, cursorType=null){
+		const frame = this.animationProject.getCurrFrame();
+		const currLayer = frame.getCurrCanvas();
+		if(cursorType) currLayer.style.cursor = cursorType;
+		
+		currLayer.addEventListener('pointerdown', startFunc);
+		this.currentEventListeners['pointerdown'] = startFunc;
+		
+		currLayer.addEventListener('pointermove', moveFunc);
+		this.currentEventListeners['pointermove'] = moveFunc;
+		
+		currLayer.addEventListener('pointerup', stopFunc);
+		this.currentEventListeners['pointerup'] = stopFunc;
+		
+		currLayer.addEventListener('pointerleave', leaveFunc);
+		this.currentEventListeners['pointerleave'] = leaveFunc;
+	}
 
 }
 

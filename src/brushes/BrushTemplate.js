@@ -19,7 +19,7 @@ class BrushTemplate {
 	}
 	
 	// assuming a PointerEvent, calculate the brush width based on stylus pressure
-	_calculateBrushWidth(pointerEvt){
+	calculateBrushWidth(pointerEvt){
 		let brushWidth = this.brushManager.getCurrSize();
 		if(pointerEvt.pressure){
 			brushWidth = (pointerEvt.pressure*2) * brushWidth;
@@ -28,7 +28,7 @@ class BrushTemplate {
 	}
 	
 	// collect info where each pixel is to be drawn on canvas
-    _addClick(pointerEvt, dragging){
+    addClick(pointerEvt, dragging){
 		const x = pointerEvt.offsetX;
 		const y = pointerEvt.offsetY;
 		const pressure = pointerEvt.pressure;
@@ -39,14 +39,31 @@ class BrushTemplate {
 		let currColor = this.brushManager.getCurrColor();
 		
 		// take into account pen pressure for color if needed (as well as for brush size)
+		// note that to find the darkest variant of the current color, we'll adjust only the non-dominant channels
 		if(this.brushManager.applyPressureColor() && pressure){
 			// pressure ranges from 0 to 1
-			const newR = currColorArr[0]*(1-pressure);
-			const newG = currColorArr[1]*(1-pressure);
-			const newB = currColorArr[2]*(1-pressure);
-			currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
+			const dominantChannel = Math.max(currColorArr[2], Math.max(currColorArr[0], currColorArr[1]));
+			if(currColorArr[0] === dominantChannel){
+				// r
+				const newR = currColorArr[0];
+				const newG = currColorArr[1]*(1-pressure);
+				const newB = currColorArr[2]*(1-pressure);
+				currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
+			}else if(currColorArr[1] === dominantChannel){
+				// g
+				const newR = currColorArr[0]*(1-pressure);
+				const newG = currColorArr[1];
+				const newB = currColorArr[2]*(1-pressure);
+				currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
+			}else{
+				// b
+				const newR = currColorArr[0]*(1-pressure);
+				const newG = currColorArr[1]*(1-pressure);
+				const newB = currColorArr[2];
+				currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
+			}
 			
-			currSize = this._calculateBrushWidth(pointerEvt);
+			currSize = this.calculateBrushWidth(pointerEvt);
 			penPressure = pressure;
 		}else{
 			currColor = 'rgba(' + currColorArr.join(",") + ')';
@@ -60,14 +77,14 @@ class BrushTemplate {
 		this.clickPressure.push(penPressure);
     }
 	
-    _redraw(strokeFunction){
+    redraw(strokeFunction){
         const frame = this.brushManager.animationProject.getCurrFrame();
 		const context = frame.getCurrCanvas().getContext("2d");
         context.lineJoin = "round"; //TODO: make this a brushmanager variable?
 		strokeFunction(context);
     }
 	
-    _clearClick(){
+    clearClick(){
         this.clickX = [];
         this.clickY = [];
         this.clickDrag = [];
@@ -76,11 +93,16 @@ class BrushTemplate {
 		this.clickPressure = [];
     }
 	
+	// not needed anymore since pointer events can handle all event types we're concerned with
 	_handleTouchEvent(evt){
 		const rect = evt.target.getBoundingClientRect();
 		const x = evt.touches[0].pageX - rect.left;
 		const y = evt.touches[0].pageY - rect.top - window.pageYOffset;
 		return {'x': x, 'y': y};
+	}
+	
+	isStartBrush(evt){
+		return (evt.which === 1 || evt.pointerType === 'touch' || evt.pointerType === 'pen');
 	}
 	
 	// event listener functions

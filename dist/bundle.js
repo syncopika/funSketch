@@ -29024,10 +29024,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var TimelineFrameThumnail = function TimelineFrameThumnail(props) {
   var frameImgData = props.imgData;
-  var height = '120px'; //props.height;
-
-  var width = '120px'; //props.width;
-
+  var height = '120px';
+  var width = '120px';
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
     style: {
       'display': 'inline-block',
@@ -29046,8 +29044,7 @@ var TimelineFrameThumnail = function TimelineFrameThumnail(props) {
 var AnimationTimeline = function AnimationTimeline(props) {
   var timelineStyle = {
     'width': '100%',
-    'height': '80%',
-    'border': '1px solid #000',
+    'height': '100%',
     'display': 'block',
     'backgroundColor': '#fff',
     'overflowX': 'auto',
@@ -30378,10 +30375,11 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "animationTimelineCanvas",
         style: {
           'display': 'block',
+          'border': '1px solid #000',
           'marginTop': '10px',
           'marginBottom': '10px',
           'width': '100%',
-          'height': '185px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
+          'height': '180px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
 
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {

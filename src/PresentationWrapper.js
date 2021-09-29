@@ -773,10 +773,11 @@ class PresentationWrapper extends React.Component {
 							
 							<canvas id='animationTimelineCanvas' style={{
 										'display': 'block',
+										'border': '1px solid #000',
 										'marginTop': '10px',
 										'marginBottom': '10px',
 										'width': '100%',
-										'height': '185px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
+										'height': '180px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
 							}}></canvas>
 							
 							<div id="animationTimelineMarkers">

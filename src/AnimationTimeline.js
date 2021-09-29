@@ -5,8 +5,8 @@ import React from 'react';
 
 const TimelineFrameThumnail = (props) => {
 	const frameImgData = props.imgData;
-	const height = '120px'; //props.height;
-	const width = '120px'; //props.width;
+	const height = '120px';
+	const width = '120px';
 	return(
 		<img style={{
 			'display': 'inline-block', 
@@ -26,8 +26,7 @@ const TimelineFrameThumnail = (props) => {
 const AnimationTimeline = (props) => {
 	const timelineStyle = {
 		'width': '100%',
-		'height': '80%',
-		'border': '1px solid #000',
+		'height': '100%',
 		'display': 'block',
 		'backgroundColor': '#fff',
 		'overflowX': 'auto',

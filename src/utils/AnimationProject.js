@@ -77,7 +77,9 @@ class Frame {
         const newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
         document.getElementById(this.containerId).appendChild(newCanvas);
+		
         setCanvas(prefill, newCanvas);
+		
         if(this.count === 0){
             newCanvas.style.opacity = .97;
             newCanvas.style.zIndex = 1;
@@ -88,6 +90,7 @@ class Frame {
         if(this.count === 0){
             this.currentCanvas = newCanvas;
         }
+		
         this.canvasList.push(newCanvas);
         this.count++;
     }
@@ -263,9 +266,14 @@ class AnimationProject {
 		this.currentFrameIndex = 0; // index of current frame
 		this.speed = 100; // 100 ms per frame 
 		this.frameList = [];
-		this.onionSkinFrame = createOnionSkinFrame(containerId);
-		this.onionSkinFrame.style.display = 'none'; // hide it initially
+		this.onionSkinFrame = null;
 		this.containerId = containerId; // id of the html element the frames are displayed in
+	}
+	
+	init(){
+		this.addNewFrame(true);
+		this.onionSkinFrame = createOnionSkinFrame(this.containerId);
+		this.onionSkinFrame.style.display = 'none'; // hide it initially
 	}
 	
 	getContainerId(){

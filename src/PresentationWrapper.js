@@ -570,13 +570,12 @@ class PresentationWrapper extends React.Component {
 
 	componentDidMount(){
 		const animationProj = new AnimationProject('canvasArea');
-		animationProj.addNewFrame(true); 
-		
-		const newBrush = new BrushManager(animationProj);
-		newBrush.brushesMap["default"].attachBrush();
-		
+		const newBrush = new BrushManager(animationProj);	
 		const newFilters = new FilterManager(animationProj, newBrush);
 		const newToolbar = new Toolbar(newBrush, animationProj);
+		
+		//animationProj.addNewFrame(true);
+		//newBrush.brushesMap["default"].attachBrush();
 		
 		this.setState({
 			'animationProject': animationProj,
@@ -588,6 +587,9 @@ class PresentationWrapper extends React.Component {
 			this._linkDemos();
 			this._setKeyDown(document);
 			this._timelineMarkerSetup();
+			
+			this.state.animationProject.init();
+			this.state.brushInstance.brushesMap["default"].attachBrush();
 		});
 	}
 	
@@ -657,7 +659,9 @@ class PresentationWrapper extends React.Component {
 						
 							<LayerOrder 
 								changingLayerOrder={this.state.changingLayerOrder}
-								layers={this.state.animationProject ? this.state.animationProject.getCurrFrame().getLayers().map((x, idx) => idx) : []}
+								layers={
+									this.state.animationProject && this.state.animationProject.getCurrFrame() ? this.state.animationProject.getCurrFrame().getLayers().map((x, idx) => idx) : []
+								}
 								updateParentStateFunction={
 									(newLayerOrder) => {
 										// 1. update layer order of current frame
@@ -772,12 +776,8 @@ class PresentationWrapper extends React.Component {
 							<AnimationTimeline frames={this.state.timelineFrames} />
 							
 							<canvas id='animationTimelineCanvas' style={{
-										'display': 'block',
-										'border': '1px solid #000',
-										'marginTop': '10px',
-										'marginBottom': '10px',
 										'width': '100%',
-										'height': '180px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
+										'height': '90%',
 							}}></canvas>
 							
 							<div id="animationTimelineMarkers">

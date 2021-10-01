@@ -27,11 +27,12 @@ const AnimationTimeline = (props) => {
 	const timelineStyle = {
 		'width': '100%',
 		'height': '100%',
-		'display': 'block',
 		'backgroundColor': '#fff',
 		'overflowX': 'auto',
 		'whiteSpace': 'nowrap',
-		'marginTop': '10px'
+		'borderLeft': '1px solid #000',
+		'borderRight': '1px solid #000',
+		'borderBottom': '1px solid #000',
 	};
 	
 	return (

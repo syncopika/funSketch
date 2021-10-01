@@ -29045,11 +29045,12 @@ var AnimationTimeline = function AnimationTimeline(props) {
   var timelineStyle = {
     'width': '100%',
     'height': '100%',
-    'display': 'block',
     'backgroundColor': '#fff',
     'overflowX': 'auto',
     'whiteSpace': 'nowrap',
-    'marginTop': '10px'
+    'borderLeft': '1px solid #000',
+    'borderRight': '1px solid #000',
+    'borderBottom': '1px solid #000'
   };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "animationTimeline",
@@ -30131,11 +30132,11 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var _this9 = this;
 
       var animationProj = new _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__["AnimationProject"]('canvasArea');
-      animationProj.addNewFrame(true);
       var newBrush = new _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_9__["BrushManager"](animationProj);
-      newBrush.brushesMap["default"].attachBrush();
       var newFilters = new _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_10__["FilterManager"](animationProj, newBrush);
-      var newToolbar = new _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__["Toolbar"](newBrush, animationProj);
+      var newToolbar = new _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__["Toolbar"](newBrush, animationProj); //animationProj.addNewFrame(true);
+      //newBrush.brushesMap["default"].attachBrush();
+
       this.setState({
         'animationProject': animationProj,
         'brushInstance': newBrush,
@@ -30149,6 +30150,10 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         _this9._setKeyDown(document);
 
         _this9._timelineMarkerSetup();
+
+        _this9.state.animationProject.init();
+
+        _this9.state.brushInstance.brushesMap["default"].attachBrush();
       });
     }
   }, {
@@ -30250,7 +30255,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "downloadFrame"
       }, "download current frame"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_LayerOrder_js__WEBPACK_IMPORTED_MODULE_12__["LayerOrder"], {
         changingLayerOrder: this.state.changingLayerOrder,
-        layers: this.state.animationProject ? this.state.animationProject.getCurrFrame().getLayers().map(function (x, idx) {
+        layers: this.state.animationProject && this.state.animationProject.getCurrFrame() ? this.state.animationProject.getCurrFrame().getLayers().map(function (x, idx) {
           return idx;
         }) : [],
         updateParentStateFunction: function updateParentStateFunction(newLayerOrder) {
@@ -30374,13 +30379,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("canvas", {
         id: "animationTimelineCanvas",
         style: {
-          'display': 'block',
-          'border': '1px solid #000',
-          'marginTop': '10px',
-          'marginBottom': '10px',
           'width': '100%',
-          'height': '180px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
-
+          'height': '90%'
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "animationTimelineMarkers"
@@ -30776,16 +30776,7 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       if (this.isStartBrush(evt)) {
         //when left click only == (which === 1)
         evt.preventDefault();
-        this.paint = true; // offset will be different with mobile
-        // https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
-        // https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
-        //if(evt.type === 'touchstart'){
-        //	const newCoords = this._handleTouchEvent(evt);
-        //	evt.offsetX = newCoords.x;
-        //	evt.offsetY = newCoords.y;
-        //	evt.preventDefault();
-        //}
-
+        this.paint = true;
         this.addClick(evt, true);
         this.redraw(this.brushStroke.bind(this));
       }
@@ -33762,13 +33753,18 @@ var AnimationProject = /*#__PURE__*/function () {
     this.speed = 100; // 100 ms per frame 
 
     this.frameList = [];
-    this.onionSkinFrame = createOnionSkinFrame(containerId);
-    this.onionSkinFrame.style.display = 'none'; // hide it initially
-
+    this.onionSkinFrame = null;
     this.containerId = containerId; // id of the html element the frames are displayed in
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(AnimationProject, [{
+    key: "init",
+    value: function init() {
+      this.addNewFrame(true);
+      this.onionSkinFrame = createOnionSkinFrame(this.containerId);
+      this.onionSkinFrame.style.display = 'none'; // hide it initially
+    }
+  }, {
     key: "getContainerId",
     value: function getContainerId() {
       return this.containerId;

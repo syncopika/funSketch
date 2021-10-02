@@ -25,10 +25,14 @@
 		margin: 0px auto;
 		width: 100%;
 		height: 100%;
+		grid-row: 2;
+		grid-column: 1;
 	}
 	
 	#pageCount{
 		text-align: center;
+		grid-row: 1;
+		grid-column: 1;
 	}
 	
 	#pageCount h3{
@@ -122,7 +126,7 @@
 	#screenContainer{
 		display: grid;
 		grid-template-columns: 1fr;
-		grid-template-rows: 0.2fr 3.15fr 1fr;
+		grid-template-rows: 0.2fr 3.4fr 1fr;
 	}
 	
 	#showDemos{
@@ -131,6 +135,9 @@
 	
 	/* want to overlay the timelinecanvas over the timeline */
 	#animationTimelineArea{
+		grid-row: 3;
+		grid-column: 1;
+		
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: 1fr 5em;
@@ -150,7 +157,7 @@
 	#animationTimelineMarkers{
 		grid-row: 2;
 		grid-column: 1;
-		overflow-y: scroll;
+		overflow-y: auto;
 	}
 	
 	#footer{

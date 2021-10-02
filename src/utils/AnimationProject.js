@@ -467,7 +467,7 @@ function createOnionSkinFrame(containerId){
 // prefill should be false when importing a project
 function setCanvas(prefill, canvasElement, width, height){
 	canvasElement.style.position = "absolute";
-	canvasElement.style.border = '1px #000 solid';
+	canvasElement.style.border = "1px #000 solid";
 	canvasElement.style.zIndex = 0;
 	canvasElement.style.opacity = 0;
 	canvasElement.style.width = "100%";
@@ -475,6 +475,12 @@ function setCanvas(prefill, canvasElement, width, height){
 	canvasElement.style.touchAction = "none"; // for handling pointer events properly
 	canvasElement.width = width ? width : canvasElement.offsetWidth;
 	canvasElement.height = height ? height : canvasElement.offsetHeight;
+	
+	// problem: if the canvas gets stretched later (e.g. when adding timeline thumbnails, it expands
+	// the div they're in and causes the canvas area to expand a bit as well, which throws the coordinates
+	// off when drawing. making sure the height isn't always at 100% of the current height seems to help.
+	canvasElement.style.width = "100%";
+	canvasElement.style.height = "";
 	
 	if(prefill){
 		canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";

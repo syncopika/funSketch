@@ -29022,7 +29022,7 @@ __webpack_require__.r(__webpack_exports__);
 // https://stackoverflow.com/questions/13416800/how-to-generate-an-image-from-imagedata-in-javascript
 
 
-var TimelineFrameThumnail = function TimelineFrameThumnail(props) {
+var TimelineFrameThumbnail = function TimelineFrameThumbnail(props) {
   var frameImgData = props.imgData;
   var height = '120px';
   var width = '120px';
@@ -29030,7 +29030,7 @@ var TimelineFrameThumnail = function TimelineFrameThumnail(props) {
     style: {
       'display': 'inline-block',
       'border': '1px solid #000',
-      'margin': '3px'
+      'margin': '1px'
     },
     width: width,
     height: height,
@@ -29046,7 +29046,7 @@ var AnimationTimeline = function AnimationTimeline(props) {
     'width': '100%',
     'height': '100%',
     'backgroundColor': '#fff',
-    'overflowX': 'auto',
+    'overflowX': 'scroll',
     'whiteSpace': 'nowrap',
     'borderLeft': '1px solid #000',
     'borderRight': '1px solid #000',
@@ -29056,7 +29056,7 @@ var AnimationTimeline = function AnimationTimeline(props) {
     id: "animationTimeline",
     style: timelineStyle
   }, props.frames.map(function (frame, index) {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(TimelineFrameThumnail, {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(TimelineFrameThumbnail, {
       imgData: frame.data,
       key: index
     });
@@ -33965,7 +33965,7 @@ function createOnionSkinFrame(containerId) {
 
 function setCanvas(prefill, canvasElement, width, height) {
   canvasElement.style.position = "absolute";
-  canvasElement.style.border = '1px #000 solid';
+  canvasElement.style.border = "1px #000 solid";
   canvasElement.style.zIndex = 0;
   canvasElement.style.opacity = 0;
   canvasElement.style.width = "100%";
@@ -33973,7 +33973,12 @@ function setCanvas(prefill, canvasElement, width, height) {
   canvasElement.style.touchAction = "none"; // for handling pointer events properly
 
   canvasElement.width = width ? width : canvasElement.offsetWidth;
-  canvasElement.height = height ? height : canvasElement.offsetHeight;
+  canvasElement.height = height ? height : canvasElement.offsetHeight; // problem: if the canvas gets stretched later (e.g. when adding timeline thumbnails, it expands
+  // the div they're in and causes the canvas area to expand a bit as well, which throws the coordinates
+  // off when drawing. making sure the height isn't always at 100% of the current height seems to help.
+
+  canvasElement.style.width = "100%";
+  canvasElement.style.height = "";
 
   if (prefill) {
     canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";

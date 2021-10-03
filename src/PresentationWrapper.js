@@ -775,9 +775,12 @@ class PresentationWrapper extends React.Component {
 						<div id="animationTimelineArea">
 							<AnimationTimeline frames={this.state.timelineFrames} />
 							
-							<canvas id='animationTimelineCanvas' style={{
-										'width': '100%',
-										'height': '90%',
+							<canvas id='animationTimelineCanvas'
+							 style={{
+								 'marginBottom': '10px', // add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/
+								 'marginTop': '5px',
+								 'width': '100%',
+								 'height': '160px', // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
 							}}></canvas>
 							
 							<div id="animationTimelineMarkers">

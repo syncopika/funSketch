@@ -29047,10 +29047,9 @@ var AnimationTimeline = function AnimationTimeline(props) {
     'height': '100%',
     'backgroundColor': '#fff',
     'overflowX': 'scroll',
+    'marginTop': '5px',
     'whiteSpace': 'nowrap',
-    'borderLeft': '1px solid #000',
-    'borderRight': '1px solid #000',
-    'borderBottom': '1px solid #000'
+    'border': '1px solid #000'
   };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "animationTimeline",
@@ -30379,8 +30378,12 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("canvas", {
         id: "animationTimelineCanvas",
         style: {
+          'marginBottom': '10px',
+          // add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/
+          'marginTop': '5px',
           'width': '100%',
-          'height': '90%'
+          'height': '160px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
+
         }
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "animationTimelineMarkers"
@@ -33973,12 +33976,7 @@ function setCanvas(prefill, canvasElement, width, height) {
   canvasElement.style.touchAction = "none"; // for handling pointer events properly
 
   canvasElement.width = width ? width : canvasElement.offsetWidth;
-  canvasElement.height = height ? height : canvasElement.offsetHeight; // problem: if the canvas gets stretched later (e.g. when adding timeline thumbnails, it expands
-  // the div they're in and causes the canvas area to expand a bit as well, which throws the coordinates
-  // off when drawing. making sure the height isn't always at 100% of the current height seems to help.
-
-  canvasElement.style.width = "100%";
-  canvasElement.style.height = "";
+  canvasElement.height = height ? height : canvasElement.offsetHeight;
 
   if (prefill) {
     canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";

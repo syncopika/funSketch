@@ -476,12 +476,6 @@ function setCanvas(prefill, canvasElement, width, height){
 	canvasElement.width = width ? width : canvasElement.offsetWidth;
 	canvasElement.height = height ? height : canvasElement.offsetHeight;
 	
-	// problem: if the canvas gets stretched later (e.g. when adding timeline thumbnails, it expands
-	// the div they're in and causes the canvas area to expand a bit as well, which throws the coordinates
-	// off when drawing. making sure the height isn't always at 100% of the current height seems to help.
-	canvasElement.style.width = "100%";
-	canvasElement.style.height = "";
-	
 	if(prefill){
 		canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
 		canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);

@@ -29,10 +29,9 @@ const AnimationTimeline = (props) => {
 		'height': '100%',
 		'backgroundColor': '#fff',
 		'overflowX': 'scroll',
+		'marginTop': '5px',
 		'whiteSpace': 'nowrap',
-		'borderLeft': '1px solid #000',
-		'borderRight': '1px solid #000',
-		'borderBottom': '1px solid #000',
+		'border': '1px solid #000',
 	};
 	
 	return (

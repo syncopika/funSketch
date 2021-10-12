@@ -53,3 +53,4 @@ https://stackoverflow.com/questions/53523837/html5-canvas-stroke-with-consistent
 https://stackoverflow.com/questions/60093686/how-do-i-draw-in-a-canvas-with-consistent-opacity
 https://stackoverflow.com/questions/19552765/html5-canvas-drawing-becomes-jagged-on-tablet
 https://stackoverflow.com/questions/59010779/pointer-event-issue-pointercancel-with-pressure-input-pen -> important when using pointerevents and a pen/touch!
+https://www.smashingmagazine.com/2020/05/styling-components-react/

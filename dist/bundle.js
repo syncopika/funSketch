@@ -29052,6 +29052,8 @@ var AnimationTimeline = function AnimationTimeline(props) {
     'border': '1px solid #000'
   };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    id: "animationTimelineArea"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "animationTimeline",
     style: timelineStyle
   }, props.frames.map(function (frame, index) {
@@ -29059,7 +29061,38 @@ var AnimationTimeline = function AnimationTimeline(props) {
       imgData: frame.data,
       key: index
     });
-  }));
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("canvas", {
+    id: "animationTimelineCanvas",
+    style: {
+      'marginBottom': '10px',
+      // add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/
+      'marginTop': '5px',
+      'width': '100%',
+      'height': '160px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
+
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    id: "animationTimelineMarkers"
+  }, Object.keys(props.markers).map(function (markerKey, index) {
+    var marker = props.markers[markerKey];
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+      htmlFor: 'marker' + marker.frameNumber + 'Select'
+    }, "marker for frame ", marker.frameNumber, ": \xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+      id: 'marker' + marker.frameNumber + 'Select',
+      name: 'marker' + marker.frameNumber + 'Select',
+      onChange: function onChange(evt) {
+        marker.speed = evt.target.value;
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", null, "100"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", null, "200"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", null, "300"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", null, "500"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", null, "1000")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+      id: 'deleteMarker_' + marker.frameNumber,
+      style: {
+        'color': 'red'
+      },
+      onClick: function onClick() {
+        return props.deleteMarkerFunc(marker.frameNumber);
+      }
+    }, " \xA0delete "));
+  })));
 };
 
 
@@ -30371,42 +30404,11 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         currLayer: this.state.currentLayer
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "canvasArea"
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "animationTimelineArea"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__["AnimationTimeline"], {
-        frames: this.state.timelineFrames
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("canvas", {
-        id: "animationTimelineCanvas",
-        style: {
-          'marginBottom': '10px',
-          // add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/
-          'marginTop': '5px',
-          'width': '100%',
-          'height': '160px' // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
-
-        }
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
-        id: "animationTimelineMarkers"
-      }, Object.keys(this.state.timelineMarkers).map(function (markerKey, index) {
-        var marker = _this10.state.timelineMarkers[markerKey];
-        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
-          htmlFor: 'marker' + marker.frameNumber + 'Select'
-        }, "marker for frame ", marker.frameNumber, ": \xA0"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("select", {
-          id: 'marker' + marker.frameNumber + 'Select',
-          name: 'marker' + marker.frameNumber + 'Select',
-          onChange: function onChange(evt) {
-            marker.speed = evt.target.value;
-          }
-        }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "100"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "200"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "300"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "500"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("option", null, "1000")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("label", {
-          id: 'deleteMarker_' + marker.frameNumber,
-          style: {
-            'color': 'red'
-          },
-          onClick: function onClick() {
-            return _this10._timelineMarkerDelete(marker.frameNumber);
-          }
-        }, " \xA0delete "));
-      }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement(_AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__["AnimationTimeline"], {
+        frames: this.state.timelineFrames,
+        markers: this.state.timelineMarkers,
+        deleteMarkerFunc: this._timelineMarkerDelete
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "brushSection"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6___default.a.createElement("div", {
         id: "colorPicker"

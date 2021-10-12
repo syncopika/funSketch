@@ -2,9 +2,17 @@
 // https://www.robinwieruch.de/minimal-react-webpack-babel-setup/
 // https://www.valentinog.com/blog/webpack/
 // https://www.typescriptlang.org/docs/handbook/migrating-from-javascript.html
+const path = require('path');
 
 module.exports = {
 	entry: './index.js',
+	mode: 'development',
+	devServer: {
+		static: {
+			directory: path.join(__dirname , "")
+		},
+		port: 3000,
+	},
 	module: {
 	  rules: [
 		{

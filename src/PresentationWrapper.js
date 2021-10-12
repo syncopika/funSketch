@@ -772,48 +772,11 @@ class PresentationWrapper extends React.Component {
 						<div id='canvasArea'>
 						</div>
 						
-						<div id="animationTimelineArea">
-							<AnimationTimeline frames={this.state.timelineFrames} />
-							
-							<canvas id='animationTimelineCanvas'
-							 style={{
-								 'marginBottom': '10px', // add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/
-								 'marginTop': '5px',
-								 'width': '100%',
-								 'height': '160px', // note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar
-							}}></canvas>
-							
-							<div id="animationTimelineMarkers">
-							{
-								Object.keys(this.state.timelineMarkers).map((markerKey, index) => {
-									const marker = this.state.timelineMarkers[markerKey];
-									return (
-										<div>
-											<label htmlFor={'marker' + marker.frameNumber + 'Select'}>marker for frame {marker.frameNumber}: &nbsp;</label>
-											<select 
-											id={'marker' + marker.frameNumber + 'Select'} 
-											name={'marker' + marker.frameNumber + 'Select'}
-											onChange={(evt) => {
-												marker.speed = evt.target.value;
-											}}
-											>
-												<option>100</option>
-												<option>200</option>
-												<option>300</option>
-												<option>500</option>
-												<option>1000</option>
-											</select>
-											<label 
-												id={'deleteMarker_' + marker.frameNumber} 
-												style={{'color': 'red'}}
-												onClick={() => this._timelineMarkerDelete(marker.frameNumber)}
-											> &nbsp;delete </label>
-										</div>
-									);
-								})
-							}
-							</div>
-						</div>
+						<AnimationTimeline 
+							frames={this.state.timelineFrames}
+							markers={this.state.timelineMarkers}
+							deleteMarkerFunc={this._timelineMarkerDelete}
+						/>
 					</div>
 				</div>
 				

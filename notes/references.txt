@@ -54,3 +54,5 @@ https://stackoverflow.com/questions/60093686/how-do-i-draw-in-a-canvas-with-cons
 https://stackoverflow.com/questions/19552765/html5-canvas-drawing-becomes-jagged-on-tablet
 https://stackoverflow.com/questions/59010779/pointer-event-issue-pointercancel-with-pressure-input-pen -> important when using pointerevents and a pen/touch!
 https://www.smashingmagazine.com/2020/05/styling-components-react/
+https://javascript.plainenglish.io/react-fast-refresh-the-new-react-hot-reloader-652c6645548c
+https://stackoverflow.com/questions/42473979/webpack-dev-server-not-updating-bundle-when-saving-file

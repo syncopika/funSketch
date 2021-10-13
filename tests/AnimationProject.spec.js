@@ -13,11 +13,11 @@ describe("test AnimationProject", () => {
 		document.body.appendChild(container);
 	});
 	
-	it("test setup", () => {
+	it("test setup without init", () => {
 		const animProject = new AnimationProject(containerId);
 		
 		expect(animProject.getContainerId()).toEqual(containerId);
-		expect(animProject.onionSkinFrame).not.toEqual(null);
+		expect(animProject.onionSkinFrame).toEqual(null);
 		
 		let frames = animProject.getFrames();
 		expect(frames.length).toEqual(0);
@@ -34,6 +34,22 @@ describe("test AnimationProject", () => {
 		frames = animProject.getFrames();
 		expect(frames.length).toEqual(2);
 		expect(frames[1].getLayers()[0].style.visibility).toEqual("");
+	});
+	
+	it("test setup with init", () => {
+		const animProject = new AnimationProject(containerId);
+		animProject.init();
+		
+		expect(animProject.getContainerId()).toEqual(containerId);
+		expect(animProject.onionSkinFrame).not.toEqual(null);
+		
+		const frames = animProject.getFrames();
+		expect(frames.length).toEqual(1);
+		
+		expect(frames[0].getLayers().length).toEqual(1);
+		expect(frames[0].getLayers()[0].style.visibility).toEqual(""); // not hidden
+		expect(frames[0]).toEqual(animProject.getCurrFrame());
+		expect(animProject.getCurrFrameIndex()).toEqual(0);
 	});
 	
 	it("test delete frame", () => {
@@ -57,6 +73,8 @@ describe("test AnimationProject", () => {
 	
 	it("test resetProject", () => {
 		const animProject = new AnimationProject(containerId);
+		animProject.init();
+		
 		animProject.addNewFrame();
 		animProject.addNewFrame();
 		animProject.addNewFrame();

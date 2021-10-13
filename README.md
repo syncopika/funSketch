@@ -1,5 +1,5 @@
 # funSketch    
-An experimental application made with React that has simple drawing features, as well as some interesting filter and brush options.    
+An application made with React that has simple drawing features, as well as some interesting filter and brush options.    
     
 but more importantly, you can also make some quick, simple animations!    
     
@@ -21,7 +21,9 @@ Because of the way I have things set up, the white with alpha as 128 can be used
 Otherwise, any white color with 255 as the alpha value is treated as transparent (so those pixels are ignored when merging layers). By default, every canvas is filled with `rgba(255,255,255,255)`.    
     
 ### installation:    
-You'll need node.js and npm. `cd` into this repo and run `npm install` to install all the dependencies. Then run `node server.js` to serve the application. To run the tests, run `npm test`.    
+You'll need node.js and npm. `cd` into this repo and run `npm install` to install all the dependencies. Then run `npm run serve` to serve the application (with hot reload!). To run the tests, run `npm test`.    
+    
+Alternatively, you can run `npm run dev` to build a development bundle in the `/dist` directory and then `node server.js`.    
     
 ### acknowledgements:    
 thanks to William Malone's <a href='http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/'>fantastic tutorial</a>, which much of this work is based on.    

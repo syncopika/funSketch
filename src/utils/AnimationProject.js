@@ -441,8 +441,8 @@ class AnimationProject {
     }
 	
 	clearOnionSkin(){
-		let onionSkin = this.onionSkinFrame;
-		let context = this.onionSkinFrame.getContext("2d");
+		const onionSkin = this.onionSkinFrame;
+		const context = this.onionSkinFrame.getContext("2d");
         context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
         context.fillStyle = "#FFFFFF";
         context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));

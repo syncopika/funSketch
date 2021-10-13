@@ -8,6 +8,8 @@ import { LayerOrder } from './LayerOrder.js';
 import { FilterDashboard } from './FilterDashboard.js';
 import { BrushDashboard } from './BrushDashboard.js';
 
+import "../styles/presentationWrapper.css";
+
 // for displaying current frame and layer number
 // TODO: importing a project won't update the counter display since it's using the Toolbar class functions
 // and so the PresentationWrapper's state doesn't get updated with the new currentFrame/Layer
@@ -42,85 +44,13 @@ class PresentationWrapper extends React.Component {
 		this.timelineFramesSet = new Set(); // keep track of what frames have been added to timeline so we don't duplicate - 0-indexed!
 	}
 	
-	_getCoordinates(canvas, event){
-		const rect = canvas.getBoundingClientRect();
-		const scaleX = canvas.width / rect.width;
-		const scaleY = canvas.width / rect.height;
-		const x = (event.clientX - rect.left) * scaleX;
-		const y = (event.clientY - rect.top) * scaleY;
-		return {'x': x, 'y': y, 'rect': rect};
-	}
-	
-	_timelineMarkerSetup(){
-		const timelineCanvas = document.getElementById('animationTimelineCanvas');
-		
-		// make sure pixel width of canvas is the same as the timeline element
-		timelineCanvas.width = document.getElementById('animationTimeline').clientWidth;
-		timelineCanvas.height = document.getElementById('animationTimeline').clientHeight - 20; // leave a gap for the scrollbar
-		
-		timelineCanvas.addEventListener('mousemove', (event) => {
-			
-			const context = timelineCanvas.getContext('2d');
-			context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
-			
-			const coords = this._getCoordinates(timelineCanvas, event);
-			const x = coords.x;
-			const y = coords.y;
-			const rect = coords.rect;
-			
-			context.beginPath();
-			context.moveTo(x, 0);
-			context.lineTo(x, rect.height);
-			context.stroke();
-			// just get all y-coords while holding that x coord
-			// draw a line
-			// if click, mark that line in canvas. have to figure out how to not erase that line 
-			// how wide should line be?
-			// also need to figure out how to translate distance between lines as frames per second...
-			// you also can't have half a frame be a different frame rate than the other half...
+	_updateCurrFrameAndTimelineMarkers(markers, frameNum){
+		this.setState({
+			'timelineMarkers': markers,
+			'currentFrame': frameNum,
+			'currentLayer': 1
 		});
-		
-		timelineCanvas.addEventListener('mouseleave', (event) => {
-			const context = timelineCanvas.getContext('2d');
-			context.clearRect(0, 0, timelineCanvas.width, timelineCanvas.height);
-		});
-		
-		timelineCanvas.addEventListener('click', (event) => {
-			// also take into account horizontal scroll distance, if any
-			const scrollDistance = document.getElementById('animationTimeline').scrollLeft;
-			
-			const coords = this._getCoordinates(timelineCanvas, event);
-			const x = coords.x + scrollDistance;
-			const y = coords.y;
-			
-			// which frame does this coordinate match to?
-			if(this.state.timelineFrames.length > 0){
-				const width = 123; // don't hardcode this? it should be based on img width in the timeline
-				const frameGuess = Math.floor(x/width) + 1;
-				
-				if(frameGuess <= this.state.timelineFrames.length){
-				
-					// update markers in state
-					let markers = this.state.timelineMarkers;
-					
-					// use frame number as the key
-					markers[frameGuess] = {
-						'xCoord': x, 
-						'frameNumber': frameGuess, 
-						'speed': 100, 
-						'frame': this.state.timelineFrames[frameGuess-1] 
-					};
-					
-					this.state.toolbarInstance.goToFrame(frameGuess-1);
-					
-					this.setState({
-						'timelineMarkers': markers,
-						'currentFrame': frameGuess,
-						'currentLayer': 1
-					});
-				}
-			}
-		});
+		this.state.toolbarInstance.goToFrame(frameNum-1);
 	}
 	
 	_timelineMarkerDelete(frameNumToDelete){
@@ -429,7 +359,7 @@ class PresentationWrapper extends React.Component {
 		animationDisplay.style.position = 'absolute';
 		animationDisplay.style.opacity = 1.0;
 		animationDisplay.id = "animationDisplay";
-		document.getElementById("canvasArea").appendChild(animationDisplay);
+		document.querySelector(".canvasArea").appendChild(animationDisplay);
 
 		const displayContext = animationDisplay.getContext('2d');
 		displayContext.fillStyle = "#ffffff";
@@ -455,7 +385,7 @@ class PresentationWrapper extends React.Component {
 					// remove animationDisplay after last frame
 					if(index+1 === timelineFrames.length){
 						setTimeout(() => {
-							document.getElementById("canvasArea").removeChild(animationDisplay);
+							document.querySelector(".canvasArea").removeChild(animationDisplay);
 						}, lastSpeed);
 					};
 				};
@@ -569,7 +499,7 @@ class PresentationWrapper extends React.Component {
 	}
 
 	componentDidMount(){
-		const animationProj = new AnimationProject('canvasArea');
+		const animationProj = new AnimationProject(document.querySelector('.canvasArea'));
 		const newBrush = new BrushManager(animationProj);	
 		const newFilters = new FilterManager(animationProj, newBrush);
 		const newToolbar = new Toolbar(newBrush, animationProj);
@@ -586,10 +516,11 @@ class PresentationWrapper extends React.Component {
 			this._setupToolbar();
 			this._linkDemos();
 			this._setKeyDown(document);
-			this._timelineMarkerSetup();
+			//this._timelineMarkerSetup();
 			
 			this.state.animationProject.init();
 			this.state.brushInstance.brushesMap["default"].attachBrush();
+			
 		});
 	}
 	
@@ -600,7 +531,7 @@ class PresentationWrapper extends React.Component {
 	render(){
 		return(
 			<div className='container'>
-				<div id='toolbar'>
+				<div className='toolbar'>
 					<div id="toolbarOptions" className="toolbarSection">
 						<h3> funSketch </h3>
 						<ul>
@@ -762,20 +693,22 @@ class PresentationWrapper extends React.Component {
 					</div>	
 				</div>
 
-				<div id='screen'>
-					<div id="screenContainer">
+				<div className='screen'>
+					<div className="screenContainer">
 						<FrameCounterDisplay
 							currFrame={this.state.currentFrame}
 							currLayer={this.state.currentLayer}
 						/>
 						
-						<div id='canvasArea'>
+						<div className='canvasArea'>
 						</div>
 						
 						<AnimationTimeline 
 							frames={this.state.timelineFrames}
 							markers={this.state.timelineMarkers}
-							deleteMarkerFunc={this._timelineMarkerDelete}
+							goToFrame={this.state.toolbarInstance ? this.state.toolbarInstance.goToFrame : () => {}}
+							deleteMarker={this._timelineMarkerDelete.bind(this)}
+							updateCurrFrameAndTimelineMarkers={this._updateCurrFrameAndTimelineMarkers.bind(this)}
 						/>
 					</div>
 				</div>

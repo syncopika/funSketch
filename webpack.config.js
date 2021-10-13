@@ -8,7 +8,6 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 
 module.exports = {
 	entry: './index.js',
-	mode: 'development',
 	devServer: {
 		hot: true,
 		static: {
@@ -28,6 +27,10 @@ module.exports = {
 		  options: {
 			plugins: ['react-refresh/babel'],
 		  },
+		},
+		{
+		  test: /\.css$/,
+		  use: ['style-loader', 'css-loader'],
 		}
 	  ],
     },

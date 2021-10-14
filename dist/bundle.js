@@ -2873,23 +2873,25 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
       tempCanvas.height = currCanvas.height;
       tempCtx.lineJoin = "round";
       tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
-      tempCtx.fillRect(0, 0, currCanvas.width, currCanvas.height);
-      this.brushStroke(tempCtx, "rgba(0,0,0,1)");
+      tempCtx.fillRect(0, 0, currCanvas.width, currCanvas.height); // redraw the stroke last drawn onto the temp canvas (which is all #fff) with #000
+
+      this.brushStroke(tempCtx, "rgba(0, 0, 0, 1)");
       var tmpImgData = tempCtx.getImageData(0, 0, currCanvas.width, currCanvas.height).data;
-      var currLayerImg = currCtx.getImageData(0, 0, currCanvas.width, currCanvas.height);
-      var imgData = currLayerImg.data;
+      var currImgData = currCtx.getImageData(0, 0, currCanvas.width, currCanvas.height);
+      var imgData = currImgData.data; // now for the pixels that were just drawn on the temp canvas (which would be #000),
+      // set the alpha channel to 128 in the image data of the actual current canvas
 
       for (var i = 0; i <= tmpImgData.length - 4; i += 4) {
         var r = tmpImgData[i];
         var g = tmpImgData[i + 1];
         var b = tmpImgData[i + 2];
 
-        if (!(r === 255 && g === 255 && b === 255)) {
-          imgData[i + 3] = 128; // set alpha value in the original image data
+        if (r === 0 && g === 0 && b === 0) {
+          imgData[i + 3] = 128;
         }
       }
 
-      currCtx.putImageData(currLayerImg, 0, 0);
+      currCtx.putImageData(currImgData, 0, 0);
     }
   }, {
     key: "brushStop",
@@ -2900,6 +2902,7 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
 
       if (this.brushManager.currColorArray[3] !== 255) {
         // we need to apply some transparency via alpha
+        var currLayer = this.brushManager.getCurrLayer();
         this.modifyAlphas(currLayer);
       }
 
@@ -2910,9 +2913,12 @@ var DefaultBrush = /*#__PURE__*/function (_BrushTemplate) {
   }, {
     key: "brushStroke",
     value: function brushStroke(context) {
+      var strokeColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
       for (var i = 0; i < this.clickX.length; i++) {
         //this.clickColor[i] = this.clickColor[i].replace("128", "0.5"); // alpha needs to be between 0 and 1 for strokeStyle!
-        context.strokeStyle = this.clickColor[i];
+        context.strokeStyle = strokeColor ? strokeColor : this.clickColor[i]; // for when applying opaque white
+
         context.lineWidth = this.clickSize[i];
         context.beginPath(); // this helps generate a solid line, rather than a line of dots.
 
@@ -6575,6 +6581,12 @@ var BrushManager = /*#__PURE__*/function () {
       return this.currSize;
     }
   }, {
+    key: "getCurrLayer",
+    value: function getCurrLayer() {
+      var frame = this.animationProject.getCurrFrame();
+      return frame.getCurrCanvas();
+    }
+  }, {
     key: "applyPressureColor",
     value: function applyPressureColor() {
       return this.pressureColorFlag;
@@ -6626,6 +6638,107 @@ var BrushManager = /*#__PURE__*/function () {
 }();
 
 
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
+/***/ "./src/utils/ColorWheel.js":
+/*!*********************************!*\
+  !*** ./src/utils/ColorWheel.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "makeColorWheel": () => (/* binding */ makeColorWheel)
+/* harmony export */ });
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+// catch-all file for functions that might be better suited being in this file
+function makeColorWheel(elementId, size) {
+  var location = document.getElementById(elementId);
+
+  if (location === undefined) {
+    console.log("could not find element with id ".concat(elementId, "!"));
+    return null;
+  }
+
+  var colorWheel = document.createElement('canvas');
+  colorWheel.id = "colorWheel";
+  colorWheel.setAttribute('width', size);
+  colorWheel.setAttribute('height', size);
+  var colorWheelContext = colorWheel.getContext('2d');
+  var x = colorWheel.width / 2;
+  var y = colorWheel.height / 2;
+  var radius = 60; // why 5600??
+
+  for (var angle = 0; angle <= 5600; angle++) {
+    var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
+
+    var endAngle = angle * Math.PI / 180;
+    colorWheelContext.beginPath();
+    colorWheelContext.moveTo(x, y); //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+
+    colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
+    colorWheelContext.closePath(); //use .createRadialGradient to get a different color for each angle
+    //createRadialGradient(x0, y0, r0, x1, y1, r1)
+
+    var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
+    gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
+    gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
+    colorWheelContext.fillStyle = gradient;
+    colorWheelContext.fill();
+  } // make black a pickable color 
+
+
+  colorWheelContext.fillStyle = "rgba(0,0,0,1)";
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill(); // make white pickable too (and add a black outline)
+
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 
+
+  colorWheelContext.stroke(); // make sure circle is filled with #fff
+
+  colorWheelContext.fillStyle = "rgba(255,255,255,1)";
+  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill(); // make transparent white pickable too (and add a black outline)
+
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI); // border around the white 
+
+  colorWheelContext.stroke(); // make sure circle is filled with transparent white
+
+  colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
+  colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill();
+  location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
+
+  var showColor = document.createElement('p'); // this element will show the color picked 
+
+  showColor.style.textAlign = 'center';
+  showColor.id = 'colorPicked';
+  showColor.textContent = "pick a color!";
+  location.appendChild(showColor);
+  return colorWheel;
+}
 
 const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
 const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
@@ -6767,7 +6880,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _misc_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./misc.js */ "./src/utils/misc.js");
+/* harmony import */ var _ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ColorWheel.js */ "./src/utils/ColorWheel.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -7036,7 +7149,7 @@ var Toolbar = /*#__PURE__*/function () {
     value: function createColorWheel(elementId, size) {
       var _this7 = this;
 
-      var colorWheel = (0,_misc_js__WEBPACK_IMPORTED_MODULE_2__.makeColorWheel)(elementId, size);
+      var colorWheel = (0,_ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__.makeColorWheel)(elementId, size);
       document.getElementById(colorWheel.id).addEventListener('mousedown', function (evt) {
         var x = evt.offsetX;
         var y = evt.offsetY;
@@ -7601,107 +7714,6 @@ var Toolbar = /*#__PURE__*/function () {
 
 
 
-
-const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
-const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
-	$ReactRefreshModuleId$
-);
-
-function $ReactRefreshModuleRuntime$(exports) {
-	if (false) {}
-}
-
-if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
-	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
-} else {
-	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
-}
-
-/***/ }),
-
-/***/ "./src/utils/misc.js":
-/*!***************************!*\
-  !*** ./src/utils/misc.js ***!
-  \***************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "makeColorWheel": () => (/* binding */ makeColorWheel)
-/* harmony export */ });
-/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
-__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
-
-// catch-all file for functions that might be better suited being in this file
-function makeColorWheel(elementId, size) {
-  var location = document.getElementById(elementId);
-
-  if (location === undefined) {
-    console.log("could not find element with id ".concat(elementId, "!"));
-    return null;
-  }
-
-  var colorWheel = document.createElement('canvas');
-  colorWheel.id = "colorWheel";
-  colorWheel.setAttribute('width', size);
-  colorWheel.setAttribute('height', size);
-  var colorWheelContext = colorWheel.getContext('2d');
-  var x = colorWheel.width / 2;
-  var y = colorWheel.height / 2;
-  var radius = 60; // why 5600??
-
-  for (var angle = 0; angle <= 5600; angle++) {
-    var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
-
-    var endAngle = angle * Math.PI / 180;
-    colorWheelContext.beginPath();
-    colorWheelContext.moveTo(x, y); //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
-
-    colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
-    colorWheelContext.closePath(); //use .createRadialGradient to get a different color for each angle
-    //createRadialGradient(x0, y0, r0, x1, y1, r1)
-
-    var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
-    gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
-    gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
-    colorWheelContext.fillStyle = gradient;
-    colorWheelContext.fill();
-  } // make black a pickable color 
-
-
-  colorWheelContext.fillStyle = "rgba(0,0,0,1)";
-  colorWheelContext.beginPath();
-  colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
-  colorWheelContext.fill(); // make white pickable too (and add a black outline)
-
-  colorWheelContext.beginPath();
-  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 
-
-  colorWheelContext.stroke(); // make sure circle is filled with #fff
-
-  colorWheelContext.fillStyle = "rgba(255,255,255,1)";
-  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
-  colorWheelContext.fill(); // make transparent white pickable too (and add a black outline)
-
-  colorWheelContext.beginPath();
-  colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI); // border around the white 
-
-  colorWheelContext.stroke(); // make sure circle is filled with transparent white
-
-  colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
-  colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI);
-  colorWheelContext.fill();
-  location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
-
-  var showColor = document.createElement('p'); // this element will show the color picked 
-
-  showColor.style.textAlign = 'center';
-  showColor.id = 'colorPicked';
-  showColor.textContent = "pick a color!";
-  location.appendChild(showColor);
-  return colorWheel;
-}
 
 const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
 const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(

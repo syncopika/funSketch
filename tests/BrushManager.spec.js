@@ -8,20 +8,22 @@ describe("test BrushManager class", () => {
 	
 	beforeAll(() => {
 		const container = document.createElement("div");
-		container.id = containerId;
+		container.className = containerId;
 		container.style.height = "200px";
 		container.style.width = "200px";
 		document.body.appendChild(container);
 	});
 	
 	it("test BrushManager object creation", () => {
-		const animProj = new AnimationProject(containerId);
+		const container = document.querySelector('.' + containerId);
+		const animProj = new AnimationProject(container);
 		const brush = new BrushManager(animProj);
 		expect(brush.animationProject).toEqual(animProj);
 	});
 	
 	it("test change brush size", () => {
-		const animProj = new AnimationProject(containerId);
+		const container = document.querySelector('.' + containerId);
+		const animProj = new AnimationProject(container);
 		const brush = new BrushManager(animProj);
 		expect(brush.currSize).toEqual(2);
 		brush.changeBrushSize(10);
@@ -29,7 +31,8 @@ describe("test BrushManager class", () => {
 	});
 	
 	it("test change brush type", () => {
-		const animProj = new AnimationProject(containerId);
+		const container = document.querySelector('.' + containerId);
+		const animProj = new AnimationProject(container);
 		const brush = new BrushManager(animProj);
 		expect(brush.selectedBrush).toEqual("default");
 		brush.setBrushType("radial");

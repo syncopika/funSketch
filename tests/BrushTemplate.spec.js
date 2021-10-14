@@ -16,7 +16,8 @@ describe("test brush template", () => {
 	});
 
 	it("test creation", () => {
-		const animProj = new AnimationProject(containerId);
+		const container = document.querySelector('.' + containerId);
+		const animProj = new AnimationProject(container);
 		const brushMan = new BrushManager(animProj);
 		const brush = new BrushTemplate(brushMan);
 		expect(brush.brushManager).toEqual(brushMan);
@@ -25,7 +26,8 @@ describe("test brush template", () => {
 	
 	// TODO: need to mock pointer events!
 	it("test addClick and clearClick", () => {
-		const animProj = new AnimationProject(containerId);
+		const container = document.querySelector('.' + containerId);
+		const animProj = new AnimationProject(container);
 		const brushMan = new BrushManager(animProj);
 		const brush = new BrushTemplate(brushMan);
 		

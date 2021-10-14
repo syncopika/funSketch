@@ -2,12 +2,12 @@
     a class representing a frame, containing a list of canvas elements which represent layers of the frame
 ***/
 class Frame {
-	constructor(containerId, number){
+	constructor(container, number){
 		this.currentIndex = 0; // index of currently showing layer
 		this.canvasList = []; // keep a list of all canvas instances
 		this.currentCanvas; // the current, active canvas being looked at (reference to html element)
 		this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
-		this.containerId = containerId; // this is the html container id to hold all the layers of this frame
+		this.container = container; // this is the html element node to hold all the layers of this frame
 		this.number = number; // this frame's number
 		this.count = 0; // current number of layers
 		this.width = 0;
@@ -18,14 +18,13 @@ class Frame {
         return {
 			'width': this.width,
 			'height': this.height,
-            'containerId': this.containerId,
             'currentIndex': this.currentIndex,
             'number': this.number
         };
     }
 	
-	getContainerId(){
-		return this.containerId;
+	getContainer(){
+		return this.container;
 	}
 	
 	getCurrCanvasIndex(){
@@ -76,8 +75,10 @@ class Frame {
         // create the new canvas element 
         const newCanvas = document.createElement('canvas');
         newCanvas.id = `frame${this.number}canvas${this.count}`;
-        document.getElementById(this.containerId).appendChild(newCanvas);
+       this.container.appendChild(newCanvas);
+		
         setCanvas(prefill, newCanvas);
+		
         if(this.count === 0){
             newCanvas.style.opacity = .97;
             newCanvas.style.zIndex = 1;
@@ -88,6 +89,7 @@ class Frame {
         if(this.count === 0){
             this.currentCanvas = newCanvas;
         }
+		
         this.canvasList.push(newCanvas);
         this.count++;
     }
@@ -235,7 +237,7 @@ class Frame {
 		setCanvas(prefill, newCanvas, this.width, this.height);
         
 		//newCanvas.style.opacity = 0.97;
-        document.getElementById(this.containerId).appendChild(newCanvas);
+        this.container.appendChild(newCanvas);
 		newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
         this.canvasList.push(newCanvas);
         this.count++;
@@ -258,18 +260,23 @@ class Frame {
     it also instantiates an onion skin frame.
 ***/
 class AnimationProject {
-	constructor(containerId){
+	constructor(container){
 		this.name = "";
 		this.currentFrameIndex = 0; // index of current frame
 		this.speed = 100; // 100 ms per frame 
 		this.frameList = [];
-		this.onionSkinFrame = createOnionSkinFrame(containerId);
-		this.onionSkinFrame.style.display = 'none'; // hide it initially
-		this.containerId = containerId; // id of the html element the frames are displayed in
+		this.onionSkinFrame = null;
+		this.container = container;
 	}
 	
-	getContainerId(){
-		return this.containerId;
+	init(){
+		this.addNewFrame(true);
+		this.onionSkinFrame = createOnionSkinFrame(this.container);
+		this.onionSkinFrame.style.display = 'none'; // hide it initially
+	}
+	
+	getContainer(){
+		return this.container;
 	}
 	
 	getFrames(){
@@ -286,7 +293,7 @@ class AnimationProject {
 	
     resetProject(){
         this.frameList.forEach((frame, frameIndex) => { 
-            const parent = document.getElementById(frame.getContainerId());
+            const parent = frame.getContainer();
             // just keep the first frame
             frame.canvasList.forEach(function(layer, layerIndex){
                 if(frameIndex > 0 || (frameIndex === 0 && layerIndex > 0)){
@@ -311,7 +318,7 @@ class AnimationProject {
     }
 	
     addNewFrame(showFlag){
-        const newFrame = new Frame(this.containerId, this.frameList.length);
+        const newFrame = new Frame(this.container, this.frameList.length);
         newFrame.setupNewLayer();
         this.frameList.push(newFrame);
         if(!showFlag){
@@ -354,7 +361,7 @@ class AnimationProject {
 		this.frameList.splice(index, 1);
 		
 		// remove all layers
-		const parentContainer = document.getElementById(frame.getContainerId());
+		const parentContainer = frame.getContainer();
 		frame.getLayers().forEach((layer) => {
 			parentContainer.removeChild(layer);
 		});
@@ -433,8 +440,8 @@ class AnimationProject {
     }
 	
 	clearOnionSkin(){
-		let onionSkin = this.onionSkinFrame;
-		let context = this.onionSkinFrame.getContext("2d");
+		const onionSkin = this.onionSkinFrame;
+		const context = this.onionSkinFrame.getContext("2d");
         context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
         context.fillStyle = "#FFFFFF";
         context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
@@ -442,10 +449,10 @@ class AnimationProject {
 	
 }
 
-function createOnionSkinFrame(containerId){
+function createOnionSkinFrame(container){
     const newCanvas = document.createElement('canvas');
     newCanvas.id = "onionSkinCanvas";
-	document.getElementById(containerId).appendChild(newCanvas);
+	container.appendChild(newCanvas);
     
 	const prefill = true;
 	setCanvas(prefill, newCanvas);
@@ -459,7 +466,7 @@ function createOnionSkinFrame(containerId){
 // prefill should be false when importing a project
 function setCanvas(prefill, canvasElement, width, height){
 	canvasElement.style.position = "absolute";
-	canvasElement.style.border = '1px #000 solid';
+	canvasElement.style.border = "1px #000 solid";
 	canvasElement.style.zIndex = 0;
 	canvasElement.style.opacity = 0;
 	canvasElement.style.width = "100%";

@@ -1,5 +1,8 @@
 {
   "verbose": true,
   "roots": ["tests"],
-  "testRegex": "((\\.|/*.)(spec))\\.js?$"
+  "testRegex": "((\\.|/*.)(spec))\\.js?$",
+  "moduleNameMapper": {
+	"^.+\\.css$": "<rootDir>/tests/cssStub.js"
+  }
 }

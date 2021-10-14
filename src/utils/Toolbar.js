@@ -1,4 +1,4 @@
-import { makeColorWheel } from "./misc.js";
+import { makeColorWheel } from "./ColorWheel.js";
 
 class Toolbar {
 	constructor(brush, animationProj){

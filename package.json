@@ -7,28 +7,35 @@
     "components": "components"
   },
   "dependencies": {
-    "express": "^4.17.1",
     "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "source-map-loader": "^0.2.4",
-    "webpack": "^4.44.2"
+    "react-dom": "^16.14.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.2",
+    "@webpack-cli/serve": "^1.6.0",
     "babel-loader": "^8.2.2",
+    "css-loader": "^6.4.0",
+    "express": "^4.17.1",
     "jest": "^26.6.3",
     "jest-canvas-mock": "^2.3.0",
-    "webpack-cli": "^3.3.12"
+    "react-refresh": "^0.10.0",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^3.3.0",
+    "webpack": "^5.58.2",
+    "webpack-cli": "^4.9.0",
+    "webpack-dev-server": "^4.3.1"
   },
   "scripts": {
     "test": "jest --config ./jest.config.json --env=jsdom",
     "dev": "webpack --mode development",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "serve": "webpack serve --mode development"
   },
   "repository": {
     "type": "git",

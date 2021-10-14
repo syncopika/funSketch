@@ -11,15 +11,6 @@ class DefaultBrush extends BrushTemplate {
 		if(this.isStartBrush(evt)){ //when left click only == (which === 1)
 			evt.preventDefault();
 			this.paint = true;
-			// offset will be different with mobile
-			// https://stackoverflow.com/questions/17130940/retrieve-the-same-offsetx-on-touch-like-mouse-event
-			// https://stackoverflow.com/questions/11287877/how-can-i-get-e-offsetx-on-mobile-ipad
-			//if(evt.type === 'touchstart'){
-			//	const newCoords = this._handleTouchEvent(evt);
-			//	evt.offsetX = newCoords.x;
-			//	evt.offsetY = newCoords.y;
-			//	evt.preventDefault();
-			//}
 			this.addClick(evt, true);
 			this.redraw(this.brushStroke.bind(this));
 		}
@@ -48,23 +39,26 @@ class DefaultBrush extends BrushTemplate {
 		tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
 		tempCtx.fillRect(0, 0, currCanvas.width, currCanvas.height);
 		
-		this.brushStroke(tempCtx, "rgba(0,0,0,1)");
+		// redraw the stroke last drawn onto the temp canvas (which is all #fff) with #000
+		this.brushStroke(tempCtx, "rgba(0, 0, 0, 1)");
 		
 		const tmpImgData = tempCtx.getImageData(0, 0, currCanvas.width, currCanvas.height).data;
 		
-		const currLayerImg = currCtx.getImageData(0, 0, currCanvas.width, currCanvas.height);
-		const imgData = currLayerImg.data;
+		const currImgData = currCtx.getImageData(0, 0, currCanvas.width, currCanvas.height);
+		const imgData = currImgData.data;
 		
+		// now for the pixels that were just drawn on the temp canvas (which would be #000),
+		// set the alpha channel to 128 in the image data of the actual current canvas
 		for(let i = 0; i <= tmpImgData.length-4; i += 4){
 			const r = tmpImgData[i];
 			const g = tmpImgData[i+1];
 			const b = tmpImgData[i+2];
-			if(!(r === 255 && g === 255 && b === 255)){
-				imgData[i+3] = 128; // set alpha value in the original image data
+			if(r === 0 && g === 0 && b === 0){
+				imgData[i+3] = 128;
 			}
 		}
 		
-		currCtx.putImageData(currLayerImg, 0, 0);
+		currCtx.putImageData(currImgData, 0, 0);
 	}
 	
 	brushStop(evt){
@@ -75,6 +69,7 @@ class DefaultBrush extends BrushTemplate {
 		// for the pixels via image data (since strokeStyle with an alpha value set does not seem to change the image data :/)
 		if(this.brushManager.currColorArray[3] !== 255){
 			// we need to apply some transparency via alpha
+			const currLayer = this.brushManager.getCurrLayer();
 			this.modifyAlphas(currLayer);
 		}
 		
@@ -83,10 +78,10 @@ class DefaultBrush extends BrushTemplate {
 	}
 	
 	// this is for determining what the brush stroke looks like
-	brushStroke(context){
+	brushStroke(context, strokeColor=null){
 		for(let i = 0; i < this.clickX.length; i++){
 			//this.clickColor[i] = this.clickColor[i].replace("128", "0.5"); // alpha needs to be between 0 and 1 for strokeStyle!
-			context.strokeStyle = this.clickColor[i];
+			context.strokeStyle = strokeColor ? strokeColor : this.clickColor[i]; // for when applying opaque white
             context.lineWidth = this.clickSize[i];
             context.beginPath();
 			

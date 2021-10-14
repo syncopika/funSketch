@@ -74,6 +74,11 @@ class BrushManager {
 		return this.currSize;
 	}
 	
+	getCurrLayer(){
+		const frame = this.animationProject.getCurrFrame();	
+		return frame.getCurrCanvas();
+	}
+	
 	applyPressureColor(){
 		return this.pressureColorFlag;
 	}

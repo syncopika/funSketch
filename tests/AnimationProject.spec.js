@@ -7,17 +7,18 @@ describe("test AnimationProject", () => {
 	
 	beforeAll(() => {
 		const container = document.createElement("div");
-		container.id = containerId;
+		container.className = containerId;
 		container.style.height = "200px";
 		container.style.width = "200px";
 		document.body.appendChild(container);
 	});
 	
-	it("test setup", () => {
-		const animProject = new AnimationProject(containerId);
+	it("test setup without init", () => {
+		const container = document.querySelector('.' + containerId);
+		const animProject = new AnimationProject(container);
 		
-		expect(animProject.getContainerId()).toEqual(containerId);
-		expect(animProject.onionSkinFrame).not.toEqual(null);
+		expect(animProject.getContainer()).toEqual(document.querySelector('.' + containerId));
+		expect(animProject.onionSkinFrame).toEqual(null);
 		
 		let frames = animProject.getFrames();
 		expect(frames.length).toEqual(0);
@@ -36,8 +37,26 @@ describe("test AnimationProject", () => {
 		expect(frames[1].getLayers()[0].style.visibility).toEqual("");
 	});
 	
+	it("test setup with init", () => {
+		const container = document.querySelector('.' + containerId);
+		const animProject = new AnimationProject(container);
+		animProject.init();
+		
+		expect(animProject.getContainer()).toEqual(container);
+		expect(animProject.onionSkinFrame).not.toEqual(null);
+		
+		const frames = animProject.getFrames();
+		expect(frames.length).toEqual(1);
+		
+		expect(frames[0].getLayers().length).toEqual(1);
+		expect(frames[0].getLayers()[0].style.visibility).toEqual(""); // not hidden
+		expect(frames[0]).toEqual(animProject.getCurrFrame());
+		expect(animProject.getCurrFrameIndex()).toEqual(0);
+	});
+	
 	it("test delete frame", () => {
-		const animProject = new AnimationProject(containerId);
+		const container = document.querySelector('.' + containerId);
+		const animProject = new AnimationProject(container);
 		expect(animProject.deleteFrame(0)).toEqual(false);
 		
 		let frames = animProject.getFrames();
@@ -56,7 +75,10 @@ describe("test AnimationProject", () => {
 	});
 	
 	it("test resetProject", () => {
-		const animProject = new AnimationProject(containerId);
+		const container = document.querySelector('.' + containerId);
+		const animProject = new AnimationProject(container);
+		animProject.init();
+		
 		animProject.addNewFrame();
 		animProject.addNewFrame();
 		animProject.addNewFrame();
@@ -69,7 +91,8 @@ describe("test AnimationProject", () => {
 	});
 	
 	it("test nextFrame", () => {
-		const animProject = new AnimationProject(containerId);
+		const container = document.querySelector('.' + containerId);
+		const animProject = new AnimationProject(container);
 		jest.spyOn(animProject, "updateOnionSkin").mockImplementation(() => {});
 		
 		expect(animProject.nextFrame()).toEqual(null);
@@ -84,7 +107,8 @@ describe("test AnimationProject", () => {
 	});
 	
 	it("test prevFrame", () => {
-		const animProject = new AnimationProject(containerId);
+		const container = document.querySelector('.' + containerId);
+		const animProject = new AnimationProject(container);
 		jest.spyOn(animProject, "updateOnionSkin").mockImplementation(() => {});
 		
 		expect(animProject.prevFrame()).toEqual(null);

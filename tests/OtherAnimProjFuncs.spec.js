@@ -9,7 +9,7 @@ describe("test other utility functions in AnimationProject", () => {
 	
 	beforeAll(() => {
 		const container = document.createElement("div");
-		container.id = containerId;
+		container.className = containerId;
 		container.style.height = "200px";
 		container.style.width = "200px";
 		document.body.appendChild(container);
@@ -33,9 +33,10 @@ describe("test other utility functions in AnimationProject", () => {
 	});
 	
 	it("test createOnionSkinFrame", () => {
-		const oskinFrame = createOnionSkinFrame(containerId);
+		const container = document.querySelector('.' + containerId);
+		const oskinFrame = createOnionSkinFrame(container);
 		expect(oskinFrame.id).toEqual("onionSkinCanvas");
-		expect(oskinFrame.parentNode.id).toEqual(containerId);
+		expect(oskinFrame.parentNode).toEqual(container);
 		expect(oskinFrame.style.opacity).toEqual("0.97");
 	});
 	

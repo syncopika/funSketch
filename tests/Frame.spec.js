@@ -7,21 +7,22 @@ describe("test Frame class", () => {
 	
 	beforeAll(() => {
 		const container = document.createElement("div");
-		container.id = containerId;
+		container.className = containerId;
 		container.style.height = "200px";
 		container.style.width = "200px";
 		document.body.appendChild(container);
 	});
 	
 	it("test frame creation and layer setup", () => {
-		const frame1 = new Frame(containerId, 2);
+		const container = document.querySelector('.' + containerId);
+		const frame1 = new Frame(container, 2);
 		
 		// check metadata
 		const frame1data = frame1.getMetadata();
 		expect(frame1data.currentIndex).toBe(0);
 		expect(frame1data.number).toBe(2);
-		expect(frame1data.containerId).toBe(containerId);
-		expect(frame1.getContainerId()).toBe(containerId);
+		
+		expect(frame1.getContainer()).toEqual(container);
 		
 		// add a new layer
 		frame1.setupNewLayer();
@@ -33,7 +34,7 @@ describe("test Frame class", () => {
 		expect(currCanvas.style.cursor).toEqual("");
 		expect(currCanvas.style.touchAction).toEqual("none");
 		
-		expect(currCanvas.parentNode).toBe(document.getElementById(containerId));
+		expect(currCanvas.parentNode).toEqual(container);
 		
 		// add a new layer
 		frame1.setupNewLayer();
@@ -48,7 +49,8 @@ describe("test Frame class", () => {
 	
 	
 	it("test frame hide and show", () => {
-		const frame = new Frame(containerId, 0);
+		const container = document.querySelector('.' + containerId);
+		const frame = new Frame(container, 0);
 		frame.setupNewLayer();
 		frame.setupNewLayer();
 		frame.setupNewLayer();
@@ -82,7 +84,8 @@ describe("test Frame class", () => {
 	});
 	
 	it("test frame setToLayer", () => {
-		const frame = new Frame(containerId, 0);
+		const container = document.querySelector('.' + containerId);
+		const frame = new Frame(container, 0);
 		frame.setupNewLayer();
 		frame.setupNewLayer();
 		frame.setupNewLayer();
@@ -109,14 +112,16 @@ describe("test Frame class", () => {
 	});
 	
 	it("test getLayers", () => {
-		const frame = new Frame(containerId, 0);
+		const container = document.querySelector('.' + containerId);
+		const frame = new Frame(container, 0);
 		expect(frame.getLayers().length).toEqual(0);
 		frame.setupNewLayer();
 		expect(frame.getLayers().length).toEqual(1);
 	});
 	
 	it("test setLayers", () => {
-		const frame = new Frame(containerId, 0);
+		const container = document.querySelector('.' + containerId);
+		const frame = new Frame(container, 0);
 		frame.setupNewLayer();
 		frame.setupNewLayer();
 		expect(frame.getLayers().length).toEqual(2);
@@ -128,7 +133,8 @@ describe("test Frame class", () => {
 	});
 	
 	it("test setCurrIndex", () => {
-		const frame = new Frame(containerId, 0);
+		const container = document.querySelector('.' + containerId);
+		const frame = new Frame(container, 0);
 		frame.setupNewLayer();
 		frame.setupNewLayer();
 		expect(frame.getCurrCanvas()).toEqual(frame.getLayers()[0]);
@@ -139,7 +145,8 @@ describe("test Frame class", () => {
 	});
 	
 	it("test nextLayer", () => {
-		const frame = new Frame(containerId, 0);
+		const container = document.querySelector('.' + containerId);
+		const frame = new Frame(container, 0);
 		frame.setupNewLayer();
 		expect(frame.nextLayer()).toEqual(false);
 		
@@ -152,7 +159,8 @@ describe("test Frame class", () => {
 	});
 	
 	it("test prevLayer", () => {
-		const frame = new Frame(containerId, 0);
+		const container = document.querySelector('.' + containerId);
+		const frame = new Frame(container, 0);
 		frame.setupNewLayer();
 		expect(frame.prevLayer()).toEqual(false);
 		

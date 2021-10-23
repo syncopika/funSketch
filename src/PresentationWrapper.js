@@ -1,5 +1,6 @@
 import React from 'react';
 import { AnimationProject } from './utils/AnimationProject.js';
+import { AnimationController } from './utils/AnimationController.js';
 import { Toolbar } from './utils/Toolbar.js';
 import { BrushManager } from './utils/BrushManager.js';
 import { FilterManager } from './utils/FilterManager.js';
@@ -34,6 +35,7 @@ class PresentationWrapper extends React.Component {
 			'brushInstance': null,
 			'toolbarInstance': null,
 			'filtersInstance': null,
+			'animationController': null,
 			'currentFrame': 1,
 			'currentLayer': 1,
 			'timelineFrames': [],
@@ -325,77 +327,6 @@ class PresentationWrapper extends React.Component {
 		}
 	}
 	
-	_playAnimation(direction){
-		/*
-			plays all the timeline frames in sequence by merging each frame's layers on a separate canvas.
-			note that even if a frame exists, if it's not in the timeline playAnimation will not do anything.
-			
-			TODO: pause? stop? just a segment?
-		*/
-		if(direction !== "forward" && direction !== "backward"){
-			console.log("not a valid direction for animation");
-			return;
-		}
-		
-		let timelineFrames = Array.from(this.state.timelineFrames); // make a copy
-		if(Object.keys(timelineFrames).length === 0){
-			return;
-		}
-		
-		if(direction === "backward"){
-			// reverse alters the original array so we needed a copy
-			timelineFrames = timelineFrames.reverse();
-		}
-
-		const animationDisplay = document.createElement('canvas');
-		
-		// all frames should have the same dimensions
-		const currFrame = this.state.animationProject.getCurrFrame();
-		animationDisplay.width = currFrame.currentCanvas.width; 
-		animationDisplay.height = currFrame.currentCanvas.height;
-		
-		animationDisplay.style.zIndex = 200;
-		animationDisplay.style.border = '1px solid #000';
-		animationDisplay.style.position = 'absolute';
-		animationDisplay.style.opacity = 1.0;
-		animationDisplay.id = "animationDisplay";
-		document.querySelector(".canvasArea").appendChild(animationDisplay);
-
-		const displayContext = animationDisplay.getContext('2d');
-		displayContext.fillStyle = "#ffffff";
-		displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
-		
-		let totalElapsedTime = 0;
-		let lastSpeed = this.state.toolbarInstance.timePerFrame;
-		
-		timelineFrames.forEach((frame, index) => {
-			if(this.state.timelineMarkers[index+1]){
-				lastSpeed = parseInt(this.state.timelineMarkers[index+1].speed);
-			}
-			
-			// TODO: use requestAnimationFrame?
-			setTimeout(() => {
-				// set the animation canvas to white instead of clearRect 
-				// we don't want transparency otherwise we'll see our current frame we were working on flash between animation frames
-				displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
-				
-				const image = new Image();
-				image.onload = () => {
-					displayContext.drawImage(image, 0, 0);
-					// remove animationDisplay after last frame
-					if(index+1 === timelineFrames.length){
-						setTimeout(() => {
-							document.querySelector(".canvasArea").removeChild(animationDisplay);
-						}, lastSpeed);
-					};
-				};
-				image.src = frame.data;
-			}, totalElapsedTime + lastSpeed);
-			
-			totalElapsedTime += lastSpeed;
-		});
-	}
-	
 	_importProjectUpdateFunc(){
 		// update state when loading in a project
 		const project = this.state.animationProject;
@@ -405,7 +336,7 @@ class PresentationWrapper extends React.Component {
 			'currentFrame': 1,
 			'currentLayer': 1,
 			'timelineFrames': [],
-			'timelineMarkers': {}
+			'timelineMarkers': {},
 		});
 		
 		this.timelineFramesSet = new Set();
@@ -503,6 +434,7 @@ class PresentationWrapper extends React.Component {
 		const newBrush = new BrushManager(animationProj);	
 		const newFilters = new FilterManager(animationProj, newBrush);
 		const newToolbar = new Toolbar(newBrush, animationProj);
+		const animationController = new AnimationController(animationProj, newToolbar);
 		
 		//animationProj.addNewFrame(true);
 		//newBrush.brushesMap["default"].attachBrush();
@@ -511,12 +443,12 @@ class PresentationWrapper extends React.Component {
 			'animationProject': animationProj,
 			'brushInstance': newBrush,
 			'toolbarInstance': newToolbar,
-			'filtersInstance': newFilters
+			'filtersInstance': newFilters,
+			'animationController': animationController,
 		}, () => {
 			this._setupToolbar();
 			this._linkDemos();
 			this._setKeyDown(document);
-			//this._timelineMarkerSetup();
 			
 			this.state.animationProject.init();
 			this.state.brushInstance.brushesMap["default"].attachBrush();
@@ -667,12 +599,22 @@ class PresentationWrapper extends React.Component {
 							<ul>
 								<li><button onClick={
 									() => {
-										this._playAnimation("forward");
+										//this._playAnimation("forward");
+										this.state.animationController.playAnimation(
+											"forward", 
+											this.state.timelineFrames,
+											this.state.timelineMarkers
+										);
 									}
 								}> play animation forward </button></li>
 								<li><button onClick={
 									() => {
-										this._playAnimation("backward");
+										//this._playAnimation("backward");
+										this.state.animationController.playAnimation(
+											"backward", 
+											this.state.timelineFrames,
+											this.state.timelineMarkers
+										);
 									}
 								}> play animation backward </button></li>
 								<li><button id='generateGif'> generate gif! </button></li>

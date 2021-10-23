@@ -1584,14 +1584,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/AnimationProject.js */ "./src/utils/AnimationProject.js");
-/* harmony import */ var _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/Toolbar.js */ "./src/utils/Toolbar.js");
-/* harmony import */ var _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils/BrushManager.js */ "./src/utils/BrushManager.js");
-/* harmony import */ var _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./utils/FilterManager.js */ "./src/utils/FilterManager.js");
-/* harmony import */ var _AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./AnimationTimeline.js */ "./src/AnimationTimeline.js");
-/* harmony import */ var _LayerOrder_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./LayerOrder.js */ "./src/LayerOrder.js");
-/* harmony import */ var _FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./FilterDashboard.js */ "./src/FilterDashboard.js");
-/* harmony import */ var _BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./BrushDashboard.js */ "./src/BrushDashboard.js");
-/* harmony import */ var _styles_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../styles/presentationWrapper.css */ "./styles/presentationWrapper.css");
+/* harmony import */ var _utils_AnimationController_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/AnimationController.js */ "./src/utils/AnimationController.js");
+/* harmony import */ var _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils/Toolbar.js */ "./src/utils/Toolbar.js");
+/* harmony import */ var _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./utils/BrushManager.js */ "./src/utils/BrushManager.js");
+/* harmony import */ var _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./utils/FilterManager.js */ "./src/utils/FilterManager.js");
+/* harmony import */ var _AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./AnimationTimeline.js */ "./src/AnimationTimeline.js");
+/* harmony import */ var _LayerOrder_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./LayerOrder.js */ "./src/LayerOrder.js");
+/* harmony import */ var _FilterDashboard_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./FilterDashboard.js */ "./src/FilterDashboard.js");
+/* harmony import */ var _BrushDashboard_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./BrushDashboard.js */ "./src/BrushDashboard.js");
+/* harmony import */ var _styles_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../styles/presentationWrapper.css */ "./styles/presentationWrapper.css");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -1605,6 +1606,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default()(this, result); }; }
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
 
 
 
@@ -1653,6 +1655,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       'brushInstance': null,
       'toolbarInstance': null,
       'filtersInstance': null,
+      'animationController': null,
       'currentFrame': 1,
       'currentLayer': 1,
       'timelineFrames': [],
@@ -1975,81 +1978,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }
     }
   }, {
-    key: "_playAnimation",
-    value: function _playAnimation(direction) {
-      var _this5 = this;
-
-      /*
-      	plays all the timeline frames in sequence by merging each frame's layers on a separate canvas.
-      	note that even if a frame exists, if it's not in the timeline playAnimation will not do anything.
-      	
-      	TODO: pause? stop? just a segment?
-      */
-      if (direction !== "forward" && direction !== "backward") {
-        console.log("not a valid direction for animation");
-        return;
-      }
-
-      var timelineFrames = Array.from(this.state.timelineFrames); // make a copy
-
-      if (Object.keys(timelineFrames).length === 0) {
-        return;
-      }
-
-      if (direction === "backward") {
-        // reverse alters the original array so we needed a copy
-        timelineFrames = timelineFrames.reverse();
-      }
-
-      var animationDisplay = document.createElement('canvas'); // all frames should have the same dimensions
-
-      var currFrame = this.state.animationProject.getCurrFrame();
-      animationDisplay.width = currFrame.currentCanvas.width;
-      animationDisplay.height = currFrame.currentCanvas.height;
-      animationDisplay.style.zIndex = 200;
-      animationDisplay.style.border = '1px solid #000';
-      animationDisplay.style.position = 'absolute';
-      animationDisplay.style.opacity = 1.0;
-      animationDisplay.id = "animationDisplay";
-      document.querySelector(".canvasArea").appendChild(animationDisplay);
-      var displayContext = animationDisplay.getContext('2d');
-      displayContext.fillStyle = "#ffffff";
-      displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
-      var totalElapsedTime = 0;
-      var lastSpeed = this.state.toolbarInstance.timePerFrame;
-      timelineFrames.forEach(function (frame, index) {
-        if (_this5.state.timelineMarkers[index + 1]) {
-          lastSpeed = parseInt(_this5.state.timelineMarkers[index + 1].speed);
-        } // TODO: use requestAnimationFrame?
-
-
-        setTimeout(function () {
-          // set the animation canvas to white instead of clearRect 
-          // we don't want transparency otherwise we'll see our current frame we were working on flash between animation frames
-          displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
-          var image = new Image();
-
-          image.onload = function () {
-            displayContext.drawImage(image, 0, 0); // remove animationDisplay after last frame
-
-            if (index + 1 === timelineFrames.length) {
-              setTimeout(function () {
-                document.querySelector(".canvasArea").removeChild(animationDisplay);
-              }, lastSpeed);
-            }
-
-            ;
-          };
-
-          image.src = frame.data;
-        }, totalElapsedTime + lastSpeed);
-        totalElapsedTime += lastSpeed;
-      });
-    }
-  }, {
     key: "_importProjectUpdateFunc",
     value: function _importProjectUpdateFunc() {
-      var _this6 = this;
+      var _this5 = this;
 
       // update state when loading in a project
       var project = this.state.animationProject;
@@ -2068,14 +1999,14 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         var currFrameData = mergedLayersFrame.toDataURL();
         var currFrameIndex = index;
 
-        if (!_this6.timelineFramesSet.has(currFrameIndex)) {
+        if (!_this5.timelineFramesSet.has(currFrameIndex)) {
           newFrames.push({
             "data": currFrameData,
             "height": mergedLayersFrame.height,
             "width": mergedLayersFrame.width
           });
 
-          _this6.timelineFramesSet.add(currFrameIndex);
+          _this5.timelineFramesSet.add(currFrameIndex);
         } else {
           // update image data
           newFrames[currFrameIndex].data = currFrameData;
@@ -2101,7 +2032,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDemo",
     value: function _getDemo(selected) {
-      var _this7 = this;
+      var _this6 = this;
 
       // case for the blank option 
       if (selected === "") {
@@ -2120,7 +2051,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       httpRequest.onload = function () {
         var data = JSON.parse(httpRequest.responseText);
 
-        _this7.state.toolbarInstance.importData(data, _this7._importProjectUpdateFunc.bind(_this7));
+        _this6.state.toolbarInstance.importData(data, _this6._importProjectUpdateFunc.bind(_this6));
       };
 
       httpRequest.send();
@@ -2163,30 +2094,31 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this8 = this;
+      var _this7 = this;
 
       var animationProj = new _utils_AnimationProject_js__WEBPACK_IMPORTED_MODULE_7__.AnimationProject(document.querySelector('.canvasArea'));
-      var newBrush = new _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_9__.BrushManager(animationProj);
-      var newFilters = new _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_10__.FilterManager(animationProj, newBrush);
-      var newToolbar = new _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_8__.Toolbar(newBrush, animationProj); //animationProj.addNewFrame(true);
+      var newBrush = new _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_10__.BrushManager(animationProj);
+      var newFilters = new _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_11__.FilterManager(animationProj, newBrush);
+      var newToolbar = new _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_9__.Toolbar(newBrush, animationProj);
+      var animationController = new _utils_AnimationController_js__WEBPACK_IMPORTED_MODULE_8__.AnimationController(animationProj, newToolbar); //animationProj.addNewFrame(true);
       //newBrush.brushesMap["default"].attachBrush();
 
       this.setState({
         'animationProject': animationProj,
         'brushInstance': newBrush,
         'toolbarInstance': newToolbar,
-        'filtersInstance': newFilters
+        'filtersInstance': newFilters,
+        'animationController': animationController
       }, function () {
-        _this8._setupToolbar();
+        _this7._setupToolbar();
 
-        _this8._linkDemos();
+        _this7._linkDemos();
 
-        _this8._setKeyDown(document); //this._timelineMarkerSetup();
+        _this7._setKeyDown(document);
 
+        _this7.state.animationProject.init();
 
-        _this8.state.animationProject.init();
-
-        _this8.state.brushInstance.brushesMap["default"].attachBrush();
+        _this7.state.brushInstance.brushesMap["default"].attachBrush();
       });
     }
   }, {
@@ -2196,7 +2128,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this9 = this;
+      var _this8 = this;
 
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
         className: "container"
@@ -2286,7 +2218,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "changeLayerOrder"
       }, "change layer order")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("button", {
         id: "downloadFrame"
-      }, "download current frame"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement(_LayerOrder_js__WEBPACK_IMPORTED_MODULE_12__.LayerOrder, {
+      }, "download current frame"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement(_LayerOrder_js__WEBPACK_IMPORTED_MODULE_13__.LayerOrder, {
         changingLayerOrder: this.state.changingLayerOrder,
         layers: this.state.animationProject && this.state.animationProject.getCurrFrame() ? this.state.animationProject.getCurrFrame().getLayers().map(function (x, idx) {
           return idx;
@@ -2296,7 +2228,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           // 2. set changingLayerOrder in state to false
           var newLayerList = [];
 
-          var currFrame = _this9.state.animationProject.getCurrFrame();
+          var currFrame = _this8.state.animationProject.getCurrFrame();
 
           var currLayerIndex = currFrame.getCurrCanvasIndex();
           var currFrameLayerList = currFrame.getLayers();
@@ -2313,9 +2245,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           });
           currFrame.setLayers(newLayerList); // update the currently shown layer to reflect the re-ordering
 
-          _this9.state.toolbarInstance.setCurrLayer(currLayerIndex);
+          _this8.state.toolbarInstance.setCurrLayer(currLayerIndex);
 
-          _this9.setState({
+          _this8.setState({
             "changingLayerOrder": false
           });
         }
@@ -2357,7 +2289,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         name: "timePerFrame",
         id: "timePerFrame",
         onChange: function onChange(evt) {
-          _this9.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
+          _this8.state.toolbarInstance.timePerFrame = parseInt(evt.target.value);
         }
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("option", {
         value: "100"
@@ -2371,11 +2303,13 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         value: "1000"
       }, "1000"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("button", {
         onClick: function onClick() {
-          _this9._playAnimation("forward");
+          //this._playAnimation("forward");
+          _this8.state.animationController.playAnimation("forward", _this8.state.timelineFrames, _this8.state.timelineMarkers);
         }
       }, " play animation forward ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("button", {
         onClick: function onClick() {
-          _this9._playAnimation("backward");
+          //this._playAnimation("backward");
+          _this8.state.animationController.playAnimation("backward", _this8.state.timelineFrames, _this8.state.timelineMarkers);
         }
       }, " play animation backward ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("button", {
         id: "generateGif"
@@ -2405,7 +2339,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         currLayer: this.state.currentLayer
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
         className: "canvasArea"
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement(_AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_11__.AnimationTimeline, {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement(_AnimationTimeline_js__WEBPACK_IMPORTED_MODULE_12__.AnimationTimeline, {
         frames: this.state.timelineFrames,
         markers: this.state.timelineMarkers,
         goToFrame: this.state.toolbarInstance ? this.state.toolbarInstance.goToFrame : function () {},
@@ -2427,7 +2361,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }, " brushes"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
         id: "brushes",
         className: "tbar"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement(_BrushDashboard_js__WEBPACK_IMPORTED_MODULE_14__.BrushDashboard, {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement(_BrushDashboard_js__WEBPACK_IMPORTED_MODULE_15__.BrushDashboard, {
         brushManager: this.state.brushInstance
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         id: "filtersOption",
@@ -2441,7 +2375,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }, " filters"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
         id: "filters",
         className: "tbar"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_13__.FilterDashboard, {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement(_FilterDashboard_js__WEBPACK_IMPORTED_MODULE_14__.FilterDashboard, {
         filterManager: this.state.filtersInstance
       }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
         id: "footer"
@@ -5856,6 +5790,181 @@ var Voronoi = /*#__PURE__*/function (_FilterTemplate) {
 
   return Voronoi;
 }(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_6__.FilterTemplate);
+
+
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
+/***/ "./src/utils/AnimationController.js":
+/*!******************************************!*\
+  !*** ./src/utils/AnimationController.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AnimationController": () => (/* binding */ AnimationController)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+var AnimationController = /*#__PURE__*/function () {
+  function AnimationController(animationProject, toolbar) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, AnimationController);
+
+    this.animProject = animationProject;
+    this.toolbar = toolbar;
+    this.currAnimFrameIndex = 0;
+    this.reqAnimFrameId = 0;
+    this.currAnimSpeed = 0;
+    this.currAnimElapsedTime = 0;
+    this.animTimelineFrames = [];
+    this.timelineMarkers = {};
+    this.animationDisplay = null; // the canvas that'll hold the merged layers of each frame when animating
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(AnimationController, [{
+    key: "_animate",
+    value: function _animate(timestamp) {
+      if (this.currAnimStartTime === 0) {
+        this.currAnimStartTime = timestamp;
+      }
+
+      this.currAnimElapsedTime = timestamp - this.currAnimStartTime; // set the animation canvas to white instead of clearRect 
+      // we don't want transparency otherwise we'll see our current frame we were working on flash between animation frames
+
+      if (this.currAnimElapsedTime >= this.currAnimSpeed) {
+        this.currAnimElapsedTime = 0;
+        this.currAnimStartTime = timestamp;
+        this.currAnimFrameIndex++;
+      }
+
+      if (this.currAnimFrameIndex > this.animTimelineFrames.length - 1) {
+        // we're done animating
+        cancelAnimationFrame(this.reqAnimFrameId);
+        this.animationDisplay.parentNode.removeChild(this.animationDisplay);
+        this.animationDisplay = null;
+      } else {
+        // load next frame
+        if (this.timelineMarkers[this.currAnimFrameIndex + 1]) {
+          // adjust speed if needed
+          this.currAnimSpeed = parseInt(this.timelineMarkers[this.currAnimFrameIndex + 1].speed); // +1 because not 0-indexed
+        }
+
+        var displayContext = this.animationDisplay.getContext('2d');
+        displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
+        var image = new Image();
+
+        image.onload = function () {
+          displayContext.drawImage(image, 0, 0);
+        };
+
+        image.src = this.animTimelineFrames[this.currAnimFrameIndex].data;
+        this.reqAnimFrameId = requestAnimationFrame(this._animate.bind(this));
+      }
+    }
+  }, {
+    key: "playAnimation",
+    value: function playAnimation(direction, timelineFrames, timelineMarkers) {
+      /*
+      	plays all the timeline frames in sequence by merging each frame's layers on a separate canvas.
+      	note that even if a frame exists, if it's not in the timeline playAnimation will not do anything.
+      	
+      	TODO: pause? stop? just a segment?
+      	
+      	BUG: reversing the animation with timeline markers won't apply the speed changes correctly
+      	e.g. if we have the 1st frame be at 500 ms and the 5th frame be at 100 ms, if we reverse, currently
+      	we'll get last frame -> 5th frame be at 500 ms. but we really should have last frame -> 5th frame be
+      	at 100 ms. then 5th -> 1st be at 500 ms. one way to manage this would be just to create an array of
+      	times for each frame and use that.
+      */
+      if (direction !== "forward" && direction !== "backward") {
+        console.log("not a valid direction for animation");
+        return;
+      }
+
+      var frames = Array.from(timelineFrames); // make a copy
+
+      if (Object.keys(frames).length === 0) {
+        return;
+      }
+
+      if (this.animationDisplay !== null) {
+        // if the animationDisplay canvas is present, we're animating already
+        return;
+      }
+
+      if (direction === "backward") {
+        // reverse alters the original array so we needed a copy
+        frames = frames.reverse();
+      }
+
+      this.animTimelineFrames = frames;
+      this.timelineMarkers = timelineMarkers; // all frames should have the same dimensions
+
+      var currFrame = this.animProject.getCurrFrame(); // create animation display (a separate canvas)
+
+      var animationDisplay = document.createElement('canvas');
+      animationDisplay.width = currFrame.currentCanvas.width;
+      animationDisplay.height = currFrame.currentCanvas.height;
+      animationDisplay.style.zIndex = 200;
+      animationDisplay.style.border = '1px solid #000';
+      animationDisplay.style.position = 'absolute';
+      animationDisplay.style.opacity = 1.0;
+      animationDisplay.id = "animationDisplay";
+      document.querySelector(".canvasArea").appendChild(animationDisplay);
+      var displayContext = animationDisplay.getContext('2d');
+      displayContext.fillStyle = "#ffffff";
+      displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
+      this.animationDisplay = animationDisplay; // set up initial animation speed
+
+      this.currAnimSpeed = this.toolbar.timePerFrame;
+
+      if (this.timelineMarkers[1]) {
+        // 1 = first frame
+        this.currAnimSpeed = parseInt(this.timelineMarkers[1].speed);
+      } // set up first frame
+
+
+      var image = new Image();
+
+      image.onload = function () {
+        displayContext.drawImage(image, 0, 0);
+      };
+
+      image.src = this.animTimelineFrames[0].data; // animate!
+
+      this.currAnimFrameIndex = 0;
+      this.currAnimStartTime = 0;
+      this.reqAnimFrameId = requestAnimationFrame(this._animate.bind(this));
+    }
+  }]);
+
+  return AnimationController;
+}();
 
 
 

@@ -1,23 +1,23 @@
 /***
-	FISHEYE DISTORTION FILTER
-	this function creates fisheye distortion!
-	source: http://popscan.blogspot.com/2012/04/fisheye-lens-equation-simple-fisheye.html
-	http://paulbourke.net/dome/fisheye/
+    FISHEYE DISTORTION FILTER
+    this function creates fisheye distortion!
+    source: http://popscan.blogspot.com/2012/04/fisheye-lens-equation-simple-fisheye.html
+    http://paulbourke.net/dome/fisheye/
 ***/
 
 import { FilterTemplate } from './FilterTemplate.js';
 
 class Fisheye extends FilterTemplate {
-	
-	constructor(){
-		super(null);
-	}
-	
+    
+    constructor(){
+        super(null);
+    }
+    
     fisheye(imgData, xPos, yPos, rad, width, height){
         let data = imgData.data;
         let oldData = new Uint8ClampedArray(data);
         let pixelCounter = 0;
-		
+        
         //rows
         for(let y = 0; y < height; y++){
             //normalize y coordinate to -1...+1
@@ -65,15 +65,15 @@ class Fisheye extends FilterTemplate {
                 pixelCounter++;
             }
         }
-		
-		return imgData;
+        
+        return imgData;
     }
-	
+    
     filter(pixels){
         return this.fisheye(pixels, 0, 0, 0, pixels.width, pixels.height);
     }
 }
 
 export {
-	Fisheye
+    Fisheye
 }

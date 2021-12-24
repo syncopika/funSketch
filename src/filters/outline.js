@@ -2,12 +2,12 @@
 import { FilterTemplate } from './FilterTemplate.js';
 
 class Outline extends FilterTemplate {
-	
-	constructor(){
-		super(null);
-	}
-	
-	withinRange(r, g, b, or, og, ob, rangeVal){
+    
+    constructor(){
+        super(null);
+    }
+    
+    withinRange(r, g, b, or, og, ob, rangeVal){
         let red = Math.abs(r - or) <= rangeVal;
         let green = Math.abs(g - og) <= rangeVal;
         let blue = Math.abs(b - ob) <= rangeVal;
@@ -16,7 +16,7 @@ class Outline extends FilterTemplate {
         }
         return false;
     }
-	
+    
     makePath(context, col, row) {
         context.lineJoin = 'round';
         context.lineWidth = 5;
@@ -27,7 +27,7 @@ class Outline extends FilterTemplate {
         context.strokeStyle = '#000';
         context.stroke();
     }
-	
+    
     /***
         OUTLINE FILTER
         gets the 'outline' of the main parts of the picture
@@ -36,24 +36,24 @@ class Outline extends FilterTemplate {
         forming a small, slightly angled line. all these lines then make up an outline.
     ***/
     filter(pixels){
-		const width = pixels.width;
+        const width = pixels.width;
         const height = pixels.height;
-		
-		// make a temp canvas to draw the result on
-		// then we'll return this temp canvas' image data
-		let tempCanvas = document.createElement("canvas");
-		tempCanvas.height = pixels.height;
-		tempCanvas.width = pixels.width;
+        
+        // make a temp canvas to draw the result on
+        // then we'll return this temp canvas' image data
+        let tempCanvas = document.createElement("canvas");
+        tempCanvas.height = pixels.height;
+        tempCanvas.width = pixels.width;
         let context = tempCanvas.getContext("2d");
-		context.clearRect(0, 0, width, height);
+        context.clearRect(0, 0, width, height);
         context.fillStyle = "#FFF";
         context.fillRect(0, 0, width, height);
-		
+        
         let d = pixels.data;
         let colCounter = 0;
         let rowCounter = 0;
         let maximum = 4 * width;
-		
+        
         for(let i = 0; i < d.length; i += 4){
             let r = d[i];
             let g = d[i + 1];
@@ -74,14 +74,14 @@ class Outline extends FilterTemplate {
             }
             colCounter++;
         }
-		
-		// return image data of the temp canvas
-		let imgData = context.getImageData(0, 0, width, height);
-		return imgData;
+        
+        // return image data of the temp canvas
+        let imgData = context.getImageData(0, 0, width, height);
+        return imgData;
     }
 
 }
 
 export {
-	Outline
+    Outline
 };

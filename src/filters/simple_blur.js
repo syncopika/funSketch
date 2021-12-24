@@ -1,6 +1,6 @@
 /***
-	simple BLUR FILTER
-	this function causes a blurring effect. it's pretty slow compared to the other blur.
+    simple BLUR FILTER
+    this function causes a blurring effect. it's pretty slow compared to the other blur.
     
     It takes the pixel itself and
     its left, right, above and below neighbors (if it has them)
@@ -9,9 +9,9 @@
 import { FilterTemplate } from './FilterTemplate.js';
 
 class SimpleBlur extends FilterTemplate {
-	constructor(){
-		super({});
-	}
+    constructor(){
+        super({});
+    }
     
     getNeighborsAvg(row, col, width, height, data){
         const channels = ['r','g','b','a'];
@@ -51,10 +51,10 @@ class SimpleBlur extends FilterTemplate {
     
     filter(pixels){
         const width = pixels.width;
-		const height = pixels.height;
+        const height = pixels.height;
         
-		const data = pixels.data;
-		const copy = new Uint8ClampedArray(data);
+        const data = pixels.data;
+        const copy = new Uint8ClampedArray(data);
         
         for(let row = 0; row < height; row++){
             for(let col = 0; col < width; col++){

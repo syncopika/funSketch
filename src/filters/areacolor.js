@@ -2,11 +2,11 @@
 import { FilterTemplate } from './FilterTemplate.js';
 
 class AreaColor extends FilterTemplate {
-	
-	constructor(){
-		super(null);
-	}
-	
+    
+    constructor(){
+        super(null);
+    }
+    
     withinRange(r, g, b, or, og, ob, rangeVal){
         let red = Math.abs(r - or) <= rangeVal;
         let green = Math.abs(g - og) <= rangeVal;
@@ -16,7 +16,7 @@ class AreaColor extends FilterTemplate {
         }
         return false;
     }
-	
+    
     //the idea is to find an area of pixels that are similarly colored, 
     //and then making that area one solid color
     filter(pixels){
@@ -29,71 +29,71 @@ class AreaColor extends FilterTemplate {
             let r = d[i];
             let g = d[i + 1];
             let b = d[i + 2];
-			
+            
             //left neighbor's color
             let lnr = copy[i - 4];
             let lng = copy[i - 3];
             let lnb = copy[i - 2];
-			
+            
             //right neighbor's color
             let rnr = copy[i + 4];
             let rng = copy[i + 5];
             let rnb = copy[i + 6];
-			
+            
             //top neighbor's color
             let tnr = copy[i - (maximum)];
             let tng = copy[i - (maximum - 1)];
             let tnb = copy[i - (maximum - 2)];
-			
+            
             //bottom neighbor's color
             let bnr = copy[i + (maximum)];
             let bng = copy[i + (maximum + 1)];
             let bnb = copy[i + (maximum + 2)];
-			
+            
             //top right
             let trr = copy[i - (maximum - 4)];
             let trg = copy[i - (maximum - 5)];
             let trb = copy[i - (maximum - 6)];
-			
+            
             //top left
             let tlr = copy[i - (maximum + 4)];
             let tlg = copy[i - (maximum + 3)];
             let tlb = copy[i - (maximum + 2)];
-			
+            
             //below left
             let blr = copy[i + (maximum - 4)];
             let blg = copy[i + (maximum - 3)];
             let blb = copy[i + (maximum - 2)];
-			
+            
             //below right
             let brr = copy[i + (maximum + 4)];
             let brg = copy[i + (maximum + 5)];
             let brb = copy[i + (maximum + 6)];
-			
+            
             //right pixel
             let cond1 = (d[i + 4] === undefined);
-			
+            
             //left pixel
             let cond2 = (d[i - 4] === undefined);
-			
+            
             //pixel below
             let cond3 = (d[i + (maximum)] === undefined);
-			
+            
             //pixel above
             let cond4 = (d[i - (maximum)] === undefined);
-			
+            
             //top left
             let cond5 = (d[i - (maximum + 4)] === undefined);
-			
+            
             //top right
             let cond6 = (d[i - (maximum - 4)] === undefined);
-			
+            
             //below right
             let cond7 = (d[i + (maximum + 4)] === undefined);
-			
+            
             //below left
             let cond8 = (d[i + (maximum - 4)] === undefined);
-			
+            
             if(!cond1 && !cond2 && !cond3 && !cond4 && !cond5 && !cond6 && !cond7 && !cond8){
                 //if next neighbor over is a completely different color, stop and move on
                 let nnr = copy[i + 8];
@@ -165,9 +165,9 @@ class AreaColor extends FilterTemplate {
         }
         return pixels;
     }
-	
+    
 }
 
 export {
-	AreaColor
+    AreaColor
 };

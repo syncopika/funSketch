@@ -27,7 +27,6 @@ const FrameCounterDisplay = (props) => {
 }
 
 class PresentationWrapper extends React.Component {
-
 	constructor(props){
 		super(props);
 		this.state = {

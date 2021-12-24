@@ -33,6 +33,9 @@ function constructSlider(name, params){
 }
 
 const FilterDashboard = (props) => {
+    // keep track of filter used so we can display a message
+    const [filterUsed, setFilterUsed] = useState("");
+    
 	const filterManager = props.filterManager;
 	const filters = (filterManager) ? filterManager.filtersMap : {}; // props.filterManager can be null initially
 	const filterNames = Object.keys(filters);
@@ -129,6 +132,7 @@ const FilterDashboard = (props) => {
 					onClick={
 						function(){
 							filterManager.filterCanvasOption(selectedFilter);
+                            setFilterUsed(`applied ${selectedFilter} filter`);
 						}
 					}
 				> apply filter </button>
@@ -143,6 +147,11 @@ const FilterDashboard = (props) => {
 					</ul>
 				</div>
 			</div>
+            
+            <div>
+                <br />
+                <p className="filterUsedMsg"> {filterUsed} </p>
+            </div>
 			
 		</div>
 	);

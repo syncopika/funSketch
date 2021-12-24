@@ -1,5 +1,4 @@
 class AnimationController {
-
 	constructor(animationProject, toolbar){
 		this.animProject = animationProject;
 		this.toolbar = toolbar;

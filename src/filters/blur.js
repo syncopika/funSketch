@@ -1,14 +1,11 @@
 /***
-	BLUR FILTER
-	this function causes a blurring effect. It takes the pixel itself and
-	its left, right, above and below neighbors (if it has them)
-	and calculates the average of their total R, G, B, and A channels respectively.
+	fast BLUR FILTER
+	this function causes a blurring effect.
 	source: http://blog.ivank.net/fastest-gaussian-blur.html
 ***/
 import { FilterTemplate } from './FilterTemplate.js';
 
 class Blur extends FilterTemplate {
-	
 	constructor(){
 		const params = {
 			"blurFactor": {
@@ -162,7 +159,6 @@ class Blur extends FilterTemplate {
 		
 		return pixels;
     }
-
 }
 
 export {

@@ -9,7 +9,6 @@ class Frame {
         this.currentCanvasSnapshots = []; // keep track of what the current canvas looks like after each mouseup
         this.container = container; // this is the html element node to hold all the layers of this frame
         this.number = number; // this frame's number
-        this.count = 0; // current number of layers
         this.width = 0;
         this.height = 0;
     }
@@ -21,10 +20,6 @@ class Frame {
             'currentIndex': this.currentIndex,
             'number': this.number
         };
-    }
-    
-    getContainer(){
-        return this.container;
     }
     
     getCurrCanvasIndex(){
@@ -74,24 +69,22 @@ class Frame {
     setupNewLayer(prefill=true){
         // create the new canvas element 
         const newCanvas = document.createElement('canvas');
-        newCanvas.id = `frame${this.number}canvas${this.count}`;
-       this.container.appendChild(newCanvas);
+        newCanvas.id = `frame${this.number}canvas${this.canvasList.length}`;
+        this.container.appendChild(newCanvas);
         
         setCanvas(prefill, newCanvas);
         
-        if(this.count === 0){
+        if(this.canvasList.length === 0){
             newCanvas.style.opacity = .97;
             newCanvas.style.zIndex = 1;
             this.width = newCanvas.width;
             this.height = newCanvas.height;
-        }
-        // set new canvas to be the current canvas only initially!
-        if(this.count === 0){
+            
+            // set new canvas to be the current canvas only initially
             this.currentCanvas = newCanvas;
         }
         
         this.canvasList.push(newCanvas);
-        this.count++;
     }
     
     _showLayer(canvas){
@@ -231,7 +224,7 @@ class Frame {
     ***/
     copyCanvas(){
         const newCanvas = document.createElement('canvas');
-        newCanvas.id = `frame${this.number}canvas${this.count}`;
+        newCanvas.id = `frame${this.number}canvas${this.canvasList.length}`;
         
         const prefill = true;
         setCanvas(prefill, newCanvas, this.width, this.height);
@@ -240,7 +233,6 @@ class Frame {
         this.container.appendChild(newCanvas);
         newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
         this.canvasList.push(newCanvas);
-        this.count++;
     }
     
     clearCurrentLayer(){
@@ -275,10 +267,6 @@ class AnimationProject {
         this.onionSkinFrame.style.display = 'none'; // hide it initially
     }
     
-    getContainer(){
-        return this.container;
-    }
-    
     getFrames(){
         return this.frameList;
     }
@@ -293,7 +281,7 @@ class AnimationProject {
     
     resetProject(){
         this.frameList.forEach((frame, frameIndex) => { 
-            const parent = frame.getContainer();
+            const parent = frame.container;
             // just keep the first frame
             frame.canvasList.forEach(function(layer, layerIndex){
                 if(frameIndex > 0 || (frameIndex === 0 && layerIndex > 0)){
@@ -360,7 +348,7 @@ class AnimationProject {
         this.frameList.splice(index, 1);
         
         // remove all layers
-        const parentContainer = frame.getContainer();
+        const parentContainer = frame.container;
         frame.getLayers().forEach((layer) => {
             parentContainer.removeChild(layer);
         });

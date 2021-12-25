@@ -22,11 +22,11 @@ describe("test Frame class", () => {
         expect(frame1data.currentIndex).toBe(0);
         expect(frame1data.number).toBe(2);
         
-        expect(frame1.getContainer()).toEqual(container);
+        expect(frame1.container).toEqual(container);
         
         // add a new layer
         frame1.setupNewLayer();
-        expect(frame1.count).toEqual(1);
+        expect(frame1.canvasList.length).toEqual(1);
         
         let currCanvas = frame1.getCurrCanvas();
         expect(currCanvas.style.opacity).toEqual("0.97");
@@ -40,7 +40,7 @@ describe("test Frame class", () => {
         frame1.setupNewLayer();
         currCanvas = frame1.getCurrCanvas();
         
-        expect(frame1.count).toEqual(2);
+        expect(frame1.canvasList.length).toEqual(2);
         expect(currCanvas).toEqual(frame1.canvasList[0]);
         expect(currCanvas).not.toEqual(frame1.canvasList[1]);
         expect(frame1.canvasList[0].style.opacity).toEqual("0.97");

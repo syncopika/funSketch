@@ -17,7 +17,7 @@ describe("test AnimationProject", () => {
         const container = document.querySelector('.' + containerId);
         const animProject = new AnimationProject(container);
         
-        expect(animProject.getContainer()).toEqual(document.querySelector('.' + containerId));
+        expect(animProject.container).toEqual(document.querySelector('.' + containerId));
         expect(animProject.onionSkinFrame).toEqual(null);
         
         let frames = animProject.getFrames();
@@ -42,7 +42,7 @@ describe("test AnimationProject", () => {
         const animProject = new AnimationProject(container);
         animProject.init();
         
-        expect(animProject.getContainer()).toEqual(container);
+        expect(animProject.container).toEqual(container);
         expect(animProject.onionSkinFrame).not.toEqual(null);
         
         const frames = animProject.getFrames();

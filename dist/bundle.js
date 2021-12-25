@@ -6174,8 +6174,6 @@ var Frame = /*#__PURE__*/function () {
 
     this.number = number; // this frame's number
 
-    this.count = 0; // current number of layers
-
     this.width = 0;
     this.height = 0;
   }
@@ -6189,11 +6187,6 @@ var Frame = /*#__PURE__*/function () {
         'currentIndex': this.currentIndex,
         'number': this.number
       };
-    }
-  }, {
-    key: "getContainer",
-    value: function getContainer() {
-      return this.container;
     }
   }, {
     key: "getCurrCanvasIndex",
@@ -6254,24 +6247,20 @@ var Frame = /*#__PURE__*/function () {
       var prefill = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       // create the new canvas element 
       var newCanvas = document.createElement('canvas');
-      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
+      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.canvasList.length);
       this.container.appendChild(newCanvas);
       setCanvas(prefill, newCanvas);
 
-      if (this.count === 0) {
+      if (this.canvasList.length === 0) {
         newCanvas.style.opacity = .97;
         newCanvas.style.zIndex = 1;
         this.width = newCanvas.width;
-        this.height = newCanvas.height;
-      } // set new canvas to be the current canvas only initially!
+        this.height = newCanvas.height; // set new canvas to be the current canvas only initially
 
-
-      if (this.count === 0) {
         this.currentCanvas = newCanvas;
       }
 
       this.canvasList.push(newCanvas);
-      this.count++;
     }
   }, {
     key: "_showLayer",
@@ -6431,14 +6420,13 @@ var Frame = /*#__PURE__*/function () {
     key: "copyCanvas",
     value: function copyCanvas() {
       var newCanvas = document.createElement('canvas');
-      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
+      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.canvasList.length);
       var prefill = true;
       setCanvas(prefill, newCanvas, this.width, this.height); //newCanvas.style.opacity = 0.97;
 
       this.container.appendChild(newCanvas);
       newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
       this.canvasList.push(newCanvas);
-      this.count++;
     }
   }, {
     key: "clearCurrentLayer",
@@ -6485,11 +6473,6 @@ var AnimationProject = /*#__PURE__*/function () {
       this.onionSkinFrame.style.display = 'none'; // hide it initially
     }
   }, {
-    key: "getContainer",
-    value: function getContainer() {
-      return this.container;
-    }
-  }, {
     key: "getFrames",
     value: function getFrames() {
       return this.frameList;
@@ -6508,7 +6491,7 @@ var AnimationProject = /*#__PURE__*/function () {
     key: "resetProject",
     value: function resetProject() {
       this.frameList.forEach(function (frame, frameIndex) {
-        var parent = frame.getContainer(); // just keep the first frame
+        var parent = frame.container; // just keep the first frame
 
         frame.canvasList.forEach(function (layer, layerIndex) {
           if (frameIndex > 0 || frameIndex === 0 && layerIndex > 0) {
@@ -6573,7 +6556,7 @@ var AnimationProject = /*#__PURE__*/function () {
 
       this.frameList.splice(index, 1); // remove all layers
 
-      var parentContainer = frame.getContainer();
+      var parentContainer = frame.container;
       frame.getLayers().forEach(function (layer) {
         parentContainer.removeChild(layer);
       });

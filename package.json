@@ -1,50 +1,57 @@
 {
-  "name": "funsketch",
-  "version": "1.0.0",
-  "description": "an experimental application that has simple drawing features, as well as some interesting filter and brush options.    \r more importantly, you can also make some quick, simple animations! \r <br>    \r try it here: https://syncopika.github.io/funSketch/    \r also, I tried out the floodfill feature using web workers <a href='https://syncopika.github.io/funSketch/floodfillExperiment/floodfillExperiment.html'>here</a>! It looks like they definitely help speed up performance. \r <br>    \r ### problems to fix / things to do:        \r - when rotating, the coordinates where the paintbrush strikes when mousedown get changed.",
-  "main": "server.js",
-  "directories": {
-    "components": "components"
-  },
-  "dependencies": {
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/plugin-transform-runtime": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
-    "@babel/preset-react": "^7.12.10",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
-    "@testing-library/jest-dom": "^5.11.8",
-    "@testing-library/react": "^11.2.2",
-    "@webpack-cli/serve": "^1.6.0",
-    "babel-loader": "^8.2.2",
-    "css-loader": "^6.4.0",
-    "express": "^4.17.1",
-    "jest": "^26.6.3",
-    "jest-canvas-mock": "^2.3.0",
-    "react-refresh": "^0.10.0",
-    "source-map-loader": "^0.2.4",
-    "style-loader": "^3.3.0",
-    "webpack": "^5.58.2",
-    "webpack-cli": "^4.9.0",
-    "webpack-dev-server": "^4.3.1"
-  },
-  "scripts": {
-    "test": "jest --config ./jest.config.json --env=jsdom",
-    "dev": "webpack --mode development",
-    "build": "webpack --mode production",
-    "serve": "webpack serve --mode development"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/syncopika/funSketch.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/syncopika/funSketch/issues"
-  },
-  "homepage": "https://github.com/syncopika/funSketch#readme"
+    "name": "funsketch",
+    "version": "1.0.0",
+    "description": "an experimental application that has simple drawing features, as well as some interesting filter and brush options.    \r more importantly, you can also make some quick, simple animations! \r <br>    \r try it here: https://syncopika.github.io/funSketch/    \r also, I tried out the floodfill feature using web workers <a href='https://syncopika.github.io/funSketch/floodfillExperiment/floodfillExperiment.html'>here</a>! It looks like they definitely help speed up performance. \r <br>    \r ### problems to fix / things to do:        \r - when rotating, the coordinates where the paintbrush strikes when mousedown get changed.",
+    "main": "server.js",
+    "directories": {
+        "components": "components"
+    },
+    "dependencies": {
+        "react": "^16.14.0",
+        "react-dom": "^16.14.0"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.12.10",
+        "@babel/plugin-transform-runtime": "^7.12.10",
+        "@babel/preset-env": "^7.12.11",
+        "@babel/preset-react": "^7.12.10",
+        "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
+        "@testing-library/jest-dom": "^5.11.8",
+        "@testing-library/react": "^11.2.2",
+        "@wdio/cli": "^7.16.12",
+        "@wdio/jasmine-framework": "^7.16.11",
+        "@wdio/local-runner": "^7.16.12",
+        "@wdio/spec-reporter": "^7.16.11",
+        "@webpack-cli/serve": "^1.6.0",
+        "babel-loader": "^8.2.2",
+        "chromedriver": "^96.0.0",
+        "css-loader": "^6.4.0",
+        "express": "^4.17.1",
+        "jest": "^26.6.3",
+        "jest-canvas-mock": "^2.3.0",
+        "react-refresh": "^0.10.0",
+        "source-map-loader": "^0.2.4",
+        "style-loader": "^3.3.0",
+        "wdio-chromedriver-service": "^7.2.2",
+        "webpack": "^5.58.2",
+        "webpack-cli": "^4.9.0",
+        "webpack-dev-server": "^4.3.1"
+    },
+    "scripts": {
+        "test": "jest --config ./jest.config.json --env=jsdom",
+        "dev": "webpack --mode development",
+        "build": "webpack --mode production",
+        "serve": "webpack serve --mode development",
+        "wdio": "wdio run wdio.conf.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/syncopika/funSketch.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/syncopika/funSketch/issues"
+    },
+    "homepage": "https://github.com/syncopika/funSketch#readme"
 }

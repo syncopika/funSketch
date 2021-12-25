@@ -2,37 +2,37 @@
 import { FilterTemplate } from './FilterTemplate.js';
 
 class Mosaic extends FilterTemplate {
-	
-	constructor(){
-		const params = {
-			"chunkWidth": {
-				"value": 40,
-				"min": 1,
-				"max": 50,
-				"step": 1,
-			},
-			"chunkHeight": {
-				"value": 40,
-				"min": 1,
-				"max": 50,
-				"step": 1,
-			}
-		};
-		super(params);
-	}
-	
+    
+    constructor(){
+        const params = {
+            "chunkWidth": {
+                "value": 40,
+                "min": 1,
+                "max": 50,
+                "step": 1,
+            },
+            "chunkHeight": {
+                "value": 40,
+                "min": 1,
+                "max": 50,
+                "step": 1,
+            }
+        };
+        super(params);
+    }
+    
     filter(pixels){
         let d = pixels.data;
         let copy = new Uint8ClampedArray(d);
-		
+        
         // get dimensions 
         let width = pixels.width;
         let height = pixels.height;
-		
+        
         // change sampling size here. lower for higher detail preservation, higher for less detail (because larger chunks)
         let chunkWidth = this.params.chunkWidth.value;
         let chunkHeight = this.params.chunkHeight.value;
-		
+        
         // when looking at each chunk of the image, for these 2 outer for loops, 
         // focus on looking at each chunk as if looking at a single pixel first (think bigger picture; abstraction!) 
         // don't think about selecting single channels yet 
@@ -55,11 +55,11 @@ class Mosaic extends FilterTemplate {
                 }
             }
         }
-		
+        
         return pixels;
     }
 }
 
 export {
-	Mosaic
+    Mosaic
 };

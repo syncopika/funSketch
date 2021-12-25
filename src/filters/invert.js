@@ -2,12 +2,12 @@
 import { FilterTemplate } from './FilterTemplate.js';
 
 class Invert extends FilterTemplate {
-	
-	constructor(){
-		super(null);
-	}
-	
-	filter(pixels){
+    
+    constructor(){
+        super(null);
+    }
+    
+    filter(pixels){
         let d = pixels.data;
         let r, g, b, x, y, z;
         for(let i = 0; i < d.length; i += 4){
@@ -23,5 +23,5 @@ class Invert extends FilterTemplate {
 }
 
 export {
-	Invert
+    Invert
 };

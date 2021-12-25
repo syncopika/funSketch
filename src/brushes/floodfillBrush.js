@@ -1,13 +1,13 @@
 import { BrushTemplate } from './BrushTemplate.js';
 
 class FloodfillBrush extends BrushTemplate {
-	
-	constructor(brushManager){
-		super(brushManager);
-		
-		this.cursorType = "url(" + "\"paintbucket.png\"" + "), auto";
-	}
-	
+    
+    constructor(brushManager){
+        super(brushManager);
+        
+        this.cursorType = "url(" + "\"paintbucket.png\"" + "), auto";
+    }
+    
     floodfill(currentCanvas, newColor, pixelSelected){
         // create a stack 
         let stack = [];
@@ -22,7 +22,7 @@ class FloodfillBrush extends BrushTemplate {
         // do the floodfill, then put the edited image data back 
         let imageData = ctx.getImageData(0, 0, currentCanvas.width, currentCanvas.height);
         let data = imageData.data;
-		let originalData = new Uint8ClampedArray(imageData.data);
+        let originalData = new Uint8ClampedArray(imageData.data);
         stack.push(pixelSelected);
         while(stack.length !== 0){
             // get a pixel
@@ -87,61 +87,61 @@ class FloodfillBrush extends BrushTemplate {
         // put new edited image back on canvas
         ctx.putImageData(imageData, 0, 0);
     }
-	
-	// event listener functions
-	brushStart(evt){
-		evt.preventDefault();
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		
-		if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart'){ //when left click only
-			if(evt.type === 'touchstart'){
-				const newCoords = this._handleTouchEvent(evt);
-				evt.offsetX = newCoords.x;
-				evt.offsetY = newCoords.y;
-				evt.preventDefault();
-			}
-			
-			// do floodfill
-			// need to parse the currColor because right now it looks like "rgb(x,y,z)". 
-			// I want it to look like [x, y, z]
-			const currColor = this.brushManager.currColor;
-			let currColorArray = currColor.substring(currColor.indexOf('(')+1, currColor.length-1).split(',');
-			currColorArray = this.brushManager.currColorArray.map(function(a){ return parseInt(a); });
-			
-			const x = evt.offsetX;
-			const y = evt.offsetY;
+    
+    // event listener functions
+    brushStart(evt){
+        evt.preventDefault();
+        const frame = this.brushManager.animationProject.getCurrFrame();    
+        const currLayer = frame.getCurrCanvas();
+        
+        if((evt.which === 1 && evt.type === 'mousedown') || evt.type === 'touchstart'){ //when left click only
+            if(evt.type === 'touchstart'){
+                const newCoords = this._handleTouchEvent(evt);
+                evt.offsetX = newCoords.x;
+                evt.offsetY = newCoords.y;
+                evt.preventDefault();
+            }
+            
+            // do floodfill
+            // need to parse the currColor because right now it looks like "rgb(x,y,z)". 
+            // I want it to look like [x, y, z]
+            const currColor = this.brushManager.currColor;
+            let currColorArray = currColor.substring(currColor.indexOf('(')+1, currColor.length-1).split(',');
+            currColorArray = this.brushManager.currColorArray.map(function(a){ return parseInt(a); });
+            
+            const x = evt.offsetX;
+            const y = evt.offsetY;
 
-			const colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
-			const color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')';
+            const colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
+            const color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')';
 
-			// create an object with the pixel data
-			const pixel = {'x': Math.floor(x), 'y': Math.floor(y), 'color': color};
+            // create an object with the pixel data
+            const pixel = {'x': Math.floor(x), 'y': Math.floor(y), 'color': color};
 
-			this.floodfill(currLayer, currColorArray, pixel);
-			
-			const w = currLayer.width;
-			const h = currLayer.height;
-			frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
-		}
-	}
-	
-	// equip the brush and set up the current canvas for using the brush
-	attachBrush(){
-		const frame = this.brushManager.animationProject.getCurrFrame();	
-		const currLayer = frame.getCurrCanvas();
-		currLayer.style.cursor = this.cursorType;
+            this.floodfill(currLayer, currColorArray, pixel);
+            
+            const w = currLayer.width;
+            const h = currLayer.height;
+            frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+        }
+    }
+    
+    // equip the brush and set up the current canvas for using the brush
+    attachBrush(){
+        const frame = this.brushManager.animationProject.getCurrFrame();    
+        const currLayer = frame.getCurrCanvas();
+        currLayer.style.cursor = this.cursorType;
 
-		// TODO: refactor this so that we can just call a method from brushManager to do this stuff?
-		let start = this.brushStart.bind(this);
-		currLayer.addEventListener('mousedown', start);
-		currLayer.addEventListener('touchstart', start);
-		this.brushManager.currentEventListeners['mousedown'] = start;
-		this.brushManager.currentEventListeners['touchstart'] = start;
-	}
+        // TODO: refactor this so that we can just call a method from brushManager to do this stuff?
+        let start = this.brushStart.bind(this);
+        currLayer.addEventListener('mousedown', start);
+        currLayer.addEventListener('touchstart', start);
+        this.brushManager.currentEventListeners['mousedown'] = start;
+        this.brushManager.currentEventListeners['touchstart'] = start;
+    }
 }
 
 
 export {
-	FloodfillBrush
+    FloodfillBrush
 };

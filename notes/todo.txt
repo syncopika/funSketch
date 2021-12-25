@@ -7,7 +7,7 @@ when adding a frame time marker, the new element messes up the mouse coordinates
 
 short-term
 ----------
-- need more tests (with cypress?)
+- need more tests (with cypress? WDIO?)
 - be able to copy a layer from one frame and then paste into another layer in another frame
 - make context.lineJoin a variable that can be changed? i.e. have more options besides 'round'?
 - when erasing, don't let cursor disappear on pointerdown event?
@@ -15,7 +15,7 @@ short-term
 - maybe add a context menu for the animation timeline?
 	- i.e. besides being able to change the frame rate, set start/end points?
 - adjust eraser cursor image size?
-- stop animation, play reverse?
+- stop animation?
 
 long-term
 ---------

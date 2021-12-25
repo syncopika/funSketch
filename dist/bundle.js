@@ -988,7 +988,8 @@ var AnimationTimeline = /*#__PURE__*/function (_React$Component) {
         var y = coords.y; // which frame does this coordinate match to?
 
         if (_this2.props.frames.length > 0) {
-          var width = 123; // don't hardcode this? it should be based on img width in the timeline
+          var width = 123; // TODO: don't hardcode this? it should be based on img width in the timeline
+          // had issues getting the styling right though so pretty difficult otherwise
 
           var frameGuess = Math.floor(x / width) + 1;
 
@@ -1291,6 +1292,12 @@ function constructSlider(name, params) {
 var FilterDashboard = function FilterDashboard(props) {
   _s();
 
+  // keep track of filter used so we can display a message
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(""),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
+      filterUsed = _useState2[0],
+      setFilterUsed = _useState2[1];
+
   var filterManager = props.filterManager;
   var filters = filterManager ? filterManager.filtersMap : {}; // props.filterManager can be null initially
 
@@ -1308,10 +1315,10 @@ var FilterDashboard = function FilterDashboard(props) {
     "gridTemplateColumns": "auto"
   }; // use a hook to be able to keep track of selected filter
 
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(""),
-      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
-      selectedFilter = _useState2[0],
-      setSelectedFilter = _useState2[1];
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(""),
+      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState3, 2),
+      selectedFilter = _useState4[0],
+      setSelectedFilter = _useState4[1];
 
   var parameterSliders = [];
 
@@ -1377,6 +1384,7 @@ var FilterDashboard = function FilterDashboard(props) {
     id: "applyFilter",
     onClick: function onClick() {
       filterManager.filterCanvasOption(selectedFilter);
+      setFilterUsed("applied ".concat(selectedFilter, " filter"));
     }
   }, " apply filter "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     id: "filterParameters"
@@ -1389,10 +1397,12 @@ var FilterDashboard = function FilterDashboard(props) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("li", {
       key: "filter_param_".concat(index)
     }, slider);
-  })))));
+  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
+    className: "filterUsedMsg"
+  }, " ", filterUsed, " ")));
 };
 
-_s(FilterDashboard, "8KX7iY69nI5p6XiamxYmNFr7O6c=");
+_s(FilterDashboard, "SySK5L6XnlOlcKv5MC9sBqV0kog=");
 
 _c = FilterDashboard;
 
@@ -1634,7 +1644,7 @@ var FrameCounterDisplay = function FrameCounterDisplay(props) {
     id: "goRight"
   }, " > "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h3", {
     id: "nextFrame"
-  }, "\xA0\xA0 \u25B6"));
+  }, "\xA0\xA0    \u25B6"));
 };
 
 _c = FrameCounterDisplay;
@@ -2100,9 +2110,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var newBrush = new _utils_BrushManager_js__WEBPACK_IMPORTED_MODULE_10__.BrushManager(animationProj);
       var newFilters = new _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_11__.FilterManager(animationProj, newBrush);
       var newToolbar = new _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_9__.Toolbar(newBrush, animationProj);
-      var animationController = new _utils_AnimationController_js__WEBPACK_IMPORTED_MODULE_8__.AnimationController(animationProj, newToolbar); //animationProj.addNewFrame(true);
-      //newBrush.brushesMap["default"].attachBrush();
-
+      var animationController = new _utils_AnimationController_js__WEBPACK_IMPORTED_MODULE_8__.AnimationController(animationProj, newToolbar);
       this.setState({
         'animationProject': animationProj,
         'brushInstance': newBrush,
@@ -2187,11 +2195,11 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "toolbarSection2"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, " Use the spacebar to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar). "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+      }, "Use ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Space"), " to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+      }, "Use the ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Left"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Right"), " keys to move to the previous or next layer, and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "A"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "D"), " keys to move between frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
+      }, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames.")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
         id: "frameLayerSection",
         className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
@@ -3328,8 +3336,8 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 /***
-	brush for making shapes
-	inspired by mrdoob's work: https://github.com/mrdoob/harmony/
+    brush for making shapes
+    inspired by mrdoob's work: https://github.com/mrdoob/harmony/
 ***/
 
 
@@ -3663,8 +3671,8 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 /***
-	brush for making shapes
-	inspired by mrdoob's work: https://github.com/mrdoob/harmony/
+    brush for making shapes
+    inspired by mrdoob's work: https://github.com/mrdoob/harmony/
 ***/
 
 
@@ -3817,8 +3825,8 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 /***
-	pen-like brush 
-	thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/sketchy.js
+    pen-like brush 
+    thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/sketchy.js
 ***/
 
 
@@ -3981,8 +3989,8 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 /***
-	web brush 
-	thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/web.js
+    web brush 
+    thanks to mrdoob: https://github.com/mrdoob/harmony/blob/master/src/js/brushes/web.js
 ***/
 
 
@@ -4422,11 +4430,9 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 /***
-	BLUR FILTER
-	this function causes a blurring effect. It takes the pixel itself and
-	its left, right, above and below neighbors (if it has them)
-	and calculates the average of their total R, G, B, and A channels respectively.
-	source: http://blog.ivank.net/fastest-gaussian-blur.html
+    fast BLUR FILTER
+    this function causes a blurring effect.
+    source: http://blog.ivank.net/fastest-gaussian-blur.html
 ***/
 
 
@@ -4771,10 +4777,10 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 /***
-	FISHEYE DISTORTION FILTER
-	this function creates fisheye distortion!
-	source: http://popscan.blogspot.com/2012/04/fisheye-lens-equation-simple-fisheye.html
-	http://paulbourke.net/dome/fisheye/
+    FISHEYE DISTORTION FILTER
+    this function creates fisheye distortion!
+    source: http://popscan.blogspot.com/2012/04/fisheye-lens-equation-simple-fisheye.html
+    http://paulbourke.net/dome/fisheye/
 ***/
 
 
@@ -5591,8 +5597,8 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 /***
-	SATURATION FILTER
-	source: http://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
+    SATURATION FILTER
+    source: http://www.qoncious.com/questions/changing-saturation-image-html5-canvas-using-javascript
 ***/
 
 
@@ -5688,6 +5694,146 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 
 /***/ }),
 
+/***/ "./src/filters/simple_blur.js":
+/*!************************************!*\
+  !*** ./src/filters/simple_blur.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SimpleBlur": () => (/* binding */ SimpleBlur)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+    simple BLUR FILTER
+    this function causes a blurring effect. it's pretty slow compared to the other blur.
+    
+    It takes the pixel itself and
+    its left, right, above and below neighbors (if it has them)
+    and calculates the average of their total R, G, B, and A channels respectively.
+***/
+
+
+var SimpleBlur = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(SimpleBlur, _FilterTemplate);
+
+  var _super = _createSuper(SimpleBlur);
+
+  function SimpleBlur() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, SimpleBlur);
+
+    return _super.call(this, {});
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(SimpleBlur, [{
+    key: "getNeighborsAvg",
+    value: function getNeighborsAvg(row, col, width, height, data) {
+      var channels = ['r', 'g', 'b', 'a'];
+      var result = {};
+      channels.forEach(function (c) {
+        return result[c] = [];
+      });
+
+      for (var i = 0; i < channels.length; i++) {
+        // top
+        var topIdx = 4 * (row - 1) * width + 4 * col + i;
+        if (topIdx >= 0) result[channels[i]].push(data[topIdx]); // left
+
+        var leftIdx = 4 * row * width + 4 * (col - 1) + i;
+        if (leftIdx >= 0) result[channels[i]].push(data[leftIdx]); // right
+
+        var rightIdx = 4 * row * width + 4 * (col + 1) + i;
+        if (rightIdx < data.length) result[channels[i]].push(data[rightIdx]); // bottom
+
+        var bottomIdx = 4 * (row + 1) * width + 4 * col + i;
+        if (bottomIdx < data.length) result[channels[i]].push(data[bottomIdx]); // self
+
+        var idx = 4 * row * width + 4 * col + i;
+        result[channels[i]].push(data[idx]);
+      }
+
+      for (var channel in result) {
+        var chanSum = result[channel].reduce(function (prev, curr) {
+          return prev + curr;
+        }, 0);
+        var chanAvg = chanSum / result[channel].length;
+        result[channel] = chanAvg;
+      }
+
+      return result;
+    }
+  }, {
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data;
+      var copy = new Uint8ClampedArray(data);
+
+      for (var row = 0; row < height; row++) {
+        for (var col = 0; col < width; col++) {
+          var neighbors = this.getNeighborsAvg(row, col, width, height, copy);
+          data[4 * width * row + 4 * col] = neighbors.r; // r
+
+          data[4 * width * row + 4 * col + 1] = neighbors.g; // g
+
+          data[4 * width * row + 4 * col + 2] = neighbors.b; // b
+
+          data[4 * width * row + 4 * col + 3] = neighbors.a; // a
+        }
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return SimpleBlur;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
+
+
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
 /***/ "./src/filters/voronoi.js":
 /*!********************************!*\
   !*** ./src/filters/voronoi.js ***!
@@ -5725,14 +5871,14 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 /***
-	voronoi filter
-	https://softwarebydefault.com/tag/voronoi-diagrams/
-	https://www.codeproject.com/Articles/882739/Simple-approach-to-Voronoi-diagrams
-	
-	- nearest neighbor automatically creates 'boundaries'.
-	- for each pixel, find the nearest neighbor (a collection of pre-selected pixels)
-	- color that pixel whatever the nearest neighbor's color is
-	- evenly spaced neighbors will yield a mosaic! awesome!
+    voronoi filter
+    https://softwarebydefault.com/tag/voronoi-diagrams/
+    https://www.codeproject.com/Articles/882739/Simple-approach-to-Voronoi-diagrams
+    
+    - nearest neighbor automatically creates 'boundaries'.
+    - for each pixel, find the nearest neighbor (a collection of pre-selected pixels)
+    - color that pixel whatever the nearest neighbor's color is
+    - evenly spaced neighbors will yield a mosaic! awesome!
 ***/
 
 
@@ -5890,16 +6036,16 @@ var AnimationController = /*#__PURE__*/function () {
     key: "playAnimation",
     value: function playAnimation(direction, timelineFrames, timelineMarkers) {
       /*
-      	plays all the timeline frames in sequence by merging each frame's layers on a separate canvas.
-      	note that even if a frame exists, if it's not in the timeline playAnimation will not do anything.
-      	
-      	TODO: pause? stop? just a segment?
-      	
-      	BUG: reversing the animation with timeline markers won't apply the speed changes correctly
-      	e.g. if we have the 1st frame be at 500 ms and the 5th frame be at 100 ms, if we reverse, currently
-      	we'll get last frame -> 5th frame be at 500 ms. but we really should have last frame -> 5th frame be
-      	at 100 ms. then 5th -> 1st be at 500 ms. one way to manage this would be just to create an array of
-      	times for each frame and use that.
+          plays all the timeline frames in sequence by merging each frame's layers on a separate canvas.
+          note that even if a frame exists, if it's not in the timeline playAnimation will not do anything.
+          
+          TODO: pause? stop? just a segment?
+          
+          BUG: reversing the animation with timeline markers won't apply the speed changes correctly
+          e.g. if we have the 1st frame be at 500 ms and the 5th frame be at 100 ms, if we reverse, currently
+          we'll get last frame -> 5th frame be at 500 ms. but we really should have last frame -> 5th frame be
+          at 100 ms. then 5th -> 1st be at 500 ms. one way to manage this would be just to create an array of
+          times for each frame and use that.
       */
       if (direction !== "forward" && direction !== "backward") {
         console.log("not a valid direction for animation");
@@ -6028,8 +6174,6 @@ var Frame = /*#__PURE__*/function () {
 
     this.number = number; // this frame's number
 
-    this.count = 0; // current number of layers
-
     this.width = 0;
     this.height = 0;
   }
@@ -6043,11 +6187,6 @@ var Frame = /*#__PURE__*/function () {
         'currentIndex': this.currentIndex,
         'number': this.number
       };
-    }
-  }, {
-    key: "getContainer",
-    value: function getContainer() {
-      return this.container;
     }
   }, {
     key: "getCurrCanvasIndex",
@@ -6096,9 +6235,10 @@ var Frame = /*#__PURE__*/function () {
     /***
         set up a new canvas element
         makes the new canvas the current canvas
-    		prefill should be false when importing a project
-    this is so that we don't prefill the canvas with rgba(255,255,255,1)
-    and mess up any alpha transparency the imported layers might have
+        
+        prefill should be false when importing a project
+        this is so that we don't prefill the canvas with rgba(255,255,255,1)
+        and mess up any alpha transparency the imported layers might have
     ***/
 
   }, {
@@ -6107,24 +6247,20 @@ var Frame = /*#__PURE__*/function () {
       var prefill = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       // create the new canvas element 
       var newCanvas = document.createElement('canvas');
-      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
+      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.canvasList.length);
       this.container.appendChild(newCanvas);
       setCanvas(prefill, newCanvas);
 
-      if (this.count === 0) {
+      if (this.canvasList.length === 0) {
         newCanvas.style.opacity = .97;
         newCanvas.style.zIndex = 1;
         this.width = newCanvas.width;
-        this.height = newCanvas.height;
-      } // set new canvas to be the current canvas only initially!
+        this.height = newCanvas.height; // set new canvas to be the current canvas only initially
 
-
-      if (this.count === 0) {
         this.currentCanvas = newCanvas;
       }
 
       this.canvasList.push(newCanvas);
-      this.count++;
     }
   }, {
     key: "_showLayer",
@@ -6275,22 +6411,22 @@ var Frame = /*#__PURE__*/function () {
     }
     /***
         clone the current canvas
-    this creates a new layer whose image data is the same as the current canvas.
-    		not sure I'm using this?
+        this creates a new layer whose image data is the same as the current canvas.
+        
+        not sure I'm using this?
     ***/
 
   }, {
     key: "copyCanvas",
     value: function copyCanvas() {
       var newCanvas = document.createElement('canvas');
-      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.count);
+      newCanvas.id = "frame".concat(this.number, "canvas").concat(this.canvasList.length);
       var prefill = true;
       setCanvas(prefill, newCanvas, this.width, this.height); //newCanvas.style.opacity = 0.97;
 
       this.container.appendChild(newCanvas);
       newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
       this.canvasList.push(newCanvas);
-      this.count++;
     }
   }, {
     key: "clearCurrentLayer",
@@ -6337,11 +6473,6 @@ var AnimationProject = /*#__PURE__*/function () {
       this.onionSkinFrame.style.display = 'none'; // hide it initially
     }
   }, {
-    key: "getContainer",
-    value: function getContainer() {
-      return this.container;
-    }
-  }, {
     key: "getFrames",
     value: function getFrames() {
       return this.frameList;
@@ -6360,7 +6491,7 @@ var AnimationProject = /*#__PURE__*/function () {
     key: "resetProject",
     value: function resetProject() {
       this.frameList.forEach(function (frame, frameIndex) {
-        var parent = frame.getContainer(); // just keep the first frame
+        var parent = frame.container; // just keep the first frame
 
         frame.canvasList.forEach(function (layer, layerIndex) {
           if (frameIndex > 0 || frameIndex === 0 && layerIndex > 0) {
@@ -6425,7 +6556,7 @@ var AnimationProject = /*#__PURE__*/function () {
 
       this.frameList.splice(index, 1); // remove all layers
 
-      var parentContainer = frame.getContainer();
+      var parentContainer = frame.container;
       frame.getLayers().forEach(function (layer) {
         parentContainer.removeChild(layer);
       });
@@ -6605,8 +6736,8 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 /***
     brush manager class
     pass in an instance of the AnimationProject class as an argument
-	
-	the current canvas element will be the target for the brush
+    
+    the current canvas element will be the target for the brush
 ***/
 
 
@@ -6888,11 +7019,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../filters/invert.js */ "./src/filters/invert.js");
 /* harmony import */ var _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../filters/mosaic.js */ "./src/filters/mosaic.js");
 /* harmony import */ var _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../filters/blur.js */ "./src/filters/blur.js");
-/* harmony import */ var _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../filters/outline.js */ "./src/filters/outline.js");
-/* harmony import */ var _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../filters/voronoi.js */ "./src/filters/voronoi.js");
-/* harmony import */ var _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../filters/fisheye.js */ "./src/filters/fisheye.js");
+/* harmony import */ var _filters_simple_blur_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../filters/simple_blur.js */ "./src/filters/simple_blur.js");
+/* harmony import */ var _filters_outline_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../filters/outline.js */ "./src/filters/outline.js");
+/* harmony import */ var _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../filters/voronoi.js */ "./src/filters/voronoi.js");
+/* harmony import */ var _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../filters/fisheye.js */ "./src/filters/fisheye.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
 
 
 
@@ -6921,9 +7054,10 @@ var FilterManager = /*#__PURE__*/function () {
       "invert": new _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__.Invert(),
       "mosaic": new _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__.Mosaic(),
       "blur": new _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__.Blur(),
-      "outline": new _filters_outline_js__WEBPACK_IMPORTED_MODULE_9__.Outline(),
-      "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_10__.Voronoi(),
-      "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_11__.Fisheye()
+      "simple_blur": new _filters_simple_blur_js__WEBPACK_IMPORTED_MODULE_9__.SimpleBlur(),
+      "outline": new _filters_outline_js__WEBPACK_IMPORTED_MODULE_10__.Outline(),
+      "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_11__.Voronoi(),
+      "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_12__.Fisheye()
     };
   } // general filtering function. pass any kind of filter through this function.
 
@@ -7125,8 +7259,8 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
-    	duplicate the current layer
-    	note: the next layer after the current will have identitcal image data
+        duplicate the current layer
+        note: the next layer after the current will have identitcal image data
     ***/
 
   }, {
@@ -7180,7 +7314,7 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
-    add a new frame
+        add a new frame
     ***/
 
   }, {
@@ -7193,7 +7327,7 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
-    duplicate current frame
+        duplicate current frame
     ***/
 
   }, {
@@ -7206,7 +7340,7 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
-    	delete current frame
+        delete current frame
     ***/
 
   }, {
@@ -7231,7 +7365,7 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
-    	change layer order for current frame on button press
+        change layer order for current frame on button press
     ***/
 
   }, {
@@ -7281,12 +7415,15 @@ var Toolbar = /*#__PURE__*/function () {
     /***
         rotate image
         pass in an element id for a button that will rotate the current canvas image on click
-    		this is mostly for experimental purposes as the effect is not quite good (blurry and loss of pixels).
-    		there are a couple StackOverflow posts out there that explain why rotating
-    an image leads to blurriness since the pixels are getting repositioned and their locations
-    are approximated, which I think makes sense
-    		How do other drawing applications achieve arbitrary rotations without weirdness? 
-    I think Paint.NET has that feature, maybe Krita does too?)
+        
+        this is mostly for experimental purposes as the effect is not quite good (blurry and loss of pixels).
+        
+        there are a couple StackOverflow posts out there that explain why rotating
+        an image leads to blurriness since the pixels are getting repositioned and their locations
+        are approximated, which I think makes sense
+        
+        How do other drawing applications achieve arbitrary rotations without weirdness? 
+        I think Paint.NET has that feature, maybe Krita does too?)
     ***/
 
   }, {
@@ -7343,8 +7480,8 @@ var Toolbar = /*#__PURE__*/function () {
     /***
         undo a previous drawing operation on the current canvas.
         still a little incorrect? - TODO: needs work
-    - problem: undo affects all layers and is not specific to one canvas (which it should)
-    maybe the frame class should store layer info for undo
+        - problem: undo affects all layers and is not specific to one canvas (which it should)
+          maybe the frame class should store layer info for undo
     ***/
 
   }, {
@@ -7491,7 +7628,7 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
-    	download a png file of the current frame
+        download a png file of the current frame
     ***/
 
   }, {
@@ -7549,7 +7686,8 @@ var Toolbar = /*#__PURE__*/function () {
             }
         }
     }
-       playBack(){
+    
+    playBack(){
         if(this.prevFrame()){
             if(this.htmlCounter){
                 const counterText = this.htmlCounter;
@@ -7557,20 +7695,24 @@ var Toolbar = /*#__PURE__*/function () {
             }
         }
     }
-       playForward(){
+    
+    playForward(){
         clearInterval(this.play);
         this.play = null;
         this.play = setInterval(this.playFor, this.timePerFrame);
     }
-       playBackward(){
+    
+    playBackward(){
         clearInterval(this.play);
         this.play = null;
         this.play = setInterval(this.playBack, this.timePerFrame);
     }
-       stop(){
+    
+    stop(){
         clearInterval(this.play);
         this.play = null;
     }
+    
     *********/
 
   }, {
@@ -7619,11 +7761,11 @@ var Toolbar = /*#__PURE__*/function () {
         
         this will need to be applied for FRAMES, not LAYERS of a frame.
     
-    timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), e.g.
-    {
-    1: 100, // frame 1
-    2: 1000 // frame 2
-    }
+        timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), e.g.
+        {
+            1: 100, // frame 1
+            2: 1000 // frame 2
+        }
     ***/
 
   }, {
@@ -11569,7 +11711,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for AnimationTimeline component */\r\n.animationTimelineFrame {\r\n\tdisplay: inline-block; \r\n\tborder: 1px solid #000;\r\n\tmargin: 1px;\r\n\twidth: 120px;\r\n\theight: 120px;\r\n}\r\n\r\n.animationTimeline {\r\n  grid-row: 1;\r\n  grid-column: 1;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: #fff;\r\n  overflow-x: scroll;\r\n  margin-top: 5px;\r\n  white-space: nowrap;\r\n  border: 1px solid #ccc;\r\n}\r\n\r\n.animationTimelineCanvas{\r\n\tgrid-row: 1;\r\n\tgrid-column: 1;\r\n\tmargin-bottom: 10px; /* add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/ */\r\n\tmargin-top: 5px;\r\n\twidth: 100%;\r\n\theight: 160px; /* note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar */\r\n}\r\n\r\n/* want to overlay the timelinecanvas over the timeline */\r\n.animationTimelineArea{\r\n\tgrid-row: 3;\r\n\tgrid-column: 1;\r\n\tdisplay: grid;\r\n\tgrid-template-columns: 1fr;\r\n\tgrid-template-rows: 1fr 5em;\r\n\tpadding-bottom: 3%;\r\n}\r\n\r\n.animationTimelineMarkers{\r\n\tgrid-row: 2;\r\n\tgrid-column: 1;\r\n\tmargin-top: 3px;\r\n\toverflow-y: auto;\r\n}", "",{"version":3,"sources":["webpack://./styles/animationTimeline.css"],"names":[],"mappings":"AAAA,+CAA+C;AAC/C;CACC,qBAAqB;CACrB,sBAAsB;CACtB,WAAW;CACX,YAAY;CACZ,aAAa;AACd;;AAEA;EACE,WAAW;EACX,cAAc;EACd,WAAW;EACX,YAAY;EACZ,sBAAsB;EACtB,kBAAkB;EAClB,eAAe;EACf,mBAAmB;EACnB,sBAAsB;AACxB;;AAEA;CACC,WAAW;CACX,cAAc;CACd,mBAAmB,EAAE,sIAAsI;CAC3J,eAAe;CACf,WAAW;CACX,aAAa,EAAE,6GAA6G;AAC7H;;AAEA,yDAAyD;AACzD;CACC,WAAW;CACX,cAAc;CACd,aAAa;CACb,0BAA0B;CAC1B,2BAA2B;CAC3B,kBAAkB;AACnB;;AAEA;CACC,WAAW;CACX,cAAc;CACd,eAAe;CACf,gBAAgB;AACjB","sourcesContent":["/* stylesheet for AnimationTimeline component */\r\n.animationTimelineFrame {\r\n\tdisplay: inline-block; \r\n\tborder: 1px solid #000;\r\n\tmargin: 1px;\r\n\twidth: 120px;\r\n\theight: 120px;\r\n}\r\n\r\n.animationTimeline {\r\n  grid-row: 1;\r\n  grid-column: 1;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: #fff;\r\n  overflow-x: scroll;\r\n  margin-top: 5px;\r\n  white-space: nowrap;\r\n  border: 1px solid #ccc;\r\n}\r\n\r\n.animationTimelineCanvas{\r\n\tgrid-row: 1;\r\n\tgrid-column: 1;\r\n\tmargin-bottom: 10px; /* add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/ */\r\n\tmargin-top: 5px;\r\n\twidth: 100%;\r\n\theight: 160px; /* note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar */\r\n}\r\n\r\n/* want to overlay the timelinecanvas over the timeline */\r\n.animationTimelineArea{\r\n\tgrid-row: 3;\r\n\tgrid-column: 1;\r\n\tdisplay: grid;\r\n\tgrid-template-columns: 1fr;\r\n\tgrid-template-rows: 1fr 5em;\r\n\tpadding-bottom: 3%;\r\n}\r\n\r\n.animationTimelineMarkers{\r\n\tgrid-row: 2;\r\n\tgrid-column: 1;\r\n\tmargin-top: 3px;\r\n\toverflow-y: auto;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for AnimationTimeline component */\r\n.animationTimelineFrame {\r\n    display: inline-block; \r\n    border: 1px solid #000;\r\n    margin: 1px;\r\n    width: 120px;\r\n    height: 120px;\r\n}\r\n\r\n.animationTimeline {\r\n  grid-row: 1;\r\n  grid-column: 1;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: #fff;\r\n  overflow-x: scroll;\r\n  margin-top: 5px;\r\n  white-space: nowrap;\r\n  border: 1px solid #ccc;\r\n}\r\n\r\n.animationTimelineCanvas{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    margin-bottom: 10px; /* add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/ */\r\n    margin-top: 5px;\r\n    width: 100%;\r\n    height: 160px; /* note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar */\r\n}\r\n\r\n/* want to overlay the timelinecanvas over the timeline */\r\n.animationTimelineArea{\r\n    grid-row: 3;\r\n    grid-column: 1;\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 1fr 5em;\r\n    padding-bottom: 3%;\r\n}\r\n\r\n.animationTimelineMarkers{\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n    margin-top: 3px;\r\n    overflow-y: auto;\r\n}", "",{"version":3,"sources":["webpack://./styles/animationTimeline.css"],"names":[],"mappings":"AAAA,+CAA+C;AAC/C;IACI,qBAAqB;IACrB,sBAAsB;IACtB,WAAW;IACX,YAAY;IACZ,aAAa;AACjB;;AAEA;EACE,WAAW;EACX,cAAc;EACd,WAAW;EACX,YAAY;EACZ,sBAAsB;EACtB,kBAAkB;EAClB,eAAe;EACf,mBAAmB;EACnB,sBAAsB;AACxB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,mBAAmB,EAAE,sIAAsI;IAC3J,eAAe;IACf,WAAW;IACX,aAAa,EAAE,6GAA6G;AAChI;;AAEA,yDAAyD;AACzD;IACI,WAAW;IACX,cAAc;IACd,aAAa;IACb,0BAA0B;IAC1B,2BAA2B;IAC3B,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,eAAe;IACf,gBAAgB;AACpB","sourcesContent":["/* stylesheet for AnimationTimeline component */\r\n.animationTimelineFrame {\r\n    display: inline-block; \r\n    border: 1px solid #000;\r\n    margin: 1px;\r\n    width: 120px;\r\n    height: 120px;\r\n}\r\n\r\n.animationTimeline {\r\n  grid-row: 1;\r\n  grid-column: 1;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: #fff;\r\n  overflow-x: scroll;\r\n  margin-top: 5px;\r\n  white-space: nowrap;\r\n  border: 1px solid #ccc;\r\n}\r\n\r\n.animationTimelineCanvas{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    margin-bottom: 10px; /* add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/ */\r\n    margin-top: 5px;\r\n    width: 100%;\r\n    height: 160px; /* note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar */\r\n}\r\n\r\n/* want to overlay the timelinecanvas over the timeline */\r\n.animationTimelineArea{\r\n    grid-row: 3;\r\n    grid-column: 1;\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 1fr 5em;\r\n    padding-bottom: 3%;\r\n}\r\n\r\n.animationTimelineMarkers{\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n    margin-top: 3px;\r\n    overflow-y: auto;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -11596,7 +11738,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for main presentation */\r\n.container{\r\n\tdisplay: grid;\r\n\tgrid-template-rows: 1fr 1em;\r\n\tgrid-template-columns: 15% 75% 10%;\r\n\twidth: 100%;\r\n}\r\n\r\n.canvasArea {\r\n\tposition: relative;\r\n\tmargin: 0px auto;\r\n\twidth: 100%;\r\n\theight: 100%;\r\n\tgrid-row: 2;\r\n\tgrid-column: 1;\r\n}\r\n\r\n.screen{\r\n\tgrid-row: 1;\r\n\tgrid-column: 2;\r\n\twidth: 85%;\r\n\tmargin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n\tdisplay: grid;\r\n\tgrid-template-columns: 1fr;\r\n\tgrid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n\tgrid-row: 1;\r\n\tgrid-column: 1;\r\n\twidth: 100%;\r\n\tmargin-top: 15%;\r\n}", "",{"version":3,"sources":["webpack://./styles/presentationWrapper.css"],"names":[],"mappings":"AAAA,qCAAqC;AACrC;CACC,aAAa;CACb,2BAA2B;CAC3B,kCAAkC;CAClC,WAAW;AACZ;;AAEA;CACC,kBAAkB;CAClB,gBAAgB;CAChB,WAAW;CACX,YAAY;CACZ,WAAW;CACX,cAAc;AACf;;AAEA;CACC,WAAW;CACX,cAAc;CACd,UAAU;CACV,cAAc;AACf;;AAEA;CACC,aAAa;CACb,0BAA0B;CAC1B,oCAAoC;AACrC;;AAEA;CACC,WAAW;CACX,cAAc;CACd,WAAW;CACX,eAAe;AAChB","sourcesContent":["/* stylesheet for main presentation */\r\n.container{\r\n\tdisplay: grid;\r\n\tgrid-template-rows: 1fr 1em;\r\n\tgrid-template-columns: 15% 75% 10%;\r\n\twidth: 100%;\r\n}\r\n\r\n.canvasArea {\r\n\tposition: relative;\r\n\tmargin: 0px auto;\r\n\twidth: 100%;\r\n\theight: 100%;\r\n\tgrid-row: 2;\r\n\tgrid-column: 1;\r\n}\r\n\r\n.screen{\r\n\tgrid-row: 1;\r\n\tgrid-column: 2;\r\n\twidth: 85%;\r\n\tmargin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n\tdisplay: grid;\r\n\tgrid-template-columns: 1fr;\r\n\tgrid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n\tgrid-row: 1;\r\n\tgrid-column: 1;\r\n\twidth: 100%;\r\n\tmargin-top: 15%;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 75% 10%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    width: 100%;\r\n    margin-top: 30%;\r\n    padding-right: 5%;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n", "",{"version":3,"sources":["webpack://./styles/presentationWrapper.css"],"names":[],"mappings":"AAAA,qCAAqC;AACrC;IACI,aAAa;IACb,2BAA2B;IAC3B,kCAAkC;IAClC,WAAW;AACf;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;IAChB,WAAW;IACX,YAAY;IACZ,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,UAAU;IACV,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,0BAA0B;IAC1B,oCAAoC;AACxC;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,sBAAsB;IACtB,mBAAmB;IACnB,4BAA4B;IAC5B,YAAY;IACZ,kBAAkB;AACtB;;AAEA;IACI,aAAa;AACjB;;AAEA;IACI,kBAAkB;IAClB,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,eAAe;IACf,iBAAiB;AACrB;;AAEA;IACI,kBAAkB;IAClB,cAAc;AAClB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,oBAAoB;AACxB","sourcesContent":["/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 75% 10%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    width: 100%;\r\n    margin-top: 30%;\r\n    padding-right: 5%;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

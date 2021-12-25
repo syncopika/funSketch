@@ -1,36 +1,96 @@
 /* stylesheet for main presentation */
 .container{
-	display: grid;
-	grid-template-rows: 1fr 1em;
-	grid-template-columns: 15% 75% 10%;
-	width: 100%;
+    display: grid;
+    grid-template-rows: 1fr 1em;
+    grid-template-columns: 15% 75% 10%;
+    width: 100%;
 }
 
 .canvasArea {
-	position: relative;
-	margin: 0px auto;
-	width: 100%;
-	height: 100%;
-	grid-row: 2;
-	grid-column: 1;
+    position: relative;
+    margin: 0px auto;
+    width: 100%;
+    height: 100%;
+    grid-row: 2;
+    grid-column: 1;
 }
 
 .screen{
-	grid-row: 1;
-	grid-column: 2;
-	width: 85%;
-	margin: 0 auto;
+    grid-row: 1;
+    grid-column: 2;
+    width: 85%;
+    margin: 0 auto;
 }
 
 .screenContainer{
-	display: grid;
-	grid-template-columns: 1fr;
-	grid-template-rows: 0.2fr 2.65fr 1fr;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.2fr 2.65fr 1fr;
 }
 
 .toolbar{
-	grid-row: 1;
-	grid-column: 1;
-	width: 100%;
-	margin-top: 15%;
+    grid-row: 1;
+    grid-column: 1;
+    width: 100%;
+    margin-top: 15%;
+}
+
+.toolbarSection2, .toolbarSection3{
+    border: 1px solid #000;
+    border-radius: 12px;
+    box-shadow: 2px 5px 5px #ccc;
+    padding: 2px;
+    text-align: center;
+}
+
+.tbar{
+    display: none;
+}
+
+#pageCount{
+    text-align: center;
+    grid-row: 1;
+    grid-column: 1;
+}
+
+#pageCount h3{
+    display: inline-block;
+}
+
+#count{
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+#timeOptions{
+    padding: 0;
+}
+
+#timeOptions li{
+    display: inline-block;
+}
+
+#animationControl{
+    text-align: center;
+}
+
+#brushSection{
+    grid-row: 1;
+    grid-column: 3;
+    width: 100%;
+    margin-top: 30%;
+    padding-right: 5%;
+}
+
+#toolbarOptions{
+    text-align: center;
+    margin: 0 auto;
+}
+
+#toolbarOptions ul{
+    padding: 0;
+}
+
+#showDemos{
+    padding-bottom: 10px;
 }

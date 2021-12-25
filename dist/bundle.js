@@ -988,7 +988,8 @@ var AnimationTimeline = /*#__PURE__*/function (_React$Component) {
         var y = coords.y; // which frame does this coordinate match to?
 
         if (_this2.props.frames.length > 0) {
-          var width = 123; // don't hardcode this? it should be based on img width in the timeline
+          var width = 123; // TODO: don't hardcode this? it should be based on img width in the timeline
+          // had issues getting the styling right though so pretty difficult otherwise
 
           var frameGuess = Math.floor(x / width) + 1;
 
@@ -2194,11 +2195,11 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "toolbarSection2"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, " Use the spacebar to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar). "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+      }, "Use ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Space"), " to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, " Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+      }, "Use the ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Left"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Right"), " keys to move to the previous or next layer, and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "A"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "D"), " keys to move between frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, " After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
+      }, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames.")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
         id: "frameLayerSection",
         className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {

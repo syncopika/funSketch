@@ -487,9 +487,15 @@ class PresentationWrapper extends React.Component {
                     
                     <div id="instructions" className="toolbarSection2">
                         <h4> instructions </h4>
-                        <p className='instructions'> Use the spacebar to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar). </p>
-                        <p className='instructions'> Use the left and right arrow keys to move to the previous or next layer, and 'A' and 'D' keys to move between frames. </p>
-                        <p className='instructions'> After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. </p>
+                        <p className='instructions'> 
+                            Use <kbd>Space</kbd> to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar). 
+                        </p>
+                        <p className='instructions'> 
+                            Use the <kbd>Left</kbd> and <kbd>Right</kbd> keys to move to the previous or next layer, and <kbd>A</kbd> and <kbd>D</kbd> keys to move between frames. 
+                        </p>
+                        <p className='instructions'> 
+                            After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. 
+                        </p>
                     </div>
                 
                     <div id="frameLayerSection" className="tbar">

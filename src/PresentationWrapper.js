@@ -435,9 +435,6 @@ class PresentationWrapper extends React.Component {
         const newToolbar = new Toolbar(newBrush, animationProj);
         const animationController = new AnimationController(animationProj, newToolbar);
         
-        //animationProj.addNewFrame(true);
-        //newBrush.brushesMap["default"].attachBrush();
-        
         this.setState({
             'animationProject': animationProj,
             'brushInstance': newBrush,
@@ -451,7 +448,6 @@ class PresentationWrapper extends React.Component {
             
             this.state.animationProject.init();
             this.state.brushInstance.brushesMap["default"].attachBrush();
-            
         });
     }
     

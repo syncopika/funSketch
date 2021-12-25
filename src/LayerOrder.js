@@ -2,7 +2,7 @@ import React from 'react';
 import {useState} from 'react';
 
 function saveNewLayerOrder(updateParentStateFunc){
-    let layers = [...document.querySelectorAll('[id^="layerOrder"]')].map((el)=>{ 
+    const layers = [...document.querySelectorAll('[id^="layerOrder"]')].map((el)=>{ 
         // currently each element's text content is like "layer <number>". 
         // map the list so that we get the number - 1, because we want list indexes so we can 
         // rearrange the order of the layers accordingly
@@ -13,15 +13,15 @@ function saveNewLayerOrder(updateParentStateFunc){
 
 
 const LayerOrder = (props) => {
-    let show = props.changingLayerOrder;
-    let updateParentState = props.updateParentStateFunction; // need to pass arg to this function
-    let layers = props.layers;
+    const show = props.changingLayerOrder;
+    const updateParentState = props.updateParentStateFunction; // need to pass arg to this function
+    const layers = props.layers;
     
-    let style = {
+    const style = {
         "textAlign": "center"
     };
     
-    let elementStyle = {
+    const elementStyle = {
         "margin": "2px auto",
         "textAlign": "center",
         "border": "1px solid #000",
@@ -44,10 +44,9 @@ const LayerOrder = (props) => {
                             
                             onDragStart={
                                 function(e){
-                                    
                                     e.stopPropagation();
                                     
-                                    let thisEl = e.target;
+                                    const thisEl = e.target;
                                     thisEl.style.opacity = 0.5;
                                     setDragSourceEl(thisEl);
                                     e.dataTransfer.effectAllowed = "move";

@@ -82,7 +82,8 @@ class AnimationTimeline extends React.Component {
             
             // which frame does this coordinate match to?
             if(this.props.frames.length > 0){
-                const width = 123; // don't hardcode this? it should be based on img width in the timeline
+                const width = 123; // TODO: don't hardcode this? it should be based on img width in the timeline
+                                   // had issues getting the styling right though so pretty difficult otherwise
                 const frameGuess = Math.floor(x/width) + 1;
                 
                 if(frameGuess <= this.props.frames.length){
@@ -124,11 +125,11 @@ class AnimationTimeline extends React.Component {
                             <div key={`timelineMarker${index}`}>
                                 <label htmlFor={'marker' + marker.frameNumber + 'Select'}> marker for frame {marker.frameNumber}: &nbsp;</label>
                                 <select 
-                                id={`marker${marker.frameNumber}Select`} 
-                                name={`marker${marker.frameNumber}Select`}
-                                onChange={(evt) => {
-                                    marker.speed = evt.target.value;
-                                }}
+                                    id={`marker${marker.frameNumber}Select`} 
+                                    name={`marker${marker.frameNumber}Select`}
+                                    onChange={(evt) => {
+                                        marker.speed = evt.target.value;
+                                    }}
                                 >
                                     <option>100</option>
                                     <option>200</option>

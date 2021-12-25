@@ -332,8 +332,7 @@ class AnimationProject {
         const newCopy = this.frameList[this.frameList.length-1];
         const currFrameLayersToCopy = this.getCurrFrame().getLayers();
         
-        currFrameLayersToCopy.forEach(function(layer, layerIndex){
-            
+        currFrameLayersToCopy.forEach(function(layer, layerIndex){  
             if((layerIndex + 1) > newCopy.getLayers().length){
                 newCopy.setupNewLayer();
             }

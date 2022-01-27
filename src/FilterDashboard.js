@@ -137,7 +137,7 @@ const FilterDashboard = (props) => {
                     </ul>
                 </div>
 				
-				<button
+                <button
                     id={"applyFilter"}
                     onClick={
                         function(){

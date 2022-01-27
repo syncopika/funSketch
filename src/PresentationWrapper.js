@@ -459,7 +459,7 @@ class PresentationWrapper extends React.Component {
         return(
             <div className='container'>
                 <div className='toolbar'>
-                    <div id="toolbarOptions" className="toolbarSection">
+                    <section id="toolbarOptions" className="toolbarSection">
                         <h3> funSketch </h3>
                         <ul>
                             <li id="instructionsOption"
@@ -483,9 +483,9 @@ class PresentationWrapper extends React.Component {
                                 onMouseOut={(evt) => {evt.target.style.color = "#000"}}
                                 onClick={this._clickOption}> demos </li>
                         </ul>
-                    </div>                    
+                    </section>                    
                     
-                    <div id="instructions" className="toolbarSection2">
+                    <section id="instructions" className="toolbarSection2">
                         <h4> instructions </h4>
                         <p className='instructions'> 
                             Use <kbd>Space</kbd> to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar). 
@@ -496,9 +496,9 @@ class PresentationWrapper extends React.Component {
                         <p className='instructions'> 
                             After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. 
                         </p>
-                    </div>
+                    </section>
                 
-                    <div id="frameLayerSection" className="tbar">
+                    <section id="frameLayerSection" className="tbar">
                         <h4> frame/layer controls </h4>
                         <div id="displayLayerStuff">
                             <p> layer: </p>
@@ -556,9 +556,9 @@ class PresentationWrapper extends React.Component {
                                 }
                             />
                         </div>
-                    </div>
+                    </section>
                     
-                    <div id="otherSection" className="tbar">
+                    <section id="otherSection" className="tbar">
                         <h4> other </h4>
                         <div id="displayOtherStuff">
                             <ul>
@@ -578,9 +578,9 @@ class PresentationWrapper extends React.Component {
                             <p><a href="./experiments/selectToolExperiment/selectTool.html">selection tool</a></p>
                             <p><a href="./experiments/pasteToolExperiment/pasteTest.html">image paste tool</a></p>
                         </div>
-                    </div>
+                    </section>
                     
-                    <div id="animControlSection" className="tbar">
+                    <section id="animControlSection" className="tbar">
                         <div id='animationControl'>
                             <h4> animation control: </h4>
                             <div id='timeOptions'>
@@ -622,9 +622,9 @@ class PresentationWrapper extends React.Component {
                             </ul>
                         </div>
                         <p id='loadingScreen'></p>
-                    </div>
+                    </section>
                     
-                    <div id='showDemos' className="tbar">
+                    <section id='showDemos' className="tbar">
                         <h3> demos </h3>
                         <select id='chooseDemo'>
                             <option label=""></option>
@@ -633,10 +633,10 @@ class PresentationWrapper extends React.Component {
                             <option className='demo'>cake_cut</option>
                             <option className='demo'>basketball_blur</option>
                         </select>
-                    </div>    
+                    </section>    
                 </div>
 
-                <div className='screen'>
+                <main className='screen'>
                     <div className="screenContainer">
                         <FrameCounterDisplay
                             currFrame={this.state.currentFrame}
@@ -654,7 +654,7 @@ class PresentationWrapper extends React.Component {
                             updateCurrFrameAndTimelineMarkers={this._updateCurrFrameAndTimelineMarkers.bind(this)}
                         />
                     </div>
-                </div>
+                </main>
                 
                 <div id="brushSection">
                     <div id="colorPicker">
@@ -678,17 +678,17 @@ class PresentationWrapper extends React.Component {
                         onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
                         onMouseOut={(evt) => {evt.target.style.color = "#000"}}
                         onClick={this._showFiltersOrBrushes}
-                    > filters 
-                    </p>
+                    > filters </p>
+                    
                     <div id="filters" className="tbar">
                         <FilterDashboard filterManager={this.state.filtersInstance} />
                     </div>
                 </div>
                 
-                <div id="footer">
+                <footer id="footer">
                     <hr />
                     <p> c.2017 | <a href='https://github.com/syncopika/funSketch'> source </a></p>
-                </div>
+                </footer>
                 
             </div> 
         );

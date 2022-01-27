@@ -126,16 +126,6 @@ const FilterDashboard = (props) => {
                 }
             }>
                 <hr />
-            
-                <button
-                    id={"applyFilter"}
-                    onClick={
-                        function(){
-                            filterManager.filterCanvasOption(selectedFilter);
-                            setFilterUsed(`applied ${selectedFilter} filter`);
-                        }
-                    }
-                > apply filter </button>
                 
                 <div id='filterParameters'>
                     <ul style={{"margin": "0 auto", "padding": "0"}}>
@@ -146,6 +136,16 @@ const FilterDashboard = (props) => {
                     }
                     </ul>
                 </div>
+				
+				<button
+                    id={"applyFilter"}
+                    onClick={
+                        function(){
+                            filterManager.filterCanvasOption(selectedFilter);
+                            setFilterUsed(`applied ${selectedFilter} filter`);
+                        }
+                    }
+                > apply filter </button>
             </div>
             
             <div>

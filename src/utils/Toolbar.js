@@ -6,7 +6,7 @@ class Toolbar {
         this.play = null;
 
         // used to hold user-indicated time (ms) per frame for animation playback and gif
-        this.timePerFrame = 200; // set to 200 be default
+        this.timePerFrame = 100; // set to 100 be default
         // should the keyboard keys be affecting the layer or the frame? 2 options only
         // this is useful for the arrow keys and space bar
         this.layerMode = true;

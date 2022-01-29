@@ -926,8 +926,8 @@ var AnimationTimeline = /*#__PURE__*/function (_React$Component) {
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(AnimationTimeline, [{
-    key: "componentDidUpdate",
-    value: function componentDidUpdate() {
+    key: "componentDidMount",
+    value: function componentDidMount() {
       this.timelineMarkerSetup();
     }
   }, {
@@ -7138,7 +7138,7 @@ var Toolbar = /*#__PURE__*/function () {
     // used as a flag for the animation playback features
     this.play = null; // used to hold user-indicated time (ms) per frame for animation playback and gif
 
-    this.timePerFrame = 200; // set to 200 be default
+    this.timePerFrame = 100; // set to 100 be default
     // should the keyboard keys be affecting the layer or the frame? 2 options only
     // this is useful for the arrow keys and space bar
 

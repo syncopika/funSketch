@@ -26,7 +26,7 @@ class AnimationTimeline extends React.Component {
         this.updateCurrFrameAndTimelineMarkers = props.updateCurrFrameAndTimelineMarkers;
     }
     
-    componentDidUpdate(){
+    componentDidMount(){
         this.timelineMarkerSetup();
     }
     

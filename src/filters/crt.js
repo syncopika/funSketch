@@ -1,11 +1,15 @@
 /***
 
 CRT (cathode ray tube) filter
+currently doesn't really give the CRT effect I'm looking for but kinda close? TODO: improve it
 
 adapted from: https://github.com/libretro/glsl-shaders/blob/master/crt/shaders/crt-nes-mini.glsl
 
 this looks helpful too but more complicated:
 https://github.com/bisqwit/crt-filter
+
+also
+https://www.reddit.com/r/Games/comments/1ra0pg/a_video_showing_the_stunning_difference_scan/
 
 ***/
 
@@ -31,7 +35,7 @@ class CRT extends FilterTemplate {
             for(let col = 0; col < width; col++){
                 const selectHigh = row % scanLineThickness === 0 ? 1 : 0;
                 const selectLow = 1 - selectHigh;
-                    
+                
                 for(let i = 0; i < 3; i++){
                     const currChannel = copy[4*width*row + 4*col + i] / 255;
                     const channelHigh = ((1.0 + brightboost) - (0.2 * currChannel)) * currChannel;

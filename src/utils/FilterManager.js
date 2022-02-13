@@ -11,6 +11,7 @@ import { Voronoi } from '../filters/voronoi.js';
 import { Fisheye } from '../filters/fisheye.js';
 import { HorizontalShift } from '../filters/shift.js';
 import { CRT } from '../filters/crt.js';
+import { ChannelShift } from '../filters/channel_shift.js';
 
 class FilterManager {
     constructor(animationProject, brush){
@@ -30,7 +31,8 @@ class FilterManager {
             "voronoi": new Voronoi(),
             "fisheye": new Fisheye(),
             "horizontal_shift": new HorizontalShift(),
-            "cathode-ray tube (CRT)": new CRT(), 
+            "cathode-ray tube-like (CRT)": new CRT(),
+            "channel_shift": new ChannelShift(),
         };
     }
 

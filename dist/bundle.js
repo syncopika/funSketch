@@ -4626,6 +4626,125 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 
 /***/ }),
 
+/***/ "./src/filters/channel_shift.js":
+/*!**************************************!*\
+  !*** ./src/filters/channel_shift.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ChannelShift": () => (/* binding */ ChannelShift)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+
+channel shift distortion filter
+
+it changes rgb channel values between pixels to give a slightly shifted/distorted effect
+
+
+I also was thinking about filters similar to the ones referenced below:
+
+have a look at this thread:
+https://discourse.processing.org/t/vhs-lo-fi-glitch-effect/12746/10
+
+and this blog post:
+http://datamoshing.com/category/processing/
+
+***/
+
+
+var ChannelShift = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(ChannelShift, _FilterTemplate);
+
+  var _super = _createSuper(ChannelShift);
+
+  function ChannelShift() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, ChannelShift);
+
+    return _super.call(this, {});
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(ChannelShift, [{
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data;
+      var copy = new Uint8ClampedArray(data);
+
+      for (var row = 0; row < height; row++) {
+        for (var col = 0; col < width; col++) {
+          var rand = Math.floor(Math.random() * 3);
+          var offset = 7;
+
+          if (offset + col < width) {
+            var newR = copy[4 * width * row + 4 * (col + offset)];
+            var newG = copy[4 * width * row + 4 * (col + offset) + 1];
+            var newB = copy[4 * width * row + 4 * (col + offset) + 2];
+
+            if (rand === 0) {
+              data[4 * width * row + 4 * col] = newR;
+            } else if (rand === 1) {
+              data[4 * width * row + 4 * col + 1] = newG;
+            } else {
+              data[4 * width * row + 4 * col + 2] = newB;
+            }
+          }
+        }
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return ChannelShift;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
+
+
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
 /***/ "./src/filters/crt.js":
 /*!****************************!*\
   !*** ./src/filters/crt.js ***!
@@ -4664,11 +4783,15 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 /***
 
 CRT (cathode ray tube) filter
+currently doesn't really give the CRT effect I'm looking for but kinda close? TODO: improve it
 
 adapted from: https://github.com/libretro/glsl-shaders/blob/master/crt/shaders/crt-nes-mini.glsl
 
 this looks helpful too but more complicated:
 https://github.com/bisqwit/crt-filter
+
+also
+https://www.reddit.com/r/Games/comments/1ra0pg/a_video_showing_the_stunning_difference_scan/
 
 ***/
 
@@ -7246,8 +7369,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../filters/fisheye.js */ "./src/filters/fisheye.js");
 /* harmony import */ var _filters_shift_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../filters/shift.js */ "./src/filters/shift.js");
 /* harmony import */ var _filters_crt_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../filters/crt.js */ "./src/filters/crt.js");
+/* harmony import */ var _filters_channel_shift_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../filters/channel_shift.js */ "./src/filters/channel_shift.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
 
 
 
@@ -7284,7 +7409,8 @@ var FilterManager = /*#__PURE__*/function () {
       "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_11__.Voronoi(),
       "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_12__.Fisheye(),
       "horizontal_shift": new _filters_shift_js__WEBPACK_IMPORTED_MODULE_13__.HorizontalShift(),
-      "cathode-ray tube (CRT)": new _filters_crt_js__WEBPACK_IMPORTED_MODULE_14__.CRT()
+      "cathode-ray tube-like (CRT)": new _filters_crt_js__WEBPACK_IMPORTED_MODULE_14__.CRT(),
+      "channel_shift": new _filters_channel_shift_js__WEBPACK_IMPORTED_MODULE_15__.ChannelShift()
     };
   } // general filtering function. pass any kind of filter through this function.
 

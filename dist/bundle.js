@@ -4626,6 +4626,116 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 
 /***/ }),
 
+/***/ "./src/filters/crt.js":
+/*!****************************!*\
+  !*** ./src/filters/crt.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "CRT": () => (/* binding */ CRT)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+
+CRT (cathode ray tube) filter
+
+adapted from: https://github.com/libretro/glsl-shaders/blob/master/crt/shaders/crt-nes-mini.glsl
+
+this looks helpful too but more complicated:
+https://github.com/bisqwit/crt-filter
+
+***/
+
+
+var CRT = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(CRT, _FilterTemplate);
+
+  var _super = _createSuper(CRT);
+
+  function CRT() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, CRT);
+
+    return _super.call(this, {});
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(CRT, [{
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data;
+      var copy = new Uint8ClampedArray(data);
+      var scanLineThickness = 4;
+      var brightboost = 0.35;
+      var intensity = 0.25;
+
+      for (var row = 0; row < height; row++) {
+        for (var col = 0; col < width; col++) {
+          var selectHigh = row % scanLineThickness === 0 ? 1 : 0;
+          var selectLow = 1 - selectHigh;
+
+          for (var i = 0; i < 3; i++) {
+            var currChannel = copy[4 * width * row + 4 * col + i] / 255;
+            var channelHigh = (1.0 + brightboost - 0.2 * currChannel) * currChannel;
+            var channelLow = (1.0 - intensity + 0.1 * currChannel) * currChannel;
+            var newColorVal = selectLow * channelLow + selectHigh * channelHigh;
+            data[4 * width * row + 4 * col + i] = 255 * newColorVal;
+          }
+        }
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return CRT;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
+
+
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
 /***/ "./src/filters/edgedetection.js":
 /*!**************************************!*\
   !*** ./src/filters/edgedetection.js ***!
@@ -5673,6 +5783,117 @@ var Saturation = /*#__PURE__*/function (_FilterTemplate) {
   }]);
 
   return Saturation;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
+
+
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
+/***/ "./src/filters/shift.js":
+/*!******************************!*\
+  !*** ./src/filters/shift.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "HorizontalShift": () => (/* binding */ HorizontalShift)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+/***
+
+horizontal shift filter
+
+it laterally shifts the pixels in each row of an image a random distance
+
+inspired by: https://docs.gimp.org/2.10/en/gimp-filter-shift.html
+
+***/
+
+
+var HorizontalShift = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(HorizontalShift, _FilterTemplate);
+
+  var _super = _createSuper(HorizontalShift);
+
+  function HorizontalShift() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, HorizontalShift);
+
+    return _super.call(this, {});
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(HorizontalShift, [{
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data;
+      var copy = new Uint8ClampedArray(data);
+
+      for (var row = 0; row < height; row++) {
+        var min = -10;
+        var max = 10;
+        var randDistance = Math.floor(Math.random() * (max - min)) + min;
+
+        for (var col = 0; col < width; col++) {
+          var shiftTo = randDistance + col;
+
+          if (shiftTo < width && shiftTo >= 0) {
+            data[4 * width * row + 4 * col] = copy[4 * width * row + 4 * shiftTo]; // r
+
+            data[4 * width * row + 4 * col + 1] = copy[4 * width * row + 4 * shiftTo + 1]; // g
+
+            data[4 * width * row + 4 * col + 2] = copy[4 * width * row + 4 * shiftTo + 2]; // b
+
+            data[4 * width * row + 4 * col + 3] = copy[4 * width * row + 4 * shiftTo + 3]; // a
+          }
+        }
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return HorizontalShift;
 }(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
 
 
@@ -7023,8 +7244,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_outline_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../filters/outline.js */ "./src/filters/outline.js");
 /* harmony import */ var _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../filters/voronoi.js */ "./src/filters/voronoi.js");
 /* harmony import */ var _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../filters/fisheye.js */ "./src/filters/fisheye.js");
+/* harmony import */ var _filters_shift_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../filters/shift.js */ "./src/filters/shift.js");
+/* harmony import */ var _filters_crt_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../filters/crt.js */ "./src/filters/crt.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
 
 
 
@@ -7057,7 +7282,9 @@ var FilterManager = /*#__PURE__*/function () {
       "simple_blur": new _filters_simple_blur_js__WEBPACK_IMPORTED_MODULE_9__.SimpleBlur(),
       "outline": new _filters_outline_js__WEBPACK_IMPORTED_MODULE_10__.Outline(),
       "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_11__.Voronoi(),
-      "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_12__.Fisheye()
+      "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_12__.Fisheye(),
+      "horizontal_shift": new _filters_shift_js__WEBPACK_IMPORTED_MODULE_13__.HorizontalShift(),
+      "cathode-ray tube (CRT)": new _filters_crt_js__WEBPACK_IMPORTED_MODULE_14__.CRT()
     };
   } // general filtering function. pass any kind of filter through this function.
 

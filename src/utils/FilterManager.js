@@ -9,6 +9,8 @@ import { SimpleBlur } from '../filters/simple_blur.js';
 import { Outline } from '../filters/outline.js';
 import { Voronoi } from '../filters/voronoi.js';
 import { Fisheye } from '../filters/fisheye.js';
+import { HorizontalShift } from '../filters/shift.js';
+import { CRT } from '../filters/crt.js';
 
 class FilterManager {
     constructor(animationProject, brush){
@@ -27,6 +29,8 @@ class FilterManager {
             "outline": new Outline(),
             "voronoi": new Voronoi(),
             "fisheye": new Fisheye(),
+            "horizontal_shift": new HorizontalShift(),
+            "cathode-ray tube (CRT)": new CRT(), 
         };
     }
 

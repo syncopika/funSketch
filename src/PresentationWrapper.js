@@ -360,7 +360,7 @@ class PresentationWrapper extends React.Component {
         const layers = project.frameList[0].canvasList;
         let visibleLayerIndex = 0;
         
-        for(var i = 0; i < layers.length; i++){
+        for(let i = 0; i < layers.length; i++){
             if(layers[i].style.opacity >= .97){
                 visibleLayerIndex = i;
                 break;

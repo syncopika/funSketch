@@ -3,7 +3,7 @@ import {useState} from 'react';
 
 const BrushDashboard = (props) => {
     const brushManager = props.brushManager;
-    const brushes = (brushManager) ? brushManager.brushesMap : {}; // can be null initially
+    const brushes = brushManager ? brushManager.brushesMap : {}; // can be null initially
     const brushNames = Object.keys(brushes);
     
     const style = {

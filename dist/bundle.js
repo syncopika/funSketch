@@ -1240,6 +1240,153 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 
 /***/ }),
 
+/***/ "./src/ColorPicker.js":
+/*!****************************!*\
+  !*** ./src/ColorPicker.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ColorPicker": () => (/* binding */ ColorPicker)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/ColorWheel.js */ "./src/utils/ColorWheel.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+var _s = __webpack_require__.$Refresh$.signature();
+
+
+
+
+var ColorPicker = function ColorPicker(props) {
+  _s();
+
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)([]),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
+      colorPalette = _useState2[0],
+      setColorPalette = _useState2[1];
+
+  var colorPickedDisplayStyle = {
+    textAlign: "center"
+  };
+  var colorPaletteContainerStyle = {
+    marginTop: "3%",
+    display: "flex",
+    flexWrap: "wrap"
+  };
+  var paletteColorStyle = {
+    width: "15px",
+    height: "15px",
+    border: "1px solid #000",
+    padding: "2px"
+  }; // pass in the elementId of the div where the color wheel should be (its container)
+  // pass in the size of the canvas of the color wheel 
+
+  function createColorWheel(elementId, size, brush) {
+    if (!brush) return; // on the initial page render, brush will be null
+
+    var colorWheel = (0,_utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__.makeColorWheel)(elementId, size);
+    document.getElementById(colorWheel.id).addEventListener('mousedown', function (evt) {
+      var x = evt.offsetX;
+      var y = evt.offsetY;
+      var colorPicked = document.getElementById(colorWheel.id).getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
+
+      var colorPickedText = document.getElementById('colorPicked');
+
+      if (colorPicked[0] > 10 && colorPicked[1] > 200) {
+        colorPickedText.style.color = "#000";
+      } else {
+        colorPickedText.style.color = "#fff";
+      }
+
+      colorPickedText.textContent = 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',' + colorPicked[3] + ')';
+      colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
+
+      brush.changeBrushColor(colorPicked);
+    });
+  }
+
+  function saveColorToPalette() {
+    var colorPickedText = document.getElementById('colorPicked');
+    var currColor = colorPickedText.textContent;
+
+    if (currColor && colorPalette.indexOf(currColor) < 0) {
+      colorPalette.push(currColor);
+      setColorPalette(colorPalette.slice());
+    }
+  }
+
+  function selectPaletteColor(event) {
+    var color = event.target.style.backgroundColor;
+    var colorPickedText = document.getElementById('colorPicked');
+    colorPickedText.textContent = color;
+    colorPickedText.style.backgroundColor = color; // color needs to be an array for the brush. set color[3] to 255
+    // need to split 'rgb(x,y,z)' to [x, y, z] first
+
+    var colorArr = color.split("rgb(")[1].split(", ").map(function (x) {
+      return parseInt(x);
+    });
+    colorArr.push(255);
+    props.brush.changeBrushColor(colorArr);
+  }
+
+  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {
+    // construct the color wheel
+    createColorWheel('colorPicker', 170, props.brush);
+  }, [props.brush]);
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement(react__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    id: "colorPicker"
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
+    id: "colorPicked",
+    style: colorPickedDisplayStyle
+  }, "pick a color!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("button", {
+    onClick: saveColorToPalette
+  }, " save color to palette "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    id: "colorPalette",
+    style: colorPaletteContainerStyle
+  }, colorPalette.map(function (color) {
+    var paletteColor = Object.assign({
+      backgroundColor: color
+    }, paletteColorStyle);
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+      style: paletteColor,
+      onClick: selectPaletteColor
+    });
+  })));
+};
+
+_s(ColorPicker, "1ULDw+V9oz7b+LmWycm8A576z5c=");
+
+_c = ColorPicker;
+
+var _c;
+
+__webpack_require__.$Refresh$.register(_c, "ColorPicker");
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
 /***/ "./src/FilterDashboard.js":
 /*!********************************!*\
   !*** ./src/FilterDashboard.js ***!
@@ -1602,7 +1749,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _LayerOrder_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./LayerOrder.js */ "./src/LayerOrder.js");
 /* harmony import */ var _FilterDashboard_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./FilterDashboard.js */ "./src/FilterDashboard.js");
 /* harmony import */ var _BrushDashboard_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./BrushDashboard.js */ "./src/BrushDashboard.js");
-/* harmony import */ var _styles_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../styles/presentationWrapper.css */ "./styles/presentationWrapper.css");
+/* harmony import */ var _ColorPicker_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./ColorPicker.js */ "./src/ColorPicker.js");
+/* harmony import */ var _styles_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../styles/presentationWrapper.css */ "./styles/presentationWrapper.css");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -1616,6 +1764,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default()(this, result); }; }
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
 
 
 
@@ -1822,7 +1971,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var newToolbar = this.state.toolbarInstance;
       var project = this.state.animationProject;
       newToolbar.setCounter("count");
-      newToolbar.createColorWheel('colorPicker', 170);
       newToolbar.insertLayer('insertCanvas');
       newToolbar.deleteLayer('deleteCanvas', function (newLayerIndex) {
         _this2.setState({
@@ -2355,8 +2503,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         updateCurrFrameAndTimelineMarkers: this._updateCurrFrameAndTimelineMarkers.bind(this)
       }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
         id: "brushSection"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
-        id: "colorPicker"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement(_ColorPicker_js__WEBPACK_IMPORTED_MODULE_16__.ColorPicker, {
+        brush: this.state.brushInstance
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         id: "brushesOption",
         onMouseOver: function onMouseOver(evt) {
@@ -7254,7 +7402,6 @@ __webpack_require__.r(__webpack_exports__);
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
-// catch-all file for functions that might be better suited being in this file
 function makeColorWheel(elementId, size) {
   var location = document.getElementById(elementId);
 
@@ -7313,14 +7460,7 @@ function makeColorWheel(elementId, size) {
   colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
   colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI);
   colorWheelContext.fill();
-  location.appendChild(colorWheel); // make the color wheel interactive and show picked color 
-
-  var showColor = document.createElement('p'); // this element will show the color picked 
-
-  showColor.style.textAlign = 'center';
-  showColor.id = 'colorPicked';
-  showColor.textContent = "pick a color!";
-  location.appendChild(showColor);
+  location.appendChild(colorWheel);
   return colorWheel;
 }
 
@@ -7476,10 +7616,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ColorWheel.js */ "./src/utils/ColorWheel.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
-
 
 
 
@@ -7735,37 +7873,6 @@ var Toolbar = /*#__PURE__*/function () {
       });
     }
     /***
-        color wheel functions
-    ***/
-    // pass in the elementId of the div where the color wheel should be (its container)
-    // pass in the size of the canvas of the color wheel 
-
-  }, {
-    key: "createColorWheel",
-    value: function createColorWheel(elementId, size) {
-      var _this7 = this;
-
-      var colorWheel = (0,_ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__.makeColorWheel)(elementId, size);
-      document.getElementById(colorWheel.id).addEventListener('mousedown', function (evt) {
-        var x = evt.offsetX;
-        var y = evt.offsetY;
-        var colorPicked = document.getElementById(colorWheel.id).getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
-
-        var colorPickedText = document.getElementById('colorPicked');
-
-        if (colorPicked[0] > 10 && colorPicked[1] > 200) {
-          colorPickedText.style.color = "#000";
-        } else {
-          colorPickedText.style.color = "#fff";
-        }
-
-        colorPickedText.textContent = 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',' + colorPicked[3] + ')';
-        colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
-
-        _this7.brush.changeBrushColor(colorPicked);
-      });
-    }
-    /***
         rotate image
         pass in an element id for a button that will rotate the current canvas image on click
         
@@ -7782,10 +7889,10 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "rotateImage",
     value: function rotateImage(elementId) {
-      var _this8 = this;
+      var _this7 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this8.animationProj.getCurrFrame();
+        var canvas = _this7.animationProj.getCurrFrame();
 
         var width = canvas.currentCanvas.width;
         var height = canvas.currentCanvas.height;
@@ -7817,10 +7924,10 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "setClearCanvas",
     value: function setClearCanvas(elementId) {
-      var _this9 = this;
+      var _this8 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this9.animationProj.getCurrFrame();
+        var frame = _this8.animationProj.getCurrFrame();
 
         var context = frame.currentCanvas.getContext("2d");
         var width = frame.currentCanvas.getAttribute("width");
@@ -7840,10 +7947,10 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "undo",
     value: function undo(elementId) {
-      var _this10 = this;
+      var _this9 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this10.animationProj.getCurrFrame();
+        var frame = _this9.animationProj.getCurrFrame();
 
         var currLayer = frame.getCurrCanvas();
         var context = currLayer.getContext("2d");
@@ -7886,11 +7993,11 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "importImage",
     value: function importImage(elementId) {
-      var _this11 = this;
+      var _this10 = this;
 
       var self = this;
       document.getElementById(elementId).addEventListener('click', function () {
-        var canvas = _this11.animationProj.getCurrFrame(); // call fileHandler here
+        var canvas = _this10.animationProj.getCurrFrame(); // call fileHandler here
 
 
         fileHandler(); // define fileHandler 
@@ -7958,11 +8065,11 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "downloadLayer",
     value: function downloadLayer(elementId) {
-      var _this12 = this;
+      var _this11 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
         // get image data from current canvas as blob
-        var canvas = _this12.animationProj.getCurrFrame();
+        var canvas = _this11.animationProj.getCurrFrame();
 
         var data = document.getElementById(canvas.currentCanvas.id).toBlob(function (blob) {
           var url = URL.createObjectURL(blob);
@@ -7987,12 +8094,12 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "downloadFrame",
     value: function downloadFrame(elementId) {
-      var _this13 = this;
+      var _this12 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
-        var frame = _this13.animationProj.getCurrFrame();
+        var frame = _this12.animationProj.getCurrFrame();
 
-        var mergedLayers = _this13.mergeFrameLayers(frame);
+        var mergedLayers = _this12.mergeFrameLayers(frame);
 
         var data = mergedLayers.toBlob(function (blob) {
           var url = URL.createObjectURL(blob);
@@ -8162,7 +8269,7 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "save",
     value: function save(elementId) {
-      var _this14 = this;
+      var _this13 = this;
 
       document.getElementById(elementId).addEventListener('click', function () {
         // prompt the user to name the file 
@@ -8177,7 +8284,7 @@ var Toolbar = /*#__PURE__*/function () {
 
         var savedData = [];
 
-        _this14.animationProj.frameList.forEach(function (frame) {
+        _this13.animationProj.frameList.forEach(function (frame) {
           // get frame metadata
           var newFrame = frame.getMetadata();
           newFrame['layers'] = []; // list of objects
@@ -8218,7 +8325,7 @@ var Toolbar = /*#__PURE__*/function () {
   }, {
     key: "importData",
     value: function importData(data, updateStateFunction) {
-      var _this15 = this;
+      var _this14 = this;
 
       if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
         console.log("import failed: it appears to not be a valid project! :<");
@@ -8231,13 +8338,13 @@ var Toolbar = /*#__PURE__*/function () {
       data.forEach(function (frame, index) {
         if (index > 0) {
           // add a new frame
-          _this15.animationProj.addNewFrame();
+          _this14.animationProj.addNewFrame();
         } // overwrite existing frame
         // TODO: implement an updateFrame method 
         // something like: animationProj.updateFrame(0, frame);
 
 
-        var currFrame = _this15.animationProj.getFrames()[index];
+        var currFrame = _this14.animationProj.getFrames()[index];
 
         var currFrameLayersFromImport = frame.layers; // looking at data-to-import's curr frame's layers
 
@@ -12064,7 +12171,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for AnimationTimeline component */\r\n.animationTimelineFrame {\r\n    display: inline-block; \r\n    border: 1px solid #000;\r\n    margin: 1px;\r\n    width: 120px;\r\n    height: 120px;\r\n}\r\n\r\n.animationTimeline {\r\n  grid-row: 1;\r\n  grid-column: 1;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: #fff;\r\n  overflow-x: scroll;\r\n  margin-top: 5px;\r\n  white-space: nowrap;\r\n  border: 1px solid #ccc;\r\n}\r\n\r\n.animationTimelineCanvas{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    margin-bottom: 10px; /* add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/ */\r\n    margin-top: 5px;\r\n    width: 100%;\r\n    height: 160px; /* note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar */\r\n}\r\n\r\n/* want to overlay the timelinecanvas over the timeline */\r\n.animationTimelineArea{\r\n    grid-row: 3;\r\n    grid-column: 1;\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 1fr 5em;\r\n    padding-bottom: 3%;\r\n}\r\n\r\n.animationTimelineMarkers{\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n    margin-top: 3px;\r\n    overflow-y: auto;\r\n}", "",{"version":3,"sources":["webpack://./styles/animationTimeline.css"],"names":[],"mappings":"AAAA,+CAA+C;AAC/C;IACI,qBAAqB;IACrB,sBAAsB;IACtB,WAAW;IACX,YAAY;IACZ,aAAa;AACjB;;AAEA;EACE,WAAW;EACX,cAAc;EACd,WAAW;EACX,YAAY;EACZ,sBAAsB;EACtB,kBAAkB;EAClB,eAAe;EACf,mBAAmB;EACnB,sBAAsB;AACxB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,mBAAmB,EAAE,sIAAsI;IAC3J,eAAe;IACf,WAAW;IACX,aAAa,EAAE,6GAA6G;AAChI;;AAEA,yDAAyD;AACzD;IACI,WAAW;IACX,cAAc;IACd,aAAa;IACb,0BAA0B;IAC1B,2BAA2B;IAC3B,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,eAAe;IACf,gBAAgB;AACpB","sourcesContent":["/* stylesheet for AnimationTimeline component */\r\n.animationTimelineFrame {\r\n    display: inline-block; \r\n    border: 1px solid #000;\r\n    margin: 1px;\r\n    width: 120px;\r\n    height: 120px;\r\n}\r\n\r\n.animationTimeline {\r\n  grid-row: 1;\r\n  grid-column: 1;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: #fff;\r\n  overflow-x: scroll;\r\n  margin-top: 5px;\r\n  white-space: nowrap;\r\n  border: 1px solid #ccc;\r\n}\r\n\r\n.animationTimelineCanvas{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    margin-bottom: 10px; /* add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/ */\r\n    margin-top: 5px;\r\n    width: 100%;\r\n    height: 160px; /* note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar */\r\n}\r\n\r\n/* want to overlay the timelinecanvas over the timeline */\r\n.animationTimelineArea{\r\n    grid-row: 3;\r\n    grid-column: 1;\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 1fr 5em;\r\n    padding-bottom: 3%;\r\n}\r\n\r\n.animationTimelineMarkers{\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n    margin-top: 3px;\r\n    overflow-y: auto;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for AnimationTimeline component \r\n   still needs work\r\n*/\r\n\r\n/* want to overlay the timelinecanvas over the timeline */\r\n.animationTimelineArea{\r\n    grid-row: 3;\r\n    grid-column: 1;\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 1fr 5em;\r\n    padding-bottom: 3%;\r\n}\r\n\r\n.animationTimeline {\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: #fff;\r\n    overflow-x: scroll;\r\n    margin-top: 5px;\r\n    white-space: nowrap;\r\n    border: 1px solid #ccc;\r\n}\r\n\r\n.animationTimelineFrame {\r\n    display: inline-block; \r\n    border: 1px solid #000;\r\n    margin: 1px;\r\n    width: 120px;\r\n    height: 120px;\r\n}\r\n\r\n.animationTimelineCanvas{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    margin-bottom: 10px; /* add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/ */\r\n    margin-top: 5px;\r\n    width: 100%;\r\n    height: 160px; /* note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar */\r\n}\r\n\r\n.animationTimelineMarkers{\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n    margin-top: 3px;\r\n    overflow-y: auto;\r\n}", "",{"version":3,"sources":["webpack://./styles/animationTimeline.css"],"names":[],"mappings":"AAAA;;CAEC;;AAED,yDAAyD;AACzD;IACI,WAAW;IACX,cAAc;IACd,aAAa;IACb,0BAA0B;IAC1B,2BAA2B;IAC3B,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,YAAY;IACZ,sBAAsB;IACtB,kBAAkB;IAClB,eAAe;IACf,mBAAmB;IACnB,sBAAsB;AAC1B;;AAEA;IACI,qBAAqB;IACrB,sBAAsB;IACtB,WAAW;IACX,YAAY;IACZ,aAAa;AACjB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,mBAAmB,EAAE,sIAAsI;IAC3J,eAAe;IACf,WAAW;IACX,aAAa,EAAE,6GAA6G;AAChI;;AAEA;IACI,WAAW;IACX,cAAc;IACd,eAAe;IACf,gBAAgB;AACpB","sourcesContent":["/* stylesheet for AnimationTimeline component \r\n   still needs work\r\n*/\r\n\r\n/* want to overlay the timelinecanvas over the timeline */\r\n.animationTimelineArea{\r\n    grid-row: 3;\r\n    grid-column: 1;\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 1fr 5em;\r\n    padding-bottom: 3%;\r\n}\r\n\r\n.animationTimeline {\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: #fff;\r\n    overflow-x: scroll;\r\n    margin-top: 5px;\r\n    white-space: nowrap;\r\n    border: 1px solid #ccc;\r\n}\r\n\r\n.animationTimelineFrame {\r\n    display: inline-block; \r\n    border: 1px solid #000;\r\n    margin: 1px;\r\n    width: 120px;\r\n    height: 120px;\r\n}\r\n\r\n.animationTimelineCanvas{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    margin-bottom: 10px; /* add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/ */\r\n    margin-top: 5px;\r\n    width: 100%;\r\n    height: 160px; /* note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar */\r\n}\r\n\r\n.animationTimelineMarkers{\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n    margin-top: 3px;\r\n    overflow-y: auto;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -12091,7 +12198,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 75% 10%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    width: 100%;\r\n    margin-top: 30%;\r\n    padding-right: 5%;\r\n    margin-left: -12%;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n", "",{"version":3,"sources":["webpack://./styles/presentationWrapper.css"],"names":[],"mappings":"AAAA,qCAAqC;AACrC;IACI,aAAa;IACb,2BAA2B;IAC3B,kCAAkC;IAClC,WAAW;AACf;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;IAChB,WAAW;IACX,YAAY;IACZ,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,UAAU;IACV,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,0BAA0B;IAC1B,oCAAoC;AACxC;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,sBAAsB;IACtB,mBAAmB;IACnB,4BAA4B;IAC5B,YAAY;IACZ,kBAAkB;AACtB;;AAEA;IACI,aAAa;AACjB;;AAEA;IACI,kBAAkB;IAClB,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,eAAe;IACf,iBAAiB;IACjB,iBAAiB;AACrB;;AAEA;IACI,kBAAkB;IAClB,cAAc;AAClB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,oBAAoB;AACxB","sourcesContent":["/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 75% 10%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    width: 100%;\r\n    margin-top: 30%;\r\n    padding-right: 5%;\r\n    margin-left: -12%;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n", "",{"version":3,"sources":["webpack://./styles/presentationWrapper.css"],"names":[],"mappings":"AAAA,qCAAqC;AACrC;IACI,aAAa;IACb,2BAA2B;IAC3B,kCAAkC;IAClC,WAAW;AACf;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;IAChB,WAAW;IACX,YAAY;IACZ,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,UAAU;IACV,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,0BAA0B;IAC1B,oCAAoC;AACxC;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,sBAAsB;IACtB,mBAAmB;IACnB,4BAA4B;IAC5B,YAAY;IACZ,kBAAkB;AACtB;;AAEA;IACI,aAAa;AACjB;;AAEA;IACI,kBAAkB;IAClB,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,eAAe;IACf,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,cAAc;AAClB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,oBAAoB;AACxB","sourcesContent":["/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

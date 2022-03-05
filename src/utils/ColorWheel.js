@@ -1,5 +1,3 @@
-// catch-all file for functions that might be better suited being in this file
-
 export function makeColorWheel(elementId, size){
     const location = document.getElementById(elementId);
     if(location === undefined){
@@ -62,13 +60,6 @@ export function makeColorWheel(elementId, size){
     colorWheelContext.fill();
     
     location.appendChild(colorWheel);
-    
-    // make the color wheel interactive and show picked color 
-    const showColor = document.createElement('p'); // this element will show the color picked 
-    showColor.style.textAlign = 'center';
-    showColor.id = 'colorPicked';
-    showColor.textContent = "pick a color!";
-    location.appendChild(showColor);
     
     return colorWheel;
 }

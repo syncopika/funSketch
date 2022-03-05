@@ -8,6 +8,7 @@ import { AnimationTimeline } from './AnimationTimeline.js';
 import { LayerOrder } from './LayerOrder.js';
 import { FilterDashboard } from './FilterDashboard.js';
 import { BrushDashboard } from './BrushDashboard.js';
+import { ColorPicker } from './ColorPicker.js';
 
 import "../styles/presentationWrapper.css";
 
@@ -163,7 +164,6 @@ class PresentationWrapper extends React.Component {
         const project = this.state.animationProject;
         
         newToolbar.setCounter("count");
-        newToolbar.createColorWheel('colorPicker', 170);
         newToolbar.insertLayer('insertCanvas');
         newToolbar.deleteLayer('deleteCanvas', (newLayerIndex) => {
             this.setState({
@@ -360,7 +360,7 @@ class PresentationWrapper extends React.Component {
         const layers = project.frameList[0].canvasList;
         let visibleLayerIndex = 0;
         
-        for(var i = 0; i < layers.length; i++){
+        for(let i = 0; i < layers.length; i++){
             if(layers[i].style.opacity >= .97){
                 visibleLayerIndex = i;
                 break;
@@ -657,8 +657,7 @@ class PresentationWrapper extends React.Component {
                 </main>
                 
                 <div id="brushSection">
-                    <div id="colorPicker">
-                    </div>
+                    <ColorPicker brush={this.state.brushInstance} />
                     
                     <hr />
                     

@@ -1,32 +1,6 @@
-/* stylesheet for AnimationTimeline component */
-.animationTimelineFrame {
-    display: inline-block; 
-    border: 1px solid #000;
-    margin: 1px;
-    width: 120px;
-    height: 120px;
-}
-
-.animationTimeline {
-  grid-row: 1;
-  grid-column: 1;
-  width: 100%;
-  height: 100%;
-  background-color: #fff;
-  overflow-x: scroll;
-  margin-top: 5px;
-  white-space: nowrap;
-  border: 1px solid #ccc;
-}
-
-.animationTimelineCanvas{
-    grid-row: 1;
-    grid-column: 1;
-    margin-bottom: 10px; /* add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/ */
-    margin-top: 5px;
-    width: 100%;
-    height: 160px; /* note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar */
-}
+/* stylesheet for AnimationTimeline component 
+   still needs work
+*/
 
 /* want to overlay the timelinecanvas over the timeline */
 .animationTimelineArea{
@@ -36,6 +10,35 @@
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 5em;
     padding-bottom: 3%;
+}
+
+.animationTimeline {
+    grid-row: 1;
+    grid-column: 1;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    overflow-x: scroll;
+    margin-top: 5px;
+    white-space: nowrap;
+    border: 1px solid #ccc;
+}
+
+.animationTimelineFrame {
+    display: inline-block; 
+    border: 1px solid #000;
+    margin: 1px;
+    width: 120px;
+    height: 120px;
+}
+
+.animationTimelineCanvas{
+    grid-row: 1;
+    grid-column: 1;
+    margin-bottom: 10px; /* add margins to 'squish' the canvas a bit so it falls properly on the timeline. otherwise it'll completely overlap the timeline :/ */
+    margin-top: 5px;
+    width: 100%;
+    height: 160px; /* note this height is slightly less than the height of AnimationTimeline to not cover the bottom scrollbar */
 }
 
 .animationTimelineMarkers{

@@ -1,4 +1,3 @@
-import { makeColorWheel } from "./ColorWheel.js";
 
 class Toolbar {
     constructor(brush, animationProj){
@@ -198,35 +197,6 @@ class Toolbar {
             if(setStateFunction){
                 setStateFunction(null);
             }
-        });
-    }
-    
-    /***
-        color wheel functions
-    ***/
-    // pass in the elementId of the div where the color wheel should be (its container)
-    // pass in the size of the canvas of the color wheel 
-    createColorWheel(elementId, size){
-        const colorWheel = makeColorWheel(elementId, size);
-        
-        document.getElementById(colorWheel.id).addEventListener('mousedown', (evt) => {
-            const x = evt.offsetX;
-            const y = evt.offsetY;
-            const colorPicked = (document.getElementById(colorWheel.id).getContext('2d')).getImageData(x, y, 1, 1).data;
-            
-            //correct the font color if the color is really dark
-            const colorPickedText = document.getElementById('colorPicked');
-            if(colorPicked[0] > 10 && colorPicked[1] > 200){
-                colorPickedText.style.color = "#000";
-            }else{
-                colorPickedText.style.color = "#fff";
-            }
-            
-            colorPickedText.textContent = 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',' + colorPicked[3] + ')';
-            colorPickedText.style.backgroundColor = colorPickedText.textContent;
-            
-            // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
-            this.brush.changeBrushColor(colorPicked);
         });
     }
     

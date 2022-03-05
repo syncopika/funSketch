@@ -2,7 +2,7 @@ import React from 'react';
 import 'jest-canvas-mock';
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ColorPicker } from '../src/colorPicker';
+import { ColorPicker } from '../src/ColorPicker';
 import { AnimationProject } from '../src/utils/AnimationProject.js';
 import { BrushManager } from '../src/utils/BrushManager.js';
 

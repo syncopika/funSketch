@@ -65,6 +65,12 @@ export const ColorPicker = (props) => {
         const colorPickedText = document.getElementById('colorPicked');
         colorPickedText.textContent = color;
         colorPickedText.style.backgroundColor = color;
+        
+        // color needs to be an array for the brush. set color[3] to 255
+        // need to split 'rgb(x,y,z)' to [x, y, z, 255] first
+        const colorArr = color.split("rgb(")[1].split(", ").map(x => parseInt(x));
+        colorArr.push(255);
+        props.brush.changeBrushColor(colorArr);
     }
 
     useEffect(() => {

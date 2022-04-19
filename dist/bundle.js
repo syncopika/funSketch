@@ -2486,7 +2486,9 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "demo"
       }, "cake_cut"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("option", {
         className: "demo"
-      }, "basketball_blur")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("main", {
+      }, "basketball_blur"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("option", {
+        className: "demo"
+      }, "walk_anim_practice")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("main", {
         className: "screen"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
         className: "screenContainer"

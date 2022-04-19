@@ -7,7 +7,7 @@ when adding a frame time marker, the new element messes up the mouse coordinates
 
 short-term
 ----------
-- need more tests (with cypress? WDIO?)
+- need more tests
 - be able to copy a layer from one frame and then paste into another layer in another frame
 - make context.lineJoin a variable that can be changed? i.e. have more options besides 'round'?
 - when erasing, don't let cursor disappear on pointerdown event?
@@ -16,6 +16,8 @@ short-term
 	- i.e. besides being able to change the frame rate, set start/end points?
 - adjust eraser cursor image size?
 - stop animation?
+- can we scale the layers of each demo (or any imported project) so that we can be sure each
+  image fits the given canvas size? currently it's not scalable. :(
 
 long-term
 ---------

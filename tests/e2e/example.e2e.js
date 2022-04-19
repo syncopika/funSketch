@@ -15,6 +15,9 @@ describe('funSketch', () => {
         //console.log(head);
         // toBe !== toBeEqual
         expect(await head.getText()).toBe("funSketch");
+        
+        const frameCount = await $("#count");
+        expect(await frameCount.getText()).toBe("frame: 1, layer: 1");
     });
 });
 

@@ -23,6 +23,8 @@ Otherwise, any white color with 255 as the alpha value is treated as transparent
 ### installation:    
 You'll need node.js and npm. `cd` into this repo and run `npm install` to install all the dependencies. Then run `npm run serve` to serve the application (with hot reload!). To run the tests, run `npm test`.    
     
+For end-to-end testing I tried using WebdriverIO with ChromeDriver. Make sure that the chromedriver version in `package.json` matches the local version of Chrome on your computer.    
+    
 Alternatively, you can run `npm run dev` to build a development bundle in the `/dist` directory and then `node server.js`.    
     
 ### acknowledgements:    

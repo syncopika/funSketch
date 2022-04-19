@@ -632,8 +632,9 @@ class PresentationWrapper extends React.Component {
                             <option className='demo'>floaty_thingy</option>
                             <option className='demo'>cake_cut</option>
                             <option className='demo'>basketball_blur</option>
+                            <option className='demo'>walk_anim_practice</option>
                         </select>
-                    </section>    
+                    </section>
                 </div>
 
                 <main className='screen'>

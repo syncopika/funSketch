@@ -262,8 +262,7 @@ class PresentationWrapper extends React.Component {
         document.getElementById('generateGif').addEventListener('click', () => {
             let frameSpeedMarkers = {};
             
-            // if there's at least one timeline marker, we need to apply frame speed for each frame 
-            // based on the marker
+            // if there's at least one timeline marker, we need to apply frame speed for each frame based on the marker
             // the initial speed will be whatever speed is currently selected (if no marker on the first frame)
             if(Object.keys(this.state.timelineFrames).length > 0){
                 let currFrameSpeed = parseInt(document.getElementById('timePerFrame').selectedOptions[0].value);
@@ -278,28 +277,30 @@ class PresentationWrapper extends React.Component {
             newToolbar.getGif("loadingScreen", frameSpeedMarkers);
         });
 
-        document.getElementById('toggleLayerOrFrame').addEventListener('click', () => {
-            let element = document.getElementById("toggleLayerOrFrame");
+        const toggleLayerOrFrameBtn = document.getElementById("toggleLayerOrFrame");
+        toggleLayerOrFrameBtn.addEventListener('click', () => {
             if(newToolbar.layerMode){
-                newToolbar.layerMode = false;
-                element.textContent = "toggle layer addition on spacebar press";
+                toggleLayerOrFrameBtn.textContent = "toggle layer addition on spacebar press";
             }else{
-                newToolbar.layerMode = true;
-                element.textContent = "toggle frame addition on spacebar press";
+                toggleLayerOrFrameBtn.textContent = "toggle frame addition on spacebar press";
             }
+            newToolbar.layerMode = !newToolbar.layerMode;
         });
         
         // toggle pen pressure for brush color
-        document.getElementById('togglePenPressureColor').addEventListener('click', (evt) => {
-            if(evt.target.style.border === "1px solid rgb(255, 0, 0)"){
-                evt.target.style.border = "1px solid rgb(0, 255, 0)";
+        const red = "1px solid rgb(255, 0, 0)";
+        const green = "1px solid rgb(0, 255, 0)";
+        const togglePenPressureBtn = document.getElementById('togglePenPressureColor');
+        togglePenPressureBtn.addEventListener('click', (evt) => {
+            if(evt.target.style.border === red){
+                evt.target.style.border = green;
             }else{
-                evt.target.style.border = "1px solid rgb(255, 0, 0)";
+                evt.target.style.border = red;
             }
             
             this.state.brushInstance.togglePressureColorFlag();
         });
-        document.getElementById('togglePenPressureColor').style.border = "1px solid rgb(255, 0, 0)";
+        togglePenPressureBtn.style.border = green;
     }
     
     _setupAnimationControl(){
@@ -375,10 +376,10 @@ class PresentationWrapper extends React.Component {
     }
     
     _getDemo(selected){
-        // case for the blank option 
-        if(selected === ""){
+        if(selected === ""){ 
             return;
         }
+        
         const selectedDemo = "demos/" + selected + ".json"; 
         const httpRequest = new XMLHttpRequest();
 
@@ -555,7 +556,7 @@ class PresentationWrapper extends React.Component {
                                         
                                         // update the currently shown layer to reflect the re-ordering
                                         this.state.toolbarInstance.setCurrLayer(currLayerIndex);
-    
+                                        
                                         this.setState({"changingLayerOrder": false});
                                     }
                                 }

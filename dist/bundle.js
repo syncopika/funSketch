@@ -2062,8 +2062,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         }
       });
       document.getElementById('generateGif').addEventListener('click', function () {
-        var frameSpeedMarkers = {}; // if there's at least one timeline marker, we need to apply frame speed for each frame 
-        // based on the marker
+        var frameSpeedMarkers = {}; // if there's at least one timeline marker, we need to apply frame speed for each frame based on the marker
         // the initial speed will be whatever speed is currently selected (if no marker on the first frame)
 
         if (Object.keys(_this2.state.timelineFrames).length > 0) {
@@ -2080,28 +2079,30 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
         newToolbar.getGif("loadingScreen", frameSpeedMarkers);
       });
-      document.getElementById('toggleLayerOrFrame').addEventListener('click', function () {
-        var element = document.getElementById("toggleLayerOrFrame");
-
+      var toggleLayerOrFrameBtn = document.getElementById("toggleLayerOrFrame");
+      toggleLayerOrFrameBtn.addEventListener('click', function () {
         if (newToolbar.layerMode) {
-          newToolbar.layerMode = false;
-          element.textContent = "toggle layer addition on spacebar press";
+          toggleLayerOrFrameBtn.textContent = "toggle layer addition on spacebar press";
         } else {
-          newToolbar.layerMode = true;
-          element.textContent = "toggle frame addition on spacebar press";
+          toggleLayerOrFrameBtn.textContent = "toggle frame addition on spacebar press";
         }
+
+        newToolbar.layerMode = !newToolbar.layerMode;
       }); // toggle pen pressure for brush color
 
-      document.getElementById('togglePenPressureColor').addEventListener('click', function (evt) {
-        if (evt.target.style.border === "1px solid rgb(255, 0, 0)") {
-          evt.target.style.border = "1px solid rgb(0, 255, 0)";
+      var red = "1px solid rgb(255, 0, 0)";
+      var green = "1px solid rgb(0, 255, 0)";
+      var togglePenPressureBtn = document.getElementById('togglePenPressureColor');
+      togglePenPressureBtn.addEventListener('click', function (evt) {
+        if (evt.target.style.border === red) {
+          evt.target.style.border = green;
         } else {
-          evt.target.style.border = "1px solid rgb(255, 0, 0)";
+          evt.target.style.border = red;
         }
 
         _this2.state.brushInstance.togglePressureColorFlag();
       });
-      document.getElementById('togglePenPressureColor').style.border = "1px solid rgb(255, 0, 0)";
+      togglePenPressureBtn.style.border = green;
     }
   }, {
     key: "_setupAnimationControl",
@@ -2192,7 +2193,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
     value: function _getDemo(selected) {
       var _this6 = this;
 
-      // case for the blank option 
       if (selected === "") {
         return;
       }
@@ -2272,11 +2272,13 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
         _this7._setKeyDown(document);
 
-        _this7.state.animationProject.init();
+        _this7.state.animationProject.init(); // capture the initial canvas dimensions so we can scale x and y coords if window resizes
+
 
         var canvas = _this7.state.animationProject.getCurrFrame().getCurrCanvas().getBoundingClientRect();
 
-        _this7.state.brushInstance.updateInitialCanvasDimensions(canvas.width, canvas.height);
+        _this7.state.brushInstance.updateInitialCanvasDimensions(canvas.width, canvas.height); // start with the default brush
+
 
         _this7.state.brushInstance.brushesMap["default"].attachBrush();
       });
@@ -8375,7 +8377,7 @@ var Toolbar = /*#__PURE__*/function () {
 
           (function (context, image) {
             image.onload = function () {
-              context.drawImage(image, 0, 0); // after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
+              context.drawImage(image, 0, 0, currLayer.width, currLayer.height); // after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
 
               if (index === data.length - 1 && updateStateFunction) {
                 updateStateFunction();

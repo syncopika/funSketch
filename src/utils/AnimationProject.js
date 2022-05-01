@@ -247,6 +247,7 @@ class Frame {
         // TODO: remove all layers except first layer, then clear it
     }
 }
+
 /***
     an AnimationProject represents a single project containing one or more frames.
     it also instantiates an onion skin frame.

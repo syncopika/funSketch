@@ -16,8 +16,6 @@ short-term
 	- i.e. besides being able to change the frame rate, set start/end points?
 - adjust eraser cursor image size?
 - stop animation?
-- can we scale the layers of each demo (or any imported project) so that we can be sure each
-  image fits the given canvas size? currently it's not scalable. :(
 
 long-term
 ---------

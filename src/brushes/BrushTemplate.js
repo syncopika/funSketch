@@ -13,8 +13,6 @@ class BrushTemplate {
         this.clickColor = [];
         this.clickSize = [];
         this.clickPressure = [];
-        
-        // cursor type
         this.cursorType = "crosshair";
     }
     
@@ -29,8 +27,10 @@ class BrushTemplate {
     
     // collect info where each pixel is to be drawn on canvas
     addClick(pointerEvt, dragging){
-        const x = pointerEvt.offsetX;
-        const y = pointerEvt.offsetY;
+        const canvas = pointerEvt.target.getBoundingClientRect();
+        const x = pointerEvt.offsetX / (canvas.width / this.brushManager.initialCanvasWidth);
+        const y = pointerEvt.offsetY / (canvas.height / this.brushManager.initialCanvasHeight);
+        
         const pressure = pointerEvt.pressure;
         const currColorArr = this.brushManager.getCurrColorArray();
         
@@ -43,26 +43,24 @@ class BrushTemplate {
         if(this.brushManager.applyPressureColor() && pressure){
             // pressure ranges from 0 to 1
             const dominantChannel = Math.max(currColorArr[2], Math.max(currColorArr[0], currColorArr[1]));
+            let newR, newG, newB;
             if(currColorArr[0] === dominantChannel){
                 // r
-                const newR = currColorArr[0];
-                const newG = currColorArr[1]*(1-pressure);
-                const newB = currColorArr[2]*(1-pressure);
-                currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
+                newR = currColorArr[0];
+                newG = currColorArr[1]*(1-pressure);
+                newB = currColorArr[2]*(1-pressure);
             }else if(currColorArr[1] === dominantChannel){
                 // g
-                const newR = currColorArr[0]*(1-pressure);
-                const newG = currColorArr[1];
-                const newB = currColorArr[2]*(1-pressure);
-                currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
+                newR = currColorArr[0]*(1-pressure);
+                newG = currColorArr[1];
+                newB = currColorArr[2]*(1-pressure);
             }else{
                 // b
-                const newR = currColorArr[0]*(1-pressure);
-                const newG = currColorArr[1]*(1-pressure);
-                const newB = currColorArr[2];
-                currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
+                newR = currColorArr[0]*(1-pressure);
+                newG = currColorArr[1]*(1-pressure);
+                newB = currColorArr[2];
             }
-            
+            currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
             currSize = this.calculateBrushWidth(pointerEvt);
             penPressure = pressure;
         }else{

@@ -24,17 +24,25 @@ describe("test brush template", () => {
         expect(brush.paint).toEqual(false);
     });
     
-    // TODO: need to mock pointer events!
     it("test addClick and clearClick", () => {
         const container = document.querySelector('.' + containerId);
         const animProj = new AnimationProject(container);
         const brushMan = new BrushManager(animProj);
         const brush = new BrushTemplate(brushMan);
         
+        // TODO: is there a better way to mock pointer events?
         const mockEvt = {
             offsetX: 1,
             offsetY: 5,
-        }
+            target: {
+                getBoundingClientRect: () => {
+                    return {
+                        width: 1,
+                        height: 1
+                    };
+                }
+            }
+        };
         
         brush.addClick(mockEvt, true);
         expect(brush.clickX.length).toEqual(1);

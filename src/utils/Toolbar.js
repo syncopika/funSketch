@@ -634,7 +634,7 @@ class Toolbar {
                 const img = new Image();
                 (function(context, image){
                     image.onload = function(){
-                        context.drawImage(image, 0, 0);
+                        context.drawImage(image, 0, 0, currLayer.width, currLayer.height);
                         
                         // after importing all the frames, update state (i.e. frame and layer counters, animation timeline)
                         if(index === data.length-1 && updateStateFunction){

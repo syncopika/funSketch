@@ -25,6 +25,11 @@ class BrushManager {
         this.currSize = 2;
         this.pressureColorFlag = false; // whether brush color should depend on pen pressure
         
+        // record the initial width and height of the canvas
+        // so we can use to properly scale x and y coords if the window resizes
+        this.initialCanvasHeight = 1;
+        this.initialCanvasWidth = 1;
+        
         // brushes map
         this.brushesMap = {};
         this.brushesMap["default"] = new DefaultBrush(this);
@@ -85,6 +90,11 @@ class BrushManager {
     
     setBrushType(brushType){
         this.selectedBrush = brushType;
+    }
+    
+    updateInitialCanvasDimensions(width, height){
+        this.initialCanvasHeight = height;
+        this.initialCanvasWidth = width;
     }
     
     togglePressureColorFlag(){

@@ -445,8 +445,13 @@ class PresentationWrapper extends React.Component {
             this._setupToolbar();
             this._linkDemos();
             this._setKeyDown(document);
-            
             this.state.animationProject.init();
+            
+            // capture the initial canvas dimensions so we can scale x and y coords if window resizes
+            const canvas = this.state.animationProject.getCurrFrame().getCurrCanvas().getBoundingClientRect();
+            this.state.brushInstance.updateInitialCanvasDimensions(canvas.width, canvas.height);
+            
+            // start with the default brush
             this.state.brushInstance.brushesMap["default"].attachBrush();
         });
     }

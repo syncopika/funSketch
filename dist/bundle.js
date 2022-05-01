@@ -2274,6 +2274,10 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
         _this7.state.animationProject.init();
 
+        var canvas = _this7.state.animationProject.getCurrFrame().getCurrCanvas().getBoundingClientRect();
+
+        _this7.state.brushInstance.updateInitialCanvasDimensions(canvas.width, canvas.height);
+
         _this7.state.brushInstance.brushesMap["default"].attachBrush();
       });
     }
@@ -2606,8 +2610,7 @@ var BrushTemplate = /*#__PURE__*/function () {
     this.clickDrag = [];
     this.clickColor = [];
     this.clickSize = [];
-    this.clickPressure = []; // cursor type
-
+    this.clickPressure = [];
     this.cursorType = "crosshair";
   } // assuming a PointerEvent, calculate the brush width based on stylus pressure
 
@@ -2627,8 +2630,9 @@ var BrushTemplate = /*#__PURE__*/function () {
   }, {
     key: "addClick",
     value: function addClick(pointerEvt, dragging) {
-      var x = pointerEvt.offsetX;
-      var y = pointerEvt.offsetY;
+      var canvas = pointerEvt.target.getBoundingClientRect();
+      var x = pointerEvt.offsetX / (canvas.width / this.brushManager.initialCanvasWidth);
+      var y = pointerEvt.offsetY / (canvas.height / this.brushManager.initialCanvasHeight);
       var pressure = pointerEvt.pressure;
       var currColorArr = this.brushManager.getCurrColorArray();
       var penPressure = 1;
@@ -2639,32 +2643,26 @@ var BrushTemplate = /*#__PURE__*/function () {
       if (this.brushManager.applyPressureColor() && pressure) {
         // pressure ranges from 0 to 1
         var dominantChannel = Math.max(currColorArr[2], Math.max(currColorArr[0], currColorArr[1]));
+        var newR, newG, newB;
 
         if (currColorArr[0] === dominantChannel) {
           // r
-          var newR = currColorArr[0];
-          var newG = currColorArr[1] * (1 - pressure);
-          var newB = currColorArr[2] * (1 - pressure);
-          currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
+          newR = currColorArr[0];
+          newG = currColorArr[1] * (1 - pressure);
+          newB = currColorArr[2] * (1 - pressure);
         } else if (currColorArr[1] === dominantChannel) {
           // g
-          var _newR = currColorArr[0] * (1 - pressure);
-
-          var _newG = currColorArr[1];
-
-          var _newB = currColorArr[2] * (1 - pressure);
-
-          currColor = 'rgba(' + _newR + ',' + _newG + ',' + _newB + ',' + currColorArr[3] + ')';
+          newR = currColorArr[0] * (1 - pressure);
+          newG = currColorArr[1];
+          newB = currColorArr[2] * (1 - pressure);
         } else {
           // b
-          var _newR2 = currColorArr[0] * (1 - pressure);
-
-          var _newG2 = currColorArr[1] * (1 - pressure);
-
-          var _newB2 = currColorArr[2];
-          currColor = 'rgba(' + _newR2 + ',' + _newG2 + ',' + _newB2 + ',' + currColorArr[3] + ')';
+          newR = currColorArr[0] * (1 - pressure);
+          newG = currColorArr[1] * (1 - pressure);
+          newB = currColorArr[2];
         }
 
+        currColor = 'rgba(' + newR + ',' + newG + ',' + newB + ',' + currColorArr[3] + ')';
         currSize = this.calculateBrushWidth(pointerEvt);
         penPressure = pressure;
       } else {
@@ -7257,7 +7255,11 @@ var BrushManager = /*#__PURE__*/function () {
     this.currColorArray = Uint8Array.from([0, 0, 0, 255]);
     this.currSize = 2;
     this.pressureColorFlag = false; // whether brush color should depend on pen pressure
-    // brushes map
+    // record the initial width and height of the canvas
+    // so we can use to properly scale x and y coords if the window resizes
+
+    this.initialCanvasHeight = 1;
+    this.initialCanvasWidth = 1; // brushes map
 
     this.brushesMap = {};
     this.brushesMap["default"] = new _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_2__.DefaultBrush(this);
@@ -7329,6 +7331,12 @@ var BrushManager = /*#__PURE__*/function () {
     key: "setBrushType",
     value: function setBrushType(brushType) {
       this.selectedBrush = brushType;
+    }
+  }, {
+    key: "updateInitialCanvasDimensions",
+    value: function updateInitialCanvasDimensions(width, height) {
+      this.initialCanvasHeight = height;
+      this.initialCanvasWidth = width;
     }
   }, {
     key: "togglePressureColorFlag",

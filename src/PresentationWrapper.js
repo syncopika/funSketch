@@ -431,7 +431,7 @@ class PresentationWrapper extends React.Component {
 
     componentDidMount(){
         const animationProj = new AnimationProject(document.querySelector('.canvasArea'));
-        const newBrush = new BrushManager(animationProj);    
+        const newBrush = new BrushManager(animationProj);
         const newFilters = new FilterManager(animationProj, newBrush);
         const newToolbar = new Toolbar(newBrush, animationProj);
         const animationController = new AnimationController(animationProj, newToolbar);
@@ -668,23 +668,24 @@ class PresentationWrapper extends React.Component {
                     
                     <hr />
                     
-                    <p id="brushesOption" 
+                    <h4 id="brushesOption" 
                         onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
                         onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
                         onClick={this._showFiltersOrBrushes}
                     > brushes 
-                    </p>
+                    </h4>
+                    
                     <div id="brushes" className="tbar">
                         <BrushDashboard brushManager={this.state.brushInstance} />
                     </div>
                     
                     <hr />
 
-                    <p id="filtersOption" 
+                    <h4 id="filtersOption" 
                         onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
                         onMouseOut={(evt) => {evt.target.style.color = "#000"}}
                         onClick={this._showFiltersOrBrushes}
-                    > filters </p>
+                    > filters </h4>
                     
                     <div id="filters" className="tbar">
                         <FilterDashboard filterManager={this.state.filtersInstance} />

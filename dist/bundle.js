@@ -1317,7 +1317,7 @@ var ColorPicker = function ColorPicker(props) {
     var colorPickedText = document.getElementById('colorPicked');
     var currColor = colorPickedText.textContent;
 
-    if (currColor && colorPalette.indexOf(currColor) < 0) {
+    if (currColor && currColor.includes("rgb") && colorPalette.indexOf(currColor) < 0) {
       colorPalette.push(currColor);
       setColorPalette(colorPalette.slice());
     }
@@ -1334,6 +1334,13 @@ var ColorPicker = function ColorPicker(props) {
       return parseInt(x);
     });
     colorArr.push(255);
+
+    if (colorArr[0] > 10 && color[1] > 200) {
+      colorPickedText.style.color = "#000";
+    } else {
+      colorPickedText.style.color = "#fff";
+    }
+
     props.brush.changeBrushColor(colorArr);
   }
 
@@ -2513,7 +2520,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         id: "brushSection"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement(_ColorPicker_js__WEBPACK_IMPORTED_MODULE_16__.ColorPicker, {
         brush: this.state.brushInstance
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", {
         id: "brushesOption",
         onMouseOver: function onMouseOver(evt) {
           evt.target.style.color = "#99b5d1";
@@ -2527,7 +2534,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement(_BrushDashboard_js__WEBPACK_IMPORTED_MODULE_15__.BrushDashboard, {
         brushManager: this.state.brushInstance
-      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", {
         id: "filtersOption",
         onMouseOver: function onMouseOver(evt) {
           evt.target.style.color = "#99b5d1";
@@ -2841,9 +2848,20 @@ var ColorPickerBrush = /*#__PURE__*/function (_BrushTemplate) {
         var frame = this.brushManager.animationProject.getCurrFrame();
         var currLayer = frame.getCurrCanvas();
         var colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
-        var color = 'rgba(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ',' + colorData[3] + ')'; // TODO: set the brush color to this color
+        var color = 'rgba(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ',' + colorData[3] + ')'; // set the brush color to this color
+        // yeah, this is pretty hacky - dunno of a better way though at the moment :)
 
-        console.log(colorData);
+        var colorPickedText = document.getElementById('colorPicked');
+
+        if (colorData[0] > 10 && colorData[1] > 200) {
+          colorPickedText.style.color = "#000";
+        } else {
+          colorPickedText.style.color = "#fff";
+        }
+
+        colorPickedText.textContent = color;
+        colorPickedText.style.backgroundColor = colorPickedText.textContent;
+        this.brushManager.changeBrushColor(colorData);
       }
     } // equip the brush and set up the current canvas for using the brush
 

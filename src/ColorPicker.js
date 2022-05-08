@@ -54,7 +54,7 @@ export const ColorPicker = (props) => {
     function saveColorToPalette(){
         const colorPickedText = document.getElementById('colorPicked');
         const currColor = colorPickedText.textContent;
-        if(currColor && colorPalette.indexOf(currColor) < 0){
+        if(currColor && currColor.includes("rgb") && colorPalette.indexOf(currColor) < 0){
             colorPalette.push(currColor);
             setColorPalette(colorPalette.slice());
         }
@@ -70,6 +70,13 @@ export const ColorPicker = (props) => {
         // need to split 'rgb(x,y,z)' to [x, y, z] first
         const colorArr = color.split("rgb(")[1].split(", ").map(x => parseInt(x));
         colorArr.push(255);
+        
+        if(colorArr[0] > 10 && color[1] > 200){
+            colorPickedText.style.color = "#000";
+        }else{
+            colorPickedText.style.color = "#fff";
+        }
+            
         props.brush.changeBrushColor(colorArr);
     }
 

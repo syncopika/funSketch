@@ -23,7 +23,7 @@ const BrushDashboard = (props) => {
     // use a hook to be able to keep track of selected brush
     const [selectedBrush, setSelectedBrush] = useState("default");
     
-    let brushSize = brushManager ? `${brushManager.currSize}` : "2";
+    const brushSize = brushManager ? `${brushManager.currSize}` : "2";
     const [currBrushSize, setBrushSize] = useState(brushSize);
     
     function equipBrush(brushManager, brushName){

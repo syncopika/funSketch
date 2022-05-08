@@ -28,8 +28,18 @@ class ColorPickerBrush extends BrushTemplate {
             const colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
             const color = 'rgba(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ',' + colorData[3] + ')';
 
-            // TODO: set the brush color to this color
-            console.log(colorData);
+            // set the brush color to this color
+            // yeah, this is pretty hacky - dunno of a better way though at the moment :)
+            const colorPickedText = document.getElementById('colorPicked');
+            if(colorData[0] > 10 && colorData[1] > 200){
+                colorPickedText.style.color = "#000";
+            }else{
+                colorPickedText.style.color = "#fff";
+            }
+            
+            colorPickedText.textContent = color;
+            colorPickedText.style.backgroundColor = colorPickedText.textContent;
+            this.brushManager.changeBrushColor(colorData);
         }
     }
     

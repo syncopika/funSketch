@@ -28,10 +28,10 @@ class ChannelShift extends FilterTemplate {
         
         const data = pixels.data;
         const copy = new Uint8ClampedArray(data);
+        const rand = Math.floor(Math.random()*3);
         
         for(let row = 0; row < height; row++){
             for(let col = 0; col < width; col++){
-                const rand = Math.floor(Math.random()*3);
                 const offset = 7;
                 if((offset + col) < width){
                     const newR = copy[4*width*row + 4*(col+offset)];

@@ -4865,10 +4865,10 @@ var ChannelShift = /*#__PURE__*/function (_FilterTemplate) {
       var height = pixels.height;
       var data = pixels.data;
       var copy = new Uint8ClampedArray(data);
+      var rand = Math.floor(Math.random() * 3);
 
       for (var row = 0; row < height; row++) {
         for (var col = 0; col < width; col++) {
-          var rand = Math.floor(Math.random() * 3);
           var offset = 7;
 
           if (offset + col < width) {

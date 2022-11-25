@@ -1757,7 +1757,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _FilterDashboard_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./FilterDashboard.js */ "./src/FilterDashboard.js");
 /* harmony import */ var _BrushDashboard_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./BrushDashboard.js */ "./src/BrushDashboard.js");
 /* harmony import */ var _ColorPicker_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./ColorPicker.js */ "./src/ColorPicker.js");
-/* harmony import */ var _styles_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../styles/presentationWrapper.css */ "./styles/presentationWrapper.css");
+/* harmony import */ var _utils_PasteImageManager_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./utils/PasteImageManager.js */ "./src/utils/PasteImageManager.js");
+/* harmony import */ var _styles_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../styles/presentationWrapper.css */ "./styles/presentationWrapper.css");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -1771,6 +1772,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default()(this, result); }; }
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
 
 
 
@@ -1815,7 +1817,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default()(this, PresentationWrapper);
 
-    _this = _super.call(this, props);
+    _this = _super.call(this, props); // TODO: do some of these things really need to be part of state? maybe they can be broken out like pasteImageManager
+
     _this.state = {
       'animationProject': null,
       'brushInstance': null,
@@ -1829,6 +1832,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       // keep track of where fps should change - not 0-indexed!
       'changingLayerOrder': false
     };
+    _this.pasteImageManager = null;
     _this.timelineFramesSet = new Set(); // keep track of what frames have been added to timeline so we don't duplicate - 0-indexed!
 
     return _this;
@@ -1848,11 +1852,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
     key: "_timelineMarkerDelete",
     value: function _timelineMarkerDelete(frameNumToDelete) {
       var currentMarkers = this.state.timelineMarkers;
-
-      if (!delete currentMarkers[frameNumToDelete]) {
-        console.log("couldn't delete frame marker for frame: " + frameNumToDelete);
-      }
-
       this.setState({
         'timelineMarkers': currentMarkers
       });
@@ -1930,6 +1929,8 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
 
           case 32:
             //space bar
+            evt.preventDefault();
+
             if (toolbar.layerMode) {
               toolbar.addNewLayer();
             } else {
@@ -1957,8 +1958,6 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
           default:
             break;
         }
-
-        evt.preventDefault();
 
         if (updateStateFlag) {
           self.setState({
@@ -2266,6 +2265,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       var newFilters = new _utils_FilterManager_js__WEBPACK_IMPORTED_MODULE_11__.FilterManager(animationProj, newBrush);
       var newToolbar = new _utils_Toolbar_js__WEBPACK_IMPORTED_MODULE_9__.Toolbar(newBrush, animationProj);
       var animationController = new _utils_AnimationController_js__WEBPACK_IMPORTED_MODULE_8__.AnimationController(animationProj, newToolbar);
+      this.pasteImageManager = new _utils_PasteImageManager_js__WEBPACK_IMPORTED_MODULE_17__.PasteImageManager(animationProj);
       this.setState({
         'animationProject': animationProj,
         'brushInstance': newBrush,
@@ -2287,7 +2287,10 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         _this7.state.brushInstance.updateInitialCanvasDimensions(canvas.width, canvas.height); // start with the default brush
 
 
-        _this7.state.brushInstance.brushesMap["default"].attachBrush();
+        _this7.state.brushInstance.brushesMap["default"].attachBrush(); // allow pasting images via ctrl+v
+
+
+        document.addEventListener('paste', _this7.pasteImageManager.handlePasteEvent.bind(_this7.pasteImageManager));
       });
     }
   }, {
@@ -2358,9 +2361,11 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "instructions"
       }, "Use ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Space"), " to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, "Use the ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Left"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Right"), " keys to move to the previous or next layer, and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "A"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "D"), " keys to move between frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+      }, "Use the ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2190"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2192"), " keys to move to the previous or next layer, and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "A"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "D"), " to move between frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames.")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
+      }, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+        className: "instructions"
+      }, "You can also paste in an image with ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Ctrl"), " + ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "V"), ". After pasting, you can move it by clicking anywhere on the canvas containing the pasted image (denoted by dotted lines) and dragging. Rotate it by pressing ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "R"), " and using the mouse wheel. Resizing it by pressing ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "S"), " and moving the mouse around over the canvas containing the pasted image. Remove the pasted image with ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Esc"), ". Apply the image or abort by clicking anywhere outside the canvas with the pasted image.")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
         id: "frameLayerSection",
         className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
@@ -2443,9 +2448,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         href: "./experiments/floodfillExperiment/floodfillExperiment.html"
       }, "floodfill with web workers")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("a", {
         href: "./experiments/selectToolExperiment/selectTool.html"
-      }, "selection tool")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("a", {
-        href: "./experiments/pasteToolExperiment/pasteTest.html"
-      }, "image paste tool")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
+      }, "selection tool")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
         id: "animControlSection",
         className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
@@ -7613,6 +7616,374 @@ var FilterManager = /*#__PURE__*/function () {
 }();
 
 
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
+/***/ "./src/utils/PasteImageManager.js":
+/*!****************************************!*\
+  !*** ./src/utils/PasteImageManager.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "PasteImageManager": () => (/* binding */ PasteImageManager)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+var PasteImageManager = /*#__PURE__*/function () {
+  function PasteImageManager(animationProject) {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, PasteImageManager);
+
+    this.isMovingPasteCanvas = false;
+    this.lastOffsetHeight = 0;
+    this.lastOffsetWidth = 0;
+    this.initialOffsetX = 0;
+    this.initialOffsetY = 0;
+    this.initialCanvasHeight = 0;
+    this.initialCanvasWidth = 0;
+    this.resizingPasteCanvas = false;
+    this.lastX = null;
+    this.lastY = null;
+    this.currPasteCanvasRotation = 0;
+    this.rotatingPasteCanvas = false;
+    this.originalPasteImage = null;
+    this.animationProject = animationProject;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(PasteImageManager, [{
+    key: "addPasteCanvas",
+    value: function addPasteCanvas(imgData, width, height) {
+      var displayArea = this.animationProject.getCurrFrame().getCurrCanvas().parentNode;
+      var canvasElement = document.createElement("canvas");
+      displayArea.appendChild(canvasElement);
+      canvasElement.className = "pasteCanvas";
+      canvasElement.style.position = "absolute";
+      canvasElement.style.border = "1px #000 dotted";
+      canvasElement.style.zIndex = 10;
+      canvasElement.style.top = 0;
+      canvasElement.style.left = 0; // https://stackoverflow.com/questions/50315340/javascript-rotate-canvas-image-corners-are-clipped-off
+
+      var diagLen = Math.sqrt(imgData.width * imgData.width + imgData.height * imgData.height);
+      canvasElement.width = diagLen;
+      canvasElement.height = diagLen;
+      this.initialCanvasHeight = diagLen;
+      this.initialCanvasWidth = diagLen;
+      var ctx = canvasElement.getContext('2d');
+      ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+      ctx.fillRect(0, 0, canvasElement.width, canvasElement.height); // draw image in center of canvas
+
+      ctx.setTransform(1, 0, 0, 1, canvasElement.width / 2, canvasElement.height / 2);
+      ctx.drawImage(imgData, -imgData.width / 2, -imgData.height / 2);
+      return canvasElement;
+    }
+  }, {
+    key: "allowScaleAndRotate",
+    value: function allowScaleAndRotate(evt) {
+      var pasteCanvas = document.querySelector('.pasteCanvas');
+
+      if (pasteCanvas) {
+        if (evt.keyCode === 83) {
+          // s key
+          this.resizingPasteCanvas = !this.resizingPasteCanvas;
+        } else if (evt.keyCode === 82) {
+          // r key
+          this.rotatingPasteCanvas = !this.rotatingPasteCanvas;
+        } else if (evt.keyCode === 27) {
+          // esc key
+          // cancel
+          pasteCanvas.parentNode.removeChild(pasteCanvas);
+          this.resizingPasteCanvas = false;
+          this.rotatingPasteCanvas = false;
+          this.currPasteCanvasRotation = 0;
+        }
+      }
+    }
+  }, {
+    key: "redrawImage",
+    value: function redrawImage(newRotation, sHeight, sWidth, dx, dy, dHeight, dWidth, pasteCanvas, ctx) {
+      // translate the (0,0) coord (where the top-left of the image will be in the canvas)
+      if (newRotation === 0) {
+        ctx.translate(0, 0);
+      } else if (newRotation === 90 || newRotation === -270) {
+        ctx.translate(pasteCanvas.width, 0);
+      } else if (newRotation === 180 || newRotation === -180) {
+        ctx.translate(pasteCanvas.width, pasteCanvas.height);
+      } else if (newRotation === 270 || newRotation === -90) {
+        ctx.translate(0, pasteCanvas.height);
+      }
+
+      ctx.setTransform(1, 0, 0, 1, pasteCanvas.width / 2, pasteCanvas.height / 2);
+      ctx.rotate(newRotation * Math.PI / 180);
+      ctx.drawImage(this.originalPasteImage, 0, 0, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    }
+  }, {
+    key: "addPasteCanvasEventListeners",
+    value: function addPasteCanvasEventListeners(pasteCanvas, initialCanvasWidth, initialCanvasHeight) {
+      var _this = this;
+
+      // apply some styling to indicate we're pasting an image
+      pasteCanvas.parentNode.style.border = '#000 2px solid'; // add click event for outside the canvas to finalize image paste
+
+      function finalizeImagePaste(evt) {
+        if (evt.target.classList.contains("pasteCanvas")) {
+          // user has to click outside the canvas to finalize the image paste
+          return;
+        }
+
+        this.isMovingPasteCanvas = false;
+        var mainCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
+        var mainCtx = mainCanvas.getContext('2d');
+        document.body.removeEventListener("pointerup", finalizeImagePaste);
+        mainCanvas.parentNode.style.border = 'none';
+
+        if (pasteCanvas.parentNode === null) {
+          // if pasteCanvas no longer in the DOM
+          return;
+        } // place the image data from pasteCanvas onto the main canvas
+        // figure out how much of the pasted image is visible and can be placed on the main canvas
+
+
+        var pasteLeft = parseInt(pasteCanvas.style.left);
+        var pasteTop = parseInt(pasteCanvas.style.top);
+        var pasteImgRowStart = 0;
+        var pasteImgRowEnd = pasteCanvas.height;
+        var pasteImgColStart = 0;
+        var pasteImgColEnd = pasteCanvas.width;
+        var width;
+
+        if (pasteLeft < 0) {
+          // image goes past the left side of the main canvas
+          width = pasteCanvas.width + pasteLeft;
+          pasteImgColStart = Math.abs(pasteLeft);
+        } else if (pasteLeft + pasteCanvas.width <= mainCanvas.width) {
+          // if pasted image falls within the mainCanvas completely width-wise
+          width = pasteCanvas.width;
+        } else {
+          // image goes past the right side of the main canvas
+          width = mainCanvas.width - pasteLeft;
+          pasteImgColEnd = width;
+        }
+
+        var height;
+
+        if (pasteTop < 0) {
+          height = pasteCanvas.height + pasteTop;
+          pasteImgRowStart = Math.abs(pasteTop);
+        } else if (pasteTop + pasteCanvas.height <= mainCanvas.height) {
+          height = pasteCanvas.height;
+        } else {
+          height = mainCanvas.height - pasteTop;
+          pasteImgRowEnd = height;
+        } // isolate just the section of image data that should be pasted
+
+
+        var pasteData = pasteCanvas.getContext('2d').getImageData(0, 0, pasteCanvas.width, pasteCanvas.height).data;
+        var pasteImgSectionData = [];
+
+        for (var row = pasteImgRowStart * 4 * pasteCanvas.width; row < pasteImgRowEnd * 4 * pasteCanvas.width; row += 4 * pasteCanvas.width) {
+          for (var col = 4 * pasteImgColStart; col < 4 * pasteImgColEnd; col += 4) {
+            pasteImgSectionData.push(pasteData[row + col]);
+            pasteImgSectionData.push(pasteData[row + col + 1]);
+            pasteImgSectionData.push(pasteData[row + col + 2]);
+            pasteImgSectionData.push(pasteData[row + col + 3]);
+          }
+        } // the location on the main canvas where to start pasting the image
+
+
+        var locX = pasteLeft < 0 ? 0 : pasteLeft;
+        var locY = pasteTop < 0 ? 0 : pasteTop;
+        var imgData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+        var rowStartMain = mainCanvas.width * 4 * locY;
+        var rowEndMain = mainCanvas.width * 4 * (locY + height);
+        var colStart = locX * 4;
+        var colEnd = 4 * (locX + width);
+        var pasteImgDataIdx = 0;
+
+        for (var i = rowStartMain; i < rowEndMain; i += mainCanvas.width * 4) {
+          for (var j = colStart; j < colEnd; j += 4) {
+            var r = pasteImgSectionData[pasteImgDataIdx++];
+            var g = pasteImgSectionData[pasteImgDataIdx++];
+            var b = pasteImgSectionData[pasteImgDataIdx++];
+            var a = pasteImgSectionData[pasteImgDataIdx++]; // avoid adding transparency as black
+
+            if (r === 0 && g === 0 && b === 0 && a === 0) {
+              continue;
+            }
+
+            imgData.data[i + j] = r;
+            imgData.data[i + j + 1] = g;
+            imgData.data[i + j + 2] = b;
+            imgData.data[i + j + 3] = a;
+          }
+        }
+
+        mainCtx.putImageData(imgData, 0, 0);
+        pasteCanvas.parentNode.removeChild(pasteCanvas);
+      }
+
+      pasteCanvas.addEventListener('wheel', function (evt) {
+        if (!_this.rotatingPasteCanvas) return;
+        evt.preventDefault();
+        var newRotation = _this.currPasteCanvasRotation;
+
+        if (evt.deltaY > 0) {
+          // rotate left
+          newRotation -= 1;
+        } else {
+          newRotation += 1;
+        }
+
+        newRotation %= 360; // https://stackoverflow.com/questions/17040360/javascript-function-to-rotate-a-base-64-image-by-x-degrees-and-return-new-base64
+
+        var ctx = pasteCanvas.getContext("2d"); // https://stackoverflow.com/questions/17411991/html5-canvas-rotate-image
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+        ctx.clearRect(0, 0, pasteCanvas.width, pasteCanvas.height);
+        var dHeight = pasteCanvas.height / initialCanvasHeight * _this.originalPasteImage.height;
+        var dWidth = pasteCanvas.width / initialCanvasWidth * _this.originalPasteImage.width;
+        var dx = -dWidth / 2;
+        var dy = -dHeight / 2;
+        ctx.setTransform(1, 0, 0, 1, pasteCanvas.width / 2, pasteCanvas.height / 2);
+        ctx.rotate(newRotation * Math.PI / 180);
+        ctx.drawImage(_this.originalPasteImage, 0, 0, _this.originalPasteImage.width, _this.originalPasteImage.height, dx, dy, dWidth, dHeight);
+        _this.currPasteCanvasRotation = newRotation;
+      });
+      pasteCanvas.addEventListener('pointerdown', function (evt) {
+        _this.isMovingPasteCanvas = true;
+        _this.initialOffsetX = evt.offsetX;
+        _this.initialOffsetY = evt.offsetY;
+      });
+      pasteCanvas.addEventListener('pointermove', function (evt) {
+        if (_this.isMovingPasteCanvas) {
+          var currX = evt.offsetX;
+          var currY = evt.offsetY;
+          var offsetY = Math.abs(currY - _this.initialOffsetY);
+          var offsetX = Math.abs(currX - _this.initialOffsetX);
+
+          if (currY < _this.lastOffsetHeight) {
+            pasteCanvas.style.top = parseInt(pasteCanvas.style.top) - offsetY + "px";
+          } else {
+            pasteCanvas.style.top = parseInt(pasteCanvas.style.top) + offsetY + "px";
+          }
+
+          _this.lastOffsetHeight = currY;
+
+          if (currX < _this.lastOffsetWidth) {
+            pasteCanvas.style.left = parseInt(pasteCanvas.style.left) - offsetX + "px";
+          } else {
+            pasteCanvas.style.left = parseInt(pasteCanvas.style.left) + offsetX + "px";
+          }
+
+          _this.lastOffsetWidth = currX;
+        } else if (_this.resizingPasteCanvas) {
+          // https://stackoverflow.com/questions/24429830/html5-canvas-how-to-change-putimagedata-scale
+          // https://stackoverflow.com/questions/23104582/scaling-an-image-to-fit-on-canvas
+          var ctx = pasteCanvas.getContext('2d');
+          var x = evt.pageX;
+          var y = evt.pageY;
+          var deltaX, deltaY;
+
+          if (_this.lastX === null || x === _this.lastX) {
+            deltaX = 0;
+          } else if (x < _this.lastX) {
+            deltaX = -1;
+          } else {
+            deltaX = 1;
+          }
+
+          if (_this.lastY === null || y === _this.lastY) {
+            deltaY = 0;
+          } else if (y < _this.lastY) {
+            deltaY = -1;
+          } else {
+            deltaY = 1;
+          }
+
+          _this.lastX = x;
+          _this.lastY = y; // adjust the canvas dimensions,
+          // then draw back the original image
+
+          pasteCanvas.width += deltaX * 2;
+          pasteCanvas.height += deltaY * 2;
+          var sHeight = _this.originalPasteImage.height;
+          var sWidth = _this.originalPasteImage.width;
+          var dHeight = pasteCanvas.height / _this.initialCanvasHeight * _this.originalPasteImage.height;
+          var dWidth = pasteCanvas.width / _this.initialCanvasWidth * _this.originalPasteImage.width;
+          var dx = -dWidth / 2;
+          var dy = -dHeight / 2;
+
+          _this.redrawImage(_this.currPasteCanvasRotation, sHeight, sWidth, dx, dy, dHeight, dWidth, pasteCanvas, ctx);
+        }
+      });
+      pasteCanvas.addEventListener('pointerup', function () {
+        _this.isMovingPasteCanvas = false;
+        if (_this.resizingPasteCanvas) _this.resizingPasteCanvas = false;
+      });
+      document.body.addEventListener("pointerup", finalizeImagePaste.bind(this));
+      document.addEventListener('keydown', this.allowScaleAndRotate.bind(this));
+    }
+  }, {
+    key: "handlePasteEvent",
+    value: function handlePasteEvent(evt) {
+      var _this2 = this;
+
+      var items = (evt.clipboardData || evt.originalEvent.clipboardData).items; // items is an object of type DataTransferItemList
+
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") > -1) {
+          var _ret = function () {
+            var file = items[i]; // items[i] is a DataTransferItem type object
+
+            var blob = file.getAsFile();
+            var url = URL.createObjectURL(blob); // place the image on a new canvas (so we can allow moving it around for placement)
+
+            var img = new Image();
+
+            img.onload = function () {
+              var pasteCanvas = _this2.addPasteCanvas(img, img.width, img.height);
+
+              _this2.addPasteCanvasEventListeners(pasteCanvas, pasteCanvas.width, pasteCanvas.height);
+
+              _this2.originalPasteImage = img;
+            };
+
+            img.src = url;
+            return "break";
+          }();
+
+          if (_ret === "break") break;
+        }
+      }
+    }
+  }]);
+
+  return PasteImageManager;
+}();
 
 const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
 const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(

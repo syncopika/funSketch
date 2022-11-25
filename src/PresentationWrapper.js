@@ -9,6 +9,7 @@ import { LayerOrder } from './LayerOrder.js';
 import { FilterDashboard } from './FilterDashboard.js';
 import { BrushDashboard } from './BrushDashboard.js';
 import { ColorPicker } from './ColorPicker.js';
+import { PasteImageManager } from './utils/PasteImageManager.js';
 
 import "../styles/presentationWrapper.css";
 
@@ -30,6 +31,8 @@ const FrameCounterDisplay = (props) => {
 class PresentationWrapper extends React.Component {
     constructor(props){
         super(props);
+        
+        // TODO: do some of these things really need to be part of state? maybe they can be broken out like pasteImageManager
         this.state = {
             'animationProject': null,
             'brushInstance': null,
@@ -42,6 +45,8 @@ class PresentationWrapper extends React.Component {
             'timelineMarkers': {}, // keep track of where fps should change - not 0-indexed!
             'changingLayerOrder': false
         };
+        
+        this.pasteImageManager = null;
         
         this.timelineFramesSet = new Set(); // keep track of what frames have been added to timeline so we don't duplicate - 0-indexed!
     }
@@ -57,10 +62,6 @@ class PresentationWrapper extends React.Component {
     
     _timelineMarkerDelete(frameNumToDelete){
         let currentMarkers = this.state.timelineMarkers;
-        
-        if(!delete currentMarkers[frameNumToDelete]){
-            console.log("couldn't delete frame marker for frame: " + frameNumToDelete);
-        }
         
         this.setState({
             'timelineMarkers': currentMarkers
@@ -126,6 +127,7 @@ class PresentationWrapper extends React.Component {
                     }
                     break;
                 case 32: //space bar
+                    evt.preventDefault();
                     if(toolbar.layerMode){
                         toolbar.addNewLayer();
                     }else{
@@ -147,7 +149,6 @@ class PresentationWrapper extends React.Component {
                 default:
                     break;
             }
-            evt.preventDefault();
             if(updateStateFlag){
                 self.setState({
                     'currentFrame': animationProj.getCurrFrameIndex() + 1,
@@ -260,7 +261,7 @@ class PresentationWrapper extends React.Component {
         });
 
         document.getElementById('generateGif').addEventListener('click', () => {
-            let frameSpeedMarkers = {};
+            const frameSpeedMarkers = {};
             
             // if there's at least one timeline marker, we need to apply frame speed for each frame based on the marker
             // the initial speed will be whatever speed is currently selected (if no marker on the first frame)
@@ -436,6 +437,8 @@ class PresentationWrapper extends React.Component {
         const newToolbar = new Toolbar(newBrush, animationProj);
         const animationController = new AnimationController(animationProj, newToolbar);
         
+        this.pasteImageManager = new PasteImageManager(animationProj);
+        
         this.setState({
             'animationProject': animationProj,
             'brushInstance': newBrush,
@@ -454,6 +457,9 @@ class PresentationWrapper extends React.Component {
             
             // start with the default brush
             this.state.brushInstance.brushesMap["default"].attachBrush();
+            
+            // allow pasting images via ctrl+v
+            document.addEventListener('paste', this.pasteImageManager.handlePasteEvent.bind(this.pasteImageManager));
         });
     }
     
@@ -497,10 +503,13 @@ class PresentationWrapper extends React.Component {
                             Use <kbd>Space</kbd> to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar). 
                         </p>
                         <p className='instructions'> 
-                            Use the <kbd>Left</kbd> and <kbd>Right</kbd> keys to move to the previous or next layer, and <kbd>A</kbd> and <kbd>D</kbd> keys to move between frames. 
+                            Use the <kbd>←</kbd> and <kbd>→</kbd> keys to move to the previous or next layer, and <kbd>A</kbd> and <kbd>D</kbd> to move between frames. 
                         </p>
                         <p className='instructions'> 
                             After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. 
+                        </p>
+                        <p className='instructions'>
+                            You can also paste in an image with <kbd>Ctrl</kbd> + <kbd>V</kbd>. After pasting, you can move it by clicking anywhere on the canvas containing the pasted image (denoted by dotted lines) and dragging. Rotate it by pressing <kbd>R</kbd> and using the mouse wheel. Resizing it by pressing <kbd>S</kbd> and moving the mouse around over the canvas containing the pasted image. Remove the pasted image with <kbd>Esc</kbd>. Apply the image or abort by clicking anywhere outside the canvas with the pasted image.
                         </p>
                     </section>
                 
@@ -582,7 +591,6 @@ class PresentationWrapper extends React.Component {
                             <h4>check out some experiments for new feature ideas:</h4>
                             <p><a href="./experiments/floodfillExperiment/floodfillExperiment.html">floodfill with web workers</a></p>
                             <p><a href="./experiments/selectToolExperiment/selectTool.html">selection tool</a></p>
-                            <p><a href="./experiments/pasteToolExperiment/pasteTest.html">image paste tool</a></p>
                         </div>
                     </section>
                     

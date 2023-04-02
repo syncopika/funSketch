@@ -21,8 +21,8 @@ class Toolbar {
     
     nextLayer(){
         this.brush.resetBrush();
-        let frame = this.animationProj.getCurrFrame();
-        let result = frame.nextLayer();
+        const frame = this.animationProj.getCurrFrame();
+        const result = frame.nextLayer();
         // TODO: can we figure out a better way to handle brushes?
         this.brush.applyBrush(); // apply brush whether or not layer changed because it was reset initially
         return result;
@@ -30,8 +30,8 @@ class Toolbar {
     
     prevLayer(){
         this.brush.resetBrush();
-        let frame = this.animationProj.getCurrFrame();
-        let result = frame.prevLayer();
+        const frame = this.animationProj.getCurrFrame();
+        const result = frame.prevLayer();
         this.brush.applyBrush();
         return result;
     }
@@ -43,8 +43,8 @@ class Toolbar {
     
     nextFrame(){
         this.brush.resetBrush();
-        let curr = this.animationProj.getCurrFrame();
-        let next = this.animationProj.nextFrame();
+        const curr = this.animationProj.getCurrFrame();
+        const next = this.animationProj.nextFrame();
         this.brush.applyBrush();
         if(next !== null){
             curr.hide();
@@ -56,8 +56,8 @@ class Toolbar {
     
     prevFrame(){
         this.brush.resetBrush();
-        let curr = this.animationProj.getCurrFrame();
-        let prev = this.animationProj.prevFrame();
+        const curr = this.animationProj.getCurrFrame();
+        const prev = this.animationProj.prevFrame();
         this.brush.applyBrush();
         if(prev !== null){
             curr.hide();
@@ -69,8 +69,8 @@ class Toolbar {
     
     goToFrame(frameIndex){
         this.brush.resetBrush();
-        let curr = this.animationProj.getCurrFrame();
-        let destFrame = this.animationProj.goToFrame(frameIndex);
+        const curr = this.animationProj.getCurrFrame();
+        const destFrame = this.animationProj.goToFrame(frameIndex);
         this.brush.applyBrush();
         if(destFrame !== null){
             curr.hide();
@@ -81,16 +81,16 @@ class Toolbar {
     }
     
     addNewLayer(){
-        let canvas = this.animationProj.getCurrFrame();
+        const canvas = this.animationProj.getCurrFrame();
         canvas.setupNewLayer();
     }
     
     insertNewLayer(){
-        let canvas = this.animationProj.getCurrFrame();
+        const canvas = this.animationProj.getCurrFrame();
         // add a new canvas first 
         canvas.setupNewLayer();
         // then move it after the current canvas 
-        let newestCanvas = canvas.canvasList.pop();
+        const newestCanvas = canvas.canvasList.pop();
         canvas.canvasList.splice(canvas.currentIndex + 1, 0, newestCanvas);
         return newestCanvas;
     }
@@ -110,8 +110,8 @@ class Toolbar {
     ***/
     duplicateLayer(elementId){
         document.getElementById(elementId).addEventListener('click', () => {
-            let currentCanvas = this.animationProj.getCurrFrame().currentCanvas;
-            let newLayer = this.insertNewLayer();
+            const currentCanvas = this.animationProj.getCurrFrame().currentCanvas;
+            const newLayer = this.insertNewLayer();
             newLayer.getContext('2d').drawImage(currentCanvas, 0, 0);
         });
     }
@@ -137,7 +137,7 @@ class Toolbar {
                 this.brush.applyBrush();
             }else{
                 // otherwise, just blank the canvas 
-                let context = oldLayer.getContext("2d");
+                const context = oldLayer.getContext("2d");
                 context.clearRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
                 context.fillStyle = "#fff";
                 context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
@@ -170,7 +170,7 @@ class Toolbar {
     ***/
     deleteCurrentFrameButton(elementId, setStateFunction){
         document.getElementById(elementId).addEventListener('click', () => {
-            let currFrameIdx = this.animationProj.getCurrFrameIndex();
+            const currFrameIdx = this.animationProj.getCurrFrameIndex();
             
             // move to another frame first before deleting
             if(currFrameIdx - 1 >= 0){
@@ -342,7 +342,7 @@ class Toolbar {
                     
                     context.drawImage(img, 0, 0, width, height);
                     
-                    canvas.addSnapshot(currentCanvas.getContext("2d").getImageData(0, 0, width, height));
+                    canvas.addSnapshot(context.getImageData(0, 0, width, height));
                 };
                 //after reader has loaded file, put the data in the image object.
                 reader.onloadend = function(){ 
@@ -359,10 +359,10 @@ class Toolbar {
     ***/
     resetImage(){
         if(this.recentImage){
-            let canvas = this.animationProj.getCurrFrame();
-            let context = canvas.currentCanvas.getContext("2d");
-            let height = canvas.currentCanvas.getAttribute("height");
-            let width = canvas.currentCanvas.getAttribute("width");
+            const canvas = this.animationProj.getCurrFrame();
+            const context = canvas.currentCanvas.getContext("2d");
+            const height = canvas.currentCanvas.getAttribute("height");
+            const width = canvas.currentCanvas.getAttribute("width");
             context.drawImage(this.recentImage, 0, 0, width, height);
         }
     }
@@ -373,12 +373,12 @@ class Toolbar {
     downloadLayer(elementId){
         document.getElementById(elementId).addEventListener('click', () => {
             // get image data from current canvas as blob
-            let canvas = this.animationProj.getCurrFrame();
-            let data = document.getElementById(canvas.currentCanvas.id).toBlob((blob) => {
-                let url = URL.createObjectURL(blob);
-                let link = document.createElement('a');
+            const canvas = this.animationProj.getCurrFrame();
+            const data = document.getElementById(canvas.currentCanvas.id).toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
                 link.href = url;
-                let name = prompt("please enter a name for the file");
+                const name = prompt("please enter a name for the file");
                 if(name === null) {
                     return;
                 }else{
@@ -395,13 +395,13 @@ class Toolbar {
     ***/
     downloadFrame(elementId){
         document.getElementById(elementId).addEventListener('click', () => {
-            let frame = this.animationProj.getCurrFrame();
-            let mergedLayers = this.mergeFrameLayers(frame);
-            let data = mergedLayers.toBlob((blob) => {
-                let url = URL.createObjectURL(blob);
-                let link = document.createElement('a');
+            const frame = this.animationProj.getCurrFrame();
+            const mergedLayers = this.mergeFrameLayers(frame);
+            const data = mergedLayers.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
                 link.href = url;
-                let name = prompt("please enter a name for the file");
+                const name = prompt("please enter a name for the file");
                 if(name === null) {
                     return;
                 }else{
@@ -481,9 +481,10 @@ class Toolbar {
 
         for(let j = 0; j < frame.canvasList.length; j++){
             const layer = frame.canvasList[j];
+            const layerCtx = layer.getContext("2d");
             
             // this assumes that all layers within a frame share the same dimensions
-            const currImageLayer = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height);
+            const currImageLayer = layerCtx.getImageData(0, 0, frame.width, frame.height);
             const imageData = currImageLayer.data;
             
             for(let k = 0; k <= imageData.length - 4; k += 4){
@@ -525,19 +526,19 @@ class Toolbar {
         if(elementId){
             document.getElementById(elementId).textContent = "now loading...";
         }
-        let gif = new GIF({
+        const gif = new GIF({
             workers: 2,
             quality: 10
         });
         // add frames + take into account frame rate given by timelineMarkers
         for(let i = 0; i < this.animationProj.frameList.length; i++){
-            let tempCanvas = this.mergeFrameLayers(this.animationProj.frameList[i]);
-            let frameTime = timelineMarkers[i+1] ? timelineMarkers[i+1] : this.timePerFrame;
+            const tempCanvas = this.mergeFrameLayers(this.animationProj.frameList[i]);
+            const frameTime = timelineMarkers[i+1] ? timelineMarkers[i+1] : this.timePerFrame;
             gif.addFrame(tempCanvas, { delay: frameTime });
         }
         gif.on('finished', function(blob){
             document.getElementById(elementId).textContent = "";
-            let newGif = URL.createObjectURL(blob);
+            const newGif = URL.createObjectURL(blob);
             window.open(newGif);
         });
         gif.render();

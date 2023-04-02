@@ -81,12 +81,11 @@ export const ColorPicker = (props) => {
     }
 
     useEffect(() => {
-        // construct the color wheel
         createColorWheel('colorPicker', 170, props.brush);
     }, [props.brush]);
     
     return (
-        <React.Fragment>
+        <>
             <div id="colorPicker"></div>
             <p id='colorPicked' style={colorPickedDisplayStyle}>pick a color!</p>
             <button onClick={saveColorToPalette}> save color to palette </button>
@@ -101,6 +100,6 @@ export const ColorPicker = (props) => {
                 })
             }
             </div>
-        </React.Fragment>
+        </>
     );
 }

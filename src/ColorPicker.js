@@ -110,7 +110,6 @@ export const ColorPicker = (props) => {
 
     useEffect(() => {
         createColorWheel('colorPicker', 170, props.brush);
-        //setupColorInput(props.brush);
     }, [props.brush]);
     
     return (

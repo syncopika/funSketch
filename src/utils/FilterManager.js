@@ -5,7 +5,7 @@ import { EdgeDetection } from '../filters/edgedetection.js';
 import { Invert } from '../filters/invert.js';
 import { Mosaic } from '../filters/mosaic.js';
 import { Blur } from '../filters/blur.js';
-import { SimpleBlur } from '../filters/simple_blur.js';
+//import { SimpleBlur } from '../filters/simple_blur.js';
 import { Outline } from '../filters/outline.js';
 import { Voronoi } from '../filters/voronoi.js';
 import { Fisheye } from '../filters/fisheye.js';
@@ -26,7 +26,7 @@ class FilterManager {
             "invert": new Invert(),
             "mosaic": new Mosaic(),
             "blur": new Blur(),
-            "simple_blur": new SimpleBlur(),
+            //"simple_blur": new SimpleBlur(),
             "outline": new Outline(),
             "voronoi": new Voronoi(),
             "fisheye": new Fisheye(),

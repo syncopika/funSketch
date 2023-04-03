@@ -672,8 +672,7 @@ class PresentationWrapper extends React.Component {
                     <hr />
                     
                     <h4 id="brushesOption" 
-                        onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
-                        onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+                        className="option"
                         onClick={this._showFiltersOrBrushes}
                     > brushes 
                     </h4>
@@ -685,8 +684,7 @@ class PresentationWrapper extends React.Component {
                     <hr />
 
                     <h4 id="filtersOption" 
-                        onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
-                        onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+                        className="option"
                         onClick={this._showFiltersOrBrushes}
                     > filters </h4>
                     

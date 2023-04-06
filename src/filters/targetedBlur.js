@@ -27,6 +27,7 @@ class TargetedBlur extends FilterTemplate {
         this.drawnLineCoords = [];
         this.isDrawing = false;
         this.alphaFlag = 0.1; // the value of alpha to use for the pixels of the offscreen canvas so we can differentiate between copied-over pixels
+        this.isActive = false; // so we can't run the filter multiple times on button click
     }
     
     setupTempCanvas(){
@@ -116,6 +117,7 @@ class TargetedBlur extends FilterTemplate {
             if(evt.code === "Escape"){
                 canvasElement.parentNode.removeChild(canvasElement);
                 document.removeEventListener('keydown', abortTargetBlur);
+                this.isActive = false;
             }
         }
         
@@ -258,7 +260,9 @@ class TargetedBlur extends FilterTemplate {
         }
         
         // put the blurred data onto the source canvas
-        currLayerCtx.putImageData(currCanvasData, 0, 0); 
+        currLayerCtx.putImageData(currCanvasData, 0, 0);
+        
+        this.isActive = false;
     }
     
     copyPixelsToOffscreenCanvas(offscreenCanvas){
@@ -281,16 +285,24 @@ class TargetedBlur extends FilterTemplate {
             let offscreenCol = 0;
             
             for(let col = selectedAreaInfo.topLeftX; col < selectedAreaInfo.topLeftX + selectedAreaInfo.width; col++){
-                if(col >= minX && col <= maxX){
-                    const r = currCanvasData[row*4*currCanvas.width + col*4];
-                    const g = currCanvasData[row*4*currCanvas.width + col*4 + 1];
-                    const b = currCanvasData[row*4*currCanvas.width + col*4 + 2];
-                    const a = currCanvasData[row*4*currCanvas.width + col*4 + 3];
+                const r = currCanvasData[row*4*currCanvas.width + col*4];
+                const g = currCanvasData[row*4*currCanvas.width + col*4 + 1];
+                const b = currCanvasData[row*4*currCanvas.width + col*4 + 2];
+                const a = currCanvasData[row*4*currCanvas.width + col*4 + 3];
                     
+                if(col >= minX && col <= maxX){
                     offscreenData.data[offscreenRow*4*offscreenCanvas.width + offscreenCol*4] = r;
                     offscreenData.data[offscreenRow*4*offscreenCanvas.width + offscreenCol*4 + 1] = g;
                     offscreenData.data[offscreenRow*4*offscreenCanvas.width + offscreenCol*4 + 2] = b;
                     offscreenData.data[offscreenRow*4*offscreenCanvas.width + offscreenCol*4 + 3] = a;                    
+                }else{
+                    // copy over pixels but change alpha so we know not to copy them back after blurring
+                    // since they're outside the selected area (but we need them when blurring)
+                    // if you don't use them, the default #fff pixels on the offscreen canvas get factored in the blur, which is not desirable
+                    offscreenData.data[offscreenRow*4*offscreenCanvas.width + offscreenCol*4] = r;
+                    offscreenData.data[offscreenRow*4*offscreenCanvas.width + offscreenCol*4 + 1] = g;
+                    offscreenData.data[offscreenRow*4*offscreenCanvas.width + offscreenCol*4 + 2] = b;
+                    offscreenData.data[offscreenRow*4*offscreenCanvas.width + offscreenCol*4 + 3] = Math.round(this.alphaFlag*255);
                 }
                 
                 offscreenCol++;
@@ -333,6 +345,12 @@ class TargetedBlur extends FilterTemplate {
     
     filter(pixels){
         // do targeted blur
+        if(this.isActive){
+            return pixels;
+        }
+        
+        this.isActive = true;
+        
         this.doTargetedBlur();
         
         return pixels;

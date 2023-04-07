@@ -19,7 +19,8 @@ class TargetedBlur extends FilterTemplate {
                 "min": 1,
                 "max": 15,
                 "step": 1,
-            }
+            },
+            "instructions": "Click on 'apply filter', which will add an overlay for you to draw on to specify the area to blur."
         }
         super(params);
         

@@ -61,11 +61,18 @@ const FilterDashboard = (props) => {
     if(filters[selectedFilter] && filters[selectedFilter].params){
         // need to set up sliders for each editable parameter for the selected filter
         for(let paramName in filters[selectedFilter].params){
-            let newSlider = constructSlider(paramName, filters[selectedFilter].params[paramName]);
-            parameterSliders.push(newSlider);
+            if(paramName !== "instructions"){
+                const newSlider = constructSlider(paramName, filters[selectedFilter].params[paramName]);
+                parameterSliders.push(newSlider);
+            }
         }
     }
-    
+
+    let filterInstructions = "";
+    if(filters[selectedFilter] && filters[selectedFilter].params && filters[selectedFilter].params.instructions){
+        filterInstructions = filters[selectedFilter].params.instructions;
+    }
+
     return (
         <div style={elementStyle}>
             <div style={
@@ -109,8 +116,7 @@ const FilterDashboard = (props) => {
                                             setSelectedFilter(filterName);
                                         }
                                     }
-                                    onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}}
-                                    onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+                                    className="option"
                                 >{filterName}</li>
                             })
                         }
@@ -127,6 +133,8 @@ const FilterDashboard = (props) => {
             }>
                 <hr />
                 
+                {filterInstructions && <p>{filterInstructions}</p>}
+
                 <div id='filterParameters'>
                     <ul style={{"margin": "0 auto", "padding": "0"}}>
                     {

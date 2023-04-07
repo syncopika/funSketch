@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
-import { makeColorWheel } from "./utils/ColorWheel.js";
+import { makeColorWheel, makeBrightnessSlider, updateColorWheel } from "./utils/ColorWheel.js";
 
 export const ColorPicker = (props) => {
     const [colorPalette, setColorPalette] = useState([]);
@@ -29,11 +29,11 @@ export const ColorPicker = (props) => {
         
         const colorWheel = makeColorWheel(elementId, size);
         
-        document.getElementById(colorWheel.id).addEventListener('mousedown', (evt) => {
+        document.getElementById(colorWheel.id).addEventListener('pointerdown', (evt) => {
             const x = evt.offsetX;
             const y = evt.offsetY;
             
-            const colorPicked = (document.getElementById(colorWheel.id).getContext('2d')).getImageData(x, y, 1, 1).data;
+            const colorPicked = colorWheel.getContext('2d').getImageData(x, y, 1, 1).data;
             
             //correct the font color if the color is really dark
             const colorPickedText = document.getElementById('colorPicked');
@@ -48,6 +48,34 @@ export const ColorPicker = (props) => {
             
             // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
             brush.changeBrushColor(colorPicked);
+        });
+        
+        const slider = makeBrightnessSlider(elementId, size);
+        setupBrightnessSlider(slider, colorWheel);
+    }
+    
+    /* try native input element of type "color"
+    function setupColorInput(brush){
+        if(!brush) return; // on the initial page render, brush will be null
+        
+        const container = document.getElementById('colorPicker');
+        if(container){
+            const colorInput = document.getElementById('colorInput');
+            colorInput.addEventListener('change', (evt) => {
+                console.log(evt.target.value);
+            });
+        }
+    }
+    */
+    
+    function setupBrightnessSlider(slider, colorWheel){
+        // TODO: get uniform darkness in the color wheel?
+        // kinda like https://ivanvmat.github.io/color-picker/
+        slider.addEventListener('click', (evt) => {
+            const x = evt.offsetX;
+            const y = evt.offsetY;
+            const darkness = y / slider.height;
+            updateColorWheel({lightness: 100 * (1 - darkness)}, colorWheel);
         });
     }
     
@@ -81,13 +109,13 @@ export const ColorPicker = (props) => {
     }
 
     useEffect(() => {
-        // construct the color wheel
         createColorWheel('colorPicker', 170, props.brush);
     }, [props.brush]);
     
     return (
-        <React.Fragment>
-            <div id="colorPicker"></div>
+        <>
+            <div id="colorPicker">
+            </div>
             <p id='colorPicked' style={colorPickedDisplayStyle}>pick a color!</p>
             <button onClick={saveColorToPalette}> save color to palette </button>
             <div id="colorPalette" style={colorPaletteContainerStyle}>
@@ -101,6 +129,6 @@ export const ColorPicker = (props) => {
                 })
             }
             </div>
-        </React.Fragment>
+        </>
     );
 }

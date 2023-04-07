@@ -475,24 +475,19 @@ class PresentationWrapper extends React.Component {
                         <h3> funSketch </h3>
                         <ul>
                             <li id="instructionsOption"
-                                onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
-                                onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+                                className="option"
                                 onClick={this._clickOption}> instructions </li>
-                            <li id="frameLayerCtrlOption" 
-                                onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
-                                onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+                            <li id="frameLayerCtrlOption"
+                                className="option"
                                 onClick={this._clickOption}> frame/layer control </li>
-                            <li id="animationCtrlOption" 
-                                onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
-                                onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+                            <li id="animationCtrlOption"
+                                className="option"
                                 onClick={this._clickOption}> animation control </li>
                             <li id="otherOption"
-                                onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
-                                onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+                                className="option"
                                 onClick={this._clickOption}> other </li>
-                            <li id="demosOption" 
-                                onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
-                                onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+                            <li id="demosOption"
+                                className="option"
                                 onClick={this._clickOption}> demos </li>
                         </ul>
                     </section>                    
@@ -530,8 +525,8 @@ class PresentationWrapper extends React.Component {
                             <p> frame: </p>
                             <ul>
                                 <li><button id='addNewFrame'>add new frame</button></li>
-                                <li><button id='copyCurrFrame'>duplicate frame</button></li>
                                 <li><button id='deleteCurrFrame'>delete current frame</button></li>
+                                <li><button id='copyCurrFrame'>duplicate frame</button></li>
                                 <li><button id='changeLayerOrder'>change layer order</button></li>
                                 <li><button id='downloadFrame'>download current frame</button></li>
                             </ul>
@@ -677,8 +672,7 @@ class PresentationWrapper extends React.Component {
                     <hr />
                     
                     <h4 id="brushesOption" 
-                        onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
-                        onMouseOut={(evt) => {evt.target.style.color = "#000"}} 
+                        className="option"
                         onClick={this._showFiltersOrBrushes}
                     > brushes 
                     </h4>
@@ -690,8 +684,7 @@ class PresentationWrapper extends React.Component {
                     <hr />
 
                     <h4 id="filtersOption" 
-                        onMouseOver={(evt) => {evt.target.style.color = "#99b5d1"}} 
-                        onMouseOut={(evt) => {evt.target.style.color = "#000"}}
+                        className="option"
                         onClick={this._showFiltersOrBrushes}
                     > filters </h4>
                     

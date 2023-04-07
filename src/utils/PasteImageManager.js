@@ -49,15 +49,14 @@ export class PasteImageManager {
     allowScaleAndRotate(evt){
         const pasteCanvas = document.querySelector('.pasteCanvas');
         if(pasteCanvas){
-            if(evt.keyCode === 83){
+            if(evt.code === "KeyS"){
                 // s key
                 this.resizingPasteCanvas = !this.resizingPasteCanvas;
-            }else if(evt.keyCode === 82){
+            }else if(evt.code === "KeyR"){
                 // r key
                 this.rotatingPasteCanvas = !this.rotatingPasteCanvas;
-            }else if(evt.keyCode === 27){
-                // esc key
-                // cancel
+            }else if(evt.code === "Escape"){
+                // esc key to cancel
                 pasteCanvas.parentNode.removeChild(pasteCanvas);
                 this.resizingPasteCanvas = false;
                 this.rotatingPasteCanvas = false;

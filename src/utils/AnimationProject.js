@@ -72,6 +72,9 @@ class Frame {
         newCanvas.id = `frame${this.number}canvas${this.canvasList.length}`;
         this.container.appendChild(newCanvas);
         
+        // https://stackoverflow.com/questions/74101155/chrome-warning-willreadfrequently-attribute-set-to-true
+        newCanvas.getContext("2d", {willReadFrequently: true});
+        
         setCanvas(prefill, newCanvas);
         
         if(this.canvasList.length === 0){
@@ -398,16 +401,16 @@ class AnimationProject {
         }
         
         this.onionSkinFrame.style.display = ''; // show onion skin
-        let onionSkinCtx = this.onionSkinFrame.getContext("2d");
+        const onionSkinCtx = this.onionSkinFrame.getContext("2d");
         onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
         
         // take the previous frame, merge all layers, put into onion skin frame
-        let onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
+        const onionSkinImageData = onionSkinCtx.getImageData(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
         
         // build the merged image from the first to last
-        let prevFrame = this.frameList[this.currentFrameIndex-1];
-        prevFrame.getLayers().forEach(function (layer) {
-            let imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
+        const prevFrame = this.frameList[this.currentFrameIndex-1];
+        prevFrame.getLayers().forEach(layer => {
+            const imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
             for(let i = 0; i < imageData.length; i += 4) {
                 if (imageData[i] === 255 && imageData[i+1] === 255 && imageData[i+2] === 255) {
                     continue;
@@ -441,6 +444,8 @@ function createOnionSkinFrame(container){
     const newCanvas = document.createElement('canvas');
     newCanvas.id = "onionSkinCanvas";
     container.appendChild(newCanvas);
+    
+    newCanvas.getContext("2d", {willReadFrequently: true});
     
     const prefill = true;
     setCanvas(prefill, newCanvas);

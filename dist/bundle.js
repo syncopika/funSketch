@@ -1293,10 +1293,10 @@ var ColorPicker = function ColorPicker(props) {
     if (!brush) return; // on the initial page render, brush will be null
 
     var colorWheel = (0,_utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__.makeColorWheel)(elementId, size);
-    document.getElementById(colorWheel.id).addEventListener('mousedown', function (evt) {
+    document.getElementById(colorWheel.id).addEventListener('pointerdown', function (evt) {
       var x = evt.offsetX;
       var y = evt.offsetY;
-      var colorPicked = document.getElementById(colorWheel.id).getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
+      var colorPicked = colorWheel.getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
 
       var colorPickedText = document.getElementById('colorPicked');
 
@@ -1310,6 +1310,35 @@ var ColorPicker = function ColorPicker(props) {
       colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
 
       brush.changeBrushColor(colorPicked);
+    });
+    var slider = (0,_utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__.makeBrightnessSlider)(elementId, size);
+    setupBrightnessSlider(slider, colorWheel);
+  }
+  /* try native input element of type "color"
+  function setupColorInput(brush){
+      if(!brush) return; // on the initial page render, brush will be null
+      
+      const container = document.getElementById('colorPicker');
+      if(container){
+          const colorInput = document.getElementById('colorInput');
+          colorInput.addEventListener('change', (evt) => {
+              console.log(evt.target.value);
+          });
+      }
+  }
+  */
+
+
+  function setupBrightnessSlider(slider, colorWheel) {
+    // TODO: get uniform darkness in the color wheel?
+    // kinda like https://ivanvmat.github.io/color-picker/
+    slider.addEventListener('click', function (evt) {
+      var x = evt.offsetX;
+      var y = evt.offsetY;
+      var darkness = y / slider.height;
+      (0,_utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__.updateColorWheel)({
+        lightness: 100 * (1 - darkness)
+      }, colorWheel);
     });
   }
 
@@ -1345,7 +1374,6 @@ var ColorPicker = function ColorPicker(props) {
   }
 
   (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {
-    // construct the color wheel
     createColorWheel('colorPicker', 170, props.brush);
   }, [props.brush]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement(react__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
@@ -1479,9 +1507,17 @@ var FilterDashboard = function FilterDashboard(props) {
   if (filters[selectedFilter] && filters[selectedFilter].params) {
     // need to set up sliders for each editable parameter for the selected filter
     for (var paramName in filters[selectedFilter].params) {
-      var newSlider = constructSlider(paramName, filters[selectedFilter].params[paramName]);
-      parameterSliders.push(newSlider);
+      if (paramName !== "instructions") {
+        var newSlider = constructSlider(paramName, filters[selectedFilter].params[paramName]);
+        parameterSliders.push(newSlider);
+      }
     }
+  }
+
+  var filterInstructions = "";
+
+  if (filters[selectedFilter] && filters[selectedFilter].params && filters[selectedFilter].params.instructions) {
+    filterInstructions = filters[selectedFilter].params.instructions;
   }
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
@@ -1522,19 +1558,14 @@ var FilterDashboard = function FilterDashboard(props) {
         // show that the filter is selected
         setSelectedFilter(filterName);
       },
-      onMouseOver: function onMouseOver(evt) {
-        evt.target.style.color = "#99b5d1";
-      },
-      onMouseOut: function onMouseOut(evt) {
-        evt.target.style.color = "#000";
-      }
+      className: "option"
     }, filterName);
   }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     style: {
       "gridRow": "2",
       "gridColumn": "1"
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("hr", null), filterInstructions && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", null, filterInstructions), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     id: "filterParameters"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("ul", {
     style: {
@@ -1731,8 +1762,8 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "PresentationWrapper": () => (/* binding */ PresentationWrapper),
-/* harmony export */   "FrameCounterDisplay": () => (/* binding */ FrameCounterDisplay)
+/* harmony export */   "FrameCounterDisplay": () => (/* binding */ FrameCounterDisplay),
+/* harmony export */   "PresentationWrapper": () => (/* binding */ PresentationWrapper)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
@@ -2311,48 +2342,23 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "toolbarSection"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h3", null, " funSketch "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", {
         id: "instructionsOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
+        className: "option",
         onClick: this._clickOption
       }, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", {
         id: "frameLayerCtrlOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
+        className: "option",
         onClick: this._clickOption
       }, " frame/layer control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", {
         id: "animationCtrlOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
+        className: "option",
         onClick: this._clickOption
       }, " animation control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", {
         id: "otherOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
+        className: "option",
         onClick: this._clickOption
       }, " other "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", {
         id: "demosOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
+        className: "option",
         onClick: this._clickOption
       }, " demos "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
         id: "instructions",
@@ -2385,10 +2391,10 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, " frame: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("button", {
         id: "addNewFrame"
       }, "add new frame")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("button", {
-        id: "copyCurrFrame"
-      }, "duplicate frame")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("button", {
         id: "deleteCurrFrame"
       }, "delete current frame")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("button", {
+        id: "copyCurrFrame"
+      }, "duplicate frame")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("button", {
         id: "changeLayerOrder"
       }, "change layer order")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("button", {
         id: "downloadFrame"
@@ -2525,12 +2531,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         brush: this.state.brushInstance
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", {
         id: "brushesOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
+        className: "option",
         onClick: this._showFiltersOrBrushes
       }, " brushes"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
         id: "brushes",
@@ -2539,12 +2540,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         brushManager: this.state.brushInstance
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", {
         id: "filtersOption",
-        onMouseOver: function onMouseOver(evt) {
-          evt.target.style.color = "#99b5d1";
-        },
-        onMouseOut: function onMouseOut(evt) {
-          evt.target.style.color = "#000";
-        },
+        className: "option",
         onClick: this._showFiltersOrBrushes
       }, " filters "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
         id: "filters",
@@ -5472,14 +5468,14 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Point": () => (/* binding */ Point),
 /* harmony export */   "Node": () => (/* binding */ Node),
-/* harmony export */   "getPixelCoords": () => (/* binding */ getPixelCoords),
-/* harmony export */   "getDist": () => (/* binding */ getDist),
-/* harmony export */   "getTreeSize": () => (/* binding */ getTreeSize),
+/* harmony export */   "Point": () => (/* binding */ Point),
 /* harmony export */   "build2dTree": () => (/* binding */ build2dTree),
-/* harmony export */   "isLeaf": () => (/* binding */ isLeaf),
-/* harmony export */   "findNearestNeighbor": () => (/* binding */ findNearestNeighbor)
+/* harmony export */   "findNearestNeighbor": () => (/* binding */ findNearestNeighbor),
+/* harmony export */   "getDist": () => (/* binding */ getDist),
+/* harmony export */   "getPixelCoords": () => (/* binding */ getPixelCoords),
+/* harmony export */   "getTreeSize": () => (/* binding */ getTreeSize),
+/* harmony export */   "isLeaf": () => (/* binding */ isLeaf)
 /* harmony export */ });
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
@@ -6209,16 +6205,16 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 
 /***/ }),
 
-/***/ "./src/filters/simple_blur.js":
-/*!************************************!*\
-  !*** ./src/filters/simple_blur.js ***!
-  \************************************/
+/***/ "./src/filters/targetedBlur.js":
+/*!*************************************!*\
+  !*** ./src/filters/targetedBlur.js ***!
+  \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "SimpleBlur": () => (/* binding */ SimpleBlur)
+/* harmony export */   "TargetedBlur": () => (/* binding */ TargetedBlur)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
@@ -6231,6 +6227,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+/* harmony import */ var _blur_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./blur.js */ "./src/filters/blur.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -6245,89 +6242,375 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 /***
-    simple BLUR FILTER
-    this function causes a blurring effect. it's pretty slow compared to the other blur.
+    TARGETED BLUR FILTER
+    this function allows the user to select an area to blur.
     
-    It takes the pixel itself and
-    its left, right, above and below neighbors (if it has them)
-    and calculates the average of their total R, G, B, and A channels respectively.
+    the general idea is currently this:
+    - have a temp canvas overlay to draw the area to blur
+    - take that selection, copy pixels over to new canvas, blur that and copy blurred pixels back to original image
+    
+    some functions here are taken from my selection tool experiment (selectTool.html)
 ***/
 
 
-var SimpleBlur = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(SimpleBlur, _FilterTemplate);
 
-  var _super = _createSuper(SimpleBlur);
+var TargetedBlur = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(TargetedBlur, _FilterTemplate);
 
-  function SimpleBlur() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, SimpleBlur);
+  var _super = _createSuper(TargetedBlur);
 
-    return _super.call(this, {});
+  function TargetedBlur(animationProject) {
+    var _this;
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, TargetedBlur);
+
+    var params = {
+      "blurFactor": {
+        "value": 3,
+        "min": 1,
+        "max": 15,
+        "step": 1
+      },
+      "instructions": "Click on 'apply filter', which will add an overlay for you to draw on to specify the area to blur."
+    };
+    _this = _super.call(this, params);
+    _this.animationProject = animationProject; // we need to be able to access the current layer
+
+    _this.drawnLineCoords = [];
+    _this.isDrawing = false;
+    _this.alphaFlag = 0.1; // the value of alpha to use for the pixels of the offscreen canvas so we can differentiate between copied-over pixels
+
+    _this.isActive = false; // so we can't run the filter multiple times on button click
+
+    return _this;
   }
 
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(SimpleBlur, [{
-    key: "getNeighborsAvg",
-    value: function getNeighborsAvg(row, col, width, height, data) {
-      var channels = ['r', 'g', 'b', 'a'];
-      var result = {};
-      channels.forEach(function (c) {
-        return result[c] = [];
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(TargetedBlur, [{
+    key: "setupTempCanvas",
+    value: function setupTempCanvas() {
+      var _this2 = this;
+
+      var currLayer = this.animationProject.getCurrFrame().getCurrCanvas();
+      var displayArea = currLayer.parentNode;
+      var canvasElement = document.createElement("canvas");
+      displayArea.appendChild(canvasElement);
+      canvasElement.className = "tempCanvasForBlur";
+      canvasElement.style.position = "absolute";
+      canvasElement.style.border = "1px #000 dotted";
+      canvasElement.style.zIndex = 10;
+      canvasElement.style.top = 0;
+      canvasElement.style.left = 0; //canvasElement.style.opacity = 0.75;
+
+      canvasElement.width = currLayer.width;
+      canvasElement.height = currLayer.height;
+      var ctx = canvasElement.getContext('2d');
+      ctx.fillStyle = "rgba(204, 204, 204, 0.5)";
+      ctx.fillRect(0, 0, currLayer.width, currLayer.height); // TODO: add event listeners to temp canvas
+      // record drawn line points' coordinates
+
+      canvasElement.addEventListener('pointerdown', function (evt) {
+        evt.preventDefault();
+        _this2.isDrawing = true;
+        ctx.fillStyle = "#fff";
+        ctx.lineJoin = "round";
+        _this2.drawnLineCoords = [{
+          'x': Math.round(evt.offsetX),
+          'y': Math.round(evt.offsetY)
+        }];
+      });
+      canvasElement.addEventListener('pointerup', function (evt) {
+        evt.preventDefault();
+        _this2.isDrawing = false; // do some processing on the coordinate data of the line drawn
+
+        _this2.fillInSelectionAreaGaps();
+
+        _this2.processOnOffscreenCanvas(); // done
+
+
+        canvasElement.parentNode.removeChild(canvasElement);
+        document.removeEventListener('keydown', abortTargetBlur);
+      });
+      canvasElement.addEventListener('pointermove', function (evt) {
+        if (!_this2.isDrawing) {
+          return;
+        }
+
+        evt.preventDefault();
+
+        _this2.drawnLineCoords.push({
+          'x': Math.round(evt.offsetX),
+          'y': Math.round(evt.offsetY)
+        });
+
+        for (var i = 0; i < _this2.drawnLineCoords.length; i++) {
+          ctx.lineWidth = 3;
+          ctx.beginPath(); // this helps generate a solid line, rather than a line of dots.
+
+          if (i) {
+            ctx.moveTo(_this2.drawnLineCoords[i - 1].x, _this2.drawnLineCoords[i - 1].y);
+          } // keep monitoring largest/smallest x and y values
+          // so we can get max width/height of drawn area
+
+
+          ctx.lineTo(_this2.drawnLineCoords[i].x, _this2.drawnLineCoords[i].y);
+          ctx.closePath();
+          ctx.stroke();
+        }
+      });
+      canvasElement.addEventListener('pointerleave', function (evt) {
+        _this2.isDrawing = false;
       });
 
-      for (var i = 0; i < channels.length; i++) {
-        // top
-        var topIdx = 4 * (row - 1) * width + 4 * col + i;
-        if (topIdx >= 0) result[channels[i]].push(data[topIdx]); // left
-
-        var leftIdx = 4 * row * width + 4 * (col - 1) + i;
-        if (leftIdx >= 0) result[channels[i]].push(data[leftIdx]); // right
-
-        var rightIdx = 4 * row * width + 4 * (col + 1) + i;
-        if (rightIdx < data.length) result[channels[i]].push(data[rightIdx]); // bottom
-
-        var bottomIdx = 4 * (row + 1) * width + 4 * col + i;
-        if (bottomIdx < data.length) result[channels[i]].push(data[bottomIdx]); // self
-
-        var idx = 4 * row * width + 4 * col + i;
-        result[channels[i]].push(data[idx]);
+      function abortTargetBlur(evt) {
+        if (evt.code === "Escape") {
+          canvasElement.parentNode.removeChild(canvasElement);
+          document.removeEventListener('keydown', abortTargetBlur);
+          this.isActive = false;
+        }
       }
 
-      for (var channel in result) {
-        var chanSum = result[channel].reduce(function (prev, curr) {
-          return prev + curr;
-        }, 0);
-        var chanAvg = chanSum / result[channel].length;
-        result[channel] = chanAvg;
+      document.addEventListener('keydown', abortTargetBlur);
+    } // strategy to deal with a gap in logged coordinates
+
+  }, {
+    key: "fillInSelectionAreaGaps",
+    value: function fillInSelectionAreaGaps() {
+      // sort y-coords collected, find an diffs > 1, add new coords based on the diff
+      var coords = this.drawnLineCoords.slice(); // make a copy because we want to append to this.drawnLineCoords
+
+      for (var idx = 1; idx < coords.length; idx++) {
+        var lastY = coords[idx - 1].y;
+        var lastX = coords[idx - 1].x;
+        var currY = coords[idx].y;
+        var currX = coords[idx].x;
+
+        if (Math.abs(currY - lastY) > 1) {
+          // fill in any coordinates in between this one and the previous (based on y-value)
+          // so we can always have a pair of coordinates for the same row if it's passed through twice
+          // this ensures a record of a continuous line
+          // but we also need to consider how x changes from the prev to curr coord.
+          var xInterval = Math.floor((currX - lastX) / (currY - lastY));
+
+          if (currY - lastY < 0) {
+            for (var i = currY; i < lastY; i++) {
+              this.drawnLineCoords.push({
+                'x': lastX + xInterval,
+                'y': i
+              });
+              lastX += xInterval;
+            }
+          } else {
+            for (var _i = lastY + 1; _i < currY; _i++) {
+              this.drawnLineCoords.push({
+                'x': lastX + xInterval,
+                'y': _i
+              });
+              lastX += xInterval;
+            }
+          }
+        }
+      }
+    } // reorganize selection loop coordinate data
+    // so that we get an object where each key is a y-value (basically the row) that maps
+    // to an array containing the min and max x-values that cover the selection (the range of pixels within that row that are part of the selection)
+
+  }, {
+    key: "reorgSelectionLoopData",
+    value: function reorgSelectionLoopData() {
+      var coords = {};
+      var data = this.drawnLineCoords;
+
+      for (var i = 0; i < data.length; i++) {
+        var currY = data[i].y;
+        var currX = data[i].x;
+
+        if (!coords[currY]) {
+          coords[currY] = {
+            maxX: currX,
+            minX: currX
+          };
+        } else {
+          if (currX > coords[currY].maxX) {
+            coords[currY].maxX = currX;
+          } else if (currX < coords[currY].minX) {
+            coords[currY].minX = currX;
+          }
+        }
       }
 
-      return result;
+      return coords;
+    } // get the width, height and top-left corner of the selected area
+
+  }, {
+    key: "getSelectionAreaInfo",
+    value: function getSelectionAreaInfo() {
+      var selectedArea = this.reorgSelectionLoopData();
+      var selectedAreaKeys = Object.keys(selectedArea);
+      selectedAreaKeys.sort();
+      var topLeftY = parseInt(selectedAreaKeys[0]);
+      var topLeftX = Object.values(selectedArea).reduce(function (acc, curr) {
+        return Math.min(acc, curr.minX);
+      }, selectedArea[topLeftY].minX);
+      var height = selectedAreaKeys[selectedAreaKeys.length - 1] - topLeftY;
+      var width = Object.values(selectedArea).reduce(function (acc, curr) {
+        return Math.max(acc, curr.maxX - curr.minX);
+      }, 0); //console.log("height: " + height + ", width: " + width + ", topLeftX: " + topLeftX + ", topLeftY: " + topLeftY);
+
+      return {
+        width: width,
+        height: height,
+        topLeftX: topLeftX,
+        topLeftY: topLeftY,
+        selectedArea: selectedArea
+      };
+    }
+  }, {
+    key: "getOffscreenCanvas",
+    value: function getOffscreenCanvas() {
+      var selectedAreaInfo = this.getSelectionAreaInfo();
+      var height = selectedAreaInfo.height;
+      var width = selectedAreaInfo.width;
+      var offscreenCanvas = document.createElement('canvas');
+      offscreenCanvas.width = width;
+      offscreenCanvas.height = height;
+      var ctx = offscreenCanvas.getContext('2d', {
+        willReadFrequently: true
+      });
+      ctx.fillStyle = "rgba(255, 255, 255, ".concat(this.alphaFlag, ")"); // note alpha is 0.1, which is 26 (b/c 10% of 255)
+
+      ctx.fillRect(0, 0, width, height); //console.log(ctx.getImageData(0, 0, 10, 10).data);
+
+      return offscreenCanvas;
+    }
+  }, {
+    key: "moveOffscreenPixelsBack",
+    value: function moveOffscreenPixelsBack(offscreenCanvas) {
+      // based on start coord and max width and height, put the processed pixels
+      // back on the current layer canvas
+      var currCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
+      var currLayerCtx = currCanvas.getContext('2d');
+      var selectedAreaInfo = this.getSelectionAreaInfo();
+      var offscreenData = offscreenCanvas.getContext('2d').getImageData(0, 0, selectedAreaInfo.width, selectedAreaInfo.height);
+      var currCanvasData = currLayerCtx.getImageData(0, 0, currCanvas.width, currCanvas.height); // use selectedAreaInfo.topLeftY to know where to start
+      // we find all the pixels in the offscreen canvas that don't have a certain alpha (so we know which pixels were copied over)
+      // and overwrite the matching pixels in the source image canvas
+
+      var currLayerRow = selectedAreaInfo.topLeftY;
+
+      for (var row = 0; row < offscreenCanvas.height; row++) {
+        var currLayerCol = selectedAreaInfo.selectedArea[currLayerRow].minX;
+
+        for (var col = 0; col < offscreenCanvas.width; col++) {
+          // if alpha channel is not 10 (maybe make a const for this), update pixel in currCanvas
+          var alpha = offscreenData.data[4 * row * offscreenData.width + 4 * col + 3];
+
+          if (alpha !== Math.round(this.alphaFlag * 255)) {
+            currCanvasData.data[4 * currLayerRow * currCanvas.width + 4 * currLayerCol] = offscreenData.data[4 * row * offscreenData.width + 4 * col]; // r
+
+            currCanvasData.data[4 * currLayerRow * currCanvas.width + 4 * currLayerCol + 1] = offscreenData.data[4 * row * offscreenData.width + 4 * col + 1]; // g
+
+            currCanvasData.data[4 * currLayerRow * currCanvas.width + 4 * currLayerCol + 2] = offscreenData.data[4 * row * offscreenData.width + 4 * col + 2]; // b
+
+            currCanvasData.data[4 * currLayerRow * currCanvas.width + 4 * currLayerCol + 3] = alpha; // a
+
+            currLayerCol++;
+          }
+        }
+
+        currLayerRow++;
+      } // put the blurred data onto the source canvas
+
+
+      currLayerCtx.putImageData(currCanvasData, 0, 0);
+      this.isActive = false;
+    }
+  }, {
+    key: "copyPixelsToOffscreenCanvas",
+    value: function copyPixelsToOffscreenCanvas(offscreenCanvas) {
+      var currCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
+      var currLayerCtx = currCanvas.getContext('2d');
+      var selectedAreaInfo = this.getSelectionAreaInfo(); //const imgData = currLayerCtx.getImageData(selectedAreaInfo.topLeftX, selectedAreaInfo.topLeftY, selectedAreaInfo.width, selectedAreaInfo.height);
+      //offscreenCanvas.getContext('2d').putImageData(imgData, 0, 0);
+      //console.log(selectedAreaInfo);
+
+      var offscreenData = offscreenCanvas.getContext('2d').getImageData(0, 0, selectedAreaInfo.width, selectedAreaInfo.height);
+      var currCanvasData = currLayerCtx.getImageData(0, 0, currCanvas.width, currCanvas.height).data;
+      var offscreenRow = 0;
+
+      for (var row = selectedAreaInfo.topLeftY; row < selectedAreaInfo.topLeftY + selectedAreaInfo.height; row++) {
+        var minX = selectedAreaInfo.selectedArea[row].minX;
+        var maxX = selectedAreaInfo.selectedArea[row].maxX;
+        var offscreenCol = 0;
+
+        for (var col = selectedAreaInfo.topLeftX; col < selectedAreaInfo.topLeftX + selectedAreaInfo.width; col++) {
+          var r = currCanvasData[row * 4 * currCanvas.width + col * 4];
+          var g = currCanvasData[row * 4 * currCanvas.width + col * 4 + 1];
+          var b = currCanvasData[row * 4 * currCanvas.width + col * 4 + 2];
+          var a = currCanvasData[row * 4 * currCanvas.width + col * 4 + 3];
+
+          if (col >= minX && col <= maxX) {
+            offscreenData.data[offscreenRow * 4 * offscreenCanvas.width + offscreenCol * 4] = r;
+            offscreenData.data[offscreenRow * 4 * offscreenCanvas.width + offscreenCol * 4 + 1] = g;
+            offscreenData.data[offscreenRow * 4 * offscreenCanvas.width + offscreenCol * 4 + 2] = b;
+            offscreenData.data[offscreenRow * 4 * offscreenCanvas.width + offscreenCol * 4 + 3] = a;
+          } else {
+            // copy over pixels but change alpha so we know not to copy them back after blurring
+            // since they're outside the selected area (but we need them when blurring)
+            // if you don't use them, the default #fff pixels on the offscreen canvas get factored in the blur, which is not desirable
+            offscreenData.data[offscreenRow * 4 * offscreenCanvas.width + offscreenCol * 4] = r;
+            offscreenData.data[offscreenRow * 4 * offscreenCanvas.width + offscreenCol * 4 + 1] = g;
+            offscreenData.data[offscreenRow * 4 * offscreenCanvas.width + offscreenCol * 4 + 2] = b;
+            offscreenData.data[offscreenRow * 4 * offscreenCanvas.width + offscreenCol * 4 + 3] = Math.round(this.alphaFlag * 255);
+          }
+
+          offscreenCol++;
+        }
+
+        offscreenRow++;
+      }
+
+      offscreenCanvas.getContext('2d').putImageData(offscreenData, 0, 0); // for debugging
+      //offscreenCanvas.style.border = '1px solid #000';
+      //offscreenCanvas.style.margin = '10px';
+      //document.body.appendChild(offscreenCanvas);
+    }
+  }, {
+    key: "processOnOffscreenCanvas",
+    value: function processOnOffscreenCanvas() {
+      // create a new canvas with the max width and height
+      var offscreenCanvas = this.getOffscreenCanvas(); // take the pixels (from the current layer) within that area and copy it to the new canvas
+
+      this.copyPixelsToOffscreenCanvas(offscreenCanvas); // blur that canvas
+
+      var blurFilter = new _blur_js__WEBPACK_IMPORTED_MODULE_6__.Blur();
+      blurFilter.params.blurFactor.value = this.params.blurFactor.value;
+      var offscreenImgData = offscreenCanvas.getContext('2d').getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+      var blurredData = blurFilter.filter(offscreenImgData);
+      offscreenCanvas.getContext('2d').putImageData(blurredData, 0, 0); // copy the pixels back (excluding the pixels outside the drawn area - use alpha channel to differentiate?)
+
+      this.moveOffscreenPixelsBack(offscreenCanvas);
+    }
+  }, {
+    key: "doTargetedBlur",
+    value: function doTargetedBlur() {
+      // create a temp canvas to draw the area to blur. impose the temp canvas on the current canvas
+      this.setupTempCanvas();
     }
   }, {
     key: "filter",
     value: function filter(pixels) {
-      var width = pixels.width;
-      var height = pixels.height;
-      var data = pixels.data;
-      var copy = new Uint8ClampedArray(data);
-
-      for (var row = 0; row < height; row++) {
-        for (var col = 0; col < width; col++) {
-          var neighbors = this.getNeighborsAvg(row, col, width, height, copy);
-          data[4 * width * row + 4 * col] = neighbors.r; // r
-
-          data[4 * width * row + 4 * col + 1] = neighbors.g; // g
-
-          data[4 * width * row + 4 * col + 2] = neighbors.b; // b
-
-          data[4 * width * row + 4 * col + 3] = neighbors.a; // a
-        }
+      // do targeted blur
+      if (this.isActive) {
+        return pixels;
       }
 
+      this.isActive = true;
+      this.doTargetedBlur();
       return pixels;
     }
   }]);
 
-  return SimpleBlur;
+  return TargetedBlur;
 }(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
 
 
@@ -6406,7 +6689,15 @@ var Voronoi = /*#__PURE__*/function (_FilterTemplate) {
   function Voronoi() {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Voronoi);
 
-    return _super.call(this, null);
+    var params = {
+      "neighborCount": {
+        "value": 30,
+        "min": 5,
+        "max": 80,
+        "step": 1
+      }
+    };
+    return _super.call(this, params);
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Voronoi, [{
@@ -6420,17 +6711,18 @@ var Voronoi = /*#__PURE__*/function (_FilterTemplate) {
 
       for (var i = 0; i < data.length; i += 4) {
         // get neighbors.
-        // add some offset to each neighbor for randomness (we don't really want evenly spaced neighbors)
-        var offset = Math.floor(Math.random() * 10); // to be applied in x or y direction
+        var pixelCoords = (0,_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__.getPixelCoords)(i, width, height);
+        var neighborCount = this.params.neighborCount.value;
 
-        var sign = Math.random() > .5 ? 1 : -1;
-        var c1 = (0,_kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__.getPixelCoords)(i, width, height);
+        if (pixelCoords.x % Math.floor(width / neighborCount) === 0 && pixelCoords.y % Math.floor(height / neighborCount) === 0 && pixelCoords.x !== 0) {
+          // add some offset to each neighbor for randomness (we don't really want evenly spaced neighbors)
+          var offset = Math.floor(Math.random() * 10); // to be applied in x or y direction
 
-        if (c1.x % Math.floor(width / 30) === 0 && c1.y % Math.floor(height / 30) === 0 && c1.x !== 0) {
-          var x = sign * offset + c1.x;
-          var y = sign * offset + c1.y;
-          var p1 = new _kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__.Point(x, y, data[i], data[i + 1], data[i + 2]);
-          neighborList.push(p1);
+          var sign = Math.random() > .5 ? 1 : -1;
+          var x = sign * offset + pixelCoords.x;
+          var y = sign * offset + pixelCoords.y;
+          var pt = new _kdtreeutils_js__WEBPACK_IMPORTED_MODULE_5__.Point(x, y, data[i], data[i + 1], data[i + 2]);
+          neighborList.push(pt);
         }
       }
 
@@ -6655,8 +6947,8 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Frame": () => (/* binding */ Frame),
 /* harmony export */   "AnimationProject": () => (/* binding */ AnimationProject),
+/* harmony export */   "Frame": () => (/* binding */ Frame),
 /* harmony export */   "createOnionSkinFrame": () => (/* binding */ createOnionSkinFrame),
 /* harmony export */   "setCanvas": () => (/* binding */ setCanvas)
 /* harmony export */ });
@@ -6763,7 +7055,11 @@ var Frame = /*#__PURE__*/function () {
       // create the new canvas element 
       var newCanvas = document.createElement('canvas');
       newCanvas.id = "frame".concat(this.number, "canvas").concat(this.canvasList.length);
-      this.container.appendChild(newCanvas);
+      this.container.appendChild(newCanvas); // https://stackoverflow.com/questions/74101155/chrome-warning-willreadfrequently-attribute-set-to-true
+
+      newCanvas.getContext("2d", {
+        willReadFrequently: true
+      });
       setCanvas(prefill, newCanvas);
 
       if (this.canvasList.length === 0) {
@@ -7171,6 +7467,9 @@ function createOnionSkinFrame(container) {
   var newCanvas = document.createElement('canvas');
   newCanvas.id = "onionSkinCanvas";
   container.appendChild(newCanvas);
+  newCanvas.getContext("2d", {
+    willReadFrequently: true
+  });
   var prefill = true;
   setCanvas(prefill, newCanvas);
   newCanvas.style.opacity = .97;
@@ -7430,7 +7729,9 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "makeColorWheel": () => (/* binding */ makeColorWheel)
+/* harmony export */   "makeBrightnessSlider": () => (/* binding */ makeBrightnessSlider),
+/* harmony export */   "makeColorWheel": () => (/* binding */ makeColorWheel),
+/* harmony export */   "updateColorWheel": () => (/* binding */ updateColorWheel)
 /* harmony export */ });
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
@@ -7447,13 +7748,15 @@ function makeColorWheel(elementId, size) {
   colorWheel.id = "colorWheel";
   colorWheel.setAttribute('width', size);
   colorWheel.setAttribute('height', size);
-  var colorWheelContext = colorWheel.getContext('2d');
+  var colorWheelContext = colorWheel.getContext('2d', {
+    willReadFrequently: true
+  });
   var x = colorWheel.width / 2;
   var y = colorWheel.height / 2;
   var radius = 60; // why 5600??
 
   for (var angle = 0; angle <= 5600; angle++) {
-    var startAngle = (angle - 2) * Math.PI / 180; //convert angles to radians
+    var startAngle = (angle - 1) * Math.PI / 180; //convert angles to radians
 
     var endAngle = angle * Math.PI / 180;
     colorWheelContext.beginPath();
@@ -7464,7 +7767,7 @@ function makeColorWheel(elementId, size) {
     //createRadialGradient(x0, y0, r0, x1, y1, r1)
 
     var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
-    gradient.addColorStop(0, 'hsla(' + angle + ', 10%, 100%, 1)');
+    gradient.addColorStop(0, 'hsla(' + angle + ', 100%, 100%, 1)');
     gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
     colorWheelContext.fillStyle = gradient;
     colorWheelContext.fill();
@@ -7477,7 +7780,7 @@ function makeColorWheel(elementId, size) {
   colorWheelContext.fill(); // make white pickable too (and add a black outline)
 
   colorWheelContext.beginPath();
-  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white 
+  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white
 
   colorWheelContext.stroke(); // make sure circle is filled with #fff
 
@@ -7486,7 +7789,7 @@ function makeColorWheel(elementId, size) {
   colorWheelContext.fill(); // make transparent white pickable too (and add a black outline)
 
   colorWheelContext.beginPath();
-  colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI); // border around the white 
+  colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI); // border around the white
 
   colorWheelContext.stroke(); // make sure circle is filled with transparent white
 
@@ -7495,6 +7798,83 @@ function makeColorWheel(elementId, size) {
   colorWheelContext.fill();
   location.appendChild(colorWheel);
   return colorWheel;
+}
+function updateColorWheel(params, colorWheel) {
+  // update color wheel based on params (e.g. lightness value of hsla)
+  var colorWheelContext = colorWheel.getContext('2d');
+  var x = colorWheel.width / 2;
+  var y = colorWheel.height / 2;
+  var radius = 60;
+  colorWheelContext.fillStyle = "#fff";
+  colorWheelContext.fillRect(0, 0, colorWheel.width, colorWheel.height);
+
+  for (var angle = 0; angle <= 5600; angle++) {
+    var startAngle = (angle - 1) * Math.PI / 180; //convert angles to radians
+
+    var endAngle = angle * Math.PI / 180;
+    colorWheelContext.beginPath();
+    colorWheelContext.moveTo(x, y); //.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+
+    colorWheelContext.arc(x, y, radius, startAngle, endAngle, false);
+    colorWheelContext.closePath(); //use .createRadialGradient to get a different color for each angle
+    //createRadialGradient(x0, y0, r0, x1, y1, r1)
+
+    var gradient = colorWheelContext.createRadialGradient(x, y, 0, startAngle, endAngle, radius);
+    gradient.addColorStop(0, 'hsla(' + angle + ', 100%, ' + (params.lightness ? params.lightness : 100) + '%, 1)');
+    gradient.addColorStop(1, 'hsla(' + angle + ', 100%, 50%, 1)');
+    colorWheelContext.fillStyle = gradient;
+    colorWheelContext.fill();
+  } // make black a pickable color 
+
+
+  colorWheelContext.fillStyle = "rgba(0,0,0,1)";
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill(); // make white pickable too (and add a black outline)
+
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI); // border around the white
+
+  colorWheelContext.stroke(); // make sure circle is filled with #fff
+
+  colorWheelContext.fillStyle = "rgba(255,255,255,1)";
+  colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill(); // make transparent white pickable too (and add a black outline)
+
+  colorWheelContext.beginPath();
+  colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI); // border around the white
+
+  colorWheelContext.stroke(); // make sure circle is filled with transparent white
+
+  colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
+  colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI);
+  colorWheelContext.fill();
+}
+function makeBrightnessSlider(elementId, size) {
+  var location = document.getElementById(elementId);
+
+  if (location === undefined) {
+    console.log("could not find element with id ".concat(elementId, "!"));
+    return null;
+  }
+
+  var brightnessSlider = document.createElement('canvas');
+  brightnessSlider.id = "colorWheel";
+  var width = size / 12;
+  var height = size;
+  brightnessSlider.setAttribute('width', width);
+  brightnessSlider.setAttribute('height', height);
+  brightnessSlider.style.border = '1px solid #000';
+  var brightnessSliderContext = brightnessSlider.getContext('2d', {
+    willReadFrequently: true
+  });
+  var gradient = brightnessSliderContext.createLinearGradient(width / 2, 0, width / 2, height);
+  gradient.addColorStop(0, "#fff");
+  gradient.addColorStop(1, "#000");
+  brightnessSliderContext.fillStyle = gradient;
+  brightnessSliderContext.fillRect(0, 0, width, height);
+  location.appendChild(brightnessSlider);
+  return brightnessSlider;
 }
 
 const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
@@ -7536,7 +7916,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../filters/invert.js */ "./src/filters/invert.js");
 /* harmony import */ var _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../filters/mosaic.js */ "./src/filters/mosaic.js");
 /* harmony import */ var _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../filters/blur.js */ "./src/filters/blur.js");
-/* harmony import */ var _filters_simple_blur_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../filters/simple_blur.js */ "./src/filters/simple_blur.js");
+/* harmony import */ var _filters_targetedBlur_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../filters/targetedBlur.js */ "./src/filters/targetedBlur.js");
 /* harmony import */ var _filters_outline_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../filters/outline.js */ "./src/filters/outline.js");
 /* harmony import */ var _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../filters/voronoi.js */ "./src/filters/voronoi.js");
 /* harmony import */ var _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../filters/fisheye.js */ "./src/filters/fisheye.js");
@@ -7554,6 +7934,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 
 
 
+ //import { SimpleBlur } from '../filters/simple_blur.js';
 
 
 
@@ -7577,7 +7958,8 @@ var FilterManager = /*#__PURE__*/function () {
       "invert": new _filters_invert_js__WEBPACK_IMPORTED_MODULE_6__.Invert(),
       "mosaic": new _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_7__.Mosaic(),
       "blur": new _filters_blur_js__WEBPACK_IMPORTED_MODULE_8__.Blur(),
-      "simple_blur": new _filters_simple_blur_js__WEBPACK_IMPORTED_MODULE_9__.SimpleBlur(),
+      //"simple_blur": new SimpleBlur(),
+      "targeted_blur": new _filters_targetedBlur_js__WEBPACK_IMPORTED_MODULE_9__.TargetedBlur(animationProject),
       "outline": new _filters_outline_js__WEBPACK_IMPORTED_MODULE_10__.Outline(),
       "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_11__.Voronoi(),
       "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_12__.Fisheye(),
@@ -7706,15 +8088,14 @@ var PasteImageManager = /*#__PURE__*/function () {
       var pasteCanvas = document.querySelector('.pasteCanvas');
 
       if (pasteCanvas) {
-        if (evt.keyCode === 83) {
+        if (evt.code === "KeyS") {
           // s key
           this.resizingPasteCanvas = !this.resizingPasteCanvas;
-        } else if (evt.keyCode === 82) {
+        } else if (evt.code === "KeyR") {
           // r key
           this.rotatingPasteCanvas = !this.rotatingPasteCanvas;
-        } else if (evt.keyCode === 27) {
-          // esc key
-          // cancel
+        } else if (evt.code === "Escape") {
+          // esc key to cancel
           pasteCanvas.parentNode.removeChild(pasteCanvas);
           this.resizingPasteCanvas = false;
           this.rotatingPasteCanvas = false;
@@ -8431,7 +8812,7 @@ var Toolbar = /*#__PURE__*/function () {
             currentCanvas.setAttribute('height', height);
             currentCanvas.setAttribute('width', width);
             context.drawImage(img, 0, 0, width, height);
-            canvas.addSnapshot(currentCanvas.getContext("2d").getImageData(0, 0, width, height));
+            canvas.addSnapshot(context.getImageData(0, 0, width, height));
           }; //after reader has loaded file, put the data in the image object.
 
 
@@ -8588,9 +8969,10 @@ var Toolbar = /*#__PURE__*/function () {
       var tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
 
       for (var j = 0; j < frame.canvasList.length; j++) {
-        var layer = frame.canvasList[j]; // this assumes that all layers within a frame share the same dimensions
+        var layer = frame.canvasList[j];
+        var layerCtx = layer.getContext("2d"); // this assumes that all layers within a frame share the same dimensions
 
-        var currImageLayer = layer.getContext("2d").getImageData(0, 0, frame.width, frame.height);
+        var currImageLayer = layerCtx.getImageData(0, 0, frame.width, frame.height);
         var imageData = currImageLayer.data;
 
         for (var k = 0; k <= imageData.length - 4; k += 4) {
@@ -9141,7 +9523,7 @@ module.exports = !fails(function () {
 
 "use strict";
 
-var IteratorPrototype = __webpack_require__(/*! ../internals/iterators-core */ "./node_modules/core-js-pure/internals/iterators-core.js").IteratorPrototype;
+var IteratorPrototype = (__webpack_require__(/*! ../internals/iterators-core */ "./node_modules/core-js-pure/internals/iterators-core.js").IteratorPrototype);
 var create = __webpack_require__(/*! ../internals/object-create */ "./node_modules/core-js-pure/internals/object-create.js");
 var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "./node_modules/core-js-pure/internals/create-property-descriptor.js");
 var setToStringTag = __webpack_require__(/*! ../internals/set-to-string-tag */ "./node_modules/core-js-pure/internals/set-to-string-tag.js");
@@ -9385,7 +9767,7 @@ module.exports = [
 "use strict";
 
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js-pure/internals/global.js");
-var getOwnPropertyDescriptor = __webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "./node_modules/core-js-pure/internals/object-get-own-property-descriptor.js").f;
+var getOwnPropertyDescriptor = (__webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "./node_modules/core-js-pure/internals/object-get-own-property-descriptor.js").f);
 var isForced = __webpack_require__(/*! ../internals/is-forced */ "./node_modules/core-js-pure/internals/is-forced.js");
 var path = __webpack_require__(/*! ../internals/path */ "./node_modules/core-js-pure/internals/path.js");
 var bind = __webpack_require__(/*! ../internals/function-bind-context */ "./node_modules/core-js-pure/internals/function-bind-context.js");
@@ -10309,7 +10691,7 @@ module.exports = CORRECT_PROTOTYPE_GETTER ? Object.getPrototypeOf : function (O)
 
 var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js-pure/internals/has.js");
 var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "./node_modules/core-js-pure/internals/to-indexed-object.js");
-var indexOf = __webpack_require__(/*! ../internals/array-includes */ "./node_modules/core-js-pure/internals/array-includes.js").indexOf;
+var indexOf = (__webpack_require__(/*! ../internals/array-includes */ "./node_modules/core-js-pure/internals/array-includes.js").indexOf);
 var hiddenKeys = __webpack_require__(/*! ../internals/hidden-keys */ "./node_modules/core-js-pure/internals/hidden-keys.js");
 
 module.exports = function (object, names) {
@@ -10512,7 +10894,7 @@ module.exports = function (key, value) {
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var TO_STRING_TAG_SUPPORT = __webpack_require__(/*! ../internals/to-string-tag-support */ "./node_modules/core-js-pure/internals/to-string-tag-support.js");
-var defineProperty = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js-pure/internals/object-define-property.js").f;
+var defineProperty = (__webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js-pure/internals/object-define-property.js").f);
 var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js-pure/internals/create-non-enumerable-property.js");
 var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js-pure/internals/has.js");
 var toString = __webpack_require__(/*! ../internals/object-to-string */ "./node_modules/core-js-pure/internals/object-to-string.js");
@@ -11091,7 +11473,7 @@ $({ global: true }, {
 
 "use strict";
 
-var charAt = __webpack_require__(/*! ../internals/string-multibyte */ "./node_modules/core-js-pure/internals/string-multibyte.js").charAt;
+var charAt = (__webpack_require__(/*! ../internals/string-multibyte */ "./node_modules/core-js-pure/internals/string-multibyte.js").charAt);
 var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */ "./node_modules/core-js-pure/internals/internal-state.js");
 var defineIterator = __webpack_require__(/*! ../internals/define-iterator */ "./node_modules/core-js-pure/internals/define-iterator.js");
 
@@ -11513,7 +11895,7 @@ var anInstance = __webpack_require__(/*! ../internals/an-instance */ "./node_mod
 var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js-pure/internals/has.js");
 var assign = __webpack_require__(/*! ../internals/object-assign */ "./node_modules/core-js-pure/internals/object-assign.js");
 var arrayFrom = __webpack_require__(/*! ../internals/array-from */ "./node_modules/core-js-pure/internals/array-from.js");
-var codeAt = __webpack_require__(/*! ../internals/string-multibyte */ "./node_modules/core-js-pure/internals/string-multibyte.js").codeAt;
+var codeAt = (__webpack_require__(/*! ../internals/string-multibyte */ "./node_modules/core-js-pure/internals/string-multibyte.js").codeAt);
 var toASCII = __webpack_require__(/*! ../internals/string-punycode-to-ascii */ "./node_modules/core-js-pure/internals/string-punycode-to-ascii.js");
 var setToStringTag = __webpack_require__(/*! ../internals/set-to-string-tag */ "./node_modules/core-js-pure/internals/set-to-string-tag.js");
 var URLSearchParamsModule = __webpack_require__(/*! ../modules/web.url-search-params */ "./node_modules/core-js-pure/modules/web.url-search-params.js");
@@ -44852,6 +45234,11 @@ module.exports = getWDSMetadata;
 /******/ 				}
 /******/ 			}
 /******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/nonce */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nc = undefined;
 /******/ 	})();
 /******/ 	
 /************************************************************************/

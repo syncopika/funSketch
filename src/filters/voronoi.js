@@ -15,35 +15,46 @@ import { FilterTemplate } from './FilterTemplate.js';
 class Voronoi extends FilterTemplate {
     
     constructor(){
-        super(null);
+        const params = {
+            "neighborCount": {
+                "value": 30,
+                "min": 5,
+                "max": 80,
+                "step": 1,
+            }
+        }
+        super(params);
     }
     
     filter(pixels){
-        let width = pixels.width;
-        let height = pixels.height;
+        const width = pixels.width;
+        const height = pixels.height;
         
-        let data = pixels.data; //imgData.data;
-        let neighborList = []; // array of Points 
+        const data = pixels.data; //imgData.data;
+        const neighborList = []; // array of Points 
         
         for(let i = 0; i < data.length; i += 4){
             // get neighbors.
-            // add some offset to each neighbor for randomness (we don't really want evenly spaced neighbors)
-            let offset = Math.floor(Math.random() * 10); // to be applied in x or y direction
-            let sign = Math.random() > .5 ? 1 : -1;
-            let c1 = getPixelCoords(i, width, height);
-            if(c1.x % Math.floor(width / 30) === 0 && c1.y % Math.floor(height / 30) === 0 && c1.x !== 0){
-                let x = (sign * offset) + c1.x;
-                let y = (sign * offset) + c1.y;
-                let p1 = new Point(x, y, data[i], data[i + 1], data[i + 2]);
-                neighborList.push(p1);
+            const pixelCoords = getPixelCoords(i, width, height);
+            const neighborCount = this.params.neighborCount.value;
+            
+            if(pixelCoords.x % Math.floor(width / neighborCount) === 0 && pixelCoords.y % Math.floor(height / neighborCount) === 0 && pixelCoords.x !== 0){
+                // add some offset to each neighbor for randomness (we don't really want evenly spaced neighbors)
+                const offset = Math.floor(Math.random() * 10); // to be applied in x or y direction
+                const sign = Math.random() > .5 ? 1 : -1;
+                
+                const x = (sign * offset) + pixelCoords.x;
+                const y = (sign * offset) + pixelCoords.y;
+                const pt = new Point(x, y, data[i], data[i + 1], data[i + 2]);
+                neighborList.push(pt);
             }
         }
         
-        let kdtree = build2dTree(neighborList, 0);
+        const kdtree = build2dTree(neighborList, 0);
 
         for(let i = 0; i < data.length; i += 4){
-            let currCoords = getPixelCoords(i, width, height);
-            let nearestNeighbor = findNearestNeighbor(kdtree, currCoords.x, currCoords.y);
+            const currCoords = getPixelCoords(i, width, height);
+            const nearestNeighbor = findNearestNeighbor(kdtree, currCoords.x, currCoords.y);
             
             // found nearest neighbor. color the current pixel the color of the nearest neighbor. 
             data[i] = nearestNeighbor.r;

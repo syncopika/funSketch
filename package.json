@@ -16,7 +16,7 @@
         "@babel/preset-env": "^7.12.11",
         "@babel/preset-react": "^7.12.10",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
-        "@testing-library/jest-dom": "^5.11.8",
+        "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^11.2.2",
         "@wdio/cli": "^7.16.12",
         "@wdio/jasmine-framework": "^7.16.11",
@@ -25,8 +25,9 @@
         "@webpack-cli/serve": "^1.6.0",
         "babel-loader": "^8.2.2",
         "chromedriver": "^100.0.0",
+        "cross-env": "^7.0.3",
         "css-loader": "^6.4.0",
-        "express": "^4.17.1",
+        "express": "^4.18.2",
         "jest": "^26.6.3",
         "jest-canvas-mock": "^2.3.0",
         "pre-commit": "^1.2.2",
@@ -34,15 +35,15 @@
         "source-map-loader": "^0.2.4",
         "style-loader": "^3.3.0",
         "wdio-chromedriver-service": "^7.2.2",
-        "webpack": "^5.58.2",
+        "webpack": "^5.77.0",
         "webpack-cli": "^4.9.0",
-        "webpack-dev-server": "^4.3.1"
+        "webpack-dev-server": "^4.13.2"
     },
     "scripts": {
         "test": "jest --config ./jest.config.json --env=jsdom",
-        "dev": "webpack --mode development",
-        "build": "webpack --mode production",
-        "serve": "webpack serve --mode development",
+        "dev": "cross-env NODE_ENV=development webpack --mode development",
+        "build": "cross-env NODE_ENV=production webpack --mode production",
+        "serve": "cross-env NODE_ENV=development webpack serve --mode development",
         "wdio": "wdio run wdio.conf.js"
     },
     "repository": {

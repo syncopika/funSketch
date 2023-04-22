@@ -79,6 +79,7 @@ class DefaultBrush extends BrushTemplate {
     
     // this is for determining what the brush stroke looks like
     brushStroke(context, strokeColor=null){
+        console.log(this.clickColor[0]);
         for(let i = 0; i < this.clickX.length; i++){
             //this.clickColor[i] = this.clickColor[i].replace("128", "0.5"); // alpha needs to be between 0 and 1 for strokeStyle!
             context.strokeStyle = strokeColor ? strokeColor : this.clickColor[i]; // for when applying opaque white

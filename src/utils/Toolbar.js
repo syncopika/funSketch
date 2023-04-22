@@ -340,7 +340,12 @@ class Toolbar {
                     currentCanvas.setAttribute('height', height);
                     currentCanvas.setAttribute('width', width);
                     
-                    context.drawImage(img, 0, 0, width, height);
+                    const scaleToFitCanvas = confirm("scale to fit image to canvas?");
+                    if(scaleToFitCanvas){
+                        context.drawImage(img, 0, 0, width, height);
+                    }else{
+                        context.drawImage(img, 0, 0, img.width, img.height);
+                    }
                     
                     canvas.addSnapshot(context.getImageData(0, 0, width, height));
                 };

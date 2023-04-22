@@ -13,6 +13,8 @@ import { Fisheye } from '../filters/fisheye.js';
 import { HorizontalShift } from '../filters/shift.js';
 import { CRT } from '../filters/crt.js';
 import { ChannelShift } from '../filters/channel_shift.js';
+import { Dots } from '../filters/dots.js';
+import { Dots2 } from '../filters/dots2.js';
 
 class FilterManager {
     constructor(animationProject, brush){
@@ -35,6 +37,8 @@ class FilterManager {
             "horizontal_shift": new HorizontalShift(),
             "cathode-ray tube-like (CRT)": new CRT(),
             "channel_shift": new ChannelShift(),
+            "dots": new Dots(),
+            "dots2": new Dots2(),
         };
     }
 

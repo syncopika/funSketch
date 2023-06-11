@@ -573,6 +573,12 @@ class PresentationWrapper extends React.Component {
                         <div id="displayOtherStuff">
                             <ul>
                                 <li><button id='importImage'> import image </button></li>
+                                <li>
+                                    <div>
+                                        <label htmlFor='fitToCanvasCheck'>fit to canvas: </label><input name='fitToCanvasCheck' id='fitToCanvasCheck' type='checkbox' defaultChecked />
+                                        <label htmlFor='centerImageCheck'>center image: </label><input name='centerImageCheck' id='centerImageCheck' type='checkbox' />
+                                    </div>
+                                </li>
                                 <li><button id='rotateCanvasImage'>rotate image</button></li>
                                 <li><button id='undo'>undo</button></li>
                                 <li><button id='saveWork'>save project (.json)</button></li> 

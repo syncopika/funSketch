@@ -340,11 +340,21 @@ class Toolbar {
                     currentCanvas.setAttribute('height', height);
                     currentCanvas.setAttribute('width', width);
                     
-                    const scaleToFitCanvas = confirm("scale to fit image to canvas?");
+                    // TODO: should these params be part of state somewhere? :/
+                    const scaleToFitCanvasCheckbox = document.getElementById('fitToCanvasCheck');
+                    const centerImageCheckbox = document.getElementById('centerImageCheck');
+                    
+                    const scaleToFitCanvas = scaleToFitCanvasCheckbox ? scaleToFitCanvasCheckbox.checked : false;
+                    const centerImage = centerImageCheckbox ? centerImageCheckbox.checked : false;
+                    
                     if(scaleToFitCanvas){
                         context.drawImage(img, 0, 0, width, height);
                     }else{
-                        context.drawImage(img, 0, 0, img.width, img.height);
+                        if(centerImage){
+                            context.drawImage(img, width/2 - img.width/2, height/2 - img.height/2, img.width, img.height);
+                        }else{
+                            context.drawImage(img, 0, 0, img.width, img.height);
+                        }
                     }
                     
                     canvas.addSnapshot(context.getImageData(0, 0, width, height));

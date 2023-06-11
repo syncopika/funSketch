@@ -94,3 +94,7 @@
 #showDemos{
     padding-bottom: 10px;
 }
+
+#fitToCanvasCheck, #centerImageCheck{
+    margin-left: 3px;
+}

@@ -15,6 +15,7 @@ import { CRT } from '../filters/crt.js';
 import { ChannelShift } from '../filters/channel_shift.js';
 import { Dots } from '../filters/dots.js';
 import { Dots2 } from '../filters/dots2.js';
+import { Thinning } from '../filters/thinning.js';
 
 class FilterManager {
     constructor(animationProject, brush){
@@ -39,6 +40,7 @@ class FilterManager {
             "channel_shift": new ChannelShift(),
             "dots": new Dots(),
             "dots2": new Dots2(),
+            "thinning": new Thinning(),
         };
     }
 

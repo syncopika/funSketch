@@ -1,4 +1,3 @@
-// kd tree to be used in Voronoi function 
 // https://blog.krum.io/k-d-trees/
 // https://github.com/z2oh/chromatic_confinement/blob/master/src/main.rs
 // https://stackoverflow.com/questions/1627305/nearest-neighbor-k-d-tree-wikipedia-proof/37107030#37107030

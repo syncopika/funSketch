@@ -149,8 +149,12 @@ const FilterDashboard = (props) => {
                     id={"applyFilter"}
                     onClick={
                         function(){
+                            if(selectedFilter === "oilpainting"){
+                                const res = confirm("this filter will take some time. are you sure?");
+                                if(!res) return;
+                            }
                             filterManager.filterCanvasOption(selectedFilter);
-                            setFilterUsed(`applied ${selectedFilter} filter`);
+                            setFilterUsed(`applied ${selectedFilter} filter @ ${new Date().toISOString()}`);
                         }
                     }
                 > apply filter </button>

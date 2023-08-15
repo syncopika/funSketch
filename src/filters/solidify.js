@@ -37,7 +37,7 @@ class Solidify extends FilterTemplate {
             return this.colorMatchCache[currColor].match(/[0-9]{1,3}/g);
         }
         
-        for(let i = 0; i < this.params.numColors.value; i++){
+        for(let i = 0; i < Math.min(this.maxColors.length, this.params.numColors.value); i++){
             const targetColor = this.maxColors[i][0];
             const channelValues = targetColor.match(/[0-9]{1,3}/g);
             
@@ -47,10 +47,10 @@ class Solidify extends FilterTemplate {
             const targetB = channelValues[2];
             
             // calculate distance
-            const dist =
+            const dist = Math.sqrt(
                 (targetR - r)*(targetR - r) +
                 (targetG - g)*(targetG - g) +
-                (targetB - b)*(targetB - b);
+                (targetB - b)*(targetB - b));
             
             // if distance smaller than smallestDistance, update
             if(dist < smallestDistance){

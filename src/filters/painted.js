@@ -1,9 +1,10 @@
 import { FilterTemplate } from './FilterTemplate.js';
 
-class Watercolor extends FilterTemplate {
+class Painted extends FilterTemplate {
+    // this was originally an attempt at watercolor creation but it turned out different lol :D
     // attempted to implement based on https://grail.cs.washington.edu/projects/watercolor/paper_small.pdf but found it a tad too challenging for me atm :)
     // https://www.reddit.com/r/proceduralgeneration/comments/6mta0f/watercolor_simple_noise_algorithm/ -> cool and maybe related?
-    // maybe helpful for a new approach: https://stackoverflow.com/questions/62671209/how-to-spread-out-blur-filter-radius-in-html5-canvas 
+    // maybe helpful for a new approach: https://stackoverflow.com/questions/62671209/how-to-spread-out-blur-filter-radius-in-html5-canvas
     
     constructor(){
         const params = {};
@@ -24,8 +25,7 @@ class Watercolor extends FilterTemplate {
         const offscreenContext = offscreenCanvas.getContext("2d");
         offscreenContext.fillStyle = '#fff';
         offscreenContext.fillRect(0, 0, width, height);
-        offscreenContext.lineCap = "round";
-        offscreenContext.lineJoin = "round";
+        offscreenContext.lineJoin = "round"; // try other line join options for interesting effects!
         offscreenContext.globalCompositeOperation = 'source-over';
         
         for(let row = 0; row < height; row += 10){
@@ -35,17 +35,25 @@ class Watercolor extends FilterTemplate {
                 const b = data[(4 * row * width) + (4 * col) + 2];
                 const a = data[(4 * row * width) + (4 * col) + 3];
                 
+                const lineCap = Math.random() < 0.5 ? "round" : "butt";
+                offscreenContext.lineCap = lineCap;
+                
                 offscreenContext.strokeStyle = `rgba(${r},${g},${b},${a})`;
                 
-                const blurAmount = Math.floor(Math.random() * (15 - 2) + 2);
-                offscreenContext.filter = `blur(${blurAmount}px) opacity(95%)`;
-                
-                offscreenContext.lineWidth = Math.floor(Math.random() * (25 - 9) + 9);
-                offscreenContext.beginPath();
-                offscreenContext.moveTo(col, row+1);
-                offscreenContext.lineTo(col-1, row);
-                offscreenContext.closePath();
-                offscreenContext.stroke();
+                for(let i = 0; i < 2; i++){
+                    offscreenContext.beginPath();
+                    offscreenContext.lineWidth = Math.floor(Math.random() * (30 - 11) + 11);
+                    offscreenContext.globalAlpha = Math.random(); // 0.5
+                    
+                    const blurAmount = Math.floor(Math.random() * (8 - 1) + 1);
+                    //const opacityAmount = Math.floor(Math.random() * (98 - 80) + 80);
+                    offscreenContext.filter = `blur(${blurAmount}px)`; // opacity(${opacityAmount}%)`;
+                    
+                    offscreenContext.moveTo(col + Math.floor(Math.random() * 8) - 10, row + Math.floor(Math.random() * 8) - 10);
+                    offscreenContext.lineTo(col + Math.floor(Math.random() * 8) - 10, row + Math.floor(Math.random() * 8) - 10);
+                    offscreenContext.closePath();
+                    offscreenContext.stroke();
+                }
             }
         }
         
@@ -59,5 +67,5 @@ class Watercolor extends FilterTemplate {
 }
 
 export {
-    Watercolor
+    Painted
 }

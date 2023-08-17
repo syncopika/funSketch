@@ -18,7 +18,7 @@ import { Dots2 } from '../filters/dots2.js';
 import { Thinning } from '../filters/thinning.js';
 import { Solidify } from '../filters/solidify.js';
 import { OilPainting } from '../filters/oilpainting.js';
-import { Watercolor } from '../filters/watercolor.js';
+import { Painted } from '../filters/painted.js';
 
 class FilterManager {
     constructor(animationProject, brush){
@@ -45,8 +45,8 @@ class FilterManager {
             "dots2": new Dots2(),
             "thinning": new Thinning(),
             "solidify": new Solidify(),
+            "painted": new Painted(),
             "oilpainting": new OilPainting(),
-            "watercolorish": new Watercolor(),
         };
     }
 

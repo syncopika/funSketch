@@ -45,12 +45,12 @@ class Painted extends FilterTemplate {
                     offscreenContext.lineWidth = Math.floor(Math.random() * (30 - 11) + 11);
                     offscreenContext.globalAlpha = Math.random(); // 0.5
                     
-                    const blurAmount = Math.floor(Math.random() * (8 - 1) + 1);
-                    //const opacityAmount = Math.floor(Math.random() * (98 - 80) + 80);
-                    offscreenContext.filter = `blur(${blurAmount}px)`; // opacity(${opacityAmount}%)`;
+                    const blurAmount = Math.floor(Math.random() * (5 - 1) + 1);
+                    //const opacityAmount = Math.floor(Math.random() * (98 - 70) + 70);
+                    offscreenContext.filter = `blur(${blurAmount}px)`; //opacity(${opacityAmount}%) 
                     
-                    offscreenContext.moveTo(col + Math.floor(Math.random() * 8) - 10, row + Math.floor(Math.random() * 8) - 10);
-                    offscreenContext.lineTo(col + Math.floor(Math.random() * 8) - 10, row + Math.floor(Math.random() * 8) - 10);
+                    offscreenContext.moveTo(col + Math.floor(Math.random() * 8) - 5, row + Math.floor(Math.random() * 8) - 5);
+                    offscreenContext.lineTo(col + Math.floor(Math.random() * 8) - 5, row + Math.floor(Math.random() * 8) - 5);
                     offscreenContext.closePath();
                     offscreenContext.stroke();
                 }

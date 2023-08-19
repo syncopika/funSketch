@@ -44,7 +44,7 @@ class FilterManager {
             "dots": new Dots(),
             "dots2": new Dots2(),
             "thinning": new Thinning(),
-            "solidify": new Solidify(),
+            //"solidify": new Solidify(),
             "painted": new Painted(),
             "oilpainting": new OilPainting(),
         };

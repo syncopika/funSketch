@@ -82,7 +82,9 @@ class Solidify extends FilterTemplate {
             }
         }
         
-        // TODO: maybe preprocess this further and combine counts of colors that are really close/within a certain distance
+        // TODO: maybe preprocess this further and combine counts of colors that are really close/within a certain distance, if possible? but that's a hard problem too
+        // using the frequency at which a color appears to use in the palette for color matches isn't a really great idea (e.g. an image could consist of mostly a single
+        // color in the background and so is rather insignificant and shouldn't be a color candidate to match against) - which is why letting user choose palette would be good. but that may be tricky to implement. :)
         const sortable = Object.entries(this.colors).sort(([,a],[,b]) => b-a);
         this.maxColors = sortable;
         

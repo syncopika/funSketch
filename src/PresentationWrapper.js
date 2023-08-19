@@ -495,16 +495,22 @@ class PresentationWrapper extends React.Component {
                     <section id="instructions" className="toolbarSection2">
                         <h4> instructions </h4>
                         <p className='instructions'> 
-                            Use <kbd>Space</kbd> to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar). 
+                            <kbd>Space</kbd> = append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar). 
                         </p>
                         <p className='instructions'> 
-                            Use the <kbd>←</kbd> and <kbd>→</kbd> keys to move to the previous or next layer, and <kbd>A</kbd> and <kbd>D</kbd> to move between frames. 
+                            <kbd>←</kbd> and <kbd>→</kbd> = move to the previous or next layer
+                        </p>
+                        <p className='instructions'>
+                            <kbd>A</kbd> and <kbd>D</kbd> to move between frames. 
                         </p>
                         <p className='instructions'> 
                             After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. 
                         </p>
                         <p className='instructions'>
-                            You can also paste in an image with <kbd>Ctrl</kbd> + <kbd>V</kbd>. After pasting, you can move it by clicking anywhere on the canvas containing the pasted image (denoted by dotted lines) and dragging. Rotate it by pressing <kbd>R</kbd> and using the mouse wheel. Resizing it by pressing <kbd>S</kbd> and moving the mouse around over the canvas containing the pasted image. Remove the pasted image with <kbd>Esc</kbd>. Apply the image or abort by clicking anywhere outside the canvas with the pasted image.
+                            <kbd>Ctrl</kbd> + <kbd>V</kbd> = paste image
+                        </p>
+                        <p className='instructions'>
+                            After pasting, you can move it by clicking anywhere on the canvas containing the pasted image (denoted by dotted lines) and dragging. Rotate it by pressing <kbd>R</kbd> and using the mouse wheel. Resizing it by pressing <kbd>S</kbd> and moving the mouse around over the canvas containing the pasted image. Remove the pasted image with <kbd>Esc</kbd>. Apply the image or abort by clicking anywhere outside the canvas with the pasted image.
                         </p>
                     </section>
                 

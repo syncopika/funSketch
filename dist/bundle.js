@@ -2365,13 +2365,17 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "toolbarSection2"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, "Use ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Space"), " to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Space"), " = append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, "Use the ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2190"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2192"), " keys to move to the previous or next layer, and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "A"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "D"), " to move between frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2190"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2192"), " = move to the previous or next layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+        className: "instructions"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "A"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "D"), " to move between frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
       }, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, "You can also paste in an image with ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Ctrl"), " + ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "V"), ". After pasting, you can move it by clicking anywhere on the canvas containing the pasted image (denoted by dotted lines) and dragging. Rotate it by pressing ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "R"), " and using the mouse wheel. Resizing it by pressing ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "S"), " and moving the mouse around over the canvas containing the pasted image. Remove the pasted image with ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Esc"), ". Apply the image or abort by clicking anywhere outside the canvas with the pasted image.")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Ctrl"), " + ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "V"), " = paste image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+        className: "instructions"
+      }, "After pasting, you can move it by clicking anywhere on the canvas containing the pasted image (denoted by dotted lines) and dragging. Rotate it by pressing ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "R"), " and using the mouse wheel. Resizing it by pressing ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "S"), " and moving the mouse around over the canvas containing the pasted image. Remove the pasted image with ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Esc"), ". Apply the image or abort by clicking anywhere outside the canvas with the pasted image.")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
         id: "frameLayerSection",
         className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
@@ -6479,27 +6483,26 @@ var Painted = /*#__PURE__*/function (_FilterTemplate) {
 
       offscreenContext.globalCompositeOperation = 'source-over';
 
-      for (var row = 0; row < height; row += 10) {
-        for (var col = 0; col < width; col += 10) {
+      for (var row = 0; row < height; row += 8) {
+        for (var col = 0; col < width; col += 8) {
           var r = data[4 * row * width + 4 * col];
           var g = data[4 * row * width + 4 * col + 1];
           var b = data[4 * row * width + 4 * col + 2];
           var a = data[4 * row * width + 4 * col + 3];
-          var lineCap = Math.random() < 0.5 ? "round" : "butt";
+          var lineCap = Math.random() < 0.5 ? "square" : "round";
           offscreenContext.lineCap = lineCap;
           offscreenContext.strokeStyle = "rgba(".concat(r, ",").concat(g, ",").concat(b, ",").concat(a, ")");
 
           for (var i = 0; i < 2; i++) {
             offscreenContext.beginPath();
-            offscreenContext.lineWidth = Math.floor(Math.random() * (30 - 11) + 11);
+            offscreenContext.lineWidth = Math.floor(Math.random() * (28 - 10) + 10);
             offscreenContext.globalAlpha = Math.random(); // 0.5
+            //const blurAmount = Math.floor(Math.random() * (4 - 1) + 1);
+            //const opacityAmount = Math.floor(Math.random() * (98 - 70) + 70);
+            //offscreenContext.filter = `blur(${blurAmount}px)`; //opacity(${opacityAmount}%) 
 
-            var blurAmount = Math.floor(Math.random() * (5 - 1) + 1); //const opacityAmount = Math.floor(Math.random() * (98 - 70) + 70);
-
-            offscreenContext.filter = "blur(".concat(blurAmount, "px)"); //opacity(${opacityAmount}%) 
-
-            offscreenContext.moveTo(col + Math.floor(Math.random() * 8) - 5, row + Math.floor(Math.random() * 8) - 5);
-            offscreenContext.lineTo(col + Math.floor(Math.random() * 8) - 5, row + Math.floor(Math.random() * 8) - 5);
+            offscreenContext.moveTo(col, row + Math.floor(Math.random() * 7) - 5);
+            offscreenContext.lineTo(col, row + Math.floor(Math.random() * 10) - 5);
             offscreenContext.closePath();
             offscreenContext.stroke();
           }

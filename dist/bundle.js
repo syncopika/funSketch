@@ -6797,183 +6797,6 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 
 /***/ }),
 
-/***/ "./src/filters/solidify.js":
-/*!*********************************!*\
-  !*** ./src/filters/solidify.js ***!
-  \*********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Solidify": () => (/* binding */ Solidify)
-/* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
-/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
-__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
-
-
-
-
-
-
-
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_5___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_4___default()(this, result); }; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-// goal: figure out the main colors of the image and then find the closest main color for each pixel and make it that color.
-// this is kinda like areacolor.js actually I realized lol. but here I'm exploring another possible route.
-// https://www.alanzucconi.com/2015/05/24/how-to-find-the-main-colours-in-an-image/
-// https://stackoverflow.com/questions/3241929/python-find-dominant-most-common-color-in-an-image
-// https://stackoverflow.com/questions/5050250/fast-way-of-getting-the-dominant-color-of-an-image
-// https://www.crisluengo.net/archives/932/
-
-
-var Solidify = /*#__PURE__*/function (_FilterTemplate) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default()(Solidify, _FilterTemplate);
-
-  var _super = _createSuper(Solidify);
-
-  // TODO: let user choose which colors should be the main colors that should make up the image?
-  function Solidify() {
-    var _this;
-
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default()(this, Solidify);
-
-    var params = {
-      "numColors": {
-        "value": 70,
-        "min": 10,
-        "max": 90,
-        "step": 1
-      }
-    };
-    _this = _super.call(this, params);
-    _this.colors = {};
-    _this.maxColors = [];
-    _this.colorMatchCache = {};
-    return _this;
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(Solidify, [{
-    key: "findMatch",
-    value: function findMatch(r, g, b) {
-      var bestMatch = "rgb(0,0,0)";
-      var smallestDistance = 1000000;
-      var currColor = "rgb(".concat(r, ",").concat(g, ",").concat(b, ")");
-
-      if (this.colorMatchCache[currColor]) {
-        return this.colorMatchCache[currColor].match(/[0-9]{1,3}/g);
-      }
-
-      for (var i = 0; i < Math.min(this.maxColors.length, this.params.numColors.value); i++) {
-        var targetColor = this.maxColors[i][0];
-        var channelValues = targetColor.match(/[0-9]{1,3}/g); //console.log(targetColor);
-
-        var targetR = channelValues[0];
-        var targetG = channelValues[1];
-        var targetB = channelValues[2]; // calculate distance
-
-        var dist = Math.sqrt((targetR - r) * (targetR - r) + (targetG - g) * (targetG - g) + (targetB - b) * (targetB - b)); // if distance smaller than smallestDistance, update
-
-        if (dist < smallestDistance) {
-          smallestDistance = dist;
-          bestMatch = "rgb(".concat(targetR, ",").concat(targetG, ",").concat(targetB, ")");
-        }
-      }
-
-      this.colorMatchCache[currColor] = bestMatch;
-      return bestMatch.match(/[0-9]{1,3}/g);
-    }
-  }, {
-    key: "filter",
-    value: function filter(pixels) {
-      var width = pixels.width;
-      var height = pixels.height;
-      var data = pixels.data;
-
-      for (var i = 0; i <= data.length - 4; i += 4) {
-        var r = data[i];
-        var g = data[i + 1];
-        var b = data[i + 2];
-        var color = "rgb(".concat(r, ",").concat(g, ",").concat(b, ")");
-
-        if (this.colors[color]) {
-          this.colors[color]++;
-        } else {
-          this.colors[color] = 1;
-        }
-      } // TODO: maybe preprocess this further and combine counts of colors that are really close/within a certain distance, if possible? but that's a hard problem too
-      // using the frequency at which a color appears to use in the palette for color matches isn't a really great idea (e.g. an image could consist of mostly a single
-      // color in the background and so is rather insignificant and shouldn't be a color candidate to match against) - which is why letting user choose palette would be good. but that may be tricky to implement. :)
-
-
-      var sortable = Object.entries(this.colors).sort(function (_ref, _ref2) {
-        var _ref3 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_ref, 2),
-            a = _ref3[1];
-
-        var _ref4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_ref2, 2),
-            b = _ref4[1];
-
-        return b - a;
-      });
-      this.maxColors = sortable;
-
-      for (var _i = 0; _i < height; _i++) {
-        for (var j = 0; j < width; j++) {
-          var _r = data[_i * width * 4 + j * 4];
-          var _g = data[_i * width * 4 + j * 4 + 1];
-          var _b = data[_i * width * 4 + j * 4 + 2];
-          var bestMatchColor = this.findMatch(_r, _g, _b);
-          data[_i * width * 4 + j * 4] = bestMatchColor[0];
-          data[_i * width * 4 + j * 4 + 1] = bestMatchColor[1];
-          data[_i * width * 4 + j * 4 + 2] = bestMatchColor[2];
-        }
-      }
-
-      this.colorMatchCache = {};
-      this.colors = {};
-      this.maxColors = [];
-      return pixels;
-    }
-  }]);
-
-  return Solidify;
-}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_6__.FilterTemplate);
-
-
-
-const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
-const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
-	$ReactRefreshModuleId$
-);
-
-function $ReactRefreshModuleRuntime$(exports) {
-	if (false) {}
-}
-
-if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
-	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
-} else {
-	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
-}
-
-/***/ }),
-
 /***/ "./src/filters/targetedBlur.js":
 /*!*************************************!*\
   !*** ./src/filters/targetedBlur.js ***!
@@ -9086,9 +8909,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_dots_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../filters/dots.js */ "./src/filters/dots.js");
 /* harmony import */ var _filters_dots2_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../filters/dots2.js */ "./src/filters/dots2.js");
 /* harmony import */ var _filters_thinning_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../filters/thinning.js */ "./src/filters/thinning.js");
-/* harmony import */ var _filters_solidify_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../filters/solidify.js */ "./src/filters/solidify.js");
-/* harmony import */ var _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../filters/oilpainting.js */ "./src/filters/oilpainting.js");
-/* harmony import */ var _filters_painted_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../filters/painted.js */ "./src/filters/painted.js");
+/* harmony import */ var _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../filters/oilpainting.js */ "./src/filters/oilpainting.js");
+/* harmony import */ var _filters_painted_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../filters/painted.js */ "./src/filters/painted.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -9111,7 +8933,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 
 
 
-
+ //import { Solidify } from '../filters/solidify.js';
 
 
 
@@ -9142,8 +8964,8 @@ var FilterManager = /*#__PURE__*/function () {
       "dots2": new _filters_dots2_js__WEBPACK_IMPORTED_MODULE_17__.Dots2(),
       "thinning": new _filters_thinning_js__WEBPACK_IMPORTED_MODULE_18__.Thinning(),
       //"solidify": new Solidify(),
-      "painted": new _filters_painted_js__WEBPACK_IMPORTED_MODULE_21__.Painted(),
-      "oilpainting": new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_20__.OilPainting()
+      "painted": new _filters_painted_js__WEBPACK_IMPORTED_MODULE_20__.Painted(),
+      "oilpainting": new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_19__.OilPainting()
     };
   } // general filtering function. pass any kind of filter through this function.
 

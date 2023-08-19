@@ -50,7 +50,7 @@ const FilterDashboard = (props) => {
         "margin": "1% auto",
         "textAlign": "center",
         "display": "grid",
-        "gridTemplateRows": "auto auto",
+        "gridTemplateRows": "300px auto",
         "gridTemplateColumns": "auto",
     };
     
@@ -75,54 +75,45 @@ const FilterDashboard = (props) => {
 
     return (
         <div style={elementStyle}>
-            <div style={
-                {
-                    "gridRow": "1",
-                    "gridColumn": "1",
-                    "height": "100%"
-                }
-            }>
-                <div style={
-                    {
-                        "height": "100%",
-                        "width": "100%"
+            <div id='filtersDisplay' style={
+            {
+                "gridRow": "1",
+                "gridColumn": "1",
+                "height": "100%",
+                "overflow": "auto",
+            }}>
+                <ul 
+                    id='filterChoices'
+                    style={
+                        {
+                            "margin": "0 auto", 
+                            "padding": "0"
+                        }
                     }
-                }>
-                    <div id='filtersDisplay'>
-                        <ul 
-                            id='filterChoices'
-                            style={
-                                {
-                                    "margin": "0 auto", 
-                                    "padding": "0"
+                >
+                {
+                    filterNames.map((filterName, index) => {
+                        let selectedStyle = null;
+                        if(selectedFilter === filterName){
+                            selectedStyle = JSON.parse(JSON.stringify(style));
+                            selectedStyle["backgroundColor"] = "#c8c8c8";
+                        }
+                        let s = (selectedStyle !== null) ? selectedStyle : style;
+                        return <li 
+                            style={s}
+                            key={(`filter_${index}`)}
+                            id={(`${filterName}_${index}`)}
+                            onClick={
+                                (evt) => {
+                                    // show that the filter is selected
+                                    setSelectedFilter(filterName);
                                 }
                             }
-                        >
-                        {
-                            filterNames.map((filterName, index) => {
-                                let selectedStyle = null;
-                                if(selectedFilter === filterName){
-                                    selectedStyle = JSON.parse(JSON.stringify(style));
-                                    selectedStyle["backgroundColor"] = "#c8c8c8";
-                                }
-                                let s = (selectedStyle !== null) ? selectedStyle : style;
-                                return <li 
-                                    style={s}
-                                    key={(`filter_${index}`)}
-                                    id={(`${filterName}_${index}`)}
-                                    onClick={
-                                        (evt) => {
-                                            // show that the filter is selected
-                                            setSelectedFilter(filterName);
-                                        }
-                                    }
-                                    className="option"
-                                >{filterName}</li>
-                            })
-                        }
-                        </ul>
-                    </div>
-                </div>
+                            className="option"
+                        >{filterName}</li>
+                    })
+                }
+                </ul>
             </div>
             
             <div style={
@@ -144,17 +135,21 @@ const FilterDashboard = (props) => {
                     }
                     </ul>
                 </div>
-				
-                <button
-                    id={"applyFilter"}
-                    onClick={
-                        function(){
-                            filterManager.filterCanvasOption(selectedFilter);
-                            setFilterUsed(`applied ${selectedFilter} filter`);
-                        }
-                    }
-                > apply filter </button>
             </div>
+            
+            <button
+                id={"applyFilter"}
+                onClick={
+                    function(){
+                        if(selectedFilter === "oilpainting"){
+                            const res = confirm("this filter will take some time. are you sure?");
+                            if(!res) return;
+                        }
+                        filterManager.filterCanvasOption(selectedFilter);
+                        setFilterUsed(`applied ${selectedFilter} filter @ ${new Date().toISOString()}`);
+                    }
+                }
+            > apply filter </button>
             
             <div>
                 <br />

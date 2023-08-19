@@ -1493,7 +1493,7 @@ var FilterDashboard = function FilterDashboard(props) {
     "margin": "1% auto",
     "textAlign": "center",
     "display": "grid",
-    "gridTemplateRows": "auto auto",
+    "gridTemplateRows": "300px auto",
     "gridTemplateColumns": "auto"
   }; // use a hook to be able to keep track of selected filter
 
@@ -1523,18 +1523,13 @@ var FilterDashboard = function FilterDashboard(props) {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     style: elementStyle
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    id: "filtersDisplay",
     style: {
       "gridRow": "1",
       "gridColumn": "1",
-      "height": "100%"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    style: {
       "height": "100%",
-      "width": "100%"
+      "overflow": "auto"
     }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    id: "filtersDisplay"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("ul", {
     id: "filterChoices",
     style: {
@@ -1560,7 +1555,7 @@ var FilterDashboard = function FilterDashboard(props) {
       },
       className: "option"
     }, filterName);
-  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
     style: {
       "gridRow": "2",
       "gridColumn": "1"
@@ -1576,13 +1571,18 @@ var FilterDashboard = function FilterDashboard(props) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("li", {
       key: "filter_param_".concat(index)
     }, slider);
-  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("button", {
+  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("button", {
     id: "applyFilter",
     onClick: function onClick() {
+      if (selectedFilter === "oilpainting") {
+        var res = confirm("this filter will take some time. are you sure?");
+        if (!res) return;
+      }
+
       filterManager.filterCanvasOption(selectedFilter);
-      setFilterUsed("applied ".concat(selectedFilter, " filter"));
+      setFilterUsed("applied ".concat(selectedFilter, " filter @ ").concat(new Date().toISOString()));
     }
-  }, " apply filter ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
+  }, " apply filter "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
     className: "filterUsedMsg"
   }, " ", filterUsed, " ")));
 };
@@ -2365,13 +2365,23 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
         className: "toolbarSection2"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, "Use ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Space"), " to append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Space"), " = append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, "Use the ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2190"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2192"), " keys to move to the previous or next layer, and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "A"), " and ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "D"), " to move between frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2190"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2192"), " = move between layers"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+        className: "instructions"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "A"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "D"), " = move between frames"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
       }, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
         className: "instructions"
-      }, "You can also paste in an image with ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Ctrl"), " + ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "V"), ". After pasting, you can move it by clicking anywhere on the canvas containing the pasted image (denoted by dotted lines) and dragging. Rotate it by pressing ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "R"), " and using the mouse wheel. Resizing it by pressing ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "S"), " and moving the mouse around over the canvas containing the pasted image. Remove the pasted image with ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Esc"), ". Apply the image or abort by clicking anywhere outside the canvas with the pasted image.")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Ctrl"), " + ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "V"), " = paste image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+        className: "instructions"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "R"), " + mouse wheel = rotate pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+        className: "instructions"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "S"), " = resize pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+        className: "instructions"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Esc"), " = remove pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
+        className: "instructions"
+      }, "After pasting the image, you can move it by clicking and dragging the box containing it (denoted by dotted lines). Apply the image to the canvas or abort by clicking anywhere outside the canvas with the pasted image.")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
         id: "frameLayerSection",
         className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
@@ -5763,7 +5773,6 @@ __webpack_require__.r(__webpack_exports__);
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
-// kd tree to be used in Voronoi function 
 // https://blog.krum.io/k-d-trees/
 // https://github.com/z2oh/chromatic_confinement/blob/master/src/main.rs
 // https://stackoverflow.com/questions/1627305/nearest-neighbor-k-d-tree-wikipedia-proof/37107030#37107030
@@ -6090,6 +6099,172 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 
 /***/ }),
 
+/***/ "./src/filters/oilpainting.js":
+/*!************************************!*\
+  !*** ./src/filters/oilpainting.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OilPainting": () => (/* binding */ OilPainting)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+// http://supercomputingblog.com/graphics/oil-painting-algorithm/
+// https://www.codeproject.com/Articles/471994/OilPaintEffect
+
+
+var OilPainting = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(OilPainting, _FilterTemplate);
+
+  var _super = _createSuper(OilPainting);
+
+  function OilPainting() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, OilPainting);
+
+    var params = {
+      "radius": {
+        "min": 1,
+        "max": 7,
+        "value": 5,
+        "step": 1
+      },
+      "intensity": {
+        "min": 10,
+        "max": 30,
+        "value": 20,
+        "step": 1
+      }
+    };
+    return _super.call(this, params);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(OilPainting, [{
+    key: "getIntensity",
+    value: function getIntensity(pixelData, width, height, row, col) {
+      var intensityCount = {};
+      var avgR = {};
+      var avgG = {};
+      var avgB = {};
+      var top = Math.max(row - this.params.radius.value, 0);
+      var bottom = Math.min(row + this.params.radius.value, height - 1);
+      var counter = 0; // collect intensities of all the neighboring pixels of this current pixel (based on given radius)
+
+      for (var r = top; r <= bottom; r++) {
+        var left = Math.max(0, col - counter);
+        var right = Math.min(width - 1, col + counter);
+
+        for (var c = left; c <= right; c++) {
+          var currPixelIndex = 4 * width * r + 4 * c;
+          var currR = pixelData[currPixelIndex];
+          var currG = pixelData[currPixelIndex + 1];
+          var currB = pixelData[currPixelIndex + 2];
+          var currIntensity = (currR + currG + currB) / 3 * this.params.intensity.value / 255;
+
+          if (intensityCount[currIntensity]) {
+            intensityCount[currIntensity]++;
+            avgR[currIntensity] += currR;
+            avgG[currIntensity] += currG;
+            avgB[currIntensity] += currB;
+          } else {
+            intensityCount[currIntensity] = 1;
+            avgR[currIntensity] = currR;
+            avgG[currIntensity] = currG;
+            avgB[currIntensity] = currB;
+          }
+        }
+
+        counter++;
+      } // find which intensity is most common surrounding this current pixel and calculate the color that matches it
+
+
+      var currMaxIntensity = Object.keys(intensityCount)[0];
+      var currMaxCount = intensityCount[currMaxIntensity];
+
+      for (var intensity in intensityCount) {
+        if (intensityCount[intensity] > currMaxCount) {
+          currMaxCount = intensityCount[intensity];
+          currMaxIntensity = intensity;
+        }
+      }
+
+      var finalR = avgR[currMaxIntensity] / currMaxCount;
+      var finalG = avgG[currMaxIntensity] / currMaxCount;
+      var finalB = avgB[currMaxIntensity] / currMaxCount;
+      return {
+        r: finalR,
+        g: finalG,
+        b: finalB
+      };
+    }
+  }, {
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data;
+      var copy = new Uint8ClampedArray(data);
+
+      for (var row = 0; row < height; row++) {
+        for (var col = 0; col < width; col++) {
+          var color = this.getIntensity(copy, width, height, row, col);
+          var pixelIdx = 4 * width * row + 4 * col;
+          data[pixelIdx] = color.r;
+          data[pixelIdx + 1] = color.g;
+          data[pixelIdx + 2] = color.b;
+        }
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return OilPainting;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
+
+
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
 /***/ "./src/filters/outline.js":
 /*!********************************!*\
   !*** ./src/filters/outline.js ***!
@@ -6223,6 +6398,140 @@ var Outline = /*#__PURE__*/function (_FilterTemplate) {
   }]);
 
   return Outline;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
+
+
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
+/***/ "./src/filters/painted.js":
+/*!********************************!*\
+  !*** ./src/filters/painted.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Painted": () => (/* binding */ Painted)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+
+
+var Painted = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Painted, _FilterTemplate);
+
+  var _super = _createSuper(Painted);
+
+  // this was originally an attempt at watercolor creation but it turned out different lol :D
+  // attempted to implement based on https://grail.cs.washington.edu/projects/watercolor/paper_small.pdf but found it a tad too challenging for me atm :)
+  // https://www.reddit.com/r/proceduralgeneration/comments/6mta0f/watercolor_simple_noise_algorithm/ -> cool and maybe related?
+  // maybe helpful for a new approach: https://stackoverflow.com/questions/62671209/how-to-spread-out-blur-filter-radius-in-html5-canvas
+  function Painted() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Painted);
+
+    var params = {};
+    return _super.call(this, params);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Painted, [{
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data; //const copy = new Uint8ClampedArray(data);
+
+      var offscreenCanvas = document.createElement("canvas");
+      offscreenCanvas.width = width;
+      offscreenCanvas.height = height;
+      var offscreenContext = offscreenCanvas.getContext("2d");
+      offscreenContext.fillStyle = '#fff';
+      offscreenContext.fillRect(0, 0, width, height);
+      offscreenContext.lineJoin = "round"; // try other line join options for interesting effects!
+
+      offscreenContext.globalCompositeOperation = 'source-over';
+      /* this is cool - we can create an interesting texture with shadow blur. but unfortunately not what I'm looking for with this filter
+      // maybe use for a different filter? note that it does add to the processing time.
+      offscreenContext.shadowOffsetX = Math.floor(Math.random() * 5);
+      offscreenContext.shadowColor = 'rgba(0, 0, 0, 0.5)';
+      offscreenContext.shadowBlur = 8;
+      */
+
+      for (var row = 0; row < height; row += 8) {
+        for (var col = 0; col < width; col += 8) {
+          var r = data[4 * row * width + 4 * col];
+          var g = data[4 * row * width + 4 * col + 1];
+          var b = data[4 * row * width + 4 * col + 2];
+          var a = data[4 * row * width + 4 * col + 3]; //const lineCap = "round";
+          //offscreenContext.lineCap = lineCap;
+
+          offscreenContext.strokeStyle = "rgba(".concat(r, ",").concat(g, ",").concat(b, ",").concat(a, ")");
+
+          for (var i = 0; i < 2; i++) {
+            offscreenContext.globalAlpha = Math.random(); //0.5;
+
+            offscreenContext.beginPath();
+            offscreenContext.lineWidth = Math.floor(Math.random() * (28 - 10) + 10); //const blurAmount = Math.floor(Math.random() * (4 - 1) + 1);
+            //const opacityAmount = Math.floor(Math.random() * (98 - 20) + 20);
+            //offscreenContext.filter = `opacity(${opacityAmount}%) blur(${blurAmount}px)`; 
+
+            offscreenContext.moveTo(col, row);
+            offscreenContext.lineTo(col, row + Math.floor(Math.random() * 7) - 5);
+            offscreenContext.closePath();
+            offscreenContext.stroke();
+          }
+        }
+      }
+
+      var offscreenPixelData = offscreenContext.getImageData(0, 0, width, height).data;
+
+      for (var _i = 0; _i < pixels.data.length; _i++) {
+        pixels.data[_i] = offscreenPixelData[_i];
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return Painted;
 }(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
 
 
@@ -8600,6 +8909,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_dots_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../filters/dots.js */ "./src/filters/dots.js");
 /* harmony import */ var _filters_dots2_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../filters/dots2.js */ "./src/filters/dots2.js");
 /* harmony import */ var _filters_thinning_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../filters/thinning.js */ "./src/filters/thinning.js");
+/* harmony import */ var _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../filters/oilpainting.js */ "./src/filters/oilpainting.js");
+/* harmony import */ var _filters_painted_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../filters/painted.js */ "./src/filters/painted.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -8620,6 +8931,9 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 
 
 
+
+
+ //import { Solidify } from '../filters/solidify.js';
 
 
 
@@ -8648,7 +8962,10 @@ var FilterManager = /*#__PURE__*/function () {
       "channel_shift": new _filters_channel_shift_js__WEBPACK_IMPORTED_MODULE_15__.ChannelShift(),
       "dots": new _filters_dots_js__WEBPACK_IMPORTED_MODULE_16__.Dots(),
       "dots2": new _filters_dots2_js__WEBPACK_IMPORTED_MODULE_17__.Dots2(),
-      "thinning": new _filters_thinning_js__WEBPACK_IMPORTED_MODULE_18__.Thinning()
+      "thinning": new _filters_thinning_js__WEBPACK_IMPORTED_MODULE_18__.Thinning(),
+      //"solidify": new Solidify(),
+      "painted": new _filters_painted_js__WEBPACK_IMPORTED_MODULE_20__.Painted(),
+      "oilpainting": new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_19__.OilPainting()
     };
   } // general filtering function. pass any kind of filter through this function.
 

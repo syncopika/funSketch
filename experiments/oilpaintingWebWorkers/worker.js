@@ -1,15 +1,15 @@
 // this is the worker script
 // give each worker a 'quadrant' to take care of 
 onmessage = function(e){
-	const data = e.data[0];	// the original image data
-	const width = e.data[1];
-	const height = e.data[2];
-	const direction = e.data[3];	// upRight, upLeft, downRight, downLeft
+    const data = e.data[0];    // the original image data
+    const width = e.data[1];
+    const height = e.data[2];
+    const direction = e.data[3];    // upRight, upLeft, downRight, downLeft
 
-	// just return the index of the pixels looked at and the color to change to
-	const result = oilpaint(data, width, height, direction);
-	
-	return result;
+    // just return the index of the pixels looked at and the color to change to
+    const result = oilpaint(data, width, height, direction);
+    
+    return result;
 }
 
 function getIntensity(pixelData, width, height, row, col){
@@ -93,44 +93,43 @@ function getIntensity(pixelData, width, height, row, col){
 // width = width of canvas, height = height of canvas, newColor = color to change to, pixelSelected = start pixel, direction = upRight, downRight, upLeft, or upRight
 // data = the original context data
 function oilpaint(data, width, height, direction){
-  const copy = new Uint8ClampedArray(data);
-	
-	// create visited set 
-	// the format of these entries will be like: {'xCoord,yCoord': 1}
-	const visited = {};
-  
-  let rowStart = 0;
-  let colStart = 0;
-  let rowEnd = height;
-  let colEnd = width;
-  
-  if(direction === 'upRight'){
-      rowEnd = Math.floor(height/2);
-      colStart = Math.floor(width/2);
-  }else if(direction === 'upLeft'){
-      rowEnd = Math.floor(height/2);
-      colEnd = Math.floor(width/2);
-  }else if(direction === 'downLeft'){
-      rowStart = Math.floor(height/2);
-      colEnd = Math.floor(width/2);
-  }else if(direction === 'downRight'){
-      rowStart = Math.floor(height/2);
-      colStart = Math.floor(width/2);
-  }
-  
-  for(let row = rowStart; row < rowEnd; row++){
-      for(let col = colStart; col < colEnd; col++){
-          const color = getIntensity(copy, width, height, row, col);
-          const pixelIdx = (4 * width * row) + (4 * col);
-          visited[pixelIdx] = {
-              r: color.r,
-              g: color.g,
-              b: color.b,
-          };
-      }
-  }
-  
-	// the visited associative array will only contain the pixel coordinates whose color should change!!
-	// do the color changing in the main thread 
-	postMessage(visited);
+    const copy = new Uint8ClampedArray(data);
+    
+    // create visited set
+    const visited = {};
+    
+    let rowStart = 0;
+    let colStart = 0;
+    let rowEnd = height;
+    let colEnd = width;
+    
+    if(direction === 'upRight'){
+        rowEnd = Math.floor(height/2);
+        colStart = Math.floor(width/2);
+    }else if(direction === 'upLeft'){
+        rowEnd = Math.floor(height/2);
+        colEnd = Math.floor(width/2);
+    }else if(direction === 'downLeft'){
+        rowStart = Math.floor(height/2);
+        colEnd = Math.floor(width/2);
+    }else if(direction === 'downRight'){
+        rowStart = Math.floor(height/2);
+        colStart = Math.floor(width/2);
+    }
+    
+    for(let row = rowStart; row < rowEnd; row++){
+        for(let col = colStart; col < colEnd; col++){
+            const color = getIntensity(copy, width, height, row, col);
+            const pixelIdx = (4 * width * row) + (4 * col);
+            visited[pixelIdx] = {
+                r: color.r,
+                g: color.g,
+                b: color.b,
+            };
+        }
+    }
+    
+    // the visited associative array will only contain the pixel coordinates whose color should change!!
+    // do the color changing in the main thread 
+    postMessage(visited);
 }

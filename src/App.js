@@ -11,12 +11,12 @@ import { BrushDashboard } from './BrushDashboard.js';
 import { ColorPicker } from './ColorPicker.js';
 import { PasteImageManager } from './utils/PasteImageManager.js';
 
-import "../styles/presentationWrapper.css";
+import "../styles/app.css";
 
 // for displaying current frame and layer number
 // TODO: importing a project won't update the counter display since it's using the Toolbar class functions
-// and so the PresentationWrapper's state doesn't get updated with the new currentFrame/Layer
-const FrameCounterDisplay = (props) => {
+// and so the App's state doesn't get updated with the new currentFrame/Layer
+export const FrameCounterDisplay = (props) => {
     return (
         <div id='pageCount'>
             <h3 id='prevFrame'> &#9664; &nbsp;&nbsp;</h3>
@@ -28,7 +28,7 @@ const FrameCounterDisplay = (props) => {
     );
 }
 
-class PresentationWrapper extends React.Component {
+export class App extends React.Component {
     constructor(props){
         super(props);
         
@@ -494,33 +494,15 @@ class PresentationWrapper extends React.Component {
                     
                     <section id="instructions" className="toolbarSection2">
                         <h4> instructions </h4>
-                        <p className='instructions'> 
-                            <kbd>Space</kbd> = append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar) 
-                        </p>
-                        <p className='instructions'> 
-                            <kbd>←</kbd> <kbd>→</kbd> = move between layers
-                        </p>
-                        <p className='instructions'>
-                            <kbd>A</kbd> <kbd>D</kbd> = move between frames
-                        </p>
-                        <p className='instructions'> 
-                            After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames. 
-                        </p>
-                        <p className='instructions'>
-                            <kbd>Ctrl</kbd> + <kbd>V</kbd> = paste image
-                        </p>
-                        <p className='instructions'>
-                            <kbd>R</kbd> + mouse wheel = rotate pasted image
-                        </p>
-                        <p className='instructions'>
-                            <kbd>S</kbd> = resize pasted image
-                        </p>
-                        <p className='instructions'>
-                            <kbd>Esc</kbd> = remove pasted image
-                        </p>                        
-                        <p className='instructions'>
-                            After pasting the image, you can move it by clicking and dragging the box containing it (denoted by dotted lines). Apply the image to the canvas or abort by clicking anywhere outside the canvas with the pasted image.
-                        </p>
+                        <p><kbd>Space</kbd> = append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)</p>
+                        <p><kbd>←</kbd> <kbd>→</kbd> = move between layers</p>
+                        <p><kbd>A</kbd> <kbd>D</kbd> = move between frames</p>
+                        <p>After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames.</p>
+                        <p><kbd>Ctrl</kbd> + <kbd>V</kbd> = paste image</p>
+                        <p><kbd>R</kbd> + mouse wheel = rotate pasted image</p>
+                        <p><kbd>S</kbd> = resize pasted image</p>
+                        <p><kbd>Esc</kbd> = abort image paste</p>                        
+                        <p>After pasting the image, you can move it by clicking and dragging the box around it (denoted by dotted lines). Apply the image to the canvas by clicking anywhere outside the dotted lines. </p>
                     </section>
                 
                     <section id="frameLayerSection" className="tbar">
@@ -549,7 +531,9 @@ class PresentationWrapper extends React.Component {
                             <LayerOrder 
                                 changingLayerOrder={this.state.changingLayerOrder}
                                 layers={
-                                    this.state.animationProject && this.state.animationProject.getCurrFrame() ? this.state.animationProject.getCurrFrame().getLayers().map((x, idx) => idx) : []
+                                    this.state.animationProject && 
+                                    this.state.animationProject.getCurrFrame() ? 
+                                    this.state.animationProject.getCurrFrame().getLayers().map((x, idx) => idx) : []
                                 }
                                 updateParentStateFunction={
                                     (newLayerOrder) => {
@@ -606,6 +590,7 @@ class PresentationWrapper extends React.Component {
                             <br />
                             <h4>check out some experiments for new feature ideas:</h4>
                             <p><a href="./experiments/floodfillExperiment/floodfillExperiment.html">floodfill with web workers</a></p>
+                            <p><a href="./experiments/oilpaintingWebWorkers/oilpainting.html">oilpainting with web workers</a></p>
                             <p><a href="./experiments/selectToolExperiment/selectTool.html">selection tool</a></p>
                         </div>
                     </section>
@@ -719,10 +704,7 @@ class PresentationWrapper extends React.Component {
                     <p> c.2017 | <a href='https://github.com/syncopika/funSketch'> source </a></p>
                 </footer>
                 
-            </div> 
+            </div>
         );
     }
-
 }
-
-export { PresentationWrapper, FrameCounterDisplay };

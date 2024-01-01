@@ -5,9 +5,9 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { AnimationProject } from '../src/utils/AnimationProject.js';
 import { Toolbar } from '../src/utils/Toolbar.js';
 import { BrushManager } from '../src/utils/BrushManager.js';
-import { PresentationWrapper, FrameCounterDisplay } from '../src/PresentationWrapper.js';
+import { App, FrameCounterDisplay } from '../src/App.js';
 
-describe("testing PresentationWrapper component", () => {
+describe("testing App component", () => {
     
     beforeAll(() => {
         jest.spyOn(AnimationProject.prototype, "updateOnionSkin").mockImplementation(() => undefined);
@@ -39,8 +39,8 @@ describe("testing PresentationWrapper component", () => {
         expect(screen.getByText(new RegExp(layerNum))).toBeInTheDocument();
     });
     
-    it("testing PresentationWrapper rendering", () => {
-        render(<PresentationWrapper />);
+    it("testing App rendering", () => {
+        render(<App />);
         
         // we expect that the layer and frame should be shown as 1 initially somewhere on the page        
         const initialFrameNum = 1;
@@ -50,7 +50,7 @@ describe("testing PresentationWrapper component", () => {
     });
     
     it("testing adding a layer", () => {
-        const presentation = render(<PresentationWrapper />);
+        const presentation = render(<App />);
         
         // add a new layer
         const leftClick = {button: 0};
@@ -64,7 +64,7 @@ describe("testing PresentationWrapper component", () => {
     });
     
     it("testing adding a frame", () => {
-        const presentation = render(<PresentationWrapper />);
+        const presentation = render(<App />);
         
         // add a new frame
         const leftClick = {button: 0};
@@ -75,7 +75,7 @@ describe("testing PresentationWrapper component", () => {
     
     it("making sure brush-related event listeners get removed from canvas when switching canvases", () => {
         const brushReset = jest.spyOn(BrushManager.prototype, "resetBrush");
-        const presentation = render(<PresentationWrapper />);
+        const presentation = render(<App />);
         
         // add a new layer
         const leftClick = {button: 0};
@@ -87,7 +87,7 @@ describe("testing PresentationWrapper component", () => {
     });
     
     it("testing deleting the initial layer (no key down)", () => {
-        const presentation = render(<PresentationWrapper />);
+        const presentation = render(<App />);
         
         const leftClick = {button: 0};
         
@@ -100,7 +100,7 @@ describe("testing PresentationWrapper component", () => {
     });
     
     it("testing adding a layer and then deleting (no key down)", () => {
-        const presentation = render(<PresentationWrapper />);
+        const presentation = render(<App />);
         
         // add a new layer
         const leftClick = {button: 0};
@@ -122,7 +122,8 @@ describe("testing PresentationWrapper component", () => {
     });
     
     it("testing adding a frame and then deleting (no key down)", () => {
-        const presentation = render(<PresentationWrapper />);
+        const presentation = render(<App />);
+        
         // add a new frame
         const leftClick = {button: 0};
         fireEvent.click(screen.getByRole('button', {name: 'add new frame'}), leftClick);
@@ -145,7 +146,7 @@ describe("testing PresentationWrapper component", () => {
     /*
     // having difficulty currently with simulating keydown
     it("testing adding a frame and then deleting (key down)", () => {
-        render(<PresentationWrapper />);
+        render(<App />);
         
         // add a new frame
         const leftClick = {button: 0};

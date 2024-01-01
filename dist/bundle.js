@@ -111,6 +111,31 @@ module.exports = _createClass;
 
 /***/ }),
 
+/***/ "./node_modules/@babel/runtime/helpers/defineProperty.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/defineProperty.js ***!
+  \***************************************************************/
+/***/ ((module) => {
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+
+/***/ }),
+
 /***/ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js":
 /*!***************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/getPrototypeOf.js ***!
@@ -827,14 +852,14 @@ ansiHTML.reset()
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var _src_PresentationWrapper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/PresentationWrapper.js */ "./src/PresentationWrapper.js");
+/* harmony import */ var _src_App_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./src/App.js */ "./src/App.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
 
 
 
-react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_src_PresentationWrapper_js__WEBPACK_IMPORTED_MODULE_2__.PresentationWrapper, null), document.getElementById('root'));
+react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_src_App_js__WEBPACK_IMPORTED_MODULE_2__.App, null), document.getElementById('root'));
 
 const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
 const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
@@ -1078,692 +1103,17 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 
 /***/ }),
 
-/***/ "./src/BrushDashboard.js":
-/*!*******************************!*\
-  !*** ./src/BrushDashboard.js ***!
-  \*******************************/
+/***/ "./src/App.js":
+/*!********************!*\
+  !*** ./src/App.js ***!
+  \********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "BrushDashboard": () => (/* binding */ BrushDashboard)
-/* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
-__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
-
-
-
-var _s = __webpack_require__.$Refresh$.signature();
-
-
-
-
-var BrushDashboard = function BrushDashboard(props) {
-  _s();
-
-  var brushManager = props.brushManager;
-  var brushes = brushManager ? brushManager.brushesMap : {}; // can be null initially
-
-  var brushNames = Object.keys(brushes);
-  var style = {
-    "textAlign": "center"
-  };
-  var elementStyle = {
-    "width": "100%",
-    "height": "100%",
-    "margin": "1% auto",
-    "textAlign": "center",
-    "display": "grid",
-    "gridTemplateRows": "auto auto",
-    "gridTemplateColumns": "auto"
-  }; // use a hook to be able to keep track of selected brush
-
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)("default"),
-      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
-      selectedBrush = _useState2[0],
-      setSelectedBrush = _useState2[1];
-
-  var brushSize = brushManager ? "".concat(brushManager.currSize) : "2";
-
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(brushSize),
-      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState3, 2),
-      currBrushSize = _useState4[0],
-      setBrushSize = _useState4[1];
-
-  function equipBrush(brushManager, brushName) {
-    return function (evt) {
-      setSelectedBrush(brushName);
-
-      if (brushManager) {
-        // equip brush
-        brushManager.resetBrush();
-        brushManager.setBrushType(brushName);
-        brushManager.applyBrush();
-      }
-    };
-  }
-
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    style: elementStyle
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    style: {
-      "gridRow": "1",
-      "gridColumn": "1",
-      "height": "100%"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    style: {
-      "overflowY": "auto",
-      "height": "100%",
-      "width": "100%"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    id: "brushDisplay"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("ul", {
-    id: "brushChoices",
-    style: {
-      "margin": "0 auto",
-      "padding": "0"
-    }
-  }, brushNames.map(function (brushName, index) {
-    var selectedStyle = JSON.parse(JSON.stringify(style));
-
-    if (selectedBrush === brushName) {
-      selectedStyle["backgroundColor"] = "#c8c8c8";
-    }
-
-    var s = selectedStyle !== null ? selectedStyle : style;
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("li", {
-      style: s,
-      key: "brush_".concat(index),
-      id: "".concat(brushName, "_").concat(index),
-      onClick: equipBrush(brushManager, brushName),
-      onMouseOver: function onMouseOver(evt) {
-        evt.target.style.color = "#99b5d1";
-      },
-      onMouseOut: function onMouseOut(evt) {
-        evt.target.style.color = "#000";
-      }
-    }, brushName);
-  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    style: {
-      "gridRow": "2",
-      "gridColumn": "1"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    id: "adjustBrushSize"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
-    className: "text-info"
-  }, "change brush size"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", {
-    id: "brushSize",
-    type: "range",
-    min: "1",
-    max: "20",
-    step: ".5",
-    defaultValue: currBrushSize,
-    onChange: function onChange(evt) {
-      brushManager.changeBrushSize(evt.target.value);
-      setBrushSize(evt.target.value);
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("span", {
-    id: "brushSizeValue"
-  }, currBrushSize))));
-};
-
-_s(BrushDashboard, "7FWB4QwAAn7GoPtoSz0w+iLMqJo=");
-
-_c = BrushDashboard;
-
-
-var _c;
-
-__webpack_require__.$Refresh$.register(_c, "BrushDashboard");
-
-const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
-const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
-	$ReactRefreshModuleId$
-);
-
-function $ReactRefreshModuleRuntime$(exports) {
-	if (false) {}
-}
-
-if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
-	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
-} else {
-	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
-}
-
-/***/ }),
-
-/***/ "./src/ColorPicker.js":
-/*!****************************!*\
-  !*** ./src/ColorPicker.js ***!
-  \****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ColorPicker": () => (/* binding */ ColorPicker)
-/* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/ColorWheel.js */ "./src/utils/ColorWheel.js");
-/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
-__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
-
-
-
-var _s = __webpack_require__.$Refresh$.signature();
-
-
-
-
-var ColorPicker = function ColorPicker(props) {
-  _s();
-
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)([]),
-      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
-      colorPalette = _useState2[0],
-      setColorPalette = _useState2[1];
-
-  var colorPickedDisplayStyle = {
-    textAlign: "center"
-  };
-  var colorPaletteContainerStyle = {
-    marginTop: "3%",
-    display: "flex",
-    flexWrap: "wrap"
-  };
-  var paletteColorStyle = {
-    width: "15px",
-    height: "15px",
-    border: "1px solid #000",
-    padding: "2px"
-  }; // pass in the elementId of the div where the color wheel should be (its container)
-  // pass in the size of the canvas of the color wheel 
-
-  function createColorWheel(elementId, size, brush) {
-    if (!brush) return; // on the initial page render, brush will be null
-
-    var colorWheel = (0,_utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__.makeColorWheel)(elementId, size);
-    document.getElementById(colorWheel.id).addEventListener('pointerdown', function (evt) {
-      var x = evt.offsetX;
-      var y = evt.offsetY;
-      var colorPicked = colorWheel.getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
-
-      var colorPickedText = document.getElementById('colorPicked');
-
-      if (colorPicked[0] > 10 && colorPicked[1] > 200) {
-        colorPickedText.style.color = "#000";
-      } else {
-        colorPickedText.style.color = "#fff";
-      }
-
-      colorPickedText.textContent = 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',' + colorPicked[3] + ')';
-      colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
-
-      brush.changeBrushColor(colorPicked);
-    });
-    var slider = (0,_utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__.makeBrightnessSlider)(elementId, size);
-    setupBrightnessSlider(slider, colorWheel);
-  }
-  /* try native input element of type "color"
-  function setupColorInput(brush){
-      if(!brush) return; // on the initial page render, brush will be null
-      
-      const container = document.getElementById('colorPicker');
-      if(container){
-          const colorInput = document.getElementById('colorInput');
-          colorInput.addEventListener('change', (evt) => {
-              console.log(evt.target.value);
-          });
-      }
-  }
-  */
-
-
-  function setupBrightnessSlider(slider, colorWheel) {
-    // TODO: get uniform darkness in the color wheel?
-    // kinda like https://ivanvmat.github.io/color-picker/
-    slider.addEventListener('click', function (evt) {
-      var x = evt.offsetX;
-      var y = evt.offsetY;
-      var darkness = y / slider.height;
-      (0,_utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_2__.updateColorWheel)({
-        lightness: 100 * (1 - darkness)
-      }, colorWheel);
-    });
-  }
-
-  function saveColorToPalette() {
-    var colorPickedText = document.getElementById('colorPicked');
-    var currColor = colorPickedText.textContent;
-
-    if (currColor && currColor.includes("rgb") && colorPalette.indexOf(currColor) < 0) {
-      colorPalette.push(currColor);
-      setColorPalette(colorPalette.slice());
-    }
-  }
-
-  function selectPaletteColor(event) {
-    var color = event.target.style.backgroundColor;
-    var colorPickedText = document.getElementById('colorPicked');
-    colorPickedText.textContent = color;
-    colorPickedText.style.backgroundColor = color; // color needs to be an array for the brush. set color[3] to 255
-    // need to split 'rgb(x,y,z)' to [x, y, z] first
-
-    var colorArr = color.split("rgb(")[1].split(", ").map(function (x) {
-      return parseInt(x);
-    });
-    colorArr.push(255);
-
-    if (colorArr[0] > 10 && color[1] > 200) {
-      colorPickedText.style.color = "#000";
-    } else {
-      colorPickedText.style.color = "#fff";
-    }
-
-    props.brush.changeBrushColor(colorArr);
-  }
-
-  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {
-    createColorWheel('colorPicker', 170, props.brush);
-  }, [props.brush]);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement(react__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    id: "colorPicker"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
-    id: "colorPicked",
-    style: colorPickedDisplayStyle
-  }, "pick a color!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("button", {
-    onClick: saveColorToPalette
-  }, " save color to palette "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    id: "colorPalette",
-    style: colorPaletteContainerStyle
-  }, colorPalette.map(function (color) {
-    var paletteColor = Object.assign({
-      backgroundColor: color
-    }, paletteColorStyle);
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-      style: paletteColor,
-      onClick: selectPaletteColor
-    });
-  })));
-};
-
-_s(ColorPicker, "1ULDw+V9oz7b+LmWycm8A576z5c=");
-
-_c = ColorPicker;
-
-var _c;
-
-__webpack_require__.$Refresh$.register(_c, "ColorPicker");
-
-const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
-const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
-	$ReactRefreshModuleId$
-);
-
-function $ReactRefreshModuleRuntime$(exports) {
-	if (false) {}
-}
-
-if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
-	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
-} else {
-	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
-}
-
-/***/ }),
-
-/***/ "./src/FilterDashboard.js":
-/*!********************************!*\
-  !*** ./src/FilterDashboard.js ***!
-  \********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "FilterDashboard": () => (/* binding */ FilterDashboard)
-/* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
-__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
-
-
-
-var _s = __webpack_require__.$Refresh$.signature();
-
-
-
-
-function constructSlider(name, params) {
-  var id = "slider_" + name;
-  var sliderCounterId = name + 'CurrValue';
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("label", {
-    htmlFor: name
-  }, name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", {
-    type: "range",
-    name: name,
-    id: id,
-    max: params.max,
-    min: params.min,
-    step: params.step,
-    defaultValue: params.value,
-    onChange: function onChange(evt) {
-      var newVal = evt.target.value; // update reference to the filter's parameter object value field,
-      // which is used when applying the filter
-
-      params.value = parseInt(newVal);
-      document.getElementById(sliderCounterId).textContent = params.value;
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
-    id: sliderCounterId
-  }, params.value));
-}
-
-var FilterDashboard = function FilterDashboard(props) {
-  _s();
-
-  // keep track of filter used so we can display a message
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(""),
-      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
-      filterUsed = _useState2[0],
-      setFilterUsed = _useState2[1];
-
-  var filterManager = props.filterManager;
-  var filters = filterManager ? filterManager.filtersMap : {}; // props.filterManager can be null initially
-
-  var filterNames = Object.keys(filters);
-  var style = {
-    "textAlign": "center"
-  };
-  var elementStyle = {
-    "width": "100%",
-    "height": "100%",
-    "margin": "1% auto",
-    "textAlign": "center",
-    "display": "grid",
-    "gridTemplateRows": "300px auto",
-    "gridTemplateColumns": "auto"
-  }; // use a hook to be able to keep track of selected filter
-
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(""),
-      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState3, 2),
-      selectedFilter = _useState4[0],
-      setSelectedFilter = _useState4[1];
-
-  var parameterSliders = [];
-
-  if (filters[selectedFilter] && filters[selectedFilter].params) {
-    // need to set up sliders for each editable parameter for the selected filter
-    for (var paramName in filters[selectedFilter].params) {
-      if (paramName !== "instructions") {
-        var newSlider = constructSlider(paramName, filters[selectedFilter].params[paramName]);
-        parameterSliders.push(newSlider);
-      }
-    }
-  }
-
-  var filterInstructions = "";
-
-  if (filters[selectedFilter] && filters[selectedFilter].params && filters[selectedFilter].params.instructions) {
-    filterInstructions = filters[selectedFilter].params.instructions;
-  }
-
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    style: elementStyle
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    id: "filtersDisplay",
-    style: {
-      "gridRow": "1",
-      "gridColumn": "1",
-      "height": "100%",
-      "overflow": "auto"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("ul", {
-    id: "filterChoices",
-    style: {
-      "margin": "0 auto",
-      "padding": "0"
-    }
-  }, filterNames.map(function (filterName, index) {
-    var selectedStyle = null;
-
-    if (selectedFilter === filterName) {
-      selectedStyle = JSON.parse(JSON.stringify(style));
-      selectedStyle["backgroundColor"] = "#c8c8c8";
-    }
-
-    var s = selectedStyle !== null ? selectedStyle : style;
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("li", {
-      style: s,
-      key: "filter_".concat(index),
-      id: "".concat(filterName, "_").concat(index),
-      onClick: function onClick(evt) {
-        // show that the filter is selected
-        setSelectedFilter(filterName);
-      },
-      className: "option"
-    }, filterName);
-  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    style: {
-      "gridRow": "2",
-      "gridColumn": "1"
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("hr", null), filterInstructions && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", null, filterInstructions), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
-    id: "filterParameters"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("ul", {
-    style: {
-      "margin": "0 auto",
-      "padding": "0"
-    }
-  }, parameterSliders.map(function (slider, index) {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("li", {
-      key: "filter_param_".concat(index)
-    }, slider);
-  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("button", {
-    id: "applyFilter",
-    onClick: function onClick() {
-      if (selectedFilter === "oilpainting") {
-        var res = confirm("this filter will take some time. are you sure?");
-        if (!res) return;
-      }
-
-      filterManager.filterCanvasOption(selectedFilter);
-      setFilterUsed("applied ".concat(selectedFilter, " filter @ ").concat(new Date().toISOString()));
-    }
-  }, " apply filter "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
-    className: "filterUsedMsg"
-  }, " ", filterUsed, " ")));
-};
-
-_s(FilterDashboard, "SySK5L6XnlOlcKv5MC9sBqV0kog=");
-
-_c = FilterDashboard;
-
-
-var _c;
-
-__webpack_require__.$Refresh$.register(_c, "FilterDashboard");
-
-const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
-const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
-	$ReactRefreshModuleId$
-);
-
-function $ReactRefreshModuleRuntime$(exports) {
-	if (false) {}
-}
-
-if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
-	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
-} else {
-	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
-}
-
-/***/ }),
-
-/***/ "./src/LayerOrder.js":
-/*!***************************!*\
-  !*** ./src/LayerOrder.js ***!
-  \***************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "LayerOrder": () => (/* binding */ LayerOrder)
-/* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
-__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
-
-
-
-
-var _s = __webpack_require__.$Refresh$.signature();
-
-
-
-
-function saveNewLayerOrder(updateParentStateFunc) {
-  var layers = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(document.querySelectorAll('[id^="layerOrder"]')).map(function (el) {
-    // currently each element's text content is like "layer <number>". 
-    // map the list so that we get the number - 1, because we want list indexes so we can 
-    // rearrange the order of the layers accordingly
-    return parseInt(el.textContent.split(' ')[1]) - 1;
-  });
-
-  updateParentStateFunc(layers); // update parent state.
-}
-
-var LayerOrder = function LayerOrder(props) {
-  _s();
-
-  var show = props.changingLayerOrder;
-  var updateParentState = props.updateParentStateFunction; // need to pass arg to this function
-
-  var layers = props.layers;
-  var style = {
-    "textAlign": "center"
-  };
-  var elementStyle = {
-    "margin": "2px auto",
-    "textAlign": "center",
-    "border": "1px solid #000",
-    "width": "10%"
-  }; // use a hook to be able to drag and drop with 
-
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(0),
-      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
-      dragSourceEl = _useState2[0],
-      setDragSourceEl = _useState2[1];
-
-  if (show) {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
-      style: style
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("h4", null, " layer order for current frame: "), layers.map(function (layerIndex) {
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
-        style: elementStyle,
-        key: layerIndex,
-        id: "layerOrder_".concat(layerIndex),
-        onDragStart: function onDragStart(e) {
-          e.stopPropagation();
-          var thisEl = e.target;
-          thisEl.style.opacity = 0.5;
-          setDragSourceEl(thisEl);
-          e.dataTransfer.effectAllowed = "move";
-          e.dataTransfer.setData("text/html", thisEl.innerHTML);
-        },
-        onDragEnter: function onDragEnter(e) {
-          e.target.style.border = "1px dotted #000";
-        },
-        onDragOver: function onDragOver(e) {
-          e.preventDefault();
-        },
-        onDragLeave: function onDragLeave(e) {
-          e.target.style.border = "1px solid #000";
-        },
-        onDrop: function onDrop(e) {
-          var thisEl = e.target; // e is the target element to drop on
-
-          e.stopPropagation(); // do nothing if target is the same as the element being dragged
-
-          if (dragSourceEl != thisEl) {
-            dragSourceEl.innerHTML = thisEl.innerHTML;
-            thisEl.innerHTML = e.dataTransfer.getData('text/html');
-          } // make sure source goes back to normal opacity
-
-
-          dragSourceEl.style.opacity = 1; // also make sure target has its border style restored
-
-          thisEl.style.border = "1px solid #000";
-          e.preventDefault();
-        },
-        draggable: "true"
-      }, "layer ", layerIndex + 1);
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("button", {
-      id: "doneChangingLayerButton",
-      onClick: function onClick() {
-        saveNewLayerOrder(updateParentState);
-      }
-    }, " done "));
-  } else {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", null);
-  }
-};
-
-_s(LayerOrder, "9lImlHe4mNtbD+1TdeqCZQD6Kw8=");
-
-_c = LayerOrder;
-
-
-var _c;
-
-__webpack_require__.$Refresh$.register(_c, "LayerOrder");
-
-const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
-const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
-	$ReactRefreshModuleId$
-);
-
-function $ReactRefreshModuleRuntime$(exports) {
-	if (false) {}
-}
-
-if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
-	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
-} else {
-	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
-}
-
-/***/ }),
-
-/***/ "./src/PresentationWrapper.js":
-/*!************************************!*\
-  !*** ./src/PresentationWrapper.js ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "FrameCounterDisplay": () => (/* binding */ FrameCounterDisplay),
-/* harmony export */   "PresentationWrapper": () => (/* binding */ PresentationWrapper)
+/* harmony export */   "App": () => (/* binding */ App),
+/* harmony export */   "FrameCounterDisplay": () => (/* binding */ FrameCounterDisplay)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
@@ -1789,7 +1139,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _BrushDashboard_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./BrushDashboard.js */ "./src/BrushDashboard.js");
 /* harmony import */ var _ColorPicker_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./ColorPicker.js */ "./src/ColorPicker.js");
 /* harmony import */ var _utils_PasteImageManager_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./utils/PasteImageManager.js */ "./src/utils/PasteImageManager.js");
-/* harmony import */ var _styles_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../styles/presentationWrapper.css */ "./styles/presentationWrapper.css");
+/* harmony import */ var _styles_app_css__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../styles/app.css */ "./styles/app.css");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -1818,7 +1168,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
  // for displaying current frame and layer number
 // TODO: importing a project won't update the counter display since it's using the Toolbar class functions
-// and so the PresentationWrapper's state doesn't get updated with the new currentFrame/Layer
+// and so the App's state doesn't get updated with the new currentFrame/Layer
 
 var FrameCounterDisplay = function FrameCounterDisplay(props) {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
@@ -1835,18 +1185,16 @@ var FrameCounterDisplay = function FrameCounterDisplay(props) {
     id: "nextFrame"
   }, "\xA0\xA0    \u25B6"));
 };
-
 _c = FrameCounterDisplay;
+var App = /*#__PURE__*/function (_React$Component) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default()(App, _React$Component);
 
-var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default()(PresentationWrapper, _React$Component);
+  var _super = _createSuper(App);
 
-  var _super = _createSuper(PresentationWrapper);
-
-  function PresentationWrapper(props) {
+  function App(props) {
     var _this;
 
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default()(this, PresentationWrapper);
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default()(this, App);
 
     _this = _super.call(this, props); // TODO: do some of these things really need to be part of state? maybe they can be broken out like pasteImageManager
 
@@ -1869,7 +1217,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
     return _this;
   }
 
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(PresentationWrapper, [{
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(App, [{
     key: "_updateCurrFrameAndTimelineMarkers",
     value: function _updateCurrFrameAndTimelineMarkers(markers, frameNum) {
       this.setState({
@@ -2363,25 +1711,7 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
       }, " demos "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
         id: "instructions",
         className: "toolbarSection2"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
-        className: "instructions"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Space"), " = append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
-        className: "instructions"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2190"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2192"), " = move between layers"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
-        className: "instructions"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "A"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "D"), " = move between frames"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
-        className: "instructions"
-      }, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
-        className: "instructions"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Ctrl"), " + ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "V"), " = paste image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
-        className: "instructions"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "R"), " + mouse wheel = rotate pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
-        className: "instructions"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "S"), " = resize pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
-        className: "instructions"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Esc"), " = remove pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", {
-        className: "instructions"
-      }, "After pasting the image, you can move it by clicking and dragging the box containing it (denoted by dotted lines). Apply the image to the canvas or abort by clicking anywhere outside the canvas with the pasted image.")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Space"), " = append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2190"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "\u2192"), " = move between layers"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "A"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "D"), " = move between frames"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Ctrl"), " + ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "V"), " = paste image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "R"), " + mouse wheel = rotate pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "S"), " = resize pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("kbd", null, "Esc"), " = abort image paste"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, "After pasting the image, you can move it by clicking and dragging the box around it (denoted by dotted lines). Apply the image to the canvas by clicking anywhere outside the dotted lines. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
         id: "frameLayerSection",
         className: "tbar"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", {
@@ -2578,14 +1908,682 @@ var PresentationWrapper = /*#__PURE__*/function (_React$Component) {
     }
   }]);
 
-  return PresentationWrapper;
+  return App;
 }(react__WEBPACK_IMPORTED_MODULE_6__.Component);
-
-
 
 var _c;
 
 __webpack_require__.$Refresh$.register(_c, "FrameCounterDisplay");
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
+/***/ "./src/BrushDashboard.js":
+/*!*******************************!*\
+  !*** ./src/BrushDashboard.js ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "BrushDashboard": () => (/* binding */ BrushDashboard)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+var _s = __webpack_require__.$Refresh$.signature();
+
+
+
+
+var BrushDashboard = function BrushDashboard(props) {
+  _s();
+
+  var brushManager = props.brushManager;
+  var brushes = brushManager ? brushManager.brushesMap : {}; // can be null initially
+
+  var brushNames = Object.keys(brushes);
+  var style = {
+    "textAlign": "center"
+  };
+  var elementStyle = {
+    "width": "100%",
+    "height": "100%",
+    "margin": "1% auto",
+    "textAlign": "center",
+    "display": "grid",
+    "gridTemplateRows": "auto auto",
+    "gridTemplateColumns": "auto"
+  }; // use a hook to be able to keep track of selected brush
+
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)("default"),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
+      selectedBrush = _useState2[0],
+      setSelectedBrush = _useState2[1];
+
+  var brushSize = brushManager ? "".concat(brushManager.currSize) : "2";
+
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(brushSize),
+      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState3, 2),
+      currBrushSize = _useState4[0],
+      setBrushSize = _useState4[1];
+
+  function equipBrush(brushManager, brushName) {
+    return function (evt) {
+      setSelectedBrush(brushName);
+
+      if (brushManager) {
+        // equip brush
+        brushManager.resetBrush();
+        brushManager.setBrushType(brushName);
+        brushManager.applyBrush();
+      }
+    };
+  }
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    style: elementStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    style: {
+      "gridRow": "1",
+      "gridColumn": "1",
+      "height": "100%"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    style: {
+      "overflowY": "auto",
+      "height": "100%",
+      "width": "100%"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    id: "brushDisplay"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("ul", {
+    id: "brushChoices",
+    style: {
+      "margin": "0 auto",
+      "padding": "0"
+    }
+  }, brushNames.map(function (brushName, index) {
+    var selectedStyle = JSON.parse(JSON.stringify(style));
+
+    if (selectedBrush === brushName) {
+      selectedStyle["backgroundColor"] = "#c8c8c8";
+    }
+
+    var s = selectedStyle !== null ? selectedStyle : style;
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("li", {
+      style: s,
+      key: "brush_".concat(index),
+      id: "".concat(brushName, "_").concat(index),
+      onClick: equipBrush(brushManager, brushName),
+      onMouseOver: function onMouseOver(evt) {
+        evt.target.style.color = "#99b5d1";
+      },
+      onMouseOut: function onMouseOut(evt) {
+        evt.target.style.color = "#000";
+      }
+    }, brushName);
+  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    style: {
+      "gridRow": "2",
+      "gridColumn": "1"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    id: "adjustBrushSize"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
+    className: "text-info"
+  }, "change brush size"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", {
+    id: "brushSize",
+    type: "range",
+    min: "1",
+    max: "20",
+    step: ".5",
+    defaultValue: currBrushSize,
+    onChange: function onChange(evt) {
+      brushManager.changeBrushSize(evt.target.value);
+      setBrushSize(evt.target.value);
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("span", {
+    id: "brushSizeValue"
+  }, currBrushSize))));
+};
+
+_s(BrushDashboard, "7FWB4QwAAn7GoPtoSz0w+iLMqJo=");
+
+_c = BrushDashboard;
+
+
+var _c;
+
+__webpack_require__.$Refresh$.register(_c, "BrushDashboard");
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
+/***/ "./src/ColorPicker.js":
+/*!****************************!*\
+  !*** ./src/ColorPicker.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ColorPicker": () => (/* binding */ ColorPicker)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils/ColorWheel.js */ "./src/utils/ColorWheel.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+var _s = __webpack_require__.$Refresh$.signature();
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+
+
+
+var ColorPicker = function ColorPicker(props) {
+  _s();
+
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)([]),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1___default()(_useState, 2),
+      colorPalette = _useState2[0],
+      setColorPalette = _useState2[1];
+
+  var colorPickedDisplayStyle = {
+    textAlign: "center"
+  };
+  var colorPaletteContainerStyle = {
+    marginTop: "3%",
+    display: "flex",
+    flexWrap: "wrap"
+  };
+  var paletteColorStyle = {
+    width: "15px",
+    height: "15px",
+    border: "1px solid #000",
+    padding: "2px"
+  }; // pass in the elementId of the div where the color wheel should be (its container)
+  // pass in the size of the canvas of the color wheel 
+
+  function createColorWheel(elementId, size, brush) {
+    if (!brush) return; // on the initial page render, brush will be null
+
+    var colorWheel = (0,_utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_3__.makeColorWheel)(elementId, size);
+    document.getElementById(colorWheel.id).addEventListener('pointerdown', function (evt) {
+      var x = evt.offsetX;
+      var y = evt.offsetY;
+      var colorPicked = colorWheel.getContext('2d').getImageData(x, y, 1, 1).data; //correct the font color if the color is really dark
+
+      var colorPickedText = document.getElementById('colorPicked');
+
+      if (colorPicked[0] > 10 && colorPicked[1] > 200) {
+        colorPickedText.style.color = "#000";
+      } else {
+        colorPickedText.style.color = "#fff";
+      }
+
+      colorPickedText.textContent = 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',' + colorPicked[3] + ')';
+      colorPickedText.style.backgroundColor = colorPickedText.textContent; // update current color seleted in brush object as Uint8 clamped array where each index corresponds to r,g,b,a
+
+      brush.changeBrushColor(colorPicked);
+    });
+    var slider = (0,_utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_3__.makeBrightnessSlider)(elementId, size);
+    setupBrightnessSlider(slider, colorWheel);
+  }
+
+  function setupBrightnessSlider(slider, colorWheel) {
+    // TODO: get uniform darkness in the color wheel?
+    // kinda like https://ivanvmat.github.io/color-picker/
+    slider.addEventListener('click', function (evt) {
+      var x = evt.offsetX;
+      var y = evt.offsetY;
+      var darkness = y / slider.height;
+      (0,_utils_ColorWheel_js__WEBPACK_IMPORTED_MODULE_3__.updateColorWheel)({
+        lightness: 100 * (1 - darkness)
+      }, colorWheel);
+    });
+  }
+
+  function saveColorToPalette() {
+    var colorPickedText = document.getElementById('colorPicked');
+    var currColor = colorPickedText.textContent;
+
+    if (currColor && currColor.includes("rgb") && colorPalette.indexOf(currColor) < 0) {
+      colorPalette.push(currColor);
+      setColorPalette(colorPalette.slice());
+    }
+  }
+
+  function selectPaletteColor(event) {
+    var color = event.target.style.backgroundColor;
+    var colorPickedText = document.getElementById('colorPicked');
+    colorPickedText.textContent = color;
+    colorPickedText.style.backgroundColor = color; // color needs to be an array for the brush. set color[3] to 255
+    // need to split 'rgb(x,y,z)' to [x, y, z] first
+
+    var colorArr = color.split("rgb(")[1].split(", ").map(function (x) {
+      return parseInt(x);
+    });
+    colorArr.push(255);
+
+    if (colorArr[0] > 10 && color[1] > 200) {
+      colorPickedText.style.color = "#000";
+    } else {
+      colorPickedText.style.color = "#fff";
+    }
+
+    props.brush.changeBrushColor(colorArr);
+  }
+
+  (0,react__WEBPACK_IMPORTED_MODULE_2__.useEffect)(function () {
+    createColorWheel('colorPicker', 170, props.brush);
+  }, [props.brush]);
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement(react__WEBPACK_IMPORTED_MODULE_2__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
+    id: "colorPicker"
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", {
+    id: "colorPicked",
+    style: colorPickedDisplayStyle
+  }, "pick a color!"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("button", {
+    onClick: saveColorToPalette
+  }, " save color to palette "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
+    id: "colorPalette",
+    style: colorPaletteContainerStyle
+  }, colorPalette.map(function (color) {
+    var paletteColor = _objectSpread(_objectSpread({}, paletteColorStyle), {}, {
+      backgroundColor: color
+    });
+
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
+      key: color,
+      style: paletteColor,
+      onClick: selectPaletteColor
+    });
+  })));
+};
+
+_s(ColorPicker, "1ULDw+V9oz7b+LmWycm8A576z5c=");
+
+_c = ColorPicker;
+
+var _c;
+
+__webpack_require__.$Refresh$.register(_c, "ColorPicker");
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
+/***/ "./src/FilterDashboard.js":
+/*!********************************!*\
+  !*** ./src/FilterDashboard.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "FilterDashboard": () => (/* binding */ FilterDashboard)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+var _s = __webpack_require__.$Refresh$.signature();
+
+
+
+
+function constructSlider(name, params) {
+  var id = "slider_" + name;
+  var sliderCounterId = name + 'CurrValue';
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("label", {
+    htmlFor: name
+  }, name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("input", {
+    type: "range",
+    name: name,
+    id: id,
+    max: params.max,
+    min: params.min,
+    step: params.step,
+    defaultValue: params.value,
+    onChange: function onChange(evt) {
+      var newVal = evt.target.value; // update reference to the filter's parameter object value field,
+      // which is used when applying the filter
+
+      params.value = parseInt(newVal);
+      document.getElementById(sliderCounterId).textContent = params.value;
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
+    id: sliderCounterId
+  }, params.value));
+}
+
+var FilterDashboard = function FilterDashboard(props) {
+  _s();
+
+  // keep track of filter used so we can display a message
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(""),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
+      filterUsed = _useState2[0],
+      setFilterUsed = _useState2[1];
+
+  var filterManager = props.filterManager;
+  var filters = filterManager ? filterManager.filtersMap : {}; // props.filterManager can be null initially
+
+  var filterNames = Object.keys(filters);
+  var style = {
+    "textAlign": "center"
+  };
+  var elementStyle = {
+    "width": "100%",
+    "height": "100%",
+    "margin": "1% auto",
+    "textAlign": "center",
+    "display": "grid",
+    "gridTemplateRows": "300px auto",
+    "gridTemplateColumns": "auto"
+  }; // use a hook to be able to keep track of selected filter
+
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(""),
+      _useState4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState3, 2),
+      selectedFilter = _useState4[0],
+      setSelectedFilter = _useState4[1];
+
+  var parameterSliders = [];
+
+  if (filters[selectedFilter] && filters[selectedFilter].params) {
+    // need to set up sliders for each editable parameter for the selected filter
+    for (var paramName in filters[selectedFilter].params) {
+      if (paramName !== "instructions") {
+        var newSlider = constructSlider(paramName, filters[selectedFilter].params[paramName]);
+        parameterSliders.push(newSlider);
+      }
+    }
+  }
+
+  var filterInstructions = "";
+
+  if (filters[selectedFilter] && filters[selectedFilter].params && filters[selectedFilter].params.instructions) {
+    filterInstructions = filters[selectedFilter].params.instructions;
+  }
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    style: elementStyle
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    id: "filtersDisplay",
+    style: {
+      "gridRow": "1",
+      "gridColumn": "1",
+      "height": "100%",
+      "overflow": "auto"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("ul", {
+    id: "filterChoices",
+    style: {
+      "margin": "0 auto",
+      "padding": "0"
+    }
+  }, filterNames.map(function (filterName, index) {
+    var selectedStyle = null;
+
+    if (selectedFilter === filterName) {
+      selectedStyle = JSON.parse(JSON.stringify(style));
+      selectedStyle["backgroundColor"] = "#c8c8c8";
+    }
+
+    var s = selectedStyle !== null ? selectedStyle : style;
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("li", {
+      style: s,
+      key: "filter_".concat(index),
+      id: "".concat(filterName, "_").concat(index),
+      onClick: function onClick(evt) {
+        // show that the filter is selected
+        setSelectedFilter(filterName);
+      },
+      className: "option"
+    }, filterName);
+  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    style: {
+      "gridRow": "2",
+      "gridColumn": "1"
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("hr", null), filterInstructions && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", null, filterInstructions), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", {
+    id: "filterParameters"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("ul", {
+    style: {
+      "margin": "0 auto",
+      "padding": "0"
+    }
+  }, parameterSliders.map(function (slider, index) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("li", {
+      key: "filter_param_".concat(index)
+    }, slider);
+  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("button", {
+    id: "applyFilter",
+    onClick: function onClick() {
+      if (selectedFilter === "oilpainting") {
+        var res = confirm("this filter will take some time. are you sure?");
+        if (!res) return;
+      }
+
+      filterManager.filterCanvasOption(selectedFilter);
+      setFilterUsed("applied ".concat(selectedFilter, " filter @ ").concat(new Date().toISOString()));
+    }
+  }, " apply filter "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
+    className: "filterUsedMsg"
+  }, " ", filterUsed, " ")));
+};
+
+_s(FilterDashboard, "SySK5L6XnlOlcKv5MC9sBqV0kog=");
+
+_c = FilterDashboard;
+
+
+var _c;
+
+__webpack_require__.$Refresh$.register(_c, "FilterDashboard");
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
+/***/ "./src/LayerOrder.js":
+/*!***************************!*\
+  !*** ./src/LayerOrder.js ***!
+  \***************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "LayerOrder": () => (/* binding */ LayerOrder)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js");
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+var _s = __webpack_require__.$Refresh$.signature();
+
+
+
+
+function saveNewLayerOrder(updateParentStateFunc) {
+  var layers = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(document.querySelectorAll('[id^="layerOrder"]')).map(function (el) {
+    // currently each element's text content is like "layer <number>". 
+    // map the list so that we get the number - 1, because we want list indexes so we can 
+    // rearrange the order of the layers accordingly
+    return parseInt(el.textContent.split(' ')[1]) - 1;
+  });
+
+  updateParentStateFunc(layers); // update parent state.
+}
+
+var LayerOrder = function LayerOrder(props) {
+  _s();
+
+  var show = props.changingLayerOrder;
+  var updateParentState = props.updateParentStateFunction; // need to pass arg to this function
+
+  var layers = props.layers;
+  var style = {
+    "textAlign": "center"
+  };
+  var elementStyle = {
+    "margin": "2px auto",
+    "textAlign": "center",
+    "border": "1px solid #000",
+    "width": "10%"
+  }; // use a hook to be able to drag and drop with 
+
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(0),
+      _useState2 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_useState, 2),
+      dragSourceEl = _useState2[0],
+      setDragSourceEl = _useState2[1];
+
+  if (show) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
+      style: style
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("h4", null, " layer order for current frame: "), layers.map(function (layerIndex) {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
+        style: elementStyle,
+        key: layerIndex,
+        id: "layerOrder_".concat(layerIndex),
+        onDragStart: function onDragStart(e) {
+          e.stopPropagation();
+          var thisEl = e.target;
+          thisEl.style.opacity = 0.5;
+          setDragSourceEl(thisEl);
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/html", thisEl.innerHTML);
+        },
+        onDragEnter: function onDragEnter(e) {
+          e.target.style.border = "1px dotted #000";
+        },
+        onDragOver: function onDragOver(e) {
+          e.preventDefault();
+        },
+        onDragLeave: function onDragLeave(e) {
+          e.target.style.border = "1px solid #000";
+        },
+        onDrop: function onDrop(e) {
+          var thisEl = e.target; // e is the target element to drop on
+
+          e.stopPropagation(); // do nothing if target is the same as the element being dragged
+
+          if (dragSourceEl != thisEl) {
+            dragSourceEl.innerHTML = thisEl.innerHTML;
+            thisEl.innerHTML = e.dataTransfer.getData('text/html');
+          } // make sure source goes back to normal opacity
+
+
+          dragSourceEl.style.opacity = 1; // also make sure target has its border style restored
+
+          thisEl.style.border = "1px solid #000";
+          e.preventDefault();
+        },
+        draggable: "true"
+      }, "layer ", layerIndex + 1);
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("button", {
+      id: "doneChangingLayerButton",
+      onClick: function onClick() {
+        saveNewLayerOrder(updateParentState);
+      }
+    }, " done "));
+  } else {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", null);
+  }
+};
+
+_s(LayerOrder, "9lImlHe4mNtbD+1TdeqCZQD6Kw8=");
+
+_c = LayerOrder;
+
+
+var _c;
+
+__webpack_require__.$Refresh$.register(_c, "LayerOrder");
 
 const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
 const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
@@ -6224,6 +6222,7 @@ var OilPainting = /*#__PURE__*/function (_FilterTemplate) {
   }, {
     key: "filter",
     value: function filter(pixels) {
+      console.log("starting oilpainting filter: " + new Date());
       var width = pixels.width;
       var height = pixels.height;
       var data = pixels.data;
@@ -6239,6 +6238,7 @@ var OilPainting = /*#__PURE__*/function (_FilterTemplate) {
         }
       }
 
+      console.log("oilpainting filter done: " + new Date());
       return pixels;
     }
   }]);
@@ -13976,10 +13976,10 @@ ___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for AnimationTimeline co
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./styles/presentationWrapper.css":
-/*!******************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./styles/presentationWrapper.css ***!
-  \******************************************************************************/
+/***/ "./node_modules/css-loader/dist/cjs.js!./styles/app.css":
+/*!**************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./styles/app.css ***!
+  \**************************************************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -13996,7 +13996,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}", "",{"version":3,"sources":["webpack://./styles/presentationWrapper.css"],"names":[],"mappings":"AAAA,qCAAqC;AACrC;IACI,aAAa;IACb,2BAA2B;IAC3B,kCAAkC;IAClC,WAAW;AACf;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;IAChB,WAAW;IACX,YAAY;IACZ,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,UAAU;IACV,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,0BAA0B;IAC1B,oCAAoC;AACxC;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,sBAAsB;IACtB,mBAAmB;IACnB,4BAA4B;IAC5B,YAAY;IACZ,kBAAkB;AACtB;;AAEA;IACI,aAAa;AACjB;;AAEA;IACI,kBAAkB;IAClB,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,eAAe;IACf,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,cAAc;AAClB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,oBAAoB;AACxB;;AAEA;IACI,gBAAgB;AACpB","sourcesContent":["/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}", "",{"version":3,"sources":["webpack://./styles/app.css"],"names":[],"mappings":"AAAA,qCAAqC;AACrC;IACI,aAAa;IACb,2BAA2B;IAC3B,kCAAkC;IAClC,WAAW;AACf;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;IAChB,WAAW;IACX,YAAY;IACZ,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,UAAU;IACV,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,0BAA0B;IAC1B,oCAAoC;AACxC;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,sBAAsB;IACtB,mBAAmB;IACnB,4BAA4B;IAC5B,YAAY;IACZ,kBAAkB;AACtB;;AAEA;IACI,aAAa;AACjB;;AAEA;IACI,kBAAkB;IAClB,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,eAAe;IACf,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,cAAc;AAClB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,oBAAoB;AACxB;;AAEA;IACI,gBAAgB;AACpB","sourcesContent":["/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -44029,10 +44029,10 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 /***/ }),
 
-/***/ "./styles/presentationWrapper.css":
-/*!****************************************!*\
-  !*** ./styles/presentationWrapper.css ***!
-  \****************************************/
+/***/ "./styles/app.css":
+/*!************************!*\
+  !*** ./styles/app.css ***!
+  \************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44052,7 +44052,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../node_modules/css-loader/dist/cjs.js!./presentationWrapper.css */ "./node_modules/css-loader/dist/cjs.js!./styles/presentationWrapper.css");
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_app_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../node_modules/css-loader/dist/cjs.js!./app.css */ "./node_modules/css-loader/dist/cjs.js!./styles/app.css");
 
       
       
@@ -44074,12 +44074,12 @@ options.setAttributes = (_node_modules_style_loader_dist_runtime_setAttributesWi
 options.domAPI = (_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
 options.insertStyleElement = (_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
 
-var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_app_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
 
 
 
 
-       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_presentationWrapper_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_app_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _node_modules_css_loader_dist_cjs_js_app_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _node_modules_css_loader_dist_cjs_js_app_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
 
 
 /***/ }),

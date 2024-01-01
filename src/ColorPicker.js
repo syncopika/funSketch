@@ -54,20 +54,6 @@ export const ColorPicker = (props) => {
         setupBrightnessSlider(slider, colorWheel);
     }
     
-    /* try native input element of type "color"
-    function setupColorInput(brush){
-        if(!brush) return; // on the initial page render, brush will be null
-        
-        const container = document.getElementById('colorPicker');
-        if(container){
-            const colorInput = document.getElementById('colorInput');
-            colorInput.addEventListener('change', (evt) => {
-                console.log(evt.target.value);
-            });
-        }
-    }
-    */
-    
     function setupBrightnessSlider(slider, colorWheel){
         // TODO: get uniform darkness in the color wheel?
         // kinda like https://ivanvmat.github.io/color-picker/
@@ -121,9 +107,9 @@ export const ColorPicker = (props) => {
             <div id="colorPalette" style={colorPaletteContainerStyle}>
             {
                 colorPalette.map((color) => {
-                    const paletteColor = Object.assign({backgroundColor: color}, paletteColorStyle);
+                    const paletteColor = {...paletteColorStyle, backgroundColor: color};
                     return (
-                        <div style={paletteColor} onClick={selectPaletteColor}>
+                        <div key={color} style={paletteColor} onClick={selectPaletteColor}>
                         </div>
                     );
                 })

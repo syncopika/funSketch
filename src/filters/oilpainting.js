@@ -84,6 +84,7 @@ class OilPainting extends FilterTemplate {
     }
     
     filter(pixels){
+        console.log("starting oilpainting filter: " + (new Date()));
         const width = pixels.width;
         const height = pixels.height;
         
@@ -99,6 +100,8 @@ class OilPainting extends FilterTemplate {
                 data[pixelIdx + 2] = color.b;
             }
         }
+        
+        console.log("oilpainting filter done: " + (new Date()));
         
         return pixels;
     }

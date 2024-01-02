@@ -1806,6 +1806,8 @@ var App = /*#__PURE__*/function (_React$Component) {
       }, " toggle frame addition on spacebar press ")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("h4", null, "check out some experiments for new feature ideas:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("a", {
         href: "./experiments/floodfillExperiment/floodfillExperiment.html"
       }, "floodfill with web workers")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("a", {
+        href: "./experiments/oilpaintingWebWorkers/oilpainting.html"
+      }, "oilpainting with web workers")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("a", {
         href: "./experiments/selectToolExperiment/selectTool.html"
       }, "selection tool")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_6__.createElement("section", {
         id: "animControlSection",

@@ -5319,6 +5319,157 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 
 /***/ }),
 
+/***/ "./src/filters/dots3.js":
+/*!******************************!*\
+  !*** ./src/filters/dots3.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Dots3": () => (/* binding */ Dots3)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+ // try halftone/halftone-like filter?
+// https://stackoverflow.com/questions/1258047/algorithm-to-make-halftone-images
+
+var Dots3 = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Dots3, _FilterTemplate);
+
+  var _super = _createSuper(Dots3);
+
+  function Dots3() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Dots3);
+
+    var params = {
+      "distThreshold": {
+        "value": 150,
+        "min": 50,
+        "max": 300,
+        "step": 1
+      }
+    };
+    return _super.call(this, params);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Dots3, [{
+    key: "getDistance",
+    value: function getDistance(r, g, b, r2, g2, b2) {
+      return Math.sqrt(r * r2 + g * g2 + b * b2);
+    }
+  }, {
+    key: "filter",
+    value: function filter(pixels) {
+      // https://cse.usf.edu/~r1k/MachineVisionBook/MachineVision.files/MachineVision_Chapter10.pdf
+      // interpolate intensity (r+g+b/3) between minDotWidth and maxDotWidth
+      // intensity => between 0 and 255, with 0 being darkest and 255 being lightest
+      // given intensity, 255 would be a dot width of 5, 0 would be 20. a = (255, minDotWidth), b = (0, maxDotWidth)
+      // formula: dotWidth = 255 + (0 - 255)((intensity - minDotWidth) / (maxDotWidth - minDotWidth))
+      // the color of the dot will be the color of the pixel selected
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data;
+
+      var drawDot = function drawDot(x, y, color, context) {
+        context.lineJoin = "round";
+        context.strokeStyle = color;
+        var dotWidth = 3;
+        context.lineWidth = dotWidth;
+        context.beginPath();
+        context.moveTo(x, y + 1);
+        context.lineTo(x, y);
+        context.closePath();
+        context.stroke();
+      }; // make a temp canvas and set it to white
+
+
+      var tempCanvas = document.createElement('canvas');
+      tempCanvas.width = width;
+      tempCanvas.height = height;
+      var tempCtx = tempCanvas.getContext('2d');
+      tempCtx.fillStyle = '#fff';
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+      for (var i = 0; i < width; i += 12) {
+        for (var j = 0; j < height; j += 12) {
+          // TODO: check neighbor pixel color.
+          // if significantly different from this color, take average and 
+          // draw a dot here
+          // otherwise don't do anything (assuming #fff here)
+          if (i + 1 < width) {
+            var r = data[4 * i + 4 * j * width];
+            var g = data[4 * i + 4 * j * width + 1];
+            var b = data[4 * i + 4 * j * width + 2];
+            var a = data[4 * i + 4 * j * width + 3];
+            var neighborR = data[4 * (i + 1) + 4 * j * width];
+            var neighborG = data[4 * (i + 1) + 4 * j * width + 1];
+            var neighborB = data[4 * (i + 1) + 4 * j * width + 2];
+            var dist = this.getDistance(r, g, b, neighborR, neighborG, neighborB);
+
+            if (dist <= this.params.distThreshold.value) {
+              drawDot(i, j, "rgba(".concat((r + neighborR) / 2, ",").concat((g + neighborG) / 2, ",").concat((b + neighborB) / 2, ",").concat(a, ")"), tempCtx);
+            }
+          }
+        }
+      } // copy temp canvas pixel data over to pixels
+
+
+      var tempPixelData = tempCtx.getImageData(0, 0, width, height).data;
+
+      for (var _i = 0; _i < pixels.data.length; _i++) {
+        pixels.data[_i] = tempPixelData[_i];
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return Dots3;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
+
+
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
 /***/ "./src/filters/edgedetection.js":
 /*!**************************************!*\
   !*** ./src/filters/edgedetection.js ***!
@@ -8910,9 +9061,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_channel_shift_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../filters/channel_shift.js */ "./src/filters/channel_shift.js");
 /* harmony import */ var _filters_dots_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../filters/dots.js */ "./src/filters/dots.js");
 /* harmony import */ var _filters_dots2_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../filters/dots2.js */ "./src/filters/dots2.js");
-/* harmony import */ var _filters_thinning_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../filters/thinning.js */ "./src/filters/thinning.js");
-/* harmony import */ var _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../filters/oilpainting.js */ "./src/filters/oilpainting.js");
-/* harmony import */ var _filters_painted_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../filters/painted.js */ "./src/filters/painted.js");
+/* harmony import */ var _filters_dots3_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../filters/dots3.js */ "./src/filters/dots3.js");
+/* harmony import */ var _filters_thinning_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../filters/thinning.js */ "./src/filters/thinning.js");
+/* harmony import */ var _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../filters/oilpainting.js */ "./src/filters/oilpainting.js");
+/* harmony import */ var _filters_painted_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../filters/painted.js */ "./src/filters/painted.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -8925,6 +9077,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 
 
  //import { SimpleBlur } from '../filters/simple_blur.js';
+
 
 
 
@@ -8964,10 +9117,11 @@ var FilterManager = /*#__PURE__*/function () {
       "channel_shift": new _filters_channel_shift_js__WEBPACK_IMPORTED_MODULE_15__.ChannelShift(),
       "dots": new _filters_dots_js__WEBPACK_IMPORTED_MODULE_16__.Dots(),
       "dots2": new _filters_dots2_js__WEBPACK_IMPORTED_MODULE_17__.Dots2(),
-      "thinning": new _filters_thinning_js__WEBPACK_IMPORTED_MODULE_18__.Thinning(),
+      "dots3": new _filters_dots3_js__WEBPACK_IMPORTED_MODULE_18__.Dots3(),
+      "thinning": new _filters_thinning_js__WEBPACK_IMPORTED_MODULE_19__.Thinning(),
       //"solidify": new Solidify(),
-      "painted": new _filters_painted_js__WEBPACK_IMPORTED_MODULE_20__.Painted(),
-      "oilpainting": new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_19__.OilPainting()
+      "painted": new _filters_painted_js__WEBPACK_IMPORTED_MODULE_21__.Painted(),
+      "oilpainting": new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_20__.OilPainting()
     };
   } // general filtering function. pass any kind of filter through this function.
 

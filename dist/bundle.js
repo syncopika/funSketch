@@ -2311,10 +2311,10 @@ function constructSlider(name, params) {
     step: params.step,
     defaultValue: params.value,
     onChange: function onChange(evt) {
-      var newVal = evt.target.value; // update reference to the filter's parameter object value field,
+      var newVal = parseFloat(evt.target.value); // update reference to the filter's parameter object value field,
       // which is used when applying the filter
 
-      params.value = parseInt(newVal);
+      params.value = newVal;
       document.getElementById(sliderCounterId).textContent = params.value;
     }
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1__.createElement("p", {
@@ -5367,29 +5367,106 @@ var Dots3 = /*#__PURE__*/function (_FilterTemplate) {
 
     var params = {
       "distThreshold": {
-        "value": 150,
-        "min": 50,
-        "max": 300,
-        "step": 1
+        "value": 5.0,
+        "min": 0.0,
+        "max": 15.0,
+        "step": 0.1
       }
     };
     return _super.call(this, params);
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Dots3, [{
-    key: "getDistance",
-    value: function getDistance(r, g, b, r2, g2, b2) {
-      return Math.sqrt(r * r2 + g * g2 + b * b2);
+    key: "rgbToXyz",
+    value: function rgbToXyz(r, g, b) {
+      // https://www.easyrgb.com/en/math.php
+      var vR = r / 255;
+      var vG = g / 255;
+      var vB = b / 255;
+
+      if (vR > 0.04045) {
+        vR = Math.pow((vR + 0.055) / 1.055, 2.4);
+      } else {
+        vR = vR / 12.92;
+      }
+
+      if (vG > 0.04045) {
+        vG = Math.pow((vG + 0.055) / 1.055, 2.4);
+      } else {
+        vG = vG / 12.92;
+      }
+
+      if (vB > 0.04045) {
+        vB = Math.pow((vB + 0.055) / 1.055, 2.4);
+      } else {
+        vB = vB / 12.92;
+      }
+
+      vR = vR * 100;
+      vG = vG * 100;
+      vB = vB * 100;
+      var x = vR * 0.4124 + vG * 0.3576 + vB * 0.1805;
+      var y = vR * 0.2126 + vG * 0.7152 + vB * 0.0722;
+      var z = vR * 0.0193 + vG * 0.1192 + vB * 0.9505;
+      return [x, y, z];
+    }
+  }, {
+    key: "xyzToLab",
+    value: function xyzToLab(xyzArr) {
+      // https://www.easyrgb.com/en/math.php
+      // https://en.wikipedia.org/wiki/Standard_illuminant#Illuminant_series_D
+      var D65 = [95.047, 100, 108.883];
+      var vX = xyzArr[0] / D65[0];
+      var vY = xyzArr[1] / D65[1];
+      var vZ = xyzArr[2] / D65[2];
+
+      if (vX > 0.008856) {
+        vX = Math.pow(vX, 1 / 3);
+      } else {
+        vX = 7.787 * vX + 16 / 116;
+      }
+
+      if (vY > 0.008856) {
+        vY = Math.pow(vY, 1 / 3);
+      } else {
+        vY = 7.787 * vY + 16 / 116;
+      }
+
+      if (vZ > 0.008856) {
+        vZ = Math.pow(vZ, 1 / 3);
+      } else {
+        vZ = 7.787 * vZ + 16 / 116;
+      }
+
+      var CIE_L = 116 * vY - 16;
+      var CIE_a = 500 * (vX - vY);
+      var CIE_b = 200 * (vY - vZ);
+      return [CIE_L, CIE_a, CIE_b];
+    } // difference between 2 CIELAB colors
+
+  }, {
+    key: "deltaE",
+    value: function deltaE(labA, labB) {
+      // https://gist.github.com/ryancat/9972419b2a78f329ce3aebb7f1a09152
+      var deltaL = labA[0] - labB[0];
+      var deltaA = labA[1] - labB[1];
+      var deltaB = labA[2] - labB[2];
+      var c1 = Math.sqrt(labA[1] * labA[1] + labA[2] * labA[2]);
+      var c2 = Math.sqrt(labB[1] * labB[1] + labB[2] * labB[2]);
+      var deltaC = c1 - c2;
+      var deltaH = deltaA * deltaA + deltaB * deltaB - deltaC * deltaC;
+      deltaH = deltaH < 0 ? 0 : Math.sqrt(deltaH);
+      var sc = 1.0 + 0.045 * c1;
+      var sh = 1.0 + 0.015 * c1;
+      var deltaLKlsl = deltaL / 1.0;
+      var deltaCkcsc = deltaC / sc;
+      var deltaHkhsh = deltaH / sh;
+      var i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
+      return i < 0 ? 0 : Math.sqrt(i);
     }
   }, {
     key: "filter",
     value: function filter(pixels) {
-      // https://cse.usf.edu/~r1k/MachineVisionBook/MachineVision.files/MachineVision_Chapter10.pdf
-      // interpolate intensity (r+g+b/3) between minDotWidth and maxDotWidth
-      // intensity => between 0 and 255, with 0 being darkest and 255 being lightest
-      // given intensity, 255 would be a dot width of 5, 0 would be 20. a = (255, minDotWidth), b = (0, maxDotWidth)
-      // formula: dotWidth = 255 + (0 - 255)((intensity - minDotWidth) / (maxDotWidth - minDotWidth))
-      // the color of the dot will be the color of the pixel selected
       var width = pixels.width;
       var height = pixels.height;
       var data = pixels.data;
@@ -5416,9 +5493,8 @@ var Dots3 = /*#__PURE__*/function (_FilterTemplate) {
 
       for (var i = 0; i < width; i += 12) {
         for (var j = 0; j < height; j += 12) {
-          // TODO: check neighbor pixel color.
-          // if significantly different from this color, take average and 
-          // draw a dot here
+          // check neighbor pixel color.
+          // if significantly different from this color, take average and draw a dot here
           // otherwise don't do anything (assuming #fff here)
           if (i + 1 < width) {
             var r = data[4 * i + 4 * j * width];
@@ -5428,9 +5504,12 @@ var Dots3 = /*#__PURE__*/function (_FilterTemplate) {
             var neighborR = data[4 * (i + 1) + 4 * j * width];
             var neighborG = data[4 * (i + 1) + 4 * j * width + 1];
             var neighborB = data[4 * (i + 1) + 4 * j * width + 2];
-            var dist = this.getDistance(r, g, b, neighborR, neighborG, neighborB);
+            var lab1 = this.xyzToLab(this.rgbToXyz(r, g, b));
+            var lab2 = this.xyzToLab(this.rgbToXyz(neighborR, neighborG, neighborB));
+            var dist = this.deltaE(lab1, lab2); //console.log(`dist: ${dist}`);
 
-            if (dist <= this.params.distThreshold.value) {
+            if (dist > this.params.distThreshold.value) {
+              // if colors are "different" enough
               drawDot(i, j, "rgba(".concat((r + neighborR) / 2, ",").concat((g + neighborG) / 2, ",").concat((b + neighborB) / 2, ",").concat(a, ")"), tempCtx);
             }
           }

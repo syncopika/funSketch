@@ -5354,8 +5354,7 @@ function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflec
 
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
- // try halftone/halftone-like filter?
-// https://stackoverflow.com/questions/1258047/algorithm-to-make-halftone-images
+ // dots based on unique colors
 
 var Dots3 = /*#__PURE__*/function (_FilterTemplate) {
   _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Dots3, _FilterTemplate);
@@ -5369,8 +5368,20 @@ var Dots3 = /*#__PURE__*/function (_FilterTemplate) {
       "distThreshold": {
         "value": 5.0,
         "min": 0.0,
-        "max": 15.0,
+        "max": 12.0,
         "step": 0.1
+      },
+      "dotSize": {
+        "value": 3.0,
+        "min": 1.0,
+        "max": 25.0,
+        "step": 1.0
+      },
+      "neighborDistance": {
+        "value": 4.0,
+        "min": 1.0,
+        "max": 20.0,
+        "step": 1.0
       }
     };
     return _super.call(this, params);
@@ -5467,14 +5478,18 @@ var Dots3 = /*#__PURE__*/function (_FilterTemplate) {
   }, {
     key: "filter",
     value: function filter(pixels) {
+      var _this = this;
+
       var width = pixels.width;
       var height = pixels.height;
       var data = pixels.data;
+      var neighborList = []; // array of Points 
 
       var drawDot = function drawDot(x, y, color, context) {
         context.lineJoin = "round";
         context.strokeStyle = color;
-        var dotWidth = 3;
+        var dotWidth = _this.params.dotSize.value; //3;
+
         context.lineWidth = dotWidth;
         context.beginPath();
         context.moveTo(x, y + 1);
@@ -5489,13 +5504,12 @@ var Dots3 = /*#__PURE__*/function (_FilterTemplate) {
       tempCanvas.height = height;
       var tempCtx = tempCanvas.getContext('2d');
       tempCtx.fillStyle = '#fff';
-      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height); // collect neighbors based on color "uniqueness" given a threshold distance
 
-      for (var i = 0; i < width; i += 12) {
-        for (var j = 0; j < height; j += 12) {
+      for (var i = 0; i < width; i += this.params.neighborDistance.value) {
+        for (var j = 0; j < height; j += this.params.neighborDistance.value) {
           // check neighbor pixel color.
-          // if significantly different from this color, take average and draw a dot here
-          // otherwise don't do anything (assuming #fff here)
+          // if significantly different from this color, take average and add to list of points
           if (i + 1 < width) {
             var r = data[4 * i + 4 * j * width];
             var g = data[4 * i + 4 * j * width + 1];
@@ -6188,6 +6202,269 @@ var _c, _c2;
 
 __webpack_require__.$Refresh$.register(_c, "Point");
 __webpack_require__.$Refresh$.register(_c2, "Node");
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
+/***/ "./src/filters/lines.js":
+/*!******************************!*\
+  !*** ./src/filters/lines.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Lines": () => (/* binding */ Lines)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+ // lines based on unique colors (like dots3 but with lines)
+
+var Lines = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Lines, _FilterTemplate);
+
+  var _super = _createSuper(Lines);
+
+  function Lines() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Lines);
+
+    var params = {
+      "distThreshold": {
+        "value": 5.0,
+        "min": 0.0,
+        "max": 12.0,
+        "step": 0.1
+      },
+      "dotSize": {
+        "value": 3.0,
+        "min": 1.0,
+        "max": 25.0,
+        "step": 1.0
+      },
+      "neighborDistance": {
+        "value": 4.0,
+        "min": 1.0,
+        "max": 20.0,
+        "step": 1.0
+      }
+    };
+    return _super.call(this, params);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Lines, [{
+    key: "rgbToXyz",
+    value: function rgbToXyz(r, g, b) {
+      // https://www.easyrgb.com/en/math.php
+      var vR = r / 255;
+      var vG = g / 255;
+      var vB = b / 255;
+
+      if (vR > 0.04045) {
+        vR = Math.pow((vR + 0.055) / 1.055, 2.4);
+      } else {
+        vR = vR / 12.92;
+      }
+
+      if (vG > 0.04045) {
+        vG = Math.pow((vG + 0.055) / 1.055, 2.4);
+      } else {
+        vG = vG / 12.92;
+      }
+
+      if (vB > 0.04045) {
+        vB = Math.pow((vB + 0.055) / 1.055, 2.4);
+      } else {
+        vB = vB / 12.92;
+      }
+
+      vR = vR * 100;
+      vG = vG * 100;
+      vB = vB * 100;
+      var x = vR * 0.4124 + vG * 0.3576 + vB * 0.1805;
+      var y = vR * 0.2126 + vG * 0.7152 + vB * 0.0722;
+      var z = vR * 0.0193 + vG * 0.1192 + vB * 0.9505;
+      return [x, y, z];
+    }
+  }, {
+    key: "xyzToLab",
+    value: function xyzToLab(xyzArr) {
+      // https://www.easyrgb.com/en/math.php
+      // https://en.wikipedia.org/wiki/Standard_illuminant#Illuminant_series_D
+      var D65 = [95.047, 100, 108.883];
+      var vX = xyzArr[0] / D65[0];
+      var vY = xyzArr[1] / D65[1];
+      var vZ = xyzArr[2] / D65[2];
+
+      if (vX > 0.008856) {
+        vX = Math.pow(vX, 1 / 3);
+      } else {
+        vX = 7.787 * vX + 16 / 116;
+      }
+
+      if (vY > 0.008856) {
+        vY = Math.pow(vY, 1 / 3);
+      } else {
+        vY = 7.787 * vY + 16 / 116;
+      }
+
+      if (vZ > 0.008856) {
+        vZ = Math.pow(vZ, 1 / 3);
+      } else {
+        vZ = 7.787 * vZ + 16 / 116;
+      }
+
+      var CIE_L = 116 * vY - 16;
+      var CIE_a = 500 * (vX - vY);
+      var CIE_b = 200 * (vY - vZ);
+      return [CIE_L, CIE_a, CIE_b];
+    } // difference between 2 CIELAB colors
+
+  }, {
+    key: "deltaE",
+    value: function deltaE(labA, labB) {
+      // https://gist.github.com/ryancat/9972419b2a78f329ce3aebb7f1a09152
+      var deltaL = labA[0] - labB[0];
+      var deltaA = labA[1] - labB[1];
+      var deltaB = labA[2] - labB[2];
+      var c1 = Math.sqrt(labA[1] * labA[1] + labA[2] * labA[2]);
+      var c2 = Math.sqrt(labB[1] * labB[1] + labB[2] * labB[2]);
+      var deltaC = c1 - c2;
+      var deltaH = deltaA * deltaA + deltaB * deltaB - deltaC * deltaC;
+      deltaH = deltaH < 0 ? 0 : Math.sqrt(deltaH);
+      var sc = 1.0 + 0.045 * c1;
+      var sh = 1.0 + 0.015 * c1;
+      var deltaLKlsl = deltaL / 1.0;
+      var deltaCkcsc = deltaC / sc;
+      var deltaHkhsh = deltaH / sh;
+      var i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
+      return i < 0 ? 0 : Math.sqrt(i);
+    }
+  }, {
+    key: "filter",
+    value: function filter(pixels) {
+      var _this = this;
+
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data;
+      var neighborList = []; // array of Points 
+
+      var drawDot = function drawDot(x, y, color, context) {
+        context.lineJoin = "round";
+        context.strokeStyle = color;
+        var dotWidth = _this.params.dotSize.value; //3;
+
+        context.lineWidth = dotWidth;
+        context.beginPath();
+        context.moveTo(x, y + 1);
+        context.lineTo(x, y);
+        context.closePath();
+        context.stroke();
+      }; // make a temp canvas and set it to white
+
+
+      var tempCanvas = document.createElement('canvas');
+      tempCanvas.width = width;
+      tempCanvas.height = height;
+      var tempCtx = tempCanvas.getContext('2d');
+      tempCtx.fillStyle = '#fff';
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height); // collect neighbors based on color "uniqueness" given a threshold distance
+
+      for (var i = 0; i < width; i += this.params.neighborDistance.value) {
+        for (var j = 0; j < height; j += this.params.neighborDistance.value) {
+          // check neighbor pixel color.
+          // if significantly different from this color, take average and add to list of points
+          if (i + 1 < width) {
+            var r = data[4 * i + 4 * j * width];
+            var g = data[4 * i + 4 * j * width + 1];
+            var b = data[4 * i + 4 * j * width + 2];
+            var a = data[4 * i + 4 * j * width + 3];
+            var neighborR = data[4 * (i + 1) + 4 * j * width];
+            var neighborG = data[4 * (i + 1) + 4 * j * width + 1];
+            var neighborB = data[4 * (i + 1) + 4 * j * width + 2];
+            var lab1 = this.xyzToLab(this.rgbToXyz(r, g, b));
+            var lab2 = this.xyzToLab(this.rgbToXyz(neighborR, neighborG, neighborB));
+            var dist = this.deltaE(lab1, lab2); //console.log(`dist: ${dist}`);
+
+            if (dist > this.params.distThreshold.value) {
+              // if colors are "different" enough
+              drawDot(i, j, "rgba(".concat((r + neighborR) / 2, ",").concat((g + neighborG) / 2, ",").concat((b + neighborB) / 2, ",").concat(a, ")"), tempCtx);
+            }
+          }
+        }
+      } // copy temp canvas pixel data over to pixels
+
+
+      var tempPixelData = tempCtx.getImageData(0, 0, width, height).data;
+
+      for (var _i = 0; _i < width; _i++) {
+        for (var _j = 0; _j < height; _j++) {
+          if (_j + 1 < height) {
+            var currR = tempPixelData[4 * _j * width + 4 * _i];
+            var currG = tempPixelData[4 * _j * width + 4 * _i + 1];
+            var currB = tempPixelData[4 * _j * width + 4 * _i + 2];
+            var belowPixelR = tempPixelData[4 * (_j + 1) * width + 4 * _i];
+            var belowPixelG = tempPixelData[4 * (_j + 1) * width + 4 * _i + 1];
+            var belowPixelB = tempPixelData[4 * (_j + 1) * width + 4 * _i + 2];
+
+            if (belowPixelR === 255 && belowPixelG === 255 && belowPixelB === 255) {
+              tempPixelData[4 * (_j + 1) * width + 4 * _i] = currR;
+              tempPixelData[4 * (_j + 1) * width + 4 * _i + 1] = currG;
+              tempPixelData[4 * (_j + 1) * width + 4 * _i + 2] = currB;
+            }
+          }
+        }
+      }
+
+      for (var _i2 = 0; _i2 < pixels.data.length; _i2++) {
+        pixels.data[_i2] = tempPixelData[_i2];
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return Lines;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
+
+
 
 const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
 const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
@@ -9141,9 +9418,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_dots_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../filters/dots.js */ "./src/filters/dots.js");
 /* harmony import */ var _filters_dots2_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../filters/dots2.js */ "./src/filters/dots2.js");
 /* harmony import */ var _filters_dots3_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../filters/dots3.js */ "./src/filters/dots3.js");
-/* harmony import */ var _filters_thinning_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../filters/thinning.js */ "./src/filters/thinning.js");
-/* harmony import */ var _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../filters/oilpainting.js */ "./src/filters/oilpainting.js");
-/* harmony import */ var _filters_painted_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../filters/painted.js */ "./src/filters/painted.js");
+/* harmony import */ var _filters_lines_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../filters/lines.js */ "./src/filters/lines.js");
+/* harmony import */ var _filters_thinning_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../filters/thinning.js */ "./src/filters/thinning.js");
+/* harmony import */ var _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../filters/oilpainting.js */ "./src/filters/oilpainting.js");
+/* harmony import */ var _filters_painted_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../filters/painted.js */ "./src/filters/painted.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -9156,6 +9434,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 
 
  //import { SimpleBlur } from '../filters/simple_blur.js';
+
 
 
 
@@ -9197,10 +9476,11 @@ var FilterManager = /*#__PURE__*/function () {
       "dots": new _filters_dots_js__WEBPACK_IMPORTED_MODULE_16__.Dots(),
       "dots2": new _filters_dots2_js__WEBPACK_IMPORTED_MODULE_17__.Dots2(),
       "dots3": new _filters_dots3_js__WEBPACK_IMPORTED_MODULE_18__.Dots3(),
-      "thinning": new _filters_thinning_js__WEBPACK_IMPORTED_MODULE_19__.Thinning(),
+      "lines": new _filters_lines_js__WEBPACK_IMPORTED_MODULE_19__.Lines(),
+      "thinning": new _filters_thinning_js__WEBPACK_IMPORTED_MODULE_20__.Thinning(),
       //"solidify": new Solidify(),
-      "painted": new _filters_painted_js__WEBPACK_IMPORTED_MODULE_21__.Painted(),
-      "oilpainting": new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_20__.OilPainting()
+      "painted": new _filters_painted_js__WEBPACK_IMPORTED_MODULE_22__.Painted(),
+      "oilpainting": new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_21__.OilPainting()
     };
   } // general filtering function. pass any kind of filter through this function.
 

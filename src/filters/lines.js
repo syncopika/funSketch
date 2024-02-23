@@ -1,8 +1,8 @@
 import { FilterTemplate } from './FilterTemplate.js';
 
-// dots based on unique colors
+// lines based on unique colors (like dots3 but with lines)
 
-class Dots3 extends FilterTemplate {
+class Lines extends FilterTemplate {
     
     constructor(){
         const params = {
@@ -178,6 +178,26 @@ class Dots3 extends FilterTemplate {
         
         // copy temp canvas pixel data over to pixels
         const tempPixelData = tempCtx.getImageData(0, 0, width, height).data;
+        for(let i = 0; i < width; i++){
+            for(let j = 0; j < height; j++){
+                if(j + 1 < height){
+                  const currR = tempPixelData[(4 * j * width) + 4 * i];
+                  const currG = tempPixelData[(4 * j * width) + 4 * i + 1];
+                  const currB = tempPixelData[(4 * j * width) + 4 * i + 2];
+                  
+                  const belowPixelR = tempPixelData[(4 * (j + 1) * width) + 4 * i];
+                  const belowPixelG = tempPixelData[(4 * (j + 1) * width) + 4 * i + 1];
+                  const belowPixelB = tempPixelData[(4 * (j + 1) * width) + 4 * i + 2];
+                  
+                  if(belowPixelR === 255 && belowPixelG === 255 && belowPixelB === 255){
+                      tempPixelData[(4 * (j + 1) * width) + 4 * i] = currR;
+                      tempPixelData[(4 * (j + 1) * width) + 4 * i + 1] = currG;
+                      tempPixelData[(4 * (j + 1) * width) + 4 * i + 2] = currB;
+                  }
+                }
+            }
+        }
+        
         for(let i = 0; i < pixels.data.length; i++){
             pixels.data[i] = tempPixelData[i];
         }
@@ -187,5 +207,5 @@ class Dots3 extends FilterTemplate {
 }
 
 export {
-    Dots3
+    Lines
 }

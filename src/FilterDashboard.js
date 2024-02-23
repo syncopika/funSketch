@@ -17,11 +17,11 @@ function constructSlider(name, params){
                 defaultValue={params.value}
                 onChange={
                     function(evt){
-                        let newVal = evt.target.value;
+                        const newVal = parseFloat(evt.target.value);
                         
                         // update reference to the filter's parameter object value field,
                         // which is used when applying the filter
-                        params.value = parseInt(newVal);
+                        params.value = newVal;
                         
                         document.getElementById(sliderCounterId).textContent = params.value;
                     }

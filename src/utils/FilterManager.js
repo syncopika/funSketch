@@ -15,6 +15,8 @@ import { CRT } from '../filters/crt.js';
 import { ChannelShift } from '../filters/channel_shift.js';
 import { Dots } from '../filters/dots.js';
 import { Dots2 } from '../filters/dots2.js';
+import { Dots3 } from '../filters/dots3.js';
+import { Lines } from '../filters/lines.js';
 import { Thinning } from '../filters/thinning.js';
 //import { Solidify } from '../filters/solidify.js';
 import { OilPainting } from '../filters/oilpainting.js';
@@ -43,6 +45,8 @@ class FilterManager {
             "channel_shift": new ChannelShift(),
             "dots": new Dots(),
             "dots2": new Dots2(),
+            "dots3": new Dots3(),
+            "lines": new Lines(),
             "thinning": new Thinning(),
             //"solidify": new Solidify(),
             "painted": new Painted(),

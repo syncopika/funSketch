@@ -122,7 +122,6 @@ class Dots3 extends FilterTemplate {
         const height = pixels.height;
         
         const data = pixels.data;
-        const neighborList = []; // array of Points 
         
         const drawDot = (x, y, color, context) => {
             context.lineJoin = "round";
@@ -147,7 +146,6 @@ class Dots3 extends FilterTemplate {
         tempCtx.fillStyle = '#fff';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
         
-        // collect neighbors based on color "uniqueness" given a threshold distance
         for(let i = 0; i < width; i += this.params.neighborDistance.value){
             for(let j = 0; j < height; j += this.params.neighborDistance.value){                
                 // check neighbor pixel color.
@@ -176,7 +174,6 @@ class Dots3 extends FilterTemplate {
             }
         }
         
-        // copy temp canvas pixel data over to pixels
         const tempPixelData = tempCtx.getImageData(0, 0, width, height).data;
         for(let i = 0; i < pixels.data.length; i++){
             pixels.data[i] = tempPixelData[i];

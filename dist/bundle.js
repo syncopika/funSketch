@@ -5483,7 +5483,6 @@ var Dots3 = /*#__PURE__*/function (_FilterTemplate) {
       var width = pixels.width;
       var height = pixels.height;
       var data = pixels.data;
-      var neighborList = []; // array of Points 
 
       var drawDot = function drawDot(x, y, color, context) {
         context.lineJoin = "round";
@@ -5504,7 +5503,7 @@ var Dots3 = /*#__PURE__*/function (_FilterTemplate) {
       tempCanvas.height = height;
       var tempCtx = tempCanvas.getContext('2d');
       tempCtx.fillStyle = '#fff';
-      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height); // collect neighbors based on color "uniqueness" given a threshold distance
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
       for (var i = 0; i < width; i += this.params.neighborDistance.value) {
         for (var j = 0; j < height; j += this.params.neighborDistance.value) {
@@ -5528,8 +5527,7 @@ var Dots3 = /*#__PURE__*/function (_FilterTemplate) {
             }
           }
         }
-      } // copy temp canvas pixel data over to pixels
-
+      }
 
       var tempPixelData = tempCtx.getImageData(0, 0, width, height).data;
 
@@ -6384,7 +6382,6 @@ var Lines = /*#__PURE__*/function (_FilterTemplate) {
       var width = pixels.width;
       var height = pixels.height;
       var data = pixels.data;
-      var neighborList = []; // array of Points 
 
       var drawDot = function drawDot(x, y, color, context) {
         context.lineJoin = "round";
@@ -6405,7 +6402,7 @@ var Lines = /*#__PURE__*/function (_FilterTemplate) {
       tempCanvas.height = height;
       var tempCtx = tempCanvas.getContext('2d');
       tempCtx.fillStyle = '#fff';
-      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height); // collect neighbors based on color "uniqueness" given a threshold distance
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
       for (var i = 0; i < width; i += this.params.neighborDistance.value) {
         for (var j = 0; j < height; j += this.params.neighborDistance.value) {
@@ -6429,14 +6426,14 @@ var Lines = /*#__PURE__*/function (_FilterTemplate) {
             }
           }
         }
-      } // copy temp canvas pixel data over to pixels
-
+      }
 
       var tempPixelData = tempCtx.getImageData(0, 0, width, height).data;
 
       for (var _i = 0; _i < width; _i++) {
         for (var _j = 0; _j < height; _j++) {
           if (_j + 1 < height) {
+            // draw a line straight down until we hit a non-white color
             var currR = tempPixelData[4 * _j * width + 4 * _i];
             var currG = tempPixelData[4 * _j * width + 4 * _i + 1];
             var currB = tempPixelData[4 * _j * width + 4 * _i + 2];
@@ -8255,6 +8252,151 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 
 /***/ }),
 
+/***/ "./src/filters/wavy.js":
+/*!*****************************!*\
+  !*** ./src/filters/wavy.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Wavy": () => (/* binding */ Wavy)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+
+
+
+
+
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+ // wavy filter
+// https://stackoverflow.com/questions/29586754/how-can-i-recreate-this-wavy-image-effect
+
+var Wavy = /*#__PURE__*/function (_FilterTemplate) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_2___default()(Wavy, _FilterTemplate);
+
+  var _super = _createSuper(Wavy);
+
+  function Wavy() {
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Wavy);
+
+    var params = {
+      "waveSpeed": {
+        "value": 0.08,
+        "min": 0.01,
+        "max": 1.0,
+        "step": 0.01
+      }
+    };
+    return _super.call(this, params);
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Wavy, [{
+    key: "filter",
+    value: function filter(pixels) {
+      var width = pixels.width;
+      var height = pixels.height;
+      var data = pixels.data; // make a temp canvas and set it to white
+
+      var tempCanvas = document.createElement('canvas');
+      tempCanvas.width = width;
+      tempCanvas.height = height;
+      var tempCtx = tempCanvas.getContext('2d');
+      tempCtx.fillStyle = '#fff';
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      var tempPixelData = tempCtx.getImageData(0, 0, width, height);
+
+      for (var i = 0; i < pixels.data.length; i++) {
+        tempPixelData.data[i] = pixels.data[i];
+      }
+
+      tempCtx.putImageData(tempPixelData, 0, 0); // set up oscillations
+
+      var oscillators = [];
+      var numOscs = 3;
+      var speed = this.params.waveSpeed.value;
+
+      for (var _i = 0; _i < numOscs; _i++) {
+        oscillators.push(function (val) {
+          return Math.sin(val * speed);
+        });
+      }
+
+      for (var y = 0; y < height; y++) {
+        // grid line x-positions
+        var x0 = 0;
+        var x1 = width * 0.25;
+        var x2 = width * 0.5;
+        var x3 = width * 0.75;
+        var x4 = width; // x-positions for the oscillator waves
+
+        var waveX1 = x1 + oscillators[0](y * 0.2) * 3;
+        var waveX2 = x2 + oscillators[1](y * 0.2) * 3;
+        var waveX3 = x3 + oscillators[2](y * 0.2) * 3; // get width of segments determined by the distance between waves
+
+        var width0 = waveX1;
+        var width1 = waveX2 - waveX1;
+        var width2 = waveX3 - waveX2;
+        var width3 = x4 - waveX3; // draw each segment taken from source back to the canvas, taking into account
+        // the distance between each wave. drawImage will automatically scale the image segment
+        // as needed.
+
+        tempCtx.drawImage(tempCanvas, x0, y, x1, 1, 0, y, width0, 1);
+        tempCtx.drawImage(tempCanvas, x1, y, x2 - x1, 1, waveX1 - 0.5, y, width1, 1);
+        tempCtx.drawImage(tempCanvas, x2, y, x3 - x2, 1, waveX2 - 1, y, width2, 1);
+        tempCtx.drawImage(tempCanvas, x3, y, x4 - x3, 1, waveX3 - 1.5, y, width3, 1);
+      }
+
+      tempPixelData = tempCtx.getImageData(0, 0, width, height);
+
+      for (var _i2 = 0; _i2 < pixels.data.length; _i2++) {
+        pixels.data[_i2] = tempPixelData.data[_i2];
+      }
+
+      return pixels;
+    }
+  }]);
+
+  return Wavy;
+}(_FilterTemplate_js__WEBPACK_IMPORTED_MODULE_5__.FilterTemplate);
+
+
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
 /***/ "./src/utils/AnimationController.js":
 /*!******************************************!*\
   !*** ./src/utils/AnimationController.js ***!
@@ -9422,6 +9564,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_thinning_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../filters/thinning.js */ "./src/filters/thinning.js");
 /* harmony import */ var _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../filters/oilpainting.js */ "./src/filters/oilpainting.js");
 /* harmony import */ var _filters_painted_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../filters/painted.js */ "./src/filters/painted.js");
+/* harmony import */ var _filters_wavy_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../filters/wavy.js */ "./src/filters/wavy.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -9447,6 +9590,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 
 
  //import { Solidify } from '../filters/solidify.js';
+
 
 
 
@@ -9480,7 +9624,8 @@ var FilterManager = /*#__PURE__*/function () {
       "thinning": new _filters_thinning_js__WEBPACK_IMPORTED_MODULE_20__.Thinning(),
       //"solidify": new Solidify(),
       "painted": new _filters_painted_js__WEBPACK_IMPORTED_MODULE_22__.Painted(),
-      "oilpainting": new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_21__.OilPainting()
+      "oilpainting": new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_21__.OilPainting(),
+      "wavy": new _filters_wavy_js__WEBPACK_IMPORTED_MODULE_23__.Wavy()
     };
   } // general filtering function. pass any kind of filter through this function.
 

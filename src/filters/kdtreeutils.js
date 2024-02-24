@@ -30,9 +30,9 @@ function getPixelCoords(index, width, height){
         // if index is out of bounds 
         return {};
     }
-    let pixelNum = Math.floor(index / 4);
-    let yCoord = Math.floor(pixelNum / width); // find what row this pixel belongs in
-    let xCoord = pixelNum - (yCoord * width); // find the difference between the pixel number of the pixel at the start of the row and this pixel 
+    const pixelNum = Math.floor(index / 4);
+    const yCoord = Math.floor(pixelNum / width); // find what row this pixel belongs in
+    const xCoord = pixelNum - (yCoord * width); // find the difference between the pixel number of the pixel at the start of the row and this pixel 
     return { 'x': xCoord, 'y': yCoord };
 }
 
@@ -46,9 +46,10 @@ function getDist(x1, x2, y1, y2){
 // in this use case our dimensions will be x and y (since each pixel has an x,y coordinate)
 // so only 2 dimensions 
 function build2dTree(pointsList, currDim){
-    let maxDim = 2;
+    const maxDim = 2;
+    
     // sort the current list in ascending order depending on the current dimension
-    let dim = currDim === 0 ? 'x' : 'y';
+    const dim = currDim === 0 ? 'x' : 'y';
     pointsList.sort(function(a, b){
         if (a[dim] < b[dim]) {
             return -1;
@@ -68,14 +69,14 @@ function build2dTree(pointsList, currDim){
     if(pointsList.length === 2){
         // since it's a BST, the 2nd element (at index 1) will be larger and thus the parent of 
         // the 1st element, which will go to the left of the parent
-        let newParent = new Node(pointsList[1], currDim);
-        let newChild = new Node(pointsList[0], (currDim + 1) % maxDim);
+        const newParent = new Node(pointsList[1], currDim);
+        const newChild = new Node(pointsList[0], (currDim + 1) % maxDim);
         newParent.left = newChild;
         return newParent;
     }
     // take the median point, place it, and recurse on left and right 
-    let midIndex = Math.floor((pointsList.length - 1) / 2);
-    let newNode = new Node(pointsList[midIndex], currDim);
+    const midIndex = Math.floor((pointsList.length - 1) / 2);
+    const newNode = new Node(pointsList[midIndex], currDim);
     newNode.left = build2dTree(pointsList.slice(0, midIndex), (currDim + 1) % maxDim);
     newNode.right = build2dTree(pointsList.slice(midIndex + 1, pointsList.length), (currDim + 1) % maxDim);
     return newNode;
@@ -95,14 +96,14 @@ function isLeaf(node){
 
 function findNearestNeighborHelper(root, record, x, y){
     if(isLeaf(root)){
-        let dist = getDist(root.data[0], x, root.data[1], y);
+        const dist = getDist(root.data[0], x, root.data[1], y);
         if (dist < record.minDist) {
             record.nearestNeighbor = root.point;
             record.minDist = dist;
         }
     }else{
         // compare current dist with min dist 
-        let currDist = getDist(root.data[0], x, root.data[1], y);
+        const currDist = getDist(root.data[0], x, root.data[1], y);
         if(currDist < record.minDist){
             record.nearestNeighbor = root.point;
             record.minDist = currDist;
@@ -112,7 +113,7 @@ function findNearestNeighborHelper(root, record, x, y){
             findNearestNeighborHelper(root.left, record, x, y);
         }else{
             // find the right direction to go in the tree based on dimension //distance
-            let currDimToCompare = (root.dim === 0) ? x : y;
+            const currDimToCompare = (root.dim === 0) ? x : y;
             if(currDimToCompare === x){
                 // is x greater than the current node's x? if so, we want to go right. else left.
                 if(x > root.data[0]){
@@ -133,12 +134,12 @@ function findNearestNeighborHelper(root, record, x, y){
             }else{
                 if(y > root.data[1]){
                     findNearestNeighborHelper(root.right, record, x, y);
-                    if (y - record.minDist < root.data[1]) {
+                    if(y - record.minDist < root.data[1]){
                         findNearestNeighborHelper(root.left, record, x, y);
                     }
                 }else{
                     findNearestNeighborHelper(root.left, record, x, y);
-                    if (y + record.minDist > root.data[1]) {
+                    if(y + record.minDist > root.data[1]){
                         findNearestNeighborHelper(root.right, record, x, y);
                     }
                 }
@@ -149,7 +150,7 @@ function findNearestNeighborHelper(root, record, x, y){
 
 // find nearest neighbor in 2d tree given a point's x and y coords and the tree's root 
 function findNearestNeighbor(root, x, y){
-    let record = {};
+    const record = {};
     // set default values 
     record.nearestNeighbor = root.point;
     record.minDist = getDist(root.data[0], x, root.data[1], y);

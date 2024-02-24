@@ -1,8 +1,14 @@
 import { FilterTemplate } from './FilterTemplate.js';
 
-// lines based on unique colors (like dots3 but with lines)
+// solidify color idea based on unique colors found in image
+//
+// potentially useful for getting rid of too many different colors,
+// which can make floodfilling a desired area turn out not as nice
+//
+// however this takes too long because I'm using a naive method
+// of iterating through all collected unique colors to find the best match
 
-class Lines extends FilterTemplate {
+class Solid extends FilterTemplate {
     
     constructor(){
         const params = {
@@ -11,12 +17,6 @@ class Lines extends FilterTemplate {
                 "min": 0.0,
                 "max": 12.0,
                 "step": 0.1,
-            },
-            "dotSize": {
-                "value": 3.0,
-                "min": 1.0,
-                "max": 25.0,
-                "step": 1.0,
             },
             "neighborDistance": {
                 "value": 4.0,
@@ -146,6 +146,9 @@ class Lines extends FilterTemplate {
         tempCtx.fillStyle = '#fff';
         tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
         
+        // keep track of unique colors seen
+        const uniqueColors = [];
+        
         for(let i = 0; i < width; i += this.params.neighborDistance.value){
             for(let j = 0; j < height; j += this.params.neighborDistance.value){                
                 // check neighbor pixel color.
@@ -164,40 +167,49 @@ class Lines extends FilterTemplate {
                     const lab2 = this.xyzToLab(this.rgbToXyz(neighborR, neighborG, neighborB));
                     
                     const dist = this.deltaE(lab1, lab2);
-                    //console.log(`dist: ${dist}`);
                     
                     if(dist > this.params.distThreshold.value){
                         // if colors are "different" enough
-                        drawDot(i, j, `rgba(${(r+neighborR)/2},${(g+neighborG)/2},${(b+neighborB)/2},${a})`, tempCtx);
+                        uniqueColors.push([
+                            (r+neighborR)/2,
+                            (g+neighborG)/2,
+                            (b+neighborB)/2,
+                        ]);
                     }
                 }
             }
         }
         
-        const tempPixelData = tempCtx.getImageData(0, 0, width, height).data;
+        // for each pixel, try to find closest match from unique colors array
+        // this is very expensive and takes too long. kd-tree would probably help a lot here? (but not sure how to set that up and take the non-linearity of colors into account at the same time)
         for(let i = 0; i < width; i++){
             for(let j = 0; j < height; j++){
-                if(j + 1 < height){
-                  // draw a line straight down until we hit a non-white color
-                  const currR = tempPixelData[(4 * j * width) + 4 * i];
-                  const currG = tempPixelData[(4 * j * width) + 4 * i + 1];
-                  const currB = tempPixelData[(4 * j * width) + 4 * i + 2];
-                  
-                  const belowPixelR = tempPixelData[(4 * (j + 1) * width) + 4 * i];
-                  const belowPixelG = tempPixelData[(4 * (j + 1) * width) + 4 * i + 1];
-                  const belowPixelB = tempPixelData[(4 * (j + 1) * width) + 4 * i + 2];
-                  
-                  if(belowPixelR === 255 && belowPixelG === 255 && belowPixelB === 255){
-                      tempPixelData[(4 * (j + 1) * width) + 4 * i] = currR;
-                      tempPixelData[(4 * (j + 1) * width) + 4 * i + 1] = currG;
-                      tempPixelData[(4 * (j + 1) * width) + 4 * i + 2] = currB;
-                  }
-                }
+                const currR = pixels.data[(4 * j * width) + 4 * i];
+                const currG = pixels.data[(4 * j * width) + 4 * i + 1];
+                const currB = pixels.data[(4 * j * width) + 4 * i + 2];
+                
+                const currLab = this.xyzToLab(this.rgbToXyz(currR, currG, currB));
+                
+                let closestMatch = uniqueColors[0];
+                let closestMatchDist = Infinity;
+                
+                uniqueColors.forEach(color => {
+                    const labColor = this.xyzToLab(this.rgbToXyz(
+                        color[0],
+                        color[1],
+                        color[2],
+                    ));
+                    const dist = this.deltaE(currLab, labColor);
+                    if(dist < closestMatchDist){
+                        closestMatchDist = dist;
+                        closestMatch = color;
+                    }
+                });
+                
+                pixels.data[(4 * j * width) + 4 * i] = closestMatch[0];
+                pixels.data[(4 * j * width) + 4 * i + 1] = closestMatch[1];
+                pixels.data[(4 * j * width) + 4 * i + 2] = closestMatch[2];
             }
-        }
-        
-        for(let i = 0; i < pixels.data.length; i++){
-            pixels.data[i] = tempPixelData[i];
         }
         
         return pixels;
@@ -205,5 +217,5 @@ class Lines extends FilterTemplate {
 }
 
 export {
-    Lines
+    Solid
 }

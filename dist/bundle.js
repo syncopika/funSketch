@@ -8298,18 +8298,15 @@ var Wavy = /*#__PURE__*/function (_FilterTemplate) {
   function Wavy() {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Wavy);
 
-    /*
-    const params = {
-        "waves": {
-            "value": 3.0,
-            "min": 0.0,
-            "max": 12.0,
-            "step": 1.0,
-        },
-    }
-    super(params);
-    */
-    return _super.call(this, {});
+    var params = {
+      "waveSpeed": {
+        "value": 0.08,
+        "min": 0.01,
+        "max": 1.0,
+        "step": 0.01
+      }
+    };
+    return _super.call(this, params);
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Wavy, [{
@@ -8331,13 +8328,13 @@ var Wavy = /*#__PURE__*/function (_FilterTemplate) {
         tempPixelData.data[i] = pixels.data[i];
       }
 
-      tempCtx.putImageData(tempPixelData, 0, 0);
-      var img = new Image();
-      img.src = tempCanvas.toDataURL(); // set up oscillations
+      tempCtx.putImageData(tempPixelData, 0, 0); //const img = new Image();
+      //img.src = tempCanvas.toDataURL();
+      // set up oscillations
 
       var oscillators = [];
       var numOscs = 3;
-      var speed = 0.08;
+      var speed = this.params.waveSpeed.value; //0.08;
 
       for (var _i = 0; _i < numOscs; _i++) {
         oscillators.push(function (val) {
@@ -8360,10 +8357,10 @@ var Wavy = /*#__PURE__*/function (_FilterTemplate) {
         var width1 = waveX2 - waveX1;
         var width2 = waveX3 - waveX2;
         var width3 = x4 - waveX3;
-        tempCtx.drawImage(img, x0, y, x1, 1, 0, y, width0, 1);
-        tempCtx.drawImage(img, x1, y, x2 - x1, 1, waveX1 - 0.5, y, width1, 1);
-        tempCtx.drawImage(img, x2, y, x3 - x2, 1, waveX2 - 1, y, width2, 1);
-        tempCtx.drawImage(img, x3, y, x4 - x3, 1, waveX3 - 1.5, y, width3, 1);
+        tempCtx.drawImage(tempCanvas, x0, y, x1, 1, 0, y, width0, 1);
+        tempCtx.drawImage(tempCanvas, x1, y, x2 - x1, 1, waveX1 - 0.5, y, width1, 1);
+        tempCtx.drawImage(tempCanvas, x2, y, x3 - x2, 1, waveX2 - 1, y, width2, 1);
+        tempCtx.drawImage(tempCanvas, x3, y, x4 - x3, 1, waveX3 - 1.5, y, width3, 1);
       }
 
       tempPixelData = tempCtx.getImageData(0, 0, width, height);

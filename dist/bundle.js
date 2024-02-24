@@ -8328,13 +8328,11 @@ var Wavy = /*#__PURE__*/function (_FilterTemplate) {
         tempPixelData.data[i] = pixels.data[i];
       }
 
-      tempCtx.putImageData(tempPixelData, 0, 0); //const img = new Image();
-      //img.src = tempCanvas.toDataURL();
-      // set up oscillations
+      tempCtx.putImageData(tempPixelData, 0, 0); // set up oscillations
 
       var oscillators = [];
       var numOscs = 3;
-      var speed = this.params.waveSpeed.value; //0.08;
+      var speed = this.params.waveSpeed.value;
 
       for (var _i = 0; _i < numOscs; _i++) {
         oscillators.push(function (val) {
@@ -8352,11 +8350,15 @@ var Wavy = /*#__PURE__*/function (_FilterTemplate) {
 
         var waveX1 = x1 + oscillators[0](y * 0.2) * 3;
         var waveX2 = x2 + oscillators[1](y * 0.2) * 3;
-        var waveX3 = x3 + oscillators[2](y * 0.2) * 3;
+        var waveX3 = x3 + oscillators[2](y * 0.2) * 3; // get width of segments determined by the distance between waves
+
         var width0 = waveX1;
         var width1 = waveX2 - waveX1;
         var width2 = waveX3 - waveX2;
-        var width3 = x4 - waveX3;
+        var width3 = x4 - waveX3; // draw each segment taken from source back to the canvas, taking into account
+        // the distance between each wave. drawImage will automatically scale the image segment
+        // as needed.
+
         tempCtx.drawImage(tempCanvas, x0, y, x1, 1, 0, y, width0, 1);
         tempCtx.drawImage(tempCanvas, x1, y, x2 - x1, 1, waveX1 - 0.5, y, width1, 1);
         tempCtx.drawImage(tempCanvas, x2, y, x3 - x2, 1, waveX2 - 1, y, width2, 1);

@@ -672,15 +672,15 @@ export class App extends React.Component {
                     </div>
                 </main>
                 
-                <div id="brushSection">
+                <section id="brushSection">
                     <ColorPicker brush={this.state.brushInstance} />
                     
                     <hr />
                     
-                    <h4 id="brushesOption" 
+                    <h4 id="brushesOption"
                         className="option"
                         onClick={this._showFiltersOrBrushes}
-                    > brushes 
+                    > brushes
                     </h4>
                     
                     <div id="brushes" className="tbar">
@@ -689,7 +689,7 @@ export class App extends React.Component {
                     
                     <hr />
 
-                    <h4 id="filtersOption" 
+                    <h4 id="filtersOption"
                         className="option"
                         onClick={this._showFiltersOrBrushes}
                     > filters </h4>
@@ -697,7 +697,7 @@ export class App extends React.Component {
                     <div id="filters" className="tbar">
                         <FilterDashboard filterManager={this.state.filtersInstance} />
                     </div>
-                </div>
+                </section>
                 
                 <footer id="footer">
                     <hr />

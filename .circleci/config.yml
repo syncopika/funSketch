@@ -6,5 +6,6 @@ orbs:
 workflows:
   node-tests:
     jobs:
-      - node/run 'lint'
+      - node/run:
+          npm-run: lint
       - node/test

@@ -62,6 +62,10 @@ export class App extends React.Component {
     
   _timelineMarkerDelete(frameNumToDelete){
     const currentMarkers = this.state.timelineMarkers;
+    
+    if(!delete currentMarkers[frameNumToDelete]){
+      console.log("couldn't delete frame marker for frame: " + frameNumToDelete);
+    }
         
     this.setState({
       'timelineMarkers': currentMarkers

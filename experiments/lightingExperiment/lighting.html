@@ -1,0 +1,174 @@
+<!doctype html>
+
+<html>
+
+  <head>
+    <title> lighting experiment </title>
+    <style>
+		body {
+			text-align: center;
+		}
+    
+		#main {
+			border: 1px solid #000;
+		}
+    
+		#canvasArea{
+			position: relative;
+			margin: 0px auto;
+			width: 800px;
+			height: 500px;
+		}
+    
+		#editCanvas{
+			cursor: crosshair;
+		}
+	</style>
+  </head>
+
+  <body>
+    <h2> lighting experiment </h2>
+    <p> import an image and press 'pick light source location' to pick a point on the canvas that will be the location of the light source. </p>
+	
+    <div>
+      <button id="pickLightSrcLoc">pick light source location</button>
+      <button id="importImage">import image</button>
+    </div>
+	
+    <br />
+
+    <div id='canvasArea'>
+    </div>
+    
+    <br />
+    
+    <label for='lightStrength'>light strength: </label><input id='lightStrength' type='range' min='0' max='1000' value='500' /> <span id='currLightStrength'>500</span>
+    <br />
+    <label for='lightRadius'>light radius: </label><input id='lightRadius' type='range' min='0' max='100' value='5' /> <span id='currLightRadius'>5</span>
+  </body>
+
+
+  <script>
+    // https://stackoverflow.com/questions/6615002/given-an-rgb-value-how-do-i-create-a-tint-or-shade
+    // https://gamedev.stackexchange.com/questions/131372/light-attenuation-formula-derivation
+    // https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
+    let lightRadius = 5;
+    let lightStrength = 1000;
+    
+    document.getElementById("importImage").addEventListener('click', () => {
+      const canvas = document.getElementById("main");
+      
+      // call fileHandler here
+      fileHandler();
+      
+      // define fileHandler 
+      function fileHandler(){
+        //initiate file choosing after button click
+        let input = document.createElement('input');
+        input.type = 'file';
+        input.addEventListener('change', getFile, false);
+        input.click();
+      }
+      
+      function getFile(e){
+        const img = new Image();
+        const reader = new FileReader();
+        const file = e.target.files[0];
+        if(!file.type.match(/image.*/)){
+          console.log("not a valid image");
+          return;
+        }
+        //when the image loads, put it on the canvas.
+        img.onload = () => {
+          // change current canvas' width and height according to imported picture
+          const currentCanvas = canvas.currentCanvas;
+          const context = canvas.getContext("2d");
+          const height = canvas.height;
+          const width = canvas.width;
+          
+          context.drawImage(img, 0, 0, width, height);
+        };
+        //after reader has loaded file, put the data in the image object.
+        reader.onloadend = function(){ 
+          img.src = reader.result;
+        };
+        //read the file as a URL
+        reader.readAsDataURL(file);
+      }
+    });
+
+
+    function setUpMainCanvas(){
+      const canvasElement = document.createElement("canvas");
+      document.getElementById("canvasArea").appendChild(canvasElement);
+      canvasElement.id = "main";
+      canvasElement.style.border = '1px #000 solid';
+      canvasElement.style.opacity = 1;
+      canvasElement.style.width = "100%";
+      canvasElement.style.height = "100%";
+      canvasElement.width = canvasElement.offsetWidth;
+      canvasElement.height = canvasElement.offsetHeight;
+      canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
+      canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+    }
+    setUpMainCanvas();
+    
+    function distance(x1, y1, x2, y2){
+      return Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
+    }
+    
+    function doLighting(srcX, srcY, canvas){
+      const ctx = canvas.getContext('2d');
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixelData = imgData.data;
+      
+      for(let y = 0; y < canvas.height; y++){
+        for(let x = 0; x < canvas.width; x++){
+        
+          const distFromSrc = distance(srcX, srcY, x, y);
+          
+          const r = pixelData[(4 * y * canvas.width) + (4 * x)];
+          const g = pixelData[(4 * y * canvas.width) + (4 * x) + 1];
+          const b = pixelData[(4 * y * canvas.width) + (4 * x) + 2];
+          
+          const attenuationAmt = lightRadius / (distFromSrc * distFromSrc) * lightStrength;
+          const newR = Math.min(r, r * attenuationAmt);
+          const newG = Math.min(g, g * attenuationAmt);
+          const newB = Math.min(b, b * attenuationAmt);
+          
+          pixelData[(4 * y * canvas.width) + (4 * x)] = newR;
+          pixelData[(4 * y * canvas.width) + (4 * x) + 1] = newG;
+          pixelData[(4 * y * canvas.width) + (4 * x) + 2] = newB;
+        }
+      }
+      
+      ctx.putImageData(imgData, 0, 0);
+    }
+
+    function selectMouseup(evt){
+      const canvas = document.getElementById("main");
+      const b = canvas.getBoundingClientRect();
+      const x = evt.clientX - b.left;
+      const y = evt.clientY - b.top;
+      doLighting(x, y, canvas);
+      document.getElementById("main").removeEventListener('mouseup', selectMouseup);
+      canvas.style.cursor = 'pointer';
+    }
+
+    document.getElementById("pickLightSrcLoc").addEventListener('click', () => {
+      document.getElementById("main").style.cursor = 'crosshair';
+      document.getElementById("main").addEventListener('mouseup', selectMouseup);
+    });
+    
+    document.getElementById('lightStrength').addEventListener('change', (e) => {
+      document.getElementById('currLightStrength').textContent = e.target.value;
+      lightStrength = e.target.value;
+    });
+    
+    document.getElementById('lightRadius').addEventListener('change', (e) => {
+      document.getElementById('currLightRadius').textContent = e.target.value;
+      lightRadius = e.target.value;
+    });
+  </script>
+
+</html>

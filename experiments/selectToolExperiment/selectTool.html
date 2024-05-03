@@ -2,9 +2,9 @@
 
 <html>
 
-<head>
-	<title> select tool experiment </title>
-	<style>
+  <head>
+    <title> select tool experiment </title>
+    <style>
 		body {
 			text-align: center;
 		}
@@ -21,27 +21,27 @@
 			cursor: crosshair;
 		}
 	</style>
-</head>
+  </head>
 
-<body>
-	<h2> select tool experiment </h2>
-	<p> import an image and press 'select' to draw on the canvas and select a part of the image to either move or delete. </p>
-	<p> to delete, press the 'delete' key on your keyboard once you have made your selection. to move, just click and drag your mouse after your selection has been made. </p>
-	<p> to exit out of selection mode, click anywhere outside the canvas. </p>
+  <body>
+    <h2> select tool experiment </h2>
+    <p> import an image and press 'select' to draw on the canvas and select a part of the image to either move or delete. </p>
+    <p> to delete, press the 'delete' key on your keyboard once you have made your selection. to move, just click and drag your mouse after your selection has been made. </p>
+    <p> to exit out of selection mode, click anywhere outside the canvas. </p>
 	
-	<div>
-		<button id="select">select</button>
-		<button id="importImage">import image</button>
-	</div>
+    <div>
+      <button id="select">select</button>
+      <button id="importImage">import image</button>
+    </div>
 	
-	<br />
+    <br />
 
-	<div id='canvasArea'>
-	</div>
-</body>
+    <div id='canvasArea'>
+    </div>
+  </body>
 
 
-<script>
+  <script>
 /***
 	the select tool could possibly be another kind of brush for funSketch?
 	since we have a bunch of event listeners we'd need to attach to the canvas

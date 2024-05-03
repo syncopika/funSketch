@@ -83,7 +83,7 @@ function floodfillHelper(currentCanvas, newColor, pixelSelected){
     const topNeighborY = currPixel.y - 1;
     const bottomNeighborY = currPixel.y + 1;
 
-    var r,g,b;
+    let r,g,b;
 		
     // top neighbor
     if(topNeighborY >= 0 && visited[currPixel.x + ',' + topNeighborY] === undefined){

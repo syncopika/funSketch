@@ -18,6 +18,8 @@ export default [
     ignores: [
       "**/node_modules/**", 
       "**/dist/**",
+      "gif.worker.js",
+      "src/gif-js/*",
     ],
   },
   {
@@ -31,5 +33,14 @@ export default [
     rules: {
       "@html-eslint/indent": ["error", 2],
     },
+  },
+  {
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        }
+      }
+    }
   },
 ];

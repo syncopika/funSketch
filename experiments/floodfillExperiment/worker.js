@@ -51,7 +51,7 @@ function floodfill(width, height, pixelSelected, direction, data){
     const topNeighborY = currPixel.y - 1;
     const bottomNeighborY = currPixel.y + 1;
 
-    var r,g,b;
+    let r,g,b;
 		
     // top neighbor
     if((direction === 'upRight' || direction === 'upLeft') && topNeighborY >= 0 && visited[currPixel.x + ',' + topNeighborY] === undefined){

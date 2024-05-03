@@ -6,34 +6,34 @@ import { LayerOrder } from '../src/LayerOrder';
 
 describe("testing LayerOrder component", () => {
     
-    beforeAll(() => {
-    });
+  beforeAll(() => {
+  });
     
-    afterAll(() => {
-    });
+  afterAll(() => {
+  });
     
-    it("is testing LayerOrder no show", () => {
-        const { container } = render(
-            <LayerOrder
-                changingLayerOrder={false}
-                updateParentStateFunction={() => {}}
-                layers={[]}
-            />
-        );
-        expect(container.innerHTML).toBe('<div></div>');
-        expect(screen.queryByText("layer order")).not.toBeInTheDocument();
-    });
+  it("is testing LayerOrder no show", () => {
+    const { container } = render(
+      <LayerOrder
+        changingLayerOrder={false}
+        updateParentStateFunction={() => {}}
+        layers={[]}
+      />
+    );
+    expect(container.innerHTML).toBe('<div></div>');
+    expect(screen.queryByText("layer order")).not.toBeInTheDocument();
+  });
     
-    it("is testing LayerOrder show", () => {
-        const { container } = render(
-            <LayerOrder
-                changingLayerOrder={true}
-                updateParentStateFunction={() => {}}
-                layers={[]}
-            />
-        );
-        expect(container.innerHTML).not.toBe('<div></div>');
-        expect(screen.getByText(new RegExp("layer order"))).toBeInTheDocument();        
-    });
+  it("is testing LayerOrder show", () => {
+    const { container } = render(
+      <LayerOrder
+        changingLayerOrder={true}
+        updateParentStateFunction={() => {}}
+        layers={[]}
+      />
+    );
+    expect(container.innerHTML).not.toBe('<div></div>');
+    expect(screen.getByText(new RegExp("layer order"))).toBeInTheDocument();        
+  });
     
 });

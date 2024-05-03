@@ -6,19 +6,19 @@ import { FilterDashboard } from '../src/FilterDashboard';
 
 describe("testing FilterDashboard component", () => {
     
-    beforeAll(() => {
-    });
+  beforeAll(() => {
+  });
     
-    afterAll(() => {
-    });
+  afterAll(() => {
+  });
     
-    it("is testing FilterDashboard", () => {
-        render(
-            <FilterDashboard
-                filterManager={null}
-            />
-        );
-        expect(screen.queryByText("apply filter")).toBeInTheDocument();
-    });
+  it("is testing FilterDashboard", () => {
+    render(
+      <FilterDashboard
+        filterManager={null}
+      />
+    );
+    expect(screen.queryByText("apply filter")).toBeInTheDocument();
+  });
     
 });

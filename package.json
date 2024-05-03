@@ -51,6 +51,10 @@
         "serve": "cross-env NODE_ENV=development webpack serve --mode development",
         "wdio": "wdio run wdio.conf.js"
     },
+    "pre-commit": [
+      "lint",
+      "test"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/syncopika/funSketch.git"

@@ -3,18 +3,8 @@ version: 2.1
 orbs:
   node: circleci/node@5.2.0
 
-jobs:
-  lint:
-    docker:
-      - image: cimg/node:current
-    steps:
-      - checkout
-      - run:
-          name: Lint
-          command: npm run lint
-
 workflows:
   node-tests:
     jobs:
-      - lint
+      - node/run 'lint'
       - node/test

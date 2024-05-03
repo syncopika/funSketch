@@ -52,7 +52,8 @@
         "wdio": "wdio run wdio.conf.js"
     },
     "pre-commit": [
-      "lint"
+      "lint",
+      "test"
     ],
     "repository": {
         "type": "git",

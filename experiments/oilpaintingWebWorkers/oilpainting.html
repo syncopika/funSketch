@@ -57,65 +57,64 @@
       <hr>
       
       <!--<label> number of trials: </label> <input type='text' id='numTrials'></input>-->
-      <button onclick='fileHandler()'>import image</image>
-        <button id='doExperiment' onclick='runExperiment()'> run! </button>
-</div>
-</body>
-    
-        <script>
-    let img;
-    const canvas1 = document.getElementById('canvas1');
-    const canvas2 = document.getElementById('canvas2');
+      <button onclick='fileHandler()'>import image</button>
+      <button id='doExperiment' onclick='runExperiment()'> run! </button>
+    </div>
+      
+    <script>
+      let img;
+      const canvas1 = document.getElementById('canvas1');
+      const canvas2 = document.getElementById('canvas2');
 
-    const ctx = canvas1.getContext('2d');
-    ctx.fillStyle = 'rgb(255,255,255)';
-    ctx.fillRect(0, 0, canvas1.width, canvas1.height);
+      const ctx = canvas1.getContext('2d');
+      ctx.fillStyle = 'rgb(255,255,255)';
+      ctx.fillRect(0, 0, canvas1.width, canvas1.height);
 
-    const ctx2 = canvas2.getContext('2d');
-    ctx2.fillStyle = 'rgb(255,255,255)';
-    ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
-    
-    const width = canvas1.width;
-    const height = canvas1.height;
-    
-    // define fileHandler 
-    function fileHandler(){
+      const ctx2 = canvas2.getContext('2d');
+      ctx2.fillStyle = 'rgb(255,255,255)';
+      ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+      
+      const width = canvas1.width;
+      const height = canvas1.height;
+      
+      // define fileHandler 
+      function fileHandler(){
         //initiate file choosing after button click
         const input = document.createElement('input');
         input.type = 'file';
         input.addEventListener('change', getFile, false);
         input.click();
-    }
-    
-    function getFile(e){
+      }
+      
+      function getFile(e){
         img = new Image();
         const reader = new FileReader();
         const file = e.target.files[0];
         if(!file.type.match(/image.*/)){
-            console.log("not a valid image");
-            return;
+          console.log("not a valid image");
+          return;
         }
         //when the image loads, put it on the canvas.
         img.onload = () => {
-            // clear the canvases                
-            ctx.fillStyle = 'rgb(255,255,255)';
-            ctx.fillRect(0, 0, canvas1.width, canvas1.height);
-            
-            ctx2.fillStyle = 'rgb(255,255,255)';
-            ctx2.fillRect(0, 0, canvas1.width, canvas1.height);
-            
-            ctx.drawImage(img, width/2 - img.width/2, height/2 - img.height/2, img.width, img.height);
-            ctx2.drawImage(img, width/2 - img.width/2, height/2 - img.height/2, img.width, img.height);
+          // clear the canvases                
+          ctx.fillStyle = 'rgb(255,255,255)';
+          ctx.fillRect(0, 0, canvas1.width, canvas1.height);
+          
+          ctx2.fillStyle = 'rgb(255,255,255)';
+          ctx2.fillRect(0, 0, canvas1.width, canvas1.height);
+          
+          ctx.drawImage(img, width/2 - img.width/2, height/2 - img.height/2, img.width, img.height);
+          ctx2.drawImage(img, width/2 - img.width/2, height/2 - img.height/2, img.width, img.height);
         };
         //after reader has loaded file, put the data in the image object.
         reader.onloadend = function(){ 
-            img.src = reader.result;
+          img.src = reader.result;
         };
         //read the file as a URL
         reader.readAsDataURL(file);
-    }
-    
-    function runExperiment(){
+      }
+      
+      function runExperiment(){
         ctx.fillStyle = 'rgb(255,255,255)';
         ctx.fillRect(0, 0, canvas1.width, canvas1.height);
         
@@ -129,7 +128,8 @@
           oilpaintWithoutWorkers('canvas1', 'regOilPaintingRes');
           oilpaintWithWorkers('canvas2', 'fastOilPaintingRes');
         }, 1000);
-    }
+      }
     </script>
+  </body>
 
 </html>    

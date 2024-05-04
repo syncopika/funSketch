@@ -38,437 +38,431 @@
 
     <div id='canvasArea'>
     </div>
+
+    <script>
+      /***
+        the select tool could possibly be another kind of brush for funSketch?
+        since we have a bunch of event listeners we'd need to attach to the canvas
+      ***/
+
+      document.getElementById("importImage").addEventListener('click', () => {
+        const canvas = document.getElementById("main");
+        
+        // call fileHandler here
+        fileHandler();
+        
+        // define fileHandler 
+        function fileHandler(){
+          //initiate file choosing after button click
+          let input = document.createElement('input');
+          input.type = 'file';
+          input.addEventListener('change', getFile, false);
+          input.click();
+        }
+        
+        function getFile(e){
+          const img = new Image();
+          const reader = new FileReader();
+          const file = e.target.files[0];
+          if(!file.type.match(/image.*/)){
+            console.log("not a valid image");
+            return;
+          }
+          //when the image loads, put it on the canvas.
+          img.onload = () => {
+            // change current canvas' width and height according to imported picture
+            const currentCanvas = canvas.currentCanvas;
+            const context = canvas.getContext("2d");
+            const height = canvas.height;
+            const width = canvas.width;
+            
+            context.drawImage(img, 0, 0, width, height);
+          };
+          //after reader has loaded file, put the data in the image object.
+          reader.onloadend = function(){ 
+            img.src = reader.result;
+          };
+          //read the file as a URL
+          reader.readAsDataURL(file);
+        }
+      });
+
+
+      function setUpMainCanvas(){
+        const canvasElement = document.createElement("canvas");
+        document.getElementById("canvasArea").appendChild(canvasElement);
+        canvasElement.id = "main";
+        canvasElement.style.border = '1px #000 solid';
+        canvasElement.style.zIndex = 1;
+        canvasElement.style.opacity = 1;
+        canvasElement.style.width = "100%";
+        canvasElement.style.height = "100%";
+        canvasElement.width = canvasElement.offsetWidth;
+        canvasElement.height = canvasElement.offsetHeight;
+        canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
+        canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+      }
+      setUpMainCanvas();
+
+      function setUpEditCanvas(){
+        const canvasElement = document.createElement("canvas");
+        document.getElementById("canvasArea").appendChild(canvasElement);
+        canvasElement.id = "editCanvas";
+        canvasElement.style.position = "absolute";
+        canvasElement.style.border = '1px #000 solid';
+        canvasElement.style.zIndex = 10;
+        canvasElement.style.width = "100%";
+        canvasElement.style.height = "100%";
+        canvasElement.style.top = 0;
+        canvasElement.style.left = 0;
+        canvasElement.width = canvasElement.offsetWidth;
+        canvasElement.height = canvasElement.offsetHeight;
+        canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,0.1)";
+        canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+        return canvasElement;
+      }
+
+      // strategy to deal with a gap in logged coordinates
+      function fillInSelectionAreaGaps(){
+        // sort y-coords collected, find an diffs > 1, add new coords based on the diff
+        const yCoords = selectData.clickY.slice();
+        const xCoords = selectData.clickX;
+        
+        for(let idx = 1; idx < yCoords.length; idx++){
+          let lastY = yCoords[idx-1];
+          let lastX = xCoords[idx-1];
+          let currY = yCoords[idx];
+          let currX = xCoords[idx];
+          
+          if(Math.abs(currY - lastY) > 1){
+            // fill in any coordinates in between this one and the previous (based on y-value)
+            // so we can always have a pair of coordinates for the same row if it's passed through twice
+            // this ensures a record of a continuous line
+            // but we also need to consider how x changes from the prev to curr coord.
+            const xInterval = Math.floor( (currX - lastX) / (currY - lastY) );
+            
+            if(currY - lastY < 0){
+              for(let i = currY; i < lastY; i++){
+                selectData.clickX.push(lastX + xInterval);
+                selectData.clickY.push(i);
+                lastX += xInterval;
+              }
+            }else{
+              for(let i = lastY+1; i < currY; i++){
+                selectData.clickX.push(lastX + xInterval);
+                selectData.clickY.push(i);
+                lastX += xInterval;
+              }
+            }
+          }
+        }
+      }
+
+      // reorganize selection loop coordinate data
+      // so that we get an object where each key is a y-value that maps
+      // to an array containing the min and max x-values that cover the selection
+      function reorgSelectionLoopData(pixelCoordData){
+        const coords = {};
+        for(let i = 0; i < pixelCoordData.clickY.length; i++){
+          const currY = pixelCoordData.clickY[i];
+          const currX = pixelCoordData.clickX[i];
+          if(!coords[currY]){
+            coords[currY] = {
+              maxX: currX,
+              minX: currX,
+            }
+          }else{
+            if(currX > coords[currY].maxX){
+              coords[currY].maxX = currX;
+            }else if(currX < coords[currY].minX){
+              coords[currY].minX = currX;
+            }
+          }
+        }
+        return coords;
+      }
+
+      // take as input the output of reorgSelectionLoopData and translate the coords by deltaX and deltaY
+      function translateReorgSelectionLoopData(reorgCoordData, deltaX, deltaY){
+        const newCoordData = {};
+        
+        for(let yVal in reorgCoordData){
+          const newY = parseInt(yVal) + deltaY;
+          
+          newCoordData[newY] = {
+            'minX': reorgCoordData[yVal].minX + deltaX, 
+            'maxX': reorgCoordData[yVal].maxX + deltaX
+          };
+        }
+        
+        return newCoordData;
+      }
+
+      function removePixels(pixelCoordData){
+        // given x and y coords of each point on a line, figure out what pixels make up the area surrounded by the line
+        // and change them to #fff
+        const coords = reorgSelectionLoopData(pixelCoordData);
+        
+        // then change the colors of the pixels that fall in range of minX and maxX of each y-coord in coords
+        const src = document.getElementById("main");
+        const srcCtx = src.getContext('2d');
+        const imgData = srcCtx.getImageData(0,0,src.width,src.height);
+        for(let row in coords){
+          const min = coords[row].minX;
+          const max = coords[row].maxX;
+          const start = src.width*4*row + 4*min;
+          const end = src.width*4*row + 4*max;
+          for(let i = start; i <= end; i += 4){
+            imgData.data[i] = 255;
+            imgData.data[i+1] = 255;
+            imgData.data[i+2] = 255;
+          }
+        }
+        
+        srcCtx.putImageData(imgData, 0, 0);
+      }
+
+      function collectSelectedPixels(pixelCoordData, imgData, canvasWidth){
+        const pixelData = {};
+        
+        const coords = reorgSelectionLoopData(pixelCoordData);
+        
+        // have the keys of pixelData just be sequential from 0 so the data isn't based anymore on a certain location. 
+        // we just want the selected pixel data and to know the order of the data
+        let idx = 0;
+        
+        for(let row in coords){
+          pixelData[idx] = [];
+          const min = coords[row].minX;
+          const max = coords[row].maxX;
+          const start = canvasWidth*4*row + 4*min;
+          const end = canvasWidth*4*row + 4*max;
+          for(let i = start; i <= end; i++){
+            pixelData[idx].push(imgData[i]);
+          }
+          idx++;
+        }
+        
+        return pixelData;
+      }
+
+
+      // select functionality
+      const selectData = {
+        clickX: [],
+        clickY: [],
+        mousedown: [], // this is for when moving the selection
+      };
+      let isSelect = false;
+      let isMousedown = false;
+      let doneSelectMove = false;
+      let editCanvas;
+
+      function selectMousemove(evt){
+        if(isMousedown){
+          selectData.clickX.push(evt.offsetX);
+          selectData.clickY.push(evt.offsetY);
+        
+          const ctx = document.getElementById('editCanvas').getContext('2d');
+          
+          // use the inverted color of the pixel of the main context
+          const srcCtx = document.getElementById('main').getContext('2d');
+          const data = srcCtx.getImageData(evt.offsetX, evt.offsetY, 1, 1).data;
+          const color = `rgb(${255-data[0]}, ${255-data[1]}, ${255-data[2]})`;
+          
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          
+          if(selectData.clickX.length-2 >= 0){
+            ctx.moveTo(selectData.clickX[selectData.clickX.length-2], selectData.clickY[selectData.clickY.length-2]);
+          }else{
+            ctx.moveTo(selectData.clickX[selectData.clickX.length-1], selectData.clickY[selectData.clickY.length-1]);
+          }
+          
+          ctx.lineTo(selectData.clickX[selectData.clickX.length-1], selectData.clickY[selectData.clickY.length-1]);
+          
+          ctx.closePath();
+          ctx.stroke();
+        }
+      }
+
+      function selectMousedown(evt){
+        isMousedown = true;
+        selectData.clickX = [evt.offsetX];
+        selectData.clickY = [evt.offsetY];
+      }
+
+      function endSelection(evt){
+        // assume user is done with selection
+        if(evt.target !== document.getElementById('editCanvas')){
+        
+          // place the selected pixels onto the main canvas
+          const mainCanvas = document.getElementById('main');
+          const mainCtx = mainCanvas.getContext('2d');
+          const imgData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+          
+          let idx = 0;
+          for(let row in selectLoopCoords){
+            const rowImageData = srcCpy[idx++];
+            const min = selectLoopCoords[row].minX;
+            const max = selectLoopCoords[row].maxX;
+            
+            const start = editCanvas.width*4*row + 4*min;
+            const end = editCanvas.width*4*row + 4*max;
+            
+            let imgDataRowIndex = 0;
+            for(let i = start; i < end; i += 4){
+              imgData.data[i] = rowImageData[imgDataRowIndex++];
+              imgData.data[i+1] = rowImageData[imgDataRowIndex++];
+              imgData.data[i+2] = rowImageData[imgDataRowIndex++];
+              imgData.data[i+3] = rowImageData[imgDataRowIndex++];
+            }
+          }
+          
+          mainCtx.putImageData(imgData, 0, 0);		
+        
+          editCanvas.parentNode.removeChild(editCanvas);
+          document.removeEventListener('keydown', deleteSelectedPixels);
+          document.removeEventListener('mousedown', endSelection);
+          isSelect = false;
+          srcCpy = null;
+          selectLoopCoords = null;
+        }
+      }
+
+      function selectMouseup(evt){
+        // after selection loop is drawn, allow user to do something with the selection
+        isMousedown = false;
+
+        editCanvas.removeEventListener('mousedown', selectMousedown);
+        editCanvas.removeEventListener('mousemove', selectMousemove);
+        editCanvas.removeEventListener('mouseup', selectMouseup);
+        
+        // add the new event listeners to handle moving the selection
+        // interesting: https://stackoverflow.com/questions/12886286/addeventlistener-for-keydown-on-canvas
+        document.addEventListener('keydown', deleteSelectedPixels);
+        editCanvas.addEventListener('mousedown', selectMoveMousedown);
+        editCanvas.addEventListener('mousemove', selectMoveMousemove);
+        editCanvas.addEventListener('mouseup', selectMoveMouseup);
+      }
+
+      function selectMoveMousedown(evt){
+        // record the coordinate clicked so we can subtract from the coords of mouseup to create a vector
+        // so we know how much to move the selected pixels left/right and up/down.
+        isMousedown = true;
+        selectData.mousedown = [evt.offsetX, evt.offsetY];
+      }
+
+      let srcCpy = null; // after moving the selected section is done, we have to reset this somehow
+      let selectLoopCoords = null;
+      function selectMoveMousemove(evt){
+        // record current coordinate of mouse to create vector from mousedown coordinate to know how to move selected pixels
+        if(isMousedown){
+          const editCanvas = document.getElementById('editCanvas');
+          const editCtx = editCanvas.getContext('2d');
+          
+          if(!srcCpy){
+            // just trying something out. we want a copy or the src image on the main canvas just once
+            // because we're going to delete the selected pixels on the src
+            const mainCanvas = document.getElementById('main');
+            const imgData = mainCanvas.getContext('2d').getImageData(0, 0, mainCanvas.width, mainCanvas.height).data.slice();
+            
+            fillInSelectionAreaGaps();
+            
+            // collect just the selected pixels
+            srcCpy = collectSelectedPixels(selectData, imgData, mainCanvas.width);
+            
+            // log the coordinates of the selection loop 
+            selectLoopCoords = reorgSelectionLoopData(selectData);
+            
+            // remove pixels from src
+            removePixels(selectData);
+          }
+          
+          const lastX = selectData.mousedown[0];
+          const lastY = selectData.mousedown[1];
+          const currX = evt.offsetX;
+          const currY = evt.offsetY;
+          
+          // clear edit canvas		
+          editCtx.fillStyle = "rgba(255,255,255,0.1)"; // need to add some transparency by making alpha channel < 1. doesn't seem to be working quite right atm
+          editCtx.fillRect(0, 0, editCanvas.width, editCanvas.height);
+          
+          // translate selected pixels
+          const imgData = editCtx.getImageData(0, 0, editCanvas.width, editCanvas.height);
+          
+          let idx = 0;
+          for(let row in selectLoopCoords){
+            // these are the translated coords!
+            const rowImageData = srcCpy[idx++];
+            const min = selectLoopCoords[row].minX;
+            const max = selectLoopCoords[row].maxX;
+            
+            const start = editCanvas.width*4*row + 4*min;
+            const end = editCanvas.width*4*row + 4*max;
+            
+            let imgDataRowIndex = 0;
+            for(let i = start; i < end; i += 4){
+              imgData.data[i] = rowImageData[imgDataRowIndex++];
+              imgData.data[i+1] = rowImageData[imgDataRowIndex++];
+              imgData.data[i+2] = rowImageData[imgDataRowIndex++];
+              imgData.data[i+3] = rowImageData[imgDataRowIndex++];
+            }
+          }
+          
+          editCtx.putImageData(imgData, 0, 0);
+          
+          selectLoopCoords = translateReorgSelectionLoopData(selectLoopCoords, currX - lastX, currY - lastY);
+          
+          // update mousedown coords
+          selectData.mousedown = [currX, currY];
+        }
+      }
+
+      function selectMoveMouseup(evt){
+        isMousedown = false;
+        selectData.mousedown = [];
+      }
+
+      function deleteSelectedPixels(evt){
+        if(evt.which === 46 && isSelect){
+          // 46 is the delete button. can also use evt.code which would be "Delete"
+          
+          // make sure we get a continuous selection loop since we may miss some coords when drawing
+          fillInSelectionAreaGaps();
+          
+          // remove selected pixels
+          removePixels(selectData);
+          
+          // remove edit canvas
+          editCanvas.parentNode.removeChild(editCanvas);
+          
+          // remove event listeners
+          document.removeEventListener('mousedown', endSelection);
+          document.removeEventListener('keydown', deleteSelectedPixels);
+          
+          isSelect = false;	
+        }
+      }
+
+
+      document.getElementById("select").addEventListener('click', () => {
+        if(!isSelect){
+          isSelect = true;
+        
+          // create new invisible canvas on top of current to keep track of crop area
+          editCanvas = setUpEditCanvas();
+          
+          // attach event listener for mousedown/mouseup to draw the selection loop
+          editCanvas.addEventListener('mousedown', selectMousedown);
+          editCanvas.addEventListener('mousemove', selectMousemove);
+          editCanvas.addEventListener('mouseup', selectMouseup);
+          
+          // click anywhere outside of the canvas to stop
+          document.addEventListener('mousedown', endSelection);
+        }
+      });
+    </script>
   </body>
-
-
-  <script>
-/***
-	the select tool could possibly be another kind of brush for funSketch?
-	since we have a bunch of event listeners we'd need to attach to the canvas
-***/
-
-document.getElementById("importImage").addEventListener('click', () => {
-	const canvas = document.getElementById("main");
-	
-	// call fileHandler here
-	fileHandler();
-	
-	// define fileHandler 
-	function fileHandler(){
-		//initiate file choosing after button click
-		let input = document.createElement('input');
-		input.type = 'file';
-		input.addEventListener('change', getFile, false);
-		input.click();
-	}
-	
-	function getFile(e){
-		const img = new Image();
-		const reader = new FileReader();
-		const file = e.target.files[0];
-		if(!file.type.match(/image.*/)){
-			console.log("not a valid image");
-			return;
-		}
-		//when the image loads, put it on the canvas.
-		img.onload = () => {
-			// change current canvas' width and height according to imported picture
-			const currentCanvas = canvas.currentCanvas;
-			const context = canvas.getContext("2d");
-			const height = canvas.height;
-			const width = canvas.width;
-			
-			context.drawImage(img, 0, 0, width, height);
-		};
-		//after reader has loaded file, put the data in the image object.
-		reader.onloadend = function(){ 
-			img.src = reader.result;
-		};
-		//read the file as a URL
-		reader.readAsDataURL(file);
-	}
-});
-
-
-function setUpMainCanvas(){
-	const canvasElement = document.createElement("canvas");
-	document.getElementById("canvasArea").appendChild(canvasElement);
-	canvasElement.id = "main";
-    canvasElement.style.border = '1px #000 solid';
-    canvasElement.style.zIndex = 1;
-    canvasElement.style.opacity = 1;
-	canvasElement.style.width = "100%";
-	canvasElement.style.height = "100%";
-	canvasElement.width = canvasElement.offsetWidth;
-	canvasElement.height = canvasElement.offsetHeight;
-    canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
-    canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
-}
-setUpMainCanvas();
-
-function setUpEditCanvas(){
-	const canvasElement = document.createElement("canvas");
-	document.getElementById("canvasArea").appendChild(canvasElement);
-	canvasElement.id = "editCanvas";
-	canvasElement.style.position = "absolute";
-    canvasElement.style.border = '1px #000 solid';
-    canvasElement.style.zIndex = 10;
-	canvasElement.style.width = "100%";
-	canvasElement.style.height = "100%";
-	canvasElement.style.top = 0;
-	canvasElement.style.left = 0;
-	canvasElement.width = canvasElement.offsetWidth;
-	canvasElement.height = canvasElement.offsetHeight;
-    canvasElement.getContext("2d").fillStyle = "rgba(255,255,255,0.1)";
-    canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
-	return canvasElement;
-}
-
-// strategy to deal with a gap in logged coordinates
-function fillInSelectionAreaGaps(){
-	// sort y-coords collected, find an diffs > 1, add new coords based on the diff
-	const yCoords = selectData.clickY.slice();
-	const xCoords = selectData.clickX;
-	
-	for(let idx = 1; idx < yCoords.length; idx++){
-		let lastY = yCoords[idx-1];
-		let lastX = xCoords[idx-1];
-		let currY = yCoords[idx];
-		let currX = xCoords[idx];
-		
-		if(Math.abs(currY - lastY) > 1){
-			// fill in any coordinates in between this one and the previous (based on y-value)
-			// so we can always have a pair of coordinates for the same row if it's passed through twice
-			// this ensures a record of a continuous line
-			// but we also need to consider how x changes from the prev to curr coord.
-			const xInterval = Math.floor( (currX - lastX) / (currY - lastY) );
-			
-			if(currY - lastY < 0){
-				for(let i = currY; i < lastY; i++){
-					selectData.clickX.push(lastX + xInterval);
-					selectData.clickY.push(i);
-					lastX += xInterval;
-				}
-			}else{
-				for(let i = lastY+1; i < currY; i++){
-					selectData.clickX.push(lastX + xInterval);
-					selectData.clickY.push(i);
-					lastX += xInterval;
-				}
-			}
-		}
-	}
-}
-
-// reorganize selection loop coordinate data
-// so that we get an object where each key is a y-value that maps
-// to an array containing the min and max x-values that cover the selection
-function reorgSelectionLoopData(pixelCoordData){
-	const coords = {};
-	for(let i = 0; i < pixelCoordData.clickY.length; i++){
-		const currY = pixelCoordData.clickY[i];
-		const currX = pixelCoordData.clickX[i];
-		if(!coords[currY]){
-			coords[currY] = {
-				maxX: currX,
-				minX: currX,
-			}
-		}else{
-			if(currX > coords[currY].maxX){
-				coords[currY].maxX = currX;
-			}else if(currX < coords[currY].minX){
-				coords[currY].minX = currX;
-			}
-		}
-	}
-	return coords;
-}
-
-// take as input the output of reorgSelectionLoopData and translate the coords by deltaX and deltaY
-function translateReorgSelectionLoopData(reorgCoordData, deltaX, deltaY){
-	const newCoordData = {};
-	
-	for(let yVal in reorgCoordData){
-		const newY = parseInt(yVal) + deltaY;
-		
-		newCoordData[newY] = {
-			'minX': reorgCoordData[yVal].minX + deltaX, 
-			'maxX': reorgCoordData[yVal].maxX + deltaX
-		};
-	}
-	
-	return newCoordData;
-}
-
-function removePixels(pixelCoordData){
-	// given x and y coords of each point on a line, figure out what pixels make up the area surrounded by the line
-	// and change them to #fff
-	const coords = reorgSelectionLoopData(pixelCoordData);
-	
-	// then change the colors of the pixels that fall in range of minX and maxX of each y-coord in coords
-	const src = document.getElementById("main");
-	const srcCtx = src.getContext('2d');
-	const imgData = srcCtx.getImageData(0,0,src.width,src.height);
-	for(let row in coords){
-		const min = coords[row].minX;
-		const max = coords[row].maxX;
-		const start = src.width*4*row + 4*min;
-		const end = src.width*4*row + 4*max;
-		for(let i = start; i <= end; i += 4){
-			imgData.data[i] = 255;
-			imgData.data[i+1] = 255;
-			imgData.data[i+2] = 255;
-		}
-	}
-	
-	srcCtx.putImageData(imgData, 0, 0);
-}
-
-function collectSelectedPixels(pixelCoordData, imgData, canvasWidth){
-	const pixelData = {};
-	
-	const coords = reorgSelectionLoopData(pixelCoordData);
-	
-	// have the keys of pixelData just be sequential from 0 so the data isn't based anymore on a certain location. 
-	// we just want the selected pixel data and to know the order of the data
-	let idx = 0;
-	
-	for(let row in coords){
-		pixelData[idx] = [];
-		const min = coords[row].minX;
-		const max = coords[row].maxX;
-		const start = canvasWidth*4*row + 4*min;
-		const end = canvasWidth*4*row + 4*max;
-		for(let i = start; i <= end; i++){
-			pixelData[idx].push(imgData[i]);
-		}
-		idx++;
-	}
-	
-	return pixelData;
-}
-
-
-// select functionality
-const selectData = {
-	clickX: [],
-	clickY: [],
-	mousedown: [], // this is for when moving the selection
-};
-let isSelect = false;
-let isMousedown = false;
-let doneSelectMove = false;
-let editCanvas;
-
-function selectMousemove(evt){
-	if(isMousedown){
-		selectData.clickX.push(evt.offsetX);
-		selectData.clickY.push(evt.offsetY);
-	
-		const ctx = document.getElementById('editCanvas').getContext('2d');
-		
-		// use the inverted color of the pixel of the main context
-		const srcCtx = document.getElementById('main').getContext('2d');
-		const data = srcCtx.getImageData(evt.offsetX, evt.offsetY, 1, 1).data;
-		const color = `rgb(${255-data[0]}, ${255-data[1]}, ${255-data[2]})`;
-		
-		ctx.strokeStyle = color;
-		ctx.lineWidth = 3;
-		ctx.beginPath();
-		
-		if(selectData.clickX.length-2 >= 0){
-			ctx.moveTo(selectData.clickX[selectData.clickX.length-2], selectData.clickY[selectData.clickY.length-2]);
-		}else{
-			ctx.moveTo(selectData.clickX[selectData.clickX.length-1], selectData.clickY[selectData.clickY.length-1]);
-		}
-		
-		ctx.lineTo(selectData.clickX[selectData.clickX.length-1], selectData.clickY[selectData.clickY.length-1]);
-		
-		ctx.closePath();
-		ctx.stroke();
-	}
-}
-
-function selectMousedown(evt){
-	isMousedown = true;
-	selectData.clickX = [evt.offsetX];
-	selectData.clickY = [evt.offsetY];
-}
-
-function endSelection(evt){
-	// assume user is done with selection
-	if(evt.target !== document.getElementById('editCanvas')){
-	
-		// place the selected pixels onto the main canvas
-		const mainCanvas = document.getElementById('main');
-		const mainCtx = mainCanvas.getContext('2d');
-		const imgData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
-		
-		let idx = 0;
-		for(let row in selectLoopCoords){
-			const rowImageData = srcCpy[idx++];
-			const min = selectLoopCoords[row].minX;
-			const max = selectLoopCoords[row].maxX;
-			
-			const start = editCanvas.width*4*row + 4*min;
-			const end = editCanvas.width*4*row + 4*max;
-			
-			let imgDataRowIndex = 0;
-			for(let i = start; i < end; i += 4){
-				imgData.data[i] = rowImageData[imgDataRowIndex++];
-				imgData.data[i+1] = rowImageData[imgDataRowIndex++];
-				imgData.data[i+2] = rowImageData[imgDataRowIndex++];
-				imgData.data[i+3] = rowImageData[imgDataRowIndex++];
-			}
-		}
-		
-		mainCtx.putImageData(imgData, 0, 0);		
-	
-		editCanvas.parentNode.removeChild(editCanvas);
-		document.removeEventListener('keydown', deleteSelectedPixels);
-		document.removeEventListener('mousedown', endSelection);
-		isSelect = false;
-		srcCpy = null;
-		selectLoopCoords = null;
-	}
-}
-
-function selectMouseup(evt){
-	// after selection loop is drawn, allow user to do something with the selection
-	isMousedown = false;
-
-	editCanvas.removeEventListener('mousedown', selectMousedown);
-	editCanvas.removeEventListener('mousemove', selectMousemove);
-	editCanvas.removeEventListener('mouseup', selectMouseup);
-	
-	// add the new event listeners to handle moving the selection
-	// interesting: https://stackoverflow.com/questions/12886286/addeventlistener-for-keydown-on-canvas
-	document.addEventListener('keydown', deleteSelectedPixels);
-	editCanvas.addEventListener('mousedown', selectMoveMousedown);
-	editCanvas.addEventListener('mousemove', selectMoveMousemove);
-	editCanvas.addEventListener('mouseup', selectMoveMouseup);
-}
-
-function selectMoveMousedown(evt){
-	// record the coordinate clicked so we can subtract from the coords of mouseup to create a vector
-	// so we know how much to move the selected pixels left/right and up/down.
-	isMousedown = true;
-	selectData.mousedown = [evt.offsetX, evt.offsetY];
-}
-
-let srcCpy = null; // after moving the selected section is done, we have to reset this somehow
-let selectLoopCoords = null;
-function selectMoveMousemove(evt){
-	// record current coordinate of mouse to create vector from mousedown coordinate to know how to move selected pixels
-	if(isMousedown){
-		const editCanvas = document.getElementById('editCanvas');
-		const editCtx = editCanvas.getContext('2d');
-		
-		if(!srcCpy){
-			// just trying something out. we want a copy or the src image on the main canvas just once
-			// because we're going to delete the selected pixels on the src
-			const mainCanvas = document.getElementById('main');
-			const imgData = mainCanvas.getContext('2d').getImageData(0, 0, mainCanvas.width, mainCanvas.height).data.slice();
-			
-			fillInSelectionAreaGaps();
-			
-			// collect just the selected pixels
-			srcCpy = collectSelectedPixels(selectData, imgData, mainCanvas.width);
-			
-			// log the coordinates of the selection loop 
-			selectLoopCoords = reorgSelectionLoopData(selectData);
-			
-			// remove pixels from src
-			removePixels(selectData);
-		}
-		
-		const lastX = selectData.mousedown[0];
-		const lastY = selectData.mousedown[1];
-		const currX = evt.offsetX;
-		const currY = evt.offsetY;
-		
-		// clear edit canvas		
-		editCtx.fillStyle = "rgba(255,255,255,0.1)"; // need to add some transparency by making alpha channel < 1. doesn't seem to be working quite right atm
-		editCtx.fillRect(0, 0, editCanvas.width, editCanvas.height);
-		
-		// translate selected pixels
-		const imgData = editCtx.getImageData(0, 0, editCanvas.width, editCanvas.height);
-		
-		let idx = 0;
-		for(let row in selectLoopCoords){
-			// these are the translated coords!
-			const rowImageData = srcCpy[idx++];
-			const min = selectLoopCoords[row].minX;
-			const max = selectLoopCoords[row].maxX;
-			
-			const start = editCanvas.width*4*row + 4*min;
-			const end = editCanvas.width*4*row + 4*max;
-			
-			let imgDataRowIndex = 0;
-			for(let i = start; i < end; i += 4){
-				imgData.data[i] = rowImageData[imgDataRowIndex++];
-				imgData.data[i+1] = rowImageData[imgDataRowIndex++];
-				imgData.data[i+2] = rowImageData[imgDataRowIndex++];
-				imgData.data[i+3] = rowImageData[imgDataRowIndex++];
-			}
-		}
-		
-		editCtx.putImageData(imgData, 0, 0);
-		
-		selectLoopCoords = translateReorgSelectionLoopData(selectLoopCoords, currX - lastX, currY - lastY);
-		
-		// update mousedown coords
-		selectData.mousedown = [currX, currY];
-	}
-}
-
-function selectMoveMouseup(evt){
-	isMousedown = false;
-	selectData.mousedown = [];
-}
-
-function deleteSelectedPixels(evt){
-	if(evt.which === 46 && isSelect){
-		// 46 is the delete button. can also use evt.code which would be "Delete"
-		
-		// make sure we get a continuous selection loop since we may miss some coords when drawing
-		fillInSelectionAreaGaps();
-		
-		// remove selected pixels
-		removePixels(selectData);
-		
-		// remove edit canvas
-		editCanvas.parentNode.removeChild(editCanvas);
-		
-		// remove event listeners
-		document.removeEventListener('mousedown', endSelection);
-		document.removeEventListener('keydown', deleteSelectedPixels);
-		
-		isSelect = false;	
-	}
-}
-
-
-document.getElementById("select").addEventListener('click', () => {
-	if(!isSelect){
-		isSelect = true;
-	
-		// create new invisible canvas on top of current to keep track of crop area
-		editCanvas = setUpEditCanvas();
-		
-		// attach event listener for mousedown/mouseup to draw the selection loop
-		editCanvas.addEventListener('mousedown', selectMousedown);
-		editCanvas.addEventListener('mousemove', selectMousemove);
-		editCanvas.addEventListener('mouseup', selectMouseup);
-		
-		// click anywhere outside of the canvas to stop
-		document.addEventListener('mousedown', endSelection);
-	}
-});
-
-
-</script>
-
-
-
 </html>

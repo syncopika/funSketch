@@ -596,6 +596,7 @@ export class App extends React.Component {
               <p><a href="./experiments/floodfillExperiment/floodfillExperiment.html">floodfill with web workers</a></p>
               <p><a href="./experiments/oilpaintingWebWorkers/oilpainting.html">oilpainting with web workers</a></p>
               <p><a href="./experiments/selectToolExperiment/selectTool.html">selection tool</a></p>
+              <p><a href="./experiments/lightingExperiment/lighting.html">lighting idea</a></p>
             </div>
           </section>
                     

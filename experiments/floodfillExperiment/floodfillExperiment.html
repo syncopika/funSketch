@@ -69,41 +69,38 @@
 
     </div>
 	
+    <script>
+    
+      var canvas1 = document.getElementById('canvas1');
+      var canvas2 = document.getElementById('canvas2');
+    
+      //var canvas1Results = document.getElementById('regFloodRes');
+      //var canvas2Results = document.getElementById('fastFloodRes');
+
+      var ctx = canvas1.getContext('2d');
+      ctx.fillStyle = 'rgb(255,255,255)';
+      ctx.fillRect(0, 0, canvas1.width, canvas1.height);
+
+      var ctx2 = canvas2.getContext('2d');
+      ctx2.fillStyle = 'rgb(255,255,255)';
+      ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+    
+      // functions for running trials  
+      function runExperiment(){
+      
+        // TODO: clear any old results 
+        
+        //var numTrials = num;
+        //var count = 0;
+        
+        // pick a random coordinate 
+        // both canvases have same dimensions and color, so doesn't matter which one
+        var coord = getRandomCoord(canvas1.height, canvas1.width, "canvas1"); 
+        floodFill('canvas1', coord, 'regFloodRes');
+        floodfillWorkers('canvas2', coord, 'fastFloodRes');
+        
+      }		
+      
+    </script>
   </body>
-	
-	
-  <script>
-	
-		var canvas1 = document.getElementById('canvas1');
-		var canvas2 = document.getElementById('canvas2');
-	
-		//var canvas1Results = document.getElementById('regFloodRes');
-		//var canvas2Results = document.getElementById('fastFloodRes');
-
-		var ctx = canvas1.getContext('2d');
-		ctx.fillStyle = 'rgb(255,255,255)';
-		ctx.fillRect(0, 0, canvas1.width, canvas1.height);
-
-		var ctx2 = canvas2.getContext('2d');
-		ctx2.fillStyle = 'rgb(255,255,255)';
-		ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
-	
-		// functions for running trials  
-		function runExperiment(){
-		
-			// TODO: clear any old results 
-			
-			//var numTrials = num;
-			//var count = 0;
-			
-			// pick a random coordinate 
-			// both canvases have same dimensions and color, so doesn't matter which one
-			var coord = getRandomCoord(canvas1.height, canvas1.width, "canvas1"); 
-			floodFill('canvas1', coord, 'regFloodRes');
-			floodfillWorkers('canvas2', coord, 'fastFloodRes');
-			
-		}		
-		
-	</script>
-
 </html>    

@@ -47,6 +47,14 @@
     display: none;
 }
 
+.navArrow:hover {
+    cursor: pointer;
+}
+
+.navArrow {
+    user-select: none;
+}
+
 #pageCount{
     text-align: center;
     grid-row: 1;
@@ -97,4 +105,8 @@
 
 #fitToCanvasCheck, #centerImageCheck{
     margin-left: 3px;
+}
+
+#togglePenPressureColor{
+    border: 1px solid rgb(0, 255, 0);
 }

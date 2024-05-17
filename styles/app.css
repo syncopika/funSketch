@@ -6,7 +6,7 @@
     width: 100%;
 }
 
-.canvasArea {
+.canvasArea{
     position: relative;
     margin: 0px auto;
     width: 100%;
@@ -45,6 +45,14 @@
 
 .tbar{
     display: none;
+}
+
+.navArrow:hover{
+    cursor: pointer;
+}
+
+.navArrow{
+    user-select: none;
 }
 
 #pageCount{
@@ -97,4 +105,8 @@
 
 #fitToCanvasCheck, #centerImageCheck{
     margin-left: 3px;
+}
+
+#togglePenPressureColor{
+    border: 1px solid rgb(0, 255, 0);
 }

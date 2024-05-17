@@ -19,6 +19,7 @@ const TimelineFrameThumbnail = (props) => {
 // to persist (these changes should be stored in PresentationWrapper's state)
 class AnimationTimeline extends React.Component {
   constructor(props){
+    console.log('rendering animation timeline');
     super(props);
         
     // functions for communicating with parent component
@@ -28,6 +29,10 @@ class AnimationTimeline extends React.Component {
     
   componentDidMount(){
     this.timelineMarkerSetup();
+  }
+  
+  componentDidUpdate(){
+    this.toolbarInstance = this.props.toolbarInstance;
   }
     
   getCoordinates(canvas, event){
@@ -88,7 +93,7 @@ class AnimationTimeline extends React.Component {
                 
         if(frameGuess <= this.props.frames.length){
           // update markers in state
-          const markers = this.props.markers;
+          const markers = JSON.parse(JSON.stringify(this.props.markers));
                     
           // use frame number as the key
           markers[frameGuess] = {
@@ -99,6 +104,7 @@ class AnimationTimeline extends React.Component {
           };
                     
           this.updateCurrFrameAndTimelineMarkers(markers, frameGuess);
+          this.toolbarInstance.goToFrame(frameGuess-1);
         }
       }
     });
@@ -123,7 +129,7 @@ class AnimationTimeline extends React.Component {
               const marker = this.props.markers[markerKey];
               return (
                 <div key={`timelineMarker${index}`}>
-                  <label htmlFor={'marker' + marker.frameNumber + 'Select'}> marker for frame {marker.frameNumber}: &nbsp;</label>
+                  <label htmlFor={`marker${marker.frameNumber}Select`}> marker for frame {marker.frameNumber}: &nbsp;</label>
                   <select 
                     id={`marker${marker.frameNumber}Select`} 
                     name={`marker${marker.frameNumber}Select`}
@@ -138,9 +144,9 @@ class AnimationTimeline extends React.Component {
                     <option>1000</option>
                   </select>
                   <label 
-                    id={'deleteMarker_' + marker.frameNumber} 
+                    id={`deleteMarker_${marker.frameNumber}`} 
                     style={{'color': 'red'}}
-                    onClick={() => this.deleteMarker(marker.frameNumber)}
+                    onClick={() => this.deleteMarker(marker.frameNumber, this.props.markers)}
                   > &nbsp;delete </label>
                 </div>
               );

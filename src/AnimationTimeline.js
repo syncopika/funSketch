@@ -32,7 +32,6 @@ class AnimationTimeline extends React.Component {
   }
   
   componentDidUpdate(){
-    console.log('updated animationtimeline!');
     this.toolbarInstance = this.props.toolbarInstance;
   }
     

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AnimationProject } from './utils/AnimationProject.js';
 import { AnimationController } from './utils/AnimationController.js';
 import { Toolbar } from './utils/Toolbar.js';
@@ -39,13 +39,22 @@ export const App = () => {
   const [currFrame, setCurrFrame] = useState(1);
   const [currLayer, setCurrLayer] = useState(1);
   const [changeLayerOrder, setChangeLayerOrder] = useState(false);
-  const [timelineFrames, setTimelineFrames] = useState([]);
-  const [timelineMarkers, setTimelineMarkers] = useState({}); // keep track of where fps should change - not 0-indexed!
+  const [timelineMarkers, setTimelineMarkers] = useState({}); // keep track of where frame speed should change - not 0-indexed!
+  
+  const [animationTimelineFrames, setAnimationTimelineFrames] = useState([]);
+  const timelineFrames = useRef([]); // use a ref for timelineFrames - this is because we need to access it in a closed context (i.e. document event listener) so we need something persistent
   
   const updateCurrFrameAndTimelineMarkers = (markers, frameNum) => {
     setTimelineMarkers(markers);
     setCurrFrame(frameNum);
     setCurrLayer(1);
+  };
+  
+  const setTimelineFrames = (newFrames) => {
+    timelineFrames.current = newFrames;
+    
+    // update the prop that's used by animationTimeline
+    setAnimationTimelineFrames(timelineFrames.current);
   };
     
   const timelineMarkerDelete = (frameNumToDelete, timelineMarkers) => {
@@ -63,16 +72,16 @@ export const App = () => {
     const frame = toolbarInstance.mergeFrameLayers(animationProject.getCurrFrame());
     const currFrameData = frame.toDataURL();
     
-    if(currFrameIndex + 1 > timelineFrames.length){
+    if(currFrameIndex + 1 > timelineFrames.current.length){
       // if the animation timeline doesn't have the current frame, add it
-      timelineFrames.push({
+      timelineFrames.current.push({
         "data": currFrameData,
         "height": frame.height, 
         "width": frame.width
       });
     }else{
       // update image data in the animation timeline
-      timelineFrames[currFrameIndex].data = currFrameData;
+      timelineFrames.current[currFrameIndex].data = currFrameData;
     }
     
     if(direction === "prev"){
@@ -112,7 +121,7 @@ export const App = () => {
       const curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
       setCurrLayer(curr.getCurrCanvasIndex() + 1);
-      setTimelineFrames([...timelineFrames]);
+      setTimelineFrames([...timelineFrames.current]);
     }
   };
 
@@ -121,7 +130,7 @@ export const App = () => {
       const curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
       setCurrLayer(curr.getCurrCanvasIndex() + 1);
-      setTimelineFrames([...timelineFrames]);
+      setTimelineFrames([...timelineFrames.current]);
     }
   };
   
@@ -130,9 +139,9 @@ export const App = () => {
           
     // if there's at least one timeline marker, we need to apply frame speed for each frame based on the marker
     // the initial speed will be whatever speed is currently selected (if no marker on the first frame)
-    if(Object.keys(timelineFrames).length > 0){
+    if(Object.keys(timelineMarkers).length > 0){
       let currFrameSpeed = parseInt(document.getElementById('timePerFrame').selectedOptions[0].value);
-      timelineFrames.forEach((frame, index) => {
+      timelineFrames.current.forEach((frame, index) => {
         if(timelineMarkers[index+1]){
           currFrameSpeed = timelineMarkers[index+1].speed;
         }
@@ -173,7 +182,7 @@ export const App = () => {
     });
         
     newToolbar.deleteCurrentFrameButton('deleteCurrFrame', (frameIndexToRemove) => {
-      const newTimelineFrames = [...timelineFrames];
+      const newTimelineFrames = [...timelineFrames.current];
       newTimelineFrames.splice(frameIndexToRemove, 1);
       
       const newTimelineMarkers = {};
@@ -257,6 +266,7 @@ export const App = () => {
     setCurrFrame(1);
     setTimelineMarkers({});
     setCurrLayer(visibleLayerIndex + 1);
+    
     setTimelineFrames(newFrames);
   };
     
@@ -349,8 +359,15 @@ export const App = () => {
       document.addEventListener('paste', pasteImageManager.handlePasteEvent.bind(pasteImageManager));
       
       // register keydown events for going between layers/frames
-      // it's important to define the event listener here because of if you define it outside of the useEffect,
-      // the closure will only capture the initial state of the component
+      // it's important to define the event listener here because if you define it outside of useEffect,
+      // the closure will only capture the initial state of the component (so our state variables would still be null)
+      //
+      // however, we still have a problem, e.g. if we load a demo, the timelineFrames array state variable will still be empty
+      // so we can use a ref to keep a persistent array variable around to help
+      // but we also want to update the child AnimationTimeline component which needs to use the ref >_<
+      //
+      // it's honestly much easier to use a React class component for this and just reference this.state wherever since it'll always be up-to-date.
+      //
       // https://stackoverflow.com/questions/55565444/how-to-register-event-with-useeffect-hooks
       // https://stackoverflow.com/questions/66213641/react-keypress-event-taking-only-initial-state-values-and-not-updated-values
       // https://github.com/facebook/react/issues/15815
@@ -394,7 +411,7 @@ export const App = () => {
         if(updateStateFlag){
           setCurrFrame(animationProject.getCurrFrameIndex() + 1);
           setCurrLayer(frame.getCurrCanvasIndex() + 1);
-          setTimelineFrames([...timelineFrames]);
+          setTimelineFrames([...timelineFrames.current]);
         }
       };
       
@@ -558,7 +575,7 @@ export const App = () => {
                   //this._playAnimation("forward");
                   animationController.playAnimation(
                     "forward", 
-                    timelineFrames,
+                    timelineFrames.current,
                     timelineMarkers
                   );
                 }
@@ -568,7 +585,7 @@ export const App = () => {
                   //this._playAnimation("backward");
                   animationController.playAnimation(
                     "backward", 
-                    timelineFrames,
+                    timelineFrames.current,
                     timelineMarkers
                   );
                 }
@@ -609,7 +626,7 @@ export const App = () => {
           </div>
                       
           <AnimationTimeline 
-            frames={timelineFrames}
+            frames={animationTimelineFrames}
             markers={timelineMarkers}
             goToFrame={toolbarInstance ? toolbarInstance.goToFrame : () => {}}
             deleteMarker={timelineMarkerDelete}

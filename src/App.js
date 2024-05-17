@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimationProject } from './utils/AnimationProject.js';
 import { AnimationController } from './utils/AnimationController.js';
 import { Toolbar } from './utils/Toolbar.js';
@@ -59,30 +59,22 @@ export const App = () => {
   };
   
   const moveToFrame = (direction) => {
-    console.log(animationProject);
-    console.log(timelineFrames);
-        
     const currFrameIndex = animationProject.getCurrFrameIndex();
     const frame = toolbarInstance.mergeFrameLayers(animationProject.getCurrFrame());
     const currFrameData = frame.toDataURL();
     
-    const newFrames = [...timelineFrames];
-    
-    if(currFrameIndex + 1 > newFrames.length){
+    if(currFrameIndex + 1 > timelineFrames.length){
       // if the animation timeline doesn't have the current frame, add it
-      newFrames.push({
+      timelineFrames.push({
         "data": currFrameData,
         "height": frame.height, 
         "width": frame.width
       });
     }else{
       // update image data in the animation timeline
-      newFrames[currFrameIndex].data = currFrameData;
+      timelineFrames[currFrameIndex].data = currFrameData;
     }
     
-    setTimelineFrames(newFrames);
-    setChangeLayerOrder(false);
-        
     if(direction === "prev"){
       if(toolbarInstance.prevFrame()){
         return true;
@@ -120,6 +112,7 @@ export const App = () => {
       const curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
       setCurrLayer(curr.getCurrCanvasIndex() + 1);
+      setTimelineFrames([...timelineFrames]);
     }
   };
 
@@ -127,7 +120,8 @@ export const App = () => {
     if(moveToFrame("next")){
       const curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
-      setCurrLayer(curr.getCurrCanvasIndex() + 1);        
+      setCurrLayer(curr.getCurrCanvasIndex() + 1);
+      setTimelineFrames([...timelineFrames]);
     }
   };
   
@@ -261,7 +255,6 @@ export const App = () => {
     project.getFrames()[0].show();
     
     setCurrFrame(1);
-    setTimelineFrames([]);
     setTimelineMarkers({});
     setCurrLayer(visibleLayerIndex + 1);
     setTimelineFrames(newFrames);
@@ -287,51 +280,6 @@ export const App = () => {
     };
     
     httpRequest.send();
-  };
-  
-  const setKeyDown = (evt) => {
-    let updateStateFlag = false;
-    let frame = null;
-    
-    switch(evt.which){
-    case 37: //left arrow key
-      if(toolbarInstance.prevLayer()){
-        frame = animationProject.getCurrFrame();
-        updateStateFlag = true;
-      }
-      break;
-    case 39: //right arrow key
-      if(toolbarInstance.nextLayer()){
-        frame = animationProject.getCurrFrame();
-        updateStateFlag = true;
-      }
-      break;
-    case 32: //space bar
-      evt.preventDefault();
-      if(toolbarInstance.layerMode){
-        toolbarInstance.addNewLayer();
-      }else{
-        animationProject.addNewFrame(false);
-      }
-      break;
-    case 65: // a key 
-      updateStateFlag = moveToFrame("prev");
-      frame = animationProject.getCurrFrame();                
-      break;
-    case 68: // d key
-      updateStateFlag = moveToFrame("next");
-      frame = animationProject.getCurrFrame();
-      break;
-    default:
-      break;
-    }
-    
-    if(updateStateFlag){
-      setCurrFrame(animationProject.getCurrFrameIndex() + 1);
-      setCurrLayer(frame.getCurrCanvasIndex() + 1);
-      frame = null;
-      updateStateFlag = false;
-    }
   };
     
   const clickOption = (evt) => {
@@ -401,9 +349,60 @@ export const App = () => {
       document.addEventListener('paste', pasteImageManager.handlePasteEvent.bind(pasteImageManager));
       
       // register keydown events for going between layers/frames
+      // it's important to define the event listener here because of if you define it outside of the useEffect,
+      // the closure will only capture the initial state of the component
       // https://stackoverflow.com/questions/55565444/how-to-register-event-with-useeffect-hooks
       // https://stackoverflow.com/questions/66213641/react-keypress-event-taking-only-initial-state-values-and-not-updated-values
-      document.addEventListener('keydown', setKeyDown);
+      // https://github.com/facebook/react/issues/15815
+      const handleKeyDown = (evt) => {
+        let updateStateFlag = false;
+        let frame = null;
+        
+        switch(evt.which){
+        case 37: //left arrow key
+          if(toolbarInstance.prevLayer()){
+            frame = animationProject.getCurrFrame();
+            updateStateFlag = true;
+          }
+          break;
+        case 39: //right arrow key
+          if(toolbarInstance.nextLayer()){
+            frame = animationProject.getCurrFrame();
+            updateStateFlag = true;
+          }
+          break;
+        case 32: //space bar
+          evt.preventDefault();
+          if(toolbarInstance.layerMode){
+            toolbarInstance.addNewLayer();
+          }else{
+            animationProject.addNewFrame(false);
+          }
+          break;
+        case 65: // a key 
+          updateStateFlag = moveToFrame("prev");
+          frame = animationProject.getCurrFrame();                
+          break;
+        case 68: // d key
+          updateStateFlag = moveToFrame("next");
+          frame = animationProject.getCurrFrame();
+          break;
+        default:
+          break;
+        }
+        
+        if(updateStateFlag){
+          setCurrFrame(animationProject.getCurrFrameIndex() + 1);
+          setCurrLayer(frame.getCurrCanvasIndex() + 1);
+          setTimelineFrames([...timelineFrames]);
+        }
+      };
+      
+      document.addEventListener('keydown', handleKeyDown);
+      
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
     }
   }, [animationProject]);
   
@@ -433,14 +432,14 @@ export const App = () => {
                   
         <section id="instructions" className="toolbarSection2">
           <h4> instructions </h4>
-          <p><kbd>Space</kbd> = append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)</p>
-          <p><kbd>←</kbd> <kbd>→</kbd> = move between layers</p>
-          <p><kbd>A</kbd> <kbd>D</kbd> = move between frames</p>
+          <p><kbd>Space</kbd>: append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)</p>
+          <p><kbd>←</kbd> <kbd>→</kbd>: move between layers</p>
+          <p><kbd>A</kbd> <kbd>D</kbd>: move between frames</p>
           <p>After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames.</p>
-          <p><kbd>Ctrl</kbd> + <kbd>V</kbd> = paste image</p>
-          <p><kbd>R</kbd> + mouse wheel = rotate pasted image</p>
-          <p><kbd>S</kbd> = resize pasted image</p>
-          <p><kbd>Esc</kbd> = abort image paste</p>                        
+          <p><kbd>Ctrl</kbd> + <kbd>V</kbd>: paste image</p>
+          <p><kbd>R</kbd> + mouse wheel: rotate pasted image</p>
+          <p><kbd>S</kbd>: resize pasted image</p>
+          <p><kbd>Esc</kbd>: abort image paste</p>                        
           <p>After pasting the image, you can move it by clicking and dragging the box around it (denoted by dotted lines). Apply the image to the canvas by clicking anywhere outside the dotted lines. </p>
         </section>
               
@@ -500,7 +499,6 @@ export const App = () => {
                   toolbarInstance.setCurrLayer(currLayerIndex);
                   
                   setChangeLayerOrder(false);
-                  //this.setState({"changingLayerOrder": false});
                 }
               }
             />
@@ -515,6 +513,7 @@ export const App = () => {
               <li>
                 <div>
                   <label htmlFor='fitToCanvasCheck'>fit to canvas: </label><input name='fitToCanvasCheck' id='fitToCanvasCheck' type='checkbox' defaultChecked />
+                  <br />
                   <label htmlFor='centerImageCheck'>center image: </label><input name='centerImageCheck' id='centerImageCheck' type='checkbox' />
                 </div>
               </li>
@@ -536,7 +535,7 @@ export const App = () => {
           </div>
         </section>
                   
-        <section id="animControlSection" className="tbar">
+        <section id='animControlSection' className='tbar'>
           <div id='animationControl'>
             <h4> animation control: </h4>
             <div id='timeOptions'>
@@ -596,7 +595,7 @@ export const App = () => {
       </div>
 
       <main className='screen'>
-        <div className="screenContainer">
+        <div className='screenContainer'>
           <FrameCounterDisplay
             prevFrame={prevFrame}
             prevLayer={prevLayer}

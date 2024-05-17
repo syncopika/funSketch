@@ -1230,25 +1230,20 @@ var App = function App() {
     setTimelineMarkers(currentMarkers);
   };
   var moveToFrame = function moveToFrame(direction) {
-    console.log(animationProject);
-    console.log(timelineFrames);
     var currFrameIndex = animationProject.getCurrFrameIndex();
     var frame = toolbarInstance.mergeFrameLayers(animationProject.getCurrFrame());
     var currFrameData = frame.toDataURL();
-    var newFrames = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(timelineFrames);
-    if (currFrameIndex + 1 > newFrames.length) {
+    if (currFrameIndex + 1 > timelineFrames.length) {
       // if the animation timeline doesn't have the current frame, add it
-      newFrames.push({
+      timelineFrames.push({
         "data": currFrameData,
         "height": frame.height,
         "width": frame.width
       });
     } else {
       // update image data in the animation timeline
-      newFrames[currFrameIndex].data = currFrameData;
+      timelineFrames[currFrameIndex].data = currFrameData;
     }
-    setTimelineFrames(newFrames);
-    setChangeLayerOrder(false);
     if (direction === "prev") {
       if (toolbarInstance.prevFrame()) {
         return true;
@@ -1284,6 +1279,7 @@ var App = function App() {
       var curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
       setCurrLayer(curr.getCurrCanvasIndex() + 1);
+      setTimelineFrames(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(timelineFrames));
     }
   };
   var nextFrame = function nextFrame() {
@@ -1291,6 +1287,7 @@ var App = function App() {
       var curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
       setCurrLayer(curr.getCurrCanvasIndex() + 1);
+      setTimelineFrames(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(timelineFrames));
     }
   };
   var generateGif = function generateGif() {
@@ -1405,7 +1402,6 @@ var App = function App() {
     }
     project.getFrames()[0].show();
     setCurrFrame(1);
-    setTimelineFrames([]);
     setTimelineMarkers({});
     setCurrLayer(visibleLayerIndex + 1);
     setTimelineFrames(newFrames);
@@ -1425,53 +1421,6 @@ var App = function App() {
       toolbarInstance.importData(data, importProjectUpdateFunc);
     };
     httpRequest.send();
-  };
-  var setKeyDown = function setKeyDown(evt) {
-    var updateStateFlag = false;
-    var frame = null;
-    switch (evt.which) {
-      case 37:
-        //left arrow key
-        if (toolbarInstance.prevLayer()) {
-          frame = animationProject.getCurrFrame();
-          updateStateFlag = true;
-        }
-        break;
-      case 39:
-        //right arrow key
-        if (toolbarInstance.nextLayer()) {
-          frame = animationProject.getCurrFrame();
-          updateStateFlag = true;
-        }
-        break;
-      case 32:
-        //space bar
-        evt.preventDefault();
-        if (toolbarInstance.layerMode) {
-          toolbarInstance.addNewLayer();
-        } else {
-          animationProject.addNewFrame(false);
-        }
-        break;
-      case 65:
-        // a key 
-        updateStateFlag = moveToFrame("prev");
-        frame = animationProject.getCurrFrame();
-        break;
-      case 68:
-        // d key
-        updateStateFlag = moveToFrame("next");
-        frame = animationProject.getCurrFrame();
-        break;
-      default:
-        break;
-    }
-    if (updateStateFlag) {
-      setCurrFrame(animationProject.getCurrFrameIndex() + 1);
-      setCurrLayer(frame.getCurrCanvasIndex() + 1);
-      frame = null;
-      updateStateFlag = false;
-    }
   };
   var clickOption = function clickOption(evt) {
     var id = evt.target.id;
@@ -1534,14 +1483,65 @@ var App = function App() {
       document.addEventListener('paste', pasteImageManager.handlePasteEvent.bind(pasteImageManager));
 
       // register keydown events for going between layers/frames
+      // it's important to define the event listener here because of if you define it outside of the useEffect,
+      // the closure will only capture the initial state of the component
       // https://stackoverflow.com/questions/55565444/how-to-register-event-with-useeffect-hooks
       // https://stackoverflow.com/questions/66213641/react-keypress-event-taking-only-initial-state-values-and-not-updated-values
-      //document.addEventListener('keydown', setKeyDown);
+      // https://github.com/facebook/react/issues/15815
+      var handleKeyDown = function handleKeyDown(evt) {
+        var updateStateFlag = false;
+        var frame = null;
+        switch (evt.which) {
+          case 37:
+            //left arrow key
+            if (toolbarInstance.prevLayer()) {
+              frame = animationProject.getCurrFrame();
+              updateStateFlag = true;
+            }
+            break;
+          case 39:
+            //right arrow key
+            if (toolbarInstance.nextLayer()) {
+              frame = animationProject.getCurrFrame();
+              updateStateFlag = true;
+            }
+            break;
+          case 32:
+            //space bar
+            evt.preventDefault();
+            if (toolbarInstance.layerMode) {
+              toolbarInstance.addNewLayer();
+            } else {
+              animationProject.addNewFrame(false);
+            }
+            break;
+          case 65:
+            // a key 
+            updateStateFlag = moveToFrame("prev");
+            frame = animationProject.getCurrFrame();
+            break;
+          case 68:
+            // d key
+            updateStateFlag = moveToFrame("next");
+            frame = animationProject.getCurrFrame();
+            break;
+          default:
+            break;
+        }
+        if (updateStateFlag) {
+          setCurrFrame(animationProject.getCurrFrameIndex() + 1);
+          setCurrLayer(frame.getCurrCanvasIndex() + 1);
+          setTimelineFrames(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(timelineFrames));
+        }
+      };
+      document.addEventListener('keydown', handleKeyDown);
+      return function () {
+        document.removeEventListener('keydown', handleKeyDown);
+      };
     }
   }, [animationProject]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
-    className: "container",
-    onKeyDown: setKeyDown
+    className: "container"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
     className: "toolbar"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("section", {
@@ -1570,7 +1570,7 @@ var App = function App() {
   }, " demos "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("section", {
     id: "instructions",
     className: "toolbarSection2"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "Space"), " = append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "\u2190"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "\u2192"), " = move between layers"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "A"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "D"), " = move between frames"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "Ctrl"), " + ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "V"), " = paste image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "R"), " + mouse wheel = rotate pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "S"), " = resize pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "Esc"), " = abort image paste"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, "After pasting the image, you can move it by clicking and dragging the box around it (denoted by dotted lines). Apply the image to the canvas by clicking anywhere outside the dotted lines. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("section", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "Space"), ": append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "\u2190"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "\u2192"), ": move between layers"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "A"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "D"), ": move between frames"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "Ctrl"), " + ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "V"), ": paste image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "R"), " + mouse wheel: rotate pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "S"), ": resize pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("kbd", null, "Esc"), ": abort image paste"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, "After pasting the image, you can move it by clicking and dragging the box around it (denoted by dotted lines). Apply the image to the canvas by clicking anywhere outside the dotted lines. ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("section", {
     id: "frameLayerSection",
     className: "tbar"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
@@ -1623,7 +1623,6 @@ var App = function App() {
       // update the currently shown layer to reflect the re-ordering
       toolbarInstance.setCurrLayer(currLayerIndex);
       setChangeLayerOrder(false);
-      //this.setState({"changingLayerOrder": false});
     }
   }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("section", {
     id: "otherSection",
@@ -1639,7 +1638,7 @@ var App = function App() {
     id: "fitToCanvasCheck",
     type: "checkbox",
     defaultChecked: true
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("label", {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("label", {
     htmlFor: "centerImageCheck"
   }, "center image: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("input", {
     name: "centerImageCheck",
@@ -2326,7 +2325,7 @@ var LayerOrder = function LayerOrder(props) {
     "margin": "2px auto",
     "textAlign": "center",
     "border": "1px solid #000",
-    "width": "10%"
+    "width": "50%"
   };
 
   // use a hook to be able to drag and drop with 
@@ -2337,7 +2336,7 @@ var LayerOrder = function LayerOrder(props) {
   if (show) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
       style: style
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("h4", null, " layer order for current frame: "), layers.map(function (layerIndex) {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("h4", null, " layer order for current frame: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("p", null, " drag-and-drop the layers in the order you want. then click 'done' to finalize the order. "), layers.map(function (layerIndex) {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_2__.createElement("div", {
         style: elementStyle,
         key: layerIndex,
@@ -13776,7 +13775,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n.navArrow:hover {\r\n    cursor: pointer;\r\n}\r\n\r\n.navArrow {\r\n    user-select: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}\r\n\r\n#togglePenPressureColor{\r\n    border: 1px solid rgb(0, 255, 0);\r\n}", "",{"version":3,"sources":["webpack://./styles/app.css"],"names":[],"mappings":"AAAA,qCAAqC;AACrC;IACI,aAAa;IACb,2BAA2B;IAC3B,kCAAkC;IAClC,WAAW;AACf;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;IAChB,WAAW;IACX,YAAY;IACZ,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,UAAU;IACV,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,0BAA0B;IAC1B,oCAAoC;AACxC;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,sBAAsB;IACtB,mBAAmB;IACnB,4BAA4B;IAC5B,YAAY;IACZ,kBAAkB;AACtB;;AAEA;IACI,aAAa;AACjB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,kBAAkB;IAClB,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,eAAe;IACf,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,cAAc;AAClB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,oBAAoB;AACxB;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,gCAAgC;AACpC","sourcesContent":["/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea {\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n.navArrow:hover {\r\n    cursor: pointer;\r\n}\r\n\r\n.navArrow {\r\n    user-select: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}\r\n\r\n#togglePenPressureColor{\r\n    border: 1px solid rgb(0, 255, 0);\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea{\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n.navArrow:hover{\r\n    cursor: pointer;\r\n}\r\n\r\n.navArrow{\r\n    user-select: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}\r\n\r\n#togglePenPressureColor{\r\n    border: 1px solid rgb(0, 255, 0);\r\n}", "",{"version":3,"sources":["webpack://./styles/app.css"],"names":[],"mappings":"AAAA,qCAAqC;AACrC;IACI,aAAa;IACb,2BAA2B;IAC3B,kCAAkC;IAClC,WAAW;AACf;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;IAChB,WAAW;IACX,YAAY;IACZ,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,UAAU;IACV,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,0BAA0B;IAC1B,oCAAoC;AACxC;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,sBAAsB;IACtB,mBAAmB;IACnB,4BAA4B;IAC5B,YAAY;IACZ,kBAAkB;AACtB;;AAEA;IACI,aAAa;AACjB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,kBAAkB;IAClB,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,eAAe;IACf,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,cAAc;AAClB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,oBAAoB;AACxB;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,gCAAgC;AACpC","sourcesContent":["/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea{\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n.navArrow:hover{\r\n    cursor: pointer;\r\n}\r\n\r\n.navArrow{\r\n    user-select: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}\r\n\r\n#togglePenPressureColor{\r\n    border: 1px solid rgb(0, 255, 0);\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -6,7 +6,7 @@
     width: 100%;
 }
 
-.canvasArea {
+.canvasArea{
     position: relative;
     margin: 0px auto;
     width: 100%;
@@ -47,11 +47,11 @@
     display: none;
 }
 
-.navArrow:hover {
+.navArrow:hover{
     cursor: pointer;
 }
 
-.navArrow {
+.navArrow{
     user-select: none;
 }
 

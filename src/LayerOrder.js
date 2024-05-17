@@ -25,7 +25,7 @@ const LayerOrder = (props) => {
     "margin": "2px auto",
     "textAlign": "center",
     "border": "1px solid #000",
-    "width": "10%",
+    "width": "50%",
   };
     
   // use a hook to be able to drag and drop with 
@@ -35,6 +35,7 @@ const LayerOrder = (props) => {
     return (
       <div style={style}>
         <h4> layer order for current frame: </h4>
+        <p> drag-and-drop the layers in the order you want. then click 'done' to finalize the order. </p>
         {
           layers.map((layerIndex) => {
             return <div 

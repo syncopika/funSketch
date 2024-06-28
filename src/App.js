@@ -344,7 +344,7 @@ export const App = () => {
       setAnimationController(animController);
       setPasteImageManager(pasteImgManager);
     }else{
-      console.log('setting up animation project...');
+      //console.log('setting up animation project...');
       setupToolbar(toolbarInstance);
       animationProject.init();
             
@@ -449,15 +449,25 @@ export const App = () => {
                   
         <section id="instructions" className="toolbarSection2">
           <h4> instructions </h4>
-          <p><kbd>Space</kbd>: append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)</p>
+          <p>
+            <kbd>Space</kbd>: append a new layer (default behavior) or 
+            frame (see 'other' to toggle between layer or frame addition with the spacebar)
+          </p>
           <p><kbd>←</kbd> <kbd>→</kbd>: move between layers</p>
           <p><kbd>A</kbd> <kbd>D</kbd>: move between frames</p>
-          <p>After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames.</p>
+          <p>
+            After frames get added to the timeline (the rectangle below the canvas), 
+            you can set different frame speeds at any frame by clicking on the frames.
+          </p>
           <p><kbd>Ctrl</kbd> + <kbd>V</kbd>: paste image</p>
           <p><kbd>R</kbd> + mouse wheel: rotate pasted image</p>
           <p><kbd>S</kbd>: resize pasted image</p>
           <p><kbd>Esc</kbd>: abort image paste</p>                        
-          <p>After pasting the image, you can move it by clicking and dragging the box around it (denoted by dotted lines). Apply the image to the canvas by clicking anywhere outside the dotted lines. </p>
+          <p>
+            After pasting the image, you can move it by clicking 
+            and dragging the box around it (denoted by dotted lines). 
+            Apply the image to the canvas by clicking anywhere outside the dotted lines. 
+          </p>
         </section>
               
         <section id="frameLayerSection" className="tbar">
@@ -529,21 +539,39 @@ export const App = () => {
               <li><button id='importImage'> import image </button></li>
               <li>
                 <div>
-                  <label htmlFor='fitToCanvasCheck'>fit to canvas: </label><input name='fitToCanvasCheck' id='fitToCanvasCheck' type='checkbox' defaultChecked />
-                  <br />
-                  <label htmlFor='centerImageCheck'>center image: </label><input name='centerImageCheck' id='centerImageCheck' type='checkbox' />
+                  <label id='fitToCanvasCheckLabel' htmlFor='fitToCanvasCheck'>
+                    fit image to canvas: 
+                  </label>
+                  <input name='fitToCanvasCheck' id='fitToCanvasCheck' type='checkbox' defaultChecked />
+                </div>
+                <div>
+                  <label id='centerImageCheckLabel' htmlFor='centerImageCheck'>
+                    center image: 
+                  </label>
+                  <input name='centerImageCheck' id='centerImageCheck' type='checkbox' />
                 </div>
               </li>
               <li><button id='rotateCanvasImage'>rotate image</button></li>
               <li><button id='undo'>undo</button></li>
               <li><button id='saveWork'>save project (.json)</button></li> 
               <li><button id='importProject'>import project </button></li>
-              <li><button id='togglePenPressureColor' onClick={togglePenPressureBtn} style={{border: '1px solid rgb(0, 255, 0)'}}> toggle pen pressure for color </button></li>
-              <li><button id='toggleLayerOrFrame' onClick={toggleLayerOrFrame}> toggle frame addition on spacebar press </button></li>
+              <li>
+                <button 
+                  id='togglePenPressureColor' 
+                  onClick={togglePenPressureBtn} 
+                  style={{border: '1px solid rgb(0, 255, 0)'}}
+                > 
+                  toggle pen pressure for color 
+                </button>
+              </li>
+              <li>
+                <button id='toggleLayerOrFrame' onClick={toggleLayerOrFrame}> 
+                  toggle frame addition on spacebar press 
+                </button>
+              </li>
             </ul>
           </div>
-          <div>
-            <br />
+          <div id="experiments">
             <h4>check out some experiments for new feature ideas:</h4>
             <p><a href="./experiments/floodfillExperiment/floodfillExperiment.html">floodfill with web workers</a></p>
             <p><a href="./experiments/oilpaintingWebWorkers/oilpainting.html">oilpainting with web workers</a></p>

@@ -152,7 +152,6 @@ const FilterDashboard = (props) => {
       > apply filter </button>
             
       <div>
-        <br />
         <p className="filterUsedMsg"> {filterUsed} </p>
       </div>
             

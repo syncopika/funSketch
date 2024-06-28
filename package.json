@@ -3,9 +3,6 @@
     "version": "1.0.0",
     "description": "an experimental application that has simple drawing features, as well as some interesting filter and brush options. more importantly, you can also make some quick, simple animations!",
     "main": "server.js",
-    "directories": {
-        "components": "components"
-    },
     "dependencies": {
         "react": "^16.14.0",
         "react-dom": "^16.14.0"

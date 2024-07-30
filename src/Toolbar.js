@@ -438,52 +438,6 @@ class Toolbar {
     });
   }
     
-  /********
-    
-  this section controls the animation playback features
-  
-  note that I specifically added my page counter element to the
-  functions so that they change with the call to up() and down()
-
-  this will need to be applied for FRAMES, not LAYERS of a frame.
-  
-  playFor(){
-      if(this.nextFrame()){
-          if(this.htmlCounter){
-              const counterText = this.htmlCounter;
-              counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-          }
-      }
-  }
-  
-  playBack(){
-      if(this.prevFrame()){
-          if(this.htmlCounter){
-              const counterText = this.htmlCounter;
-              counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-          }
-      }
-  }
-  
-  playForward(){
-      clearInterval(this.play);
-      this.play = null;
-      this.play = setInterval(this.playFor, this.timePerFrame);
-  }
-  
-  playBackward(){
-      clearInterval(this.play);
-      this.play = null;
-      this.play = setInterval(this.playBack, this.timePerFrame);
-  }
-  
-  stop(){
-      clearInterval(this.play);
-      this.play = null;
-  }
-  
-  *********/
-    
   mergeFrameLayers(frame){
     const tempCanvas = document.createElement('canvas');
     const tempCtx = tempCanvas.getContext("2d");

@@ -856,24 +856,6 @@ class Frame {
       this.canvasList.splice(layerIndex, 1);
     }
   }
-
-  /***
-    clone the current canvas
-    this creates a new layer whose image data is the same as the current canvas.
-    
-    not sure I'm using this?
-  ***/
-  copyCanvas() {
-    const newCanvas = document.createElement('canvas');
-    newCanvas.id = `frame${this.number}canvas${this.canvasList.length}`;
-    const prefill = true;
-    setCanvas(prefill, newCanvas, this.width, this.height);
-
-    //newCanvas.style.opacity = 0.97;
-    this.container.appendChild(newCanvas);
-    newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
-    this.canvasList.push(newCanvas);
-  }
   clearCurrentLayer() {
     const currLayer = this.getCurrCanvas();
     const context = currLayer.getContext("2d");
@@ -2828,52 +2810,6 @@ class Toolbar {
       }
     });
   }
-
-  /********
-    
-  this section controls the animation playback features
-  
-  note that I specifically added my page counter element to the
-  functions so that they change with the call to up() and down()
-    this will need to be applied for FRAMES, not LAYERS of a frame.
-  
-  playFor(){
-      if(this.nextFrame()){
-          if(this.htmlCounter){
-              const counterText = this.htmlCounter;
-              counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-          }
-      }
-  }
-  
-  playBack(){
-      if(this.prevFrame()){
-          if(this.htmlCounter){
-              const counterText = this.htmlCounter;
-              counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-          }
-      }
-  }
-  
-  playForward(){
-      clearInterval(this.play);
-      this.play = null;
-      this.play = setInterval(this.playFor, this.timePerFrame);
-  }
-  
-  playBackward(){
-      clearInterval(this.play);
-      this.play = null;
-      this.play = setInterval(this.playBack, this.timePerFrame);
-  }
-  
-  stop(){
-      clearInterval(this.play);
-      this.play = null;
-  }
-  
-  *********/
-
   mergeFrameLayers(frame) {
     const tempCanvas = document.createElement('canvas');
     const tempCtx = tempCanvas.getContext("2d");
@@ -12147,7 +12083,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea{\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n.navArrow:hover{\r\n    cursor: pointer;\r\n}\r\n\r\n.navArrow{\r\n    user-select: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}\r\n\r\n#togglePenPressureColor{\r\n    border: 1px solid rgb(0, 255, 0);\r\n}", "",{"version":3,"sources":["webpack://./src/app.css"],"names":[],"mappings":"AAAA,qCAAqC;AACrC;IACI,aAAa;IACb,2BAA2B;IAC3B,kCAAkC;IAClC,WAAW;AACf;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;IAChB,WAAW;IACX,YAAY;IACZ,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,UAAU;IACV,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,0BAA0B;IAC1B,oCAAoC;AACxC;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,sBAAsB;IACtB,mBAAmB;IACnB,4BAA4B;IAC5B,YAAY;IACZ,kBAAkB;AACtB;;AAEA;IACI,aAAa;AACjB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,kBAAkB;IAClB,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,eAAe;IACf,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,cAAc;AAClB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,oBAAoB;AACxB;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,gCAAgC;AACpC","sourcesContent":["/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea{\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n.navArrow:hover{\r\n    cursor: pointer;\r\n}\r\n\r\n.navArrow{\r\n    user-select: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}\r\n\r\n#togglePenPressureColor{\r\n    border: 1px solid rgb(0, 255, 0);\r\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea{\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n.navArrow:hover{\r\n    cursor: pointer;\r\n}\r\n\r\n.navArrow{\r\n    user-select: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timePerFrame {\r\n  margin-left: 3px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}\r\n\r\n#togglePenPressureColor{\r\n    border: 1px solid rgb(0, 255, 0);\r\n}", "",{"version":3,"sources":["webpack://./src/app.css"],"names":[],"mappings":"AAAA,qCAAqC;AACrC;IACI,aAAa;IACb,2BAA2B;IAC3B,kCAAkC;IAClC,WAAW;AACf;;AAEA;IACI,kBAAkB;IAClB,gBAAgB;IAChB,WAAW;IACX,YAAY;IACZ,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,UAAU;IACV,cAAc;AAClB;;AAEA;IACI,aAAa;IACb,0BAA0B;IAC1B,oCAAoC;AACxC;;AAEA;IACI,WAAW;IACX,cAAc;IACd,WAAW;IACX,eAAe;AACnB;;AAEA;IACI,sBAAsB;IACtB,mBAAmB;IACnB,4BAA4B;IAC5B,YAAY;IACZ,kBAAkB;AACtB;;AAEA;IACI,aAAa;AACjB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,iBAAiB;AACrB;;AAEA;IACI,kBAAkB;IAClB,WAAW;IACX,cAAc;AAClB;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;IAClB,mBAAmB;AACvB;;AAEA;EACE,gBAAgB;AAClB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,qBAAqB;AACzB;;AAEA;IACI,kBAAkB;AACtB;;AAEA;IACI,WAAW;IACX,cAAc;IACd,eAAe;IACf,iBAAiB;IACjB,kBAAkB;AACtB;;AAEA;IACI,kBAAkB;IAClB,cAAc;AAClB;;AAEA;IACI,UAAU;AACd;;AAEA;IACI,oBAAoB;AACxB;;AAEA;IACI,gBAAgB;AACpB;;AAEA;IACI,gCAAgC;AACpC","sourcesContent":["/* stylesheet for main presentation */\r\n.container{\r\n    display: grid;\r\n    grid-template-rows: 1fr 1em;\r\n    grid-template-columns: 15% 73% 12%;\r\n    width: 100%;\r\n}\r\n\r\n.canvasArea{\r\n    position: relative;\r\n    margin: 0px auto;\r\n    width: 100%;\r\n    height: 100%;\r\n    grid-row: 2;\r\n    grid-column: 1;\r\n}\r\n\r\n.screen{\r\n    grid-row: 1;\r\n    grid-column: 2;\r\n    width: 85%;\r\n    margin: 0 auto;\r\n}\r\n\r\n.screenContainer{\r\n    display: grid;\r\n    grid-template-columns: 1fr;\r\n    grid-template-rows: 0.2fr 2.65fr 1fr;\r\n}\r\n\r\n.toolbar{\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n    width: 100%;\r\n    margin-top: 15%;\r\n}\r\n\r\n.toolbarSection2, .toolbarSection3{\r\n    border: 1px solid #000;\r\n    border-radius: 12px;\r\n    box-shadow: 2px 5px 5px #ccc;\r\n    padding: 2px;\r\n    text-align: center;\r\n}\r\n\r\n.tbar{\r\n    display: none;\r\n}\r\n\r\n.navArrow:hover{\r\n    cursor: pointer;\r\n}\r\n\r\n.navArrow{\r\n    user-select: none;\r\n}\r\n\r\n#pageCount{\r\n    text-align: center;\r\n    grid-row: 1;\r\n    grid-column: 1;\r\n}\r\n\r\n#pageCount h3{\r\n    display: inline-block;\r\n}\r\n\r\n#count{\r\n    padding-left: 50px;\r\n    padding-right: 50px;\r\n}\r\n\r\n#timePerFrame {\r\n  margin-left: 3px;\r\n}\r\n\r\n#timeOptions{\r\n    padding: 0;\r\n}\r\n\r\n#timeOptions li{\r\n    display: inline-block;\r\n}\r\n\r\n#animationControl{\r\n    text-align: center;\r\n}\r\n\r\n#brushSection{\r\n    grid-row: 1;\r\n    grid-column: 3;\r\n    margin-top: 30%;\r\n    margin-left: -12%;\r\n    text-align: center;\r\n}\r\n\r\n#toolbarOptions{\r\n    text-align: center;\r\n    margin: 0 auto;\r\n}\r\n\r\n#toolbarOptions ul{\r\n    padding: 0;\r\n}\r\n\r\n#showDemos{\r\n    padding-bottom: 10px;\r\n}\r\n\r\n#fitToCanvasCheck, #centerImageCheck{\r\n    margin-left: 3px;\r\n}\r\n\r\n#togglePenPressureColor{\r\n    border: 1px solid rgb(0, 255, 0);\r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

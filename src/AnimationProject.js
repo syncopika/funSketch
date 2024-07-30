@@ -219,25 +219,6 @@ class Frame {
     }
   }
     
-  /***
-    clone the current canvas
-    this creates a new layer whose image data is the same as the current canvas.
-    
-    not sure I'm using this?
-  ***/
-  copyCanvas(){
-    const newCanvas = document.createElement('canvas');
-    newCanvas.id = `frame${this.number}canvas${this.canvasList.length}`;
-        
-    const prefill = true;
-    setCanvas(prefill, newCanvas, this.width, this.height);
-        
-    //newCanvas.style.opacity = 0.97;
-    this.container.appendChild(newCanvas);
-    newCanvas.getContext("2d").drawImage(this.currentCanvas, 0, 0);
-    this.canvasList.push(newCanvas);
-  }
-    
   clearCurrentLayer(){
     const currLayer = this.getCurrCanvas();
     const context = currLayer.getContext("2d");

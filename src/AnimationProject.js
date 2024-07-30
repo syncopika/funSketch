@@ -1,5 +1,5 @@
 /***
-    a class representing a frame, containing a list of canvas elements which represent layers of the frame
+  a class representing a frame, containing a list of canvas elements which represent layers of the frame
 ***/
 class Frame {
   constructor(container, number){
@@ -59,13 +59,13 @@ class Frame {
   }
     
   /***
-        set up a new canvas element
-        makes the new canvas the current canvas
-        
-        prefill should be false when importing a project
-        this is so that we don't prefill the canvas with rgba(255,255,255,1)
-        and mess up any alpha transparency the imported layers might have
-    ***/
+    set up a new canvas element
+    makes the new canvas the current canvas
+    
+    prefill should be false when importing a project
+    this is so that we don't prefill the canvas with rgba(255,255,255,1)
+    and mess up any alpha transparency the imported layers might have
+  ***/
   setupNewLayer(prefill=true){
     // create the new canvas element 
     const newCanvas = document.createElement('canvas');
@@ -90,18 +90,18 @@ class Frame {
     this.canvasList.push(newCanvas);
   }
     
-  _showLayer(canvas){
+  #showLayer(canvas){
     canvas.style.opacity = .97;
     canvas.style.zIndex = 1;
   }
 
-  _hideLayer(canvas){
+  #hideLayer(canvas){
     canvas.style.opacity = 0;
     canvas.style.zIndex = 0;
   }
     
   // make current canvas an onion skin
-  _makeCurrLayerOnion(canvas){
+  #makeCurrLayerOnion(canvas){
     canvas.style.opacity = .92; // apply onion skin to current canvas 
     canvas.style.zIndex = 0;
   }
@@ -111,18 +111,18 @@ class Frame {
     if(this.currentIndex + 1 < this.canvasList.length){
       // move to next canvas and apply onion skin to current canvas
       const currLayer = this.currentCanvas;
-      this._makeCurrLayerOnion(currLayer);
+      this.#makeCurrLayerOnion(currLayer);
             
       // in the special case for when you want to go to the next canvas from the very first one, 
       // ignore the step where the opacity and z-index for the previous canvas get reset to 0.
       if(currLayer.currentIndex > 0){
         const prevLayer = this.canvasList[this.currentIndex - 1];
         // reset opacity and z-index for previous canvas (because of onionskin)
-        this._hideLayer(prevLayer);
+        this.#hideLayer(prevLayer);
       }
       // show the next canvas 
       const nextLayer = this.canvasList[this.currentIndex + 1];
-      this._showLayer(nextLayer);
+      this.#showLayer(nextLayer);
             
       this.currentCanvas = nextLayer;
       this.currentIndex++;
@@ -137,11 +137,11 @@ class Frame {
     // this moves the current layer to the previous one if exists
     if(this.currentIndex - 1 >= 0){
       const currLayer = this.currentCanvas;
-      this._hideLayer(currLayer);
+      this.#hideLayer(currLayer);
             
       // make previous canvas visible 
       const prevLayer = this.canvasList[this.currentIndex - 1];
-      this._showLayer(prevLayer);
+      this.#showLayer(prevLayer);
             
       // if there is another canvas before the previous one, apply onion skin
       if(this.currentIndex - 2 >= 0){
@@ -220,11 +220,11 @@ class Frame {
   }
     
   /***
-        clone the current canvas
-        this creates a new layer whose image data is the same as the current canvas.
-        
-        not sure I'm using this?
-    ***/
+    clone the current canvas
+    this creates a new layer whose image data is the same as the current canvas.
+    
+    not sure I'm using this?
+  ***/
   copyCanvas(){
     const newCanvas = document.createElement('canvas');
     newCanvas.id = `frame${this.number}canvas${this.canvasList.length}`;
@@ -252,8 +252,8 @@ class Frame {
 }
 
 /***
-    an AnimationProject represents a single project containing one or more frames.
-    it also instantiates an onion skin frame.
+  an AnimationProject represents a single project containing one or more frames.
+  it also instantiates an onion skin frame.
 ***/
 class AnimationProject {
   constructor(container){

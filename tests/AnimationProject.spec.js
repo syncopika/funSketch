@@ -1,5 +1,5 @@
 import 'jest-canvas-mock';
-import { AnimationProject } from '../src/utils/AnimationProject.js';
+import { AnimationProject } from '../src/AnimationProject.js';
 
 describe("test AnimationProject", () => {
     

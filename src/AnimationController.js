@@ -11,8 +11,9 @@ class AnimationController {
     this.timelineMarkers = {};
     this.animationDisplay = null; // the canvas that'll hold the merged layers of each frame when animating
   }
-    
-  _animate(timestamp){
+  
+  // private method
+  #animate(timestamp){
     if(this.currAnimStartTime === 0){
       this.currAnimStartTime = timestamp;
     }
@@ -48,24 +49,24 @@ class AnimationController {
       };
       image.src = this.animTimelineFrames[this.currAnimFrameIndex].data;
             
-      this.reqAnimFrameId = requestAnimationFrame(this._animate.bind(this));
+      this.reqAnimFrameId = requestAnimationFrame(this.#animate.bind(this));
     }
   }
 
   playAnimation(direction, timelineFrames, timelineMarkers){
     /*
-            plays all the timeline frames in sequence by merging each frame's layers on a separate canvas.
-            note that even if a frame exists, if it's not in the timeline playAnimation will not do anything.
-            
-            TODO: pause? stop? just a segment?
-            
-            BUG: reversing the animation with timeline markers won't apply the speed changes correctly
-            e.g. if we have the 1st frame be at 500 ms and the 5th frame be at 100 ms, if we reverse, currently
-            we'll get last frame -> 5th frame be at 500 ms. but we really should have last frame -> 5th frame be
-            at 100 ms. then 5th -> 1st be at 500 ms. one way to manage this would be just to create an array of
-            times for each frame and use that.
-        */
-        
+      plays all the timeline frames in sequence by merging each frame's layers on a separate canvas.
+      note that even if a frame exists, if it's not in the timeline playAnimation will not do anything.
+      
+      TODO: pause? stop? just a segment?
+      
+      BUG: reversing the animation with timeline markers won't apply the speed changes correctly
+      e.g. if we have the 1st frame be at 500 ms and the 5th frame be at 100 ms, if we reverse, currently
+      we'll get last frame -> 5th frame be at 500 ms. but we really should have last frame -> 5th frame be
+      at 100 ms. then 5th -> 1st be at 500 ms. one way to manage this would be just to create an array of
+      times for each frame and use that.
+    */
+    
     if(direction !== "forward" && direction !== "backward"){
       console.log("not a valid direction for animation");
       return;
@@ -126,7 +127,7 @@ class AnimationController {
     // animate!
     this.currAnimFrameIndex = 0;
     this.currAnimStartTime = 0;
-    this.reqAnimFrameId = requestAnimationFrame(this._animate.bind(this));
+    this.reqAnimFrameId = requestAnimationFrame(this.#animate.bind(this));
   }
 }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import 'jest-canvas-mock';
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { FilterDashboard } from '../src/FilterDashboard';
+import { FilterDashboard } from '../src/components/FilterDashboard';
 
 describe("testing FilterDashboard component", () => {
     

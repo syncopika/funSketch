@@ -2,7 +2,7 @@
 // https://stackoverflow.com/questions/19262141/resize-image-with-javascript-canvas-smoothly
 // https://stackoverflow.com/questions/13416800/how-to-generate-an-image-from-imagedata-in-javascript
 import React from 'react';
-import '../styles/animationTimeline.css';
+import './animationTimeline.css';
 
 const TimelineFrameThumbnail = (props) => {
   const frameImgData = props.imgData;

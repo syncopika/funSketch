@@ -1,6 +1,6 @@
 import 'jest-canvas-mock';
-import { BrushManager } from '../src/utils/BrushManager.js';
-import { AnimationProject } from '../src/utils/AnimationProject.js';
+import { BrushManager } from '../src/BrushManager.js';
+import { AnimationProject } from '../src/AnimationProject.js';
 import { BrushTemplate } from '../src/brushes/BrushTemplate.js';
 
 describe("test brush template", () => {

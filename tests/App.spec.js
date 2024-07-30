@@ -2,9 +2,9 @@ import React from 'react';
 import 'jest-canvas-mock';
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { AnimationProject } from '../src/utils/AnimationProject.js';
-import { Toolbar } from '../src/utils/Toolbar.js';
-import { BrushManager } from '../src/utils/BrushManager.js';
+import { AnimationProject } from '../src/AnimationProject.js';
+import { Toolbar } from '../src/Toolbar.js';
+import { BrushManager } from '../src/BrushManager.js';
 import { App, FrameCounterDisplay } from '../src/App.js';
 
 describe("testing App component", () => {

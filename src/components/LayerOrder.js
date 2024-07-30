@@ -11,7 +11,6 @@ function saveNewLayerOrder(updateParentStateFunc){
   updateParentStateFunc(layers); // update parent state.
 }
 
-
 const LayerOrder = (props) => {
   const show = props.changingLayerOrder;
   const updateParentState = props.updateParentStateFunction; // need to pass arg to this function

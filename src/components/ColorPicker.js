@@ -1,6 +1,10 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
-import { makeColorWheel, makeBrightnessSlider, updateColorWheel } from "./utils/ColorWheel.js";
+import { 
+  makeColorWheel, 
+  makeBrightnessSlider, 
+  updateColorWheel 
+} from "../utils/ColorWheel.js";
 
 export const ColorPicker = (props) => {
   const [colorPalette, setColorPalette] = useState([]);

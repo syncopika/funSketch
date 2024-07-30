@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AnimationProject } from './utils/AnimationProject.js';
-import { AnimationController } from './utils/AnimationController.js';
-import { Toolbar } from './utils/Toolbar.js';
-import { BrushManager } from './utils/BrushManager.js';
-import { FilterManager } from './utils/FilterManager.js';
-import { AnimationTimeline } from './AnimationTimeline.js';
-import { LayerOrder } from './LayerOrder.js';
-import { FilterDashboard } from './FilterDashboard.js';
-import { BrushDashboard } from './BrushDashboard.js';
-import { ColorPicker } from './ColorPicker.js';
-import { PasteImageManager } from './utils/PasteImageManager.js';
+import { AnimationProject } from './AnimationProject.js';
+import { AnimationController } from './AnimationController.js';
+import { Toolbar } from './Toolbar.js';
+import { BrushManager } from './BrushManager.js';
+import { FilterManager } from './FilterManager.js';
+import { AnimationTimeline } from './components/AnimationTimeline.js';
+import { LayerOrder } from './components/LayerOrder.js';
+import { FilterDashboard } from './components/FilterDashboard.js';
+import { BrushDashboard } from './components/BrushDashboard.js';
+import { ColorPicker } from './components/ColorPicker.js';
+import { PasteImageManager } from './PasteImageManager.js';
 
-import "../styles/app.css";
+import "./app.css";
 
 // for displaying current frame and layer number
 // TODO: importing a project won't update the counter display since it's using the Toolbar class functions
@@ -375,20 +375,20 @@ export const App = () => {
         let updateStateFlag = false;
         let frame = null;
         
-        switch(evt.which){
-        case 37: //left arrow key
+        switch(evt.code){
+        case "ArrowLeft": //left arrow key
           if(toolbarInstance.prevLayer()){
             frame = animationProject.getCurrFrame();
             updateStateFlag = true;
           }
           break;
-        case 39: //right arrow key
+        case "ArrowRight": //right arrow key
           if(toolbarInstance.nextLayer()){
             frame = animationProject.getCurrFrame();
             updateStateFlag = true;
           }
           break;
-        case 32: //space bar
+        case "Space": //space bar
           evt.preventDefault();
           if(toolbarInstance.layerMode){
             toolbarInstance.addNewLayer();
@@ -396,11 +396,11 @@ export const App = () => {
             animationProject.addNewFrame(false);
           }
           break;
-        case 65: // a key 
+        case "KeyA": // a key 
           updateStateFlag = moveToFrame("prev");
           frame = animationProject.getCurrFrame();                
           break;
-        case 68: // d key
+        case "KeyD": // d key
           updateStateFlag = moveToFrame("next");
           frame = animationProject.getCurrFrame();
           break;

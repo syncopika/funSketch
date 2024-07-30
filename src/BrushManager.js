@@ -1,18 +1,18 @@
 /***
-    brush manager class
-    pass in an instance of the AnimationProject class as an argument
-    
-    the current canvas element will be the target for the brush
+  brush manager class
+  pass in an instance of the AnimationProject class as an argument
+  
+  the current canvas element will be the target for the brush
 ***/
-import { DefaultBrush } from '../brushes/defaultBrush.js';
-import { EraserBrush } from '../brushes/eraserBrush.js';
-import { RadialBrush } from '../brushes/radialBrush.js';
-import { SketchyBrush } from '../brushes/sketchyBrush.js';
-import { WebBrush } from '../brushes/webBrush.js';
-import { ShapeBrush } from '../brushes/shapeBrush.js';
-import { PenBrush } from '../brushes/penBrush.js';
-import { FloodfillBrush } from '../brushes/floodfillBrush.js';
-import { ColorPickerBrush } from '../brushes/colorPickerBrush.js';
+import { DefaultBrush } from './brushes/defaultBrush.js';
+import { EraserBrush } from './brushes/eraserBrush.js';
+import { RadialBrush } from './brushes/radialBrush.js';
+import { SketchyBrush } from './brushes/sketchyBrush.js';
+import { WebBrush } from './brushes/webBrush.js';
+import { ShapeBrush } from './brushes/shapeBrush.js';
+import { PenBrush } from './brushes/penBrush.js';
+import { FloodfillBrush } from './brushes/floodfillBrush.js';
+import { ColorPickerBrush } from './brushes/colorPickerBrush.js';
 
 class BrushManager {
   constructor(animationProj){

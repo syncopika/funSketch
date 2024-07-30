@@ -174,9 +174,9 @@ export class PasteImageManager {
                     
           // avoid adding transparency as black
           if(r === 0 &&
-                       g === 0 &&
-                       b === 0 &&
-                       a === 0){
+             g === 0 &&
+             b === 0 &&
+             a === 0){
             continue;
           }
           imgData.data[i+j] = r;

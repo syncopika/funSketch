@@ -26,6 +26,9 @@ module.exports = {
           {
             loader: 'babel-loader',
             options: {
+              presets: [
+                ['@babel/preset-env', { targets: "defaults" }]
+              ],              
               plugins: [isDevelopment && 'react-refresh/babel'].filter(Boolean),
             },
           },

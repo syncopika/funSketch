@@ -1,4 +1,5 @@
-/* stylesheet for main presentation */
+/* stylesheet for app */
+
 .container{
     display: grid;
     grid-template-rows: 1fr 1em;
@@ -68,6 +69,10 @@
 #count{
     padding-left: 50px;
     padding-right: 50px;
+}
+
+#timePerFrame {
+    margin-left: 3px;
 }
 
 #timeOptions{

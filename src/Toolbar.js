@@ -1,4 +1,3 @@
-
 class Toolbar {
   constructor(brush, animationProj){
     // used as a flag for the animation playback features
@@ -96,8 +95,8 @@ class Toolbar {
   }
 
   /***
-        insert a new layer after the current layer
-    ***/
+    insert a new layer after the current layer
+  ***/
   insertLayer(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       this.insertNewLayer();
@@ -105,9 +104,9 @@ class Toolbar {
   }
     
   /***
-        duplicate the current layer
-        note: the next layer after the current will have identitcal image data
-    ***/
+    duplicate the current layer
+    note: the next layer after the current will have identitcal image data
+  ***/
   duplicateLayer(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       const currentCanvas = this.animationProj.getCurrFrame().currentCanvas;
@@ -117,11 +116,11 @@ class Toolbar {
   }
     
   /***
-        delete current layer
-        shifts the current layer to the next one if there is one.
-        otherwise, the previous layer will become the current one.
-        if there isn't a previous one either, then the layer will just be made blank.
-    ***/
+    delete current layer
+    shifts the current layer to the next one if there is one.
+    otherwise, the previous layer will become the current one.
+    if there isn't a previous one either, then the layer will just be made blank.
+  ***/
   deleteLayer(elementId, setStateFunction){
     // elementId here refers to the display that shows current frame and layer
     document.getElementById(elementId).addEventListener('click', () => {
@@ -148,8 +147,8 @@ class Toolbar {
   }
     
   /***
-        add a new frame
-    ***/
+    add a new frame
+  ***/
   addNewFrameButton(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       this.animationProj.addNewFrame();
@@ -157,8 +156,8 @@ class Toolbar {
   }
     
   /***
-        duplicate current frame
-    ***/
+    duplicate current frame
+  ***/
   copyCurrFrameButton(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       this.animationProj.copyCurrFrame();
@@ -166,8 +165,8 @@ class Toolbar {
   }
     
   /***
-        delete current frame
-    ***/
+    delete current frame
+  ***/
   deleteCurrentFrameButton(elementId, setStateFunction){
     document.getElementById(elementId).addEventListener('click', () => {
       const currFrameIdx = this.animationProj.getCurrFrameIndex();
@@ -186,8 +185,8 @@ class Toolbar {
   }
     
   /***
-        change layer order for current frame on button press
-    ***/
+    change layer order for current frame on button press
+  ***/
   changeCurrentFrameLayerOrder(elementId, setStateFunction){
     document.getElementById(elementId).addEventListener('click', () => {
       // I'm not sure why right now but something weird happens after calling 
@@ -201,18 +200,18 @@ class Toolbar {
   }
     
   /***
-        rotate image
-        pass in an element id for a button that will rotate the current canvas image on click
-        
-        this is mostly for experimental purposes as the effect is not quite good (blurry and loss of pixels).
-        
-        there are a couple StackOverflow posts out there that explain why rotating
-        an image leads to blurriness since the pixels are getting repositioned and their locations
-        are approximated, which I think makes sense
-        
-        How do other drawing applications achieve arbitrary rotations without weirdness? 
-        I think Paint.NET has that feature, maybe Krita does too?)
-    ***/
+    rotate image
+    pass in an element id for a button that will rotate the current canvas image on click
+    
+    this is mostly for experimental purposes as the effect is not quite good (blurry and loss of pixels).
+    
+    there are a couple StackOverflow posts out there that explain why rotating
+    an image leads to blurriness since the pixels are getting repositioned and their locations
+    are approximated, which I think makes sense
+    
+    How do other drawing applications achieve arbitrary rotations without weirdness? 
+    I think Paint.NET has that feature, maybe Krita does too?)
+  ***/
   rotateImage(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       const canvas = this.animationProj.getCurrFrame();
@@ -240,9 +239,9 @@ class Toolbar {
   }
     
   /***
-        clear the current canvas
-        pass in an element id that will execute clear canvas onclick
-    ***/
+    clear the current canvas
+    pass in an element id that will execute clear canvas onclick
+  ***/
   setClearCanvas(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       const frame = this.animationProj.getCurrFrame();
@@ -256,11 +255,11 @@ class Toolbar {
   }
     
   /***
-        undo a previous drawing operation on the current canvas.
-        still a little incorrect? - TODO: needs work
-        - problem: undo affects all layers and is not specific to one canvas (which it should)
-          maybe the frame class should store layer info for undo
-    ***/
+    undo a previous drawing operation on the current canvas.
+    still a little incorrect? - TODO: needs work
+    - problem: undo affects all layers and is not specific to one canvas (which it should)
+      maybe the frame class should store layer info for undo
+  ***/
   undo(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       const frame = this.animationProj.getCurrFrame();
@@ -302,8 +301,8 @@ class Toolbar {
   }
     
   /***
-        import an image
-    ***/
+    import an image
+  ***/
   importImage(elementId){
     const self = this;
         
@@ -370,8 +369,8 @@ class Toolbar {
   }
     
   /***
-        reset the canvas to most recent imported image
-    ***/
+    reset the canvas to most recent imported image
+  ***/
   resetImage(){
     if(this.recentImage){
       const canvas = this.animationProj.getCurrFrame();
@@ -383,8 +382,8 @@ class Toolbar {
   }
     
   /***
-        download a png file of the current layer
-    ***/
+    download a png file of the current layer
+  ***/
   downloadLayer(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       // get image data from current canvas as blob
@@ -406,8 +405,8 @@ class Toolbar {
   }
     
   /***
-        download a png file of the current frame
-    ***/
+    download a png file of the current frame
+  ***/
   downloadFrame(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       const frame = this.animationProj.getCurrFrame();
@@ -438,52 +437,6 @@ class Toolbar {
       }
     });
   }
-    
-  /********
-    
-        this section controls the animation playback features
-        
-        note that I specifically added my page counter element to the
-        functions so that they change with the call to up() and down()
-
-        this will need to be applied for FRAMES, not LAYERS of a frame.
-    
-    playFor(){
-        if(this.nextFrame()){
-            if(this.htmlCounter){
-                const counterText = this.htmlCounter;
-                counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-            }
-        }
-    }
-    
-    playBack(){
-        if(this.prevFrame()){
-            if(this.htmlCounter){
-                const counterText = this.htmlCounter;
-                counterText.textContent = "frame: " + (this.animationProj.currentFrame + 1) + ", layer: " + (canvas.currentIndex + 1);
-            }
-        }
-    }
-    
-    playForward(){
-        clearInterval(this.play);
-        this.play = null;
-        this.play = setInterval(this.playFor, this.timePerFrame);
-    }
-    
-    playBackward(){
-        clearInterval(this.play);
-        this.play = null;
-        this.play = setInterval(this.playBack, this.timePerFrame);
-    }
-    
-    stop(){
-        clearInterval(this.play);
-        this.play = null;
-    }
-    
-    *********/
     
   mergeFrameLayers(frame){
     const tempCanvas = document.createElement('canvas');
@@ -522,21 +475,20 @@ class Toolbar {
 
     
   /***
+    create a gif from the frames.
+    using gif.js - https://github.com/jnordberg/gif.js
+
+    elementId is for the loading message,
+    e.g. a <p> element that says "now loading..."
     
-        create a gif from the frames.
-        using gif.js - https://github.com/jnordberg/gif.js
-    
-        elementId is for the loading message,
-        e.g. a <p> element that says "now loading..."
-        
-        this will need to be applied for FRAMES, not LAYERS of a frame.
-    
-        timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), e.g.
-        {
-            1: 100, // frame 1
-            2: 1000 // frame 2
-        }
-    ***/
+    this will need to be applied for FRAMES, not LAYERS of a frame.
+
+    timeMarkers (dictionary): a dictionary mapping frames to their time delay (millisec), e.g.
+    {
+        1: 100, // frame 1
+        2: 1000 // frame 2
+    }
+  ***/
   getGif(elementId, timelineMarkers){
     if(elementId){
       document.getElementById(elementId).textContent = "now loading...";
@@ -560,15 +512,13 @@ class Toolbar {
   }
     
   /***
+    save/export & import functions
+    check this out: https://stackoverflow.com/questions/22329481/compressing-base64-data-uri-images
     
-        save/export & import functions
-        check this out: https://stackoverflow.com/questions/22329481/compressing-base64-data-uri-images
-        
-        don't think this is going to work for large projects without some sort of better compression. simply drawing a few lines on
-        a canvas produces a very large base64 string spanning many lines. not very practical for exporting a project
-        that has several frames, especially if you take into account different colors and more detail
-        
-    ***/
+    don't think this is going to work for large projects without some sort of better compression. simply drawing a few lines on
+    a canvas produces a very large base64 string spanning many lines. not very practical for exporting a project
+    that has several frames, especially if you take into account different colors and more detail
+  ***/
   save(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       // prompt the user to name the file 

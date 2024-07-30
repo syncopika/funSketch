@@ -2,7 +2,7 @@ import React from 'react';
 import 'jest-canvas-mock';
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { LayerOrder } from '../src/LayerOrder';
+import { LayerOrder } from '../src/components/LayerOrder';
 
 describe("testing LayerOrder component", () => {
     

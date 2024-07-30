@@ -1,5 +1,5 @@
 import 'jest-canvas-mock';
-import { Frame } from '../src/utils/AnimationProject.js';
+import { Frame } from '../src/AnimationProject.js';
 
 describe("test Frame class", () => {
     

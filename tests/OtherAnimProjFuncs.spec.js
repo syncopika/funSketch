@@ -1,7 +1,7 @@
 // test other util functions in animationproject
 
 import 'jest-canvas-mock';
-import { createOnionSkinFrame, setCanvas } from '../src/utils/AnimationProject.js';
+import { createOnionSkinFrame, setCanvas } from '../src/AnimationProject.js';
 
 describe("test other utility functions in AnimationProject", () => {
     

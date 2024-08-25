@@ -22,6 +22,7 @@ import { Thinning } from './filters/thinning.js';
 import { OilPainting } from './filters/oilpainting.js';
 import { Painted } from './filters/painted.js';
 import { Wavy } from './filters/wavy.js';
+import { OutlineTop } from './filters/outlinetop.js';
 
 class FilterManager {
   constructor(animationProject, brush){
@@ -53,6 +54,7 @@ class FilterManager {
       "painted": new Painted(),
       "oilpainting": new OilPainting(),
       "wavy": new Wavy(),
+      "outline-top": new OutlineTop(),
     };
   }
 

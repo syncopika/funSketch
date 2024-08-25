@@ -16,6 +16,7 @@ class Wavy extends FilterTemplate {
     };
     super(params);
   }
+  
   filter(pixels){
     const width = pixels.width;
     const height = pixels.height;
@@ -75,7 +76,6 @@ class Wavy extends FilterTemplate {
       tempCtx.drawImage(tempCanvas, x2, y, x3 - x2, 1, waveX2 - 1, y, width2, 1);
       tempCtx.drawImage(tempCanvas, x3, y, x4 - x3, 1, waveX3 - 1.5, y, width3, 1);
     }
-        
         
     tempPixelData = tempCtx.getImageData(0, 0, width, height);
     for(let i = 0; i < pixels.data.length; i++){

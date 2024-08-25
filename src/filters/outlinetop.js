@@ -1,14 +1,13 @@
-// edge detection filter
+// outline-on-top filter
+// similar to outline but places outline on top of original image
+// and the outlines are generated via edge detection
+
 import { FilterTemplate } from './FilterTemplate.js';
 
-class EdgeDetection extends FilterTemplate {
+export class OutlineTop extends FilterTemplate {
     
   constructor(){
     super(null);
-  }
-    
-  grayscale(){
-    // TODO or not TODO? do we actually need this
   }
     
   filter(pixels){
@@ -17,9 +16,6 @@ class EdgeDetection extends FilterTemplate {
     const data = pixels.data;
         
     const sourceImageCopy = new Uint8ClampedArray(data);
-        
-    // need to grayscale the image here :/
-    //this.grayscale(pixels);
         
     const xKernel = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
     const yKernel = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
@@ -48,16 +44,21 @@ class EdgeDetection extends FilterTemplate {
                 
         // finally set the current pixel to the new value based on the formula 
         const newVal = (Math.ceil(Math.sqrt((pX * pX) + (pY * pY))));
-        data[center] = newVal;
-        data[center + 1] = newVal;
-        data[center + 2] = newVal;
-        data[center + 3] = 255;
+        
+        // invert because we want black outlines
+        const newR = 255 - newVal;
+        const newG = 255 - newVal;
+        const newB = 255 - newVal;
+        const newA = 255;
+        
+        // only apply edge detection line if channel value is under a certain threshold (in this case 200)
+        data[center] = newR < 200 ? 10 : data[center];
+        data[center + 1] = newG < 200 ? 10 : data[center + 1];
+        data[center + 2] = newB < 200 ? 10 : data[center + 2];
+        data[center + 3] = newA;
       }
     }
+    
     return pixels;
   }
 }
-
-export {
-  EdgeDetection
-};

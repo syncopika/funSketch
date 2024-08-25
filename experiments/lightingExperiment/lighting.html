@@ -33,6 +33,7 @@
     <div>
       <button id="pickLightSrcLoc">pick light source location</button>
       <button id="importImage">import image</button>
+      <button id="reset" onclick="reset()">reset</button>
     </div>
 	
     <br />
@@ -54,6 +55,7 @@
     // https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
     let lightRadius = 5;
     let lightStrength = 1000;
+    let currImage = null;
     
     document.getElementById("importImage").addEventListener('click', () => {
       const canvas = document.getElementById("main");
@@ -64,7 +66,7 @@
       // define fileHandler 
       function fileHandler(){
         //initiate file choosing after button click
-        let input = document.createElement('input');
+        const input = document.createElement('input');
         input.type = 'file';
         input.addEventListener('change', getFile, false);
         input.click();
@@ -81,12 +83,13 @@
         //when the image loads, put it on the canvas.
         img.onload = () => {
           // change current canvas' width and height according to imported picture
-          const currentCanvas = canvas.currentCanvas;
           const context = canvas.getContext("2d");
           const height = canvas.height;
           const width = canvas.width;
           
           context.drawImage(img, 0, 0, width, height);
+          
+          currImage = img;
         };
         //after reader has loaded file, put the data in the image object.
         reader.onloadend = function(){ 
@@ -97,12 +100,20 @@
       }
     });
 
+    function reset(){
+      if(!currImage) return;
+      const canvas = document.getElementById("main");
+      const context = canvas.getContext("2d");
+      const height = canvas.height;
+      const width = canvas.width;
+      context.drawImage(currImage, 0, 0, width, height);
+    }
 
     function setUpMainCanvas(){
       const canvasElement = document.createElement("canvas");
       document.getElementById("canvasArea").appendChild(canvasElement);
       canvasElement.id = "main";
-      canvasElement.style.border = '1px #000 solid';
+      canvasElement.style.border = "1px #000 solid";
       canvasElement.style.opacity = 1;
       canvasElement.style.width = "100%";
       canvasElement.style.height = "100%";

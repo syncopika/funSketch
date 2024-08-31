@@ -131,8 +131,8 @@ class TargetedBlur extends FilterTemplate {
     const coords = this.drawnLineCoords.slice(); // make a copy because we want to append to this.drawnLineCoords
         
     for(let idx = 1; idx < coords.length; idx++){
+      let lastX = coords[idx-1].x;
       const lastY = coords[idx-1].y;
-      const lastX = coords[idx-1].x;
       const currY = coords[idx].y;
       const currX = coords[idx].x;
             
@@ -152,7 +152,7 @@ class TargetedBlur extends FilterTemplate {
             lastX += xInterval;
           }
         }else{
-          for(let i = lastY+1; i < currY; i++){
+          for(let i = lastY + 1; i < currY; i++){
             this.drawnLineCoords.push({
               'x': lastX + xInterval, 
               'y': i,

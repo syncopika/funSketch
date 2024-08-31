@@ -6,11 +6,11 @@ function constructSlider(name, params){
   const sliderCounterId = name + 'CurrValue';
   return (
     <div>
-      <label htmlFor={name}>{name}</label>
+      <label htmlFor={id}>{name}</label>
       <input 
         type="range" 
-        name={name} 
-        id={id} 
+        name={id}
+        id={id}
         max={params.max} 
         min={params.min} 
         step={params.step} 

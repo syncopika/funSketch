@@ -23,7 +23,7 @@ Otherwise, any white color with 255 as the alpha value is treated as transparent
 ### installation:    
 You'll need node.js and npm. `cd` into this repo and run `npm install` to install all the dependencies. Then run `npm run serve` to serve the application (with hot reload!). To run the tests, run `npm test`.    
     
-For end-to-end testing I tried using WebdriverIO with ChromeDriver. Make sure that the chromedriver version in `package.json` matches the local version of Chrome on your computer.    
+For end-to-end testing I'm currently using TestCafe. You will need to build the app, serve it on `localhost:3000` (see `server.js`) and then run the e2e tests via `npm run e2e` in another terminal window.    
     
 Alternatively, you can run `npm run dev` to build a development bundle in the `/dist` directory and then `node server.js`.    
     

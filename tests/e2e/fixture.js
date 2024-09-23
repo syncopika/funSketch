@@ -18,4 +18,12 @@ test('basic test', async t => {
   
   // check that the animation timeline exists
   await t.expect(Selector('.animationTimelineCanvas').exists).ok();
+  
+  // click brushes section
+  const brushesSection = Selector('h4').withText('brushes');
+  const brushes = Selector('#brushes');
+  await t
+    .click(brushesSection)
+    .expect(brushes.getStyleProperty('display'))
+    .eql('block');
 });

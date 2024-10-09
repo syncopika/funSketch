@@ -14,18 +14,17 @@ export function applyTurbulentFlow(colorImgData, width, height, octaves, persist
     srgbTextureImgData.push(0);
   }
   
-  
   for(let row = 0; row < height; row++){
     for(let col = 0; col < width; col++){
       let total = 0;
       let freq = frequency0;
-      let amplitude = 1.2;
+      let amplitude = 1.1;
       let maxVal = 0; // used to normalize result between 0 and 1
       
       for(let i = 0; i < octaves; i++){
         // TODO: get noise value
         // use FastNoise? https://github.com/Auburn/FastNoiseLite/blob/master/JavaScript/FastNoiseLite.js
-        let noise = Math.random() * 2;
+        let noise = Math.random();
         
         // TODO: if using FastNoise, uncomment below
         //noise = (noise + 1) / 2; // noise is -1 to 1 so adjust to make it from 0 and 1
@@ -94,7 +93,7 @@ export function applyEdgeDarkening(originalImgData, colorImgData, width, height,
   for(let row = 0; row < height; row++){
     for(let col = 0; col < width; col++){
       // compute gradient in x dir for rgb
-      const gradx3 = [0.0, 0.0, 0.0];
+      const gradx3 = [0, 0, 0];
       
       for(let i = 0; i < n; i++){
         const i2 = i - Math.floor(n/2);
@@ -132,7 +131,7 @@ export function applyEdgeDarkening(originalImgData, colorImgData, width, height,
       }
       
       // compute gradient in y dir for rgb
-      const grady3 = [0.0, 0.0, 0.0];
+      const grady3 = [0, 0, 0];
       
       for(let i = 0; i < n; i++){
         const i2 = i - Math.floor(n/2);
@@ -301,8 +300,8 @@ function convertHSLtoRGB(imgData, width, height){
 
 // https://github.com/ratkins/RGBConverter/blob/master/RGBConverter.cpp
 function rgbToHsl(r, g, b){
-  const max = Math.max(...[r, g, b]);
-  const min = Math.min(...[r, g, b]);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
   
   let h = (max + min) / 2;
   let s = (max + min) / 2;
@@ -315,10 +314,10 @@ function rgbToHsl(r, g, b){
   }else{
     const d = max - min;
     
-    s = l > 0.5 ? d / (2 - d) : d / (max + min);
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
     
     if(max === r){
-      h = (g - b) / d + (g < b ? 6 : 0);
+      h = ((g - b) / d) + (g < b ? 6 : 0);
     }else if(max === g){
       h = (b - r) / d + 2;
     }else if(max === b){
@@ -342,9 +341,9 @@ function hslToRgb(h, s, l){
   }else{
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
     const p = 2 * l - q;
-    r = hueToRgb(p, q, h + 1/3);
+    r = hueToRgb(p, q, h + (1/3));
     g = hueToRgb(p, q, h);
-    b = hueToRgb(p, q, h - 1/3);
+    b = hueToRgb(p, q, h - (1/3));
   }
   
   return {r, g, b};

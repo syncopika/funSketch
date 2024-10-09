@@ -41,7 +41,6 @@ class Watercolor extends FilterTemplate {
         const paperTextureImgData = convertImgDataToFloat([...ctx.getImageData(0, 0, width, height).data]);
         
         const origImgData = convertImgDataToFloat([...data]);
-        //const origImgData2 = convertImgDataToFloat([...data]);
         
         console.log('image data converted to float');
         

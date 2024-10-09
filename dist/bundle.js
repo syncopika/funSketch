@@ -8223,8 +8223,6 @@ class Watercolor extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterT
         // convert image data to float first
         const paperTextureImgData = (0,_watercolor_utils_js__WEBPACK_IMPORTED_MODULE_1__.convertImgDataToFloat)([...ctx.getImageData(0, 0, width, height).data]);
         const origImgData = (0,_watercolor_utils_js__WEBPACK_IMPORTED_MODULE_1__.convertImgDataToFloat)([...data]);
-        //const origImgData2 = convertImgDataToFloat([...data]);
-
         console.log('image data converted to float');
         const beta = 0.5;
         const octaves = 6;
@@ -8312,13 +8310,13 @@ function applyTurbulentFlow(colorImgData, width, height, octaves, persistence, f
     for (let col = 0; col < width; col++) {
       let total = 0;
       let freq = frequency0;
-      let amplitude = 1.2;
+      let amplitude = 1.0;
       let maxVal = 0; // used to normalize result between 0 and 1
 
       for (let i = 0; i < octaves; i++) {
         // TODO: get noise value
         // use FastNoise? https://github.com/Auburn/FastNoiseLite/blob/master/JavaScript/FastNoiseLite.js
-        let noise = Math.random() * 2;
+        let noise = Math.random();
 
         // TODO: if using FastNoise, uncomment below
         //noise = (noise + 1) / 2; // noise is -1 to 1 so adjust to make it from 0 and 1
@@ -8378,7 +8376,7 @@ function applyEdgeDarkening(originalImgData, colorImgData, width, height, n, bet
   for (let row = 0; row < height; row++) {
     for (let col = 0; col < width; col++) {
       // compute gradient in x dir for rgb
-      const gradx3 = [0.0, 0.0, 0.0];
+      const gradx3 = [0, 0, 0];
       for (let i = 0; i < n; i++) {
         const i2 = i - Math.floor(n / 2);
         let y2 = row + i2;
@@ -8410,7 +8408,7 @@ function applyEdgeDarkening(originalImgData, colorImgData, width, height, n, bet
       }
 
       // compute gradient in y dir for rgb
-      const grady3 = [0.0, 0.0, 0.0];
+      const grady3 = [0, 0, 0];
       for (let i = 0; i < n; i++) {
         const i2 = i - Math.floor(n / 2);
         let y2 = row + i2;
@@ -8493,7 +8491,6 @@ function modifyColorHSL(origImgData, paperTextureImgData, width, height, beta) {
       const d = 1.0 + beta * (texture - 0.5);
       const newHSL = [colorHSL.h, 0, 0];
       let c;
-      let cp;
 
       // saturation (s in hsl)
       c = colorHSL.s;
@@ -8501,7 +8498,7 @@ function modifyColorHSL(origImgData, paperTextureImgData, width, height, beta) {
 
       // compute new luminance (l in hsl)
       c = colorHSL.l;
-      cp = c * (1.0 - (1.0 - c) * (d - 1.0));
+      const cp = c * (1.0 - (1.0 - c) * (d - 1.0));
       newHSL[2] = cp;
 
       /*
@@ -8565,18 +8562,18 @@ function convertHSLtoRGB(imgData, width, height) {
 
 // https://github.com/ratkins/RGBConverter/blob/master/RGBConverter.cpp
 function rgbToHsl(r, g, b) {
-  const max = Math.max(...[r, g, b]);
-  const min = Math.min(...[r, g, b]);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
   let h = (max + min) / 2;
   let s = (max + min) / 2;
-  let l = (max + min) / 2;
+  const l = (max + min) / 2;
   if (max === min) {
     // achromatic
     h = 0;
     s = 0;
   } else {
     const d = max - min;
-    s = l > 0.5 ? d / (2 - d) : d / (max + min);
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
     if (max === r) {
       h = (g - b) / d + (g < b ? 6 : 0);
     } else if (max === g) {

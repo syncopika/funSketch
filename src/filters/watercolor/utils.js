@@ -1,6 +1,9 @@
 // https://3dstereophoto.blogspot.com/2018/05/non-photorealistic-rendering-watercolor.html
 // https://github.com/ugocapeto/thewatercolorist/blob/main/thewatercolorist_main.cpp
 
+//import { quickNoise } from './noise.js';
+import FastNoiseLite from './fastnoise.js';
+
 export function applyPaperTexture(origImgData, paperTextureImgData, width, height, beta){
   //console.log(origImgData);
   //console.log(paperTextureImgData);
@@ -14,28 +17,35 @@ export function applyTurbulentFlow(colorImgData, width, height, octaves, persist
     srgbTextureImgData.push(0);
   }
   
+  // use FastNoiseLite https://github.com/Auburn/FastNoiseLite/blob/master/JavaScript/FastNoiseLite.js
+  const fastnoise = new FastNoiseLite();
+  fastnoise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
+  
   for(let row = 0; row < height; row++){
     for(let col = 0; col < width; col++){
       let total = 0;
       let freq = frequency0;
-      let amplitude = 1.1;
+      let amplitude = 1.2;
       let maxVal = 0; // used to normalize result between 0 and 1
       
       for(let i = 0; i < octaves; i++){
-        // TODO: get noise value
-        // use FastNoise? https://github.com/Auburn/FastNoiseLite/blob/master/JavaScript/FastNoiseLite.js
-        let noise = Math.random();
+        fastnoise.SetFrequency(freq);
         
-        // TODO: if using FastNoise, uncomment below
-        //noise = (noise + 1) / 2; // noise is -1 to 1 so adjust to make it from 0 and 1
+        let noise = fastnoise.GetNoise(col, row);
         
-        /* make sure noise is between 0 and 1
+        if(row === 0 && col === 0){
+          console.log(noise);
+        }
+        
+        noise = (noise + 1) / 2; // noise is -1 to 1 so adjust to make it from 0 and 1
+        
+        // make sure noise is between 0 and 1
         if(noise < 0){
           noise = 0;
         }
         if(noise > 1){
           noise = 1;
-        }*/
+        }
         
         noise = noise * amplitude;
         total += noise;

@@ -12,7 +12,32 @@ import {
 class Watercolor extends FilterTemplate {
     
   constructor(){
-    const params = {};
+    const params = {
+      "beta": {
+        "value": 0.5,
+        "min": 0,
+        "max": 2,
+        "step": 0.1,
+      },
+      "octaves": {
+        "value": 3,
+        "min": 0,
+        "max": 10,
+        "step": 1,
+      },
+      "frequency": {
+        "value": 0.02,
+        "min": 0,
+        "max": 0.1,
+        "step": 0.01,
+      },
+      "persistence": {
+        "value": 0.3,
+        "min": 0.1,
+        "max": 1.0,
+        "step": 0.1,
+      },
+    };
     super(params);
   }
   
@@ -39,16 +64,15 @@ class Watercolor extends FilterTemplate {
         
         // convert image data to float first
         const paperTextureImgData = convertImgDataToFloat([...ctx.getImageData(0, 0, width, height).data]);
-        
         const origImgData = convertImgDataToFloat([...data]);
         
         console.log('image data converted to float');
         
-        const beta = 0.5;
-        const octaves = 8;
-        const frequency0 = 0.02;
+        const beta = this.params.beta.value; //0.5;
+        const octaves = this.params.octaves.value; //8;
+        const frequency0 = this.params.frequency.value; //0.02;
         const n = 3;
-        const persistence = 0.3;
+        const persistence = this.params.persistence.value; //0.3;
         
         const paperTextureRes = applyPaperTexture(origImgData, paperTextureImgData, width, height, beta);
         console.log('done applying paper texture');

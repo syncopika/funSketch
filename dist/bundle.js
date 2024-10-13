@@ -5325,7 +5325,15 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 
 class BilinearFilter extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
-    super(null);
+    const params = {
+      "blurFactor": {
+        "value": 3,
+        "min": 1,
+        "max": 15,
+        "step": 1
+      }
+    };
+    super(params);
   }
   getPixelData(pixelData, row, col, width) {
     const r = pixelData[4 * width * row + 4 * col];
@@ -5351,7 +5359,7 @@ class BilinearFilter extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Fil
 
     // do blur on source image copy
     const blurFilter = new _blur_js__WEBPACK_IMPORTED_MODULE_1__.Blur();
-    blurFilter.params.blurFactor.value = 3;
+    blurFilter.params.blurFactor.value = this.params.blurFactor.value;
     blurFilter.filter(blurredImageData);
 
     // do edge detection on source image copy
@@ -8291,7 +8299,32 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 
 class Watercolor extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
-    const params = {};
+    const params = {
+      "beta": {
+        "value": 0.5,
+        "min": 0,
+        "max": 2,
+        "step": 0.1
+      },
+      "octaves": {
+        "value": 3,
+        "min": 0,
+        "max": 10,
+        "step": 1
+      },
+      "frequency": {
+        "value": 0.02,
+        "min": 0,
+        "max": 0.1,
+        "step": 0.01
+      },
+      "persistence": {
+        "value": 0.3,
+        "min": 0.1,
+        "max": 1.0,
+        "step": 0.1
+      }
+    };
     super(params);
   }
 
@@ -8318,11 +8351,12 @@ class Watercolor extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterT
         const paperTextureImgData = (0,_watercolor_utils_js__WEBPACK_IMPORTED_MODULE_1__.convertImgDataToFloat)([...ctx.getImageData(0, 0, width, height).data]);
         const origImgData = (0,_watercolor_utils_js__WEBPACK_IMPORTED_MODULE_1__.convertImgDataToFloat)([...data]);
         console.log('image data converted to float');
-        const beta = 0.5;
-        const octaves = 8;
-        const frequency0 = 0.02;
+        const beta = this.params.beta.value; //0.5;
+        const octaves = this.params.octaves.value; //8;
+        const frequency0 = this.params.frequency.value; //0.02;
         const n = 3;
-        const persistence = 0.3;
+        const persistence = this.params.persistence.value; //0.3;
+
         const paperTextureRes = (0,_watercolor_utils_js__WEBPACK_IMPORTED_MODULE_1__.applyPaperTexture)(origImgData, paperTextureImgData, width, height, beta);
         console.log('done applying paper texture');
         const turbulentFlowRes = (0,_watercolor_utils_js__WEBPACK_IMPORTED_MODULE_1__.applyTurbulentFlow)(paperTextureRes, width, height, octaves, persistence, frequency0, beta);

@@ -12,7 +12,15 @@ import { EdgeDetection } from './edgedetection.js';
 class BilinearFilter extends FilterTemplate {
     
   constructor(){
-    super(null);
+    const params = {
+      "blurFactor": {
+        "value": 3,
+        "min": 1,
+        "max": 15,
+        "step": 1,
+      }
+    };
+    super(params);
   }
   
   getPixelData(pixelData, row, col, width){
@@ -38,7 +46,7 @@ class BilinearFilter extends FilterTemplate {
     
     // do blur on source image copy
     const blurFilter = new Blur();
-    blurFilter.params.blurFactor.value = 3;
+    blurFilter.params.blurFactor.value = this.params.blurFactor.value;
     blurFilter.filter(blurredImageData);
     
     // do edge detection on source image copy

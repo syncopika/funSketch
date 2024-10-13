@@ -130,7 +130,7 @@ class Blur extends FilterTemplate {
   }
     
   filter(pixels){
-    // run gausBlurr for each color channel, then piece them all back together
+    // run gaussBlur for each color channel, then piece them all back together
     // see Marc Pérez's comment in http://blog.ivank.net/fastest-gaussian-blur.html
     const width = pixels.width;
     const height = pixels.height;

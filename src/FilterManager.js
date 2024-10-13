@@ -23,6 +23,8 @@ import { OilPainting } from './filters/oilpainting.js';
 import { Painted } from './filters/painted.js';
 import { Wavy } from './filters/wavy.js';
 import { OutlineTop } from './filters/outlinetop.js';
+import { Watercolor } from './filters/watercolor.js';
+import { BilinearFilter } from './filters/bilinear.js';
 
 class FilterManager {
   constructor(animationProject, brush){
@@ -55,11 +57,13 @@ class FilterManager {
       "oilpainting": new OilPainting(),
       "wavy": new Wavy(),
       "outline-top": new OutlineTop(),
+      "watercolor": new Watercolor(),
+      "bilinear_filter": new BilinearFilter(),
     };
   }
 
   // general filtering function. pass any kind of filter through this function.
-  filterCanvas(filter){
+  async filterCanvas(filter, option){
     const currFrame = this.animationProject.getCurrFrame();
     const currLayer = currFrame.getCurrCanvas();
     const context = currLayer.getContext("2d");
@@ -71,14 +75,21 @@ class FilterManager {
     currFrame.addSnapshot(imgData);
 
     // grab a new copy of image data so we don't mess with the snapshot data we just stored
-    const filteredImageData = filter(context.getImageData(0, 0, width, height));
+    let filteredImageData;
+    if(option === 'watercolor'){
+      // async filter
+      filteredImageData = await filter(context.getImageData(0, 0, width, height));
+    }else{
+      filteredImageData = filter(context.getImageData(0, 0, width, height));
+    }
+    
     context.putImageData(filteredImageData, 0, 0);
   }
     
   // use this for select/option elements when picking a filter
   filterCanvasOption(option){
     const selectedFilter = this.filtersMap[option];
-    this.filterCanvas((selectedFilter).filter.bind(selectedFilter)); // make sure 'this' context is correct for the filtering function
+    this.filterCanvas((selectedFilter).filter.bind(selectedFilter), option); // make sure 'this' context is correct for the filtering function
   }
 }
 

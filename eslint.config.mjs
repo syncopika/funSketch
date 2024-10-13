@@ -20,6 +20,7 @@ export default [
       "**/dist/**",
       "gif.worker.js",
       "src/gif-js/*",
+      "src/filters/watercolor/fastnoise.js",
     ],
   },
   {

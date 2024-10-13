@@ -45,10 +45,10 @@ class Watercolor extends FilterTemplate {
         console.log('image data converted to float');
         
         const beta = 0.5;
-        const octaves = 9;
-        const frequency0 = 0.03;
+        const octaves = 8;
+        const frequency0 = 0.02;
         const n = 3;
-        const persistence = 0.5;
+        const persistence = 0.3;
         
         const paperTextureRes = applyPaperTexture(origImgData, paperTextureImgData, width, height, beta);
         console.log('done applying paper texture');

@@ -7,20 +7,13 @@ class EdgeDetection extends FilterTemplate {
     super(null);
   }
     
-  grayscale(){
-    // TODO or not TODO? do we actually need this
-  }
-    
   filter(pixels){
     const width = pixels.width;
     const height = pixels.height;
     const data = pixels.data;
         
     const sourceImageCopy = new Uint8ClampedArray(data);
-        
-    // need to grayscale the image here :/
-    //this.grayscale(pixels);
-        
+    
     const xKernel = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
     const yKernel = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
         

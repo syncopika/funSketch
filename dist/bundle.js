@@ -1961,6 +1961,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters_wavy_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./filters/wavy.js */ "./src/filters/wavy.js");
 /* harmony import */ var _filters_outlinetop_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./filters/outlinetop.js */ "./src/filters/outlinetop.js");
 /* harmony import */ var _filters_watercolor_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./filters/watercolor.js */ "./src/filters/watercolor.js");
+/* harmony import */ var _filters_bilinear_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./filters/bilinear.js */ "./src/filters/bilinear.js");
 /* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
 __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
 
@@ -1985,6 +1986,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 
 
 //import { Solidify } from './filters/solidify.js';
+
 
 
 
@@ -2020,7 +2022,8 @@ class FilterManager {
       "oilpainting": new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_19__.OilPainting(),
       "wavy": new _filters_wavy_js__WEBPACK_IMPORTED_MODULE_21__.Wavy(),
       "outline-top": new _filters_outlinetop_js__WEBPACK_IMPORTED_MODULE_22__.OutlineTop(),
-      "watercolor": new _filters_watercolor_js__WEBPACK_IMPORTED_MODULE_23__.Watercolor()
+      "watercolor": new _filters_watercolor_js__WEBPACK_IMPORTED_MODULE_23__.Watercolor(),
+      "bilinear_filter": new _filters_bilinear_js__WEBPACK_IMPORTED_MODULE_24__.BilinearFilter()
     };
   }
 
@@ -5293,6 +5296,104 @@ if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Pr
 
 /***/ }),
 
+/***/ "./src/filters/bilinear.js":
+/*!*********************************!*\
+  !*** ./src/filters/bilinear.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BilinearFilter: () => (/* binding */ BilinearFilter)
+/* harmony export */ });
+/* harmony import */ var _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FilterTemplate.js */ "./src/filters/FilterTemplate.js");
+/* harmony import */ var _blur_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./blur.js */ "./src/filters/blur.js");
+/* harmony import */ var _edgedetection_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edgedetection.js */ "./src/filters/edgedetection.js");
+/* provided dependency */ var __react_refresh_utils__ = __webpack_require__(/*! ./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js */ "./node_modules/@pmmmwh/react-refresh-webpack-plugin/lib/runtime/RefreshUtils.js");
+__webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/react-refresh/runtime.js */ "./node_modules/react-refresh/runtime.js");
+
+// fake bilinear filter
+// combines Gaussian blur + edge detection, inspired by https://www.reddit.com/r/computervision/comments/p56ur/is_there_any_free_implementation_of_a_bilateral/
+// TODO: try a real bilinear filter without relying on edge detection
+// https://browncsci1290.github.io/webpage/labs/bilateral/
+// https://stackoverflow.com/questions/1357403/how-to-cartoon-ify-an-image-programmatically
+// https://dsp.stackexchange.com/questions/8316/the-difference-between-bilateral-filter-and-gaussian-filter
+
+
+
+
+class BilinearFilter extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
+  constructor() {
+    super(null);
+  }
+  getPixelData(pixelData, row, col, width) {
+    const r = pixelData[4 * width * row + 4 * col];
+    const g = pixelData[4 * width * row + 4 * col + 1];
+    const b = pixelData[4 * width * row + 4 * col + 2];
+    return {
+      r,
+      g,
+      b
+    };
+  }
+  checkBlackPixel(pixelData, row, col, width) {
+    const rgb = this.getPixelData(pixelData, row, col, width);
+    const threshold = 40;
+    return rgb.r <= threshold && rgb.g <= threshold && rgb.b <= threshold;
+  }
+  filter(pixels) {
+    const width = pixels.width;
+    const height = pixels.height;
+    const data = pixels.data;
+    const blurredImageData = new ImageData(new Uint8ClampedArray(data), width, height);
+    const edgeDetectionImageData = new ImageData(new Uint8ClampedArray(data), width, height);
+
+    // do blur on source image copy
+    const blurFilter = new _blur_js__WEBPACK_IMPORTED_MODULE_1__.Blur();
+    blurFilter.params.blurFactor.value = 3;
+    blurFilter.filter(blurredImageData);
+
+    // do edge detection on source image copy
+    const edgeDetectionFilter = new _edgedetection_js__WEBPACK_IMPORTED_MODULE_2__.EdgeDetection();
+    edgeDetectionFilter.filter(edgeDetectionImageData);
+
+    // for each pixel of edgeDetectionImageData, if the pixel is black (e.g. < 30 for rgb),
+    // copy over the blurred result. otherwise, leave alone (this should preserve edges
+    // as the edges should appear, in general(?), lighter than rgb(10,10,10) or whatever threshold we want
+    for (let i = 0; i < height; i++) {
+      for (let j = 0; j < width; j++) {
+        if (this.checkBlackPixel(edgeDetectionImageData.data, i, j, width)) {
+          // set source image data pixel to blurred value
+          const rgb = this.getPixelData(blurredImageData.data, i, j, width);
+          data[4 * width * i + 4 * j] = rgb.r;
+          data[4 * width * i + 4 * j + 1] = rgb.g;
+          data[4 * width * i + 4 * j + 2] = rgb.b;
+        }
+      }
+    }
+    return pixels;
+  }
+}
+
+
+const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
+const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
+	$ReactRefreshModuleId$
+);
+
+function $ReactRefreshModuleRuntime$(exports) {
+	if (false) {}
+}
+
+if (typeof Promise !== 'undefined' && $ReactRefreshCurrentExports$ instanceof Promise) {
+	$ReactRefreshCurrentExports$.then($ReactRefreshModuleRuntime$);
+} else {
+	$ReactRefreshModuleRuntime$($ReactRefreshCurrentExports$);
+}
+
+/***/ }),
+
 /***/ "./src/filters/blur.js":
 /*!*****************************!*\
   !*** ./src/filters/blur.js ***!
@@ -5418,7 +5519,7 @@ class Blur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplat
     this.boxBlur(src, trgt, width, height, (boxes[2] - 1) / 2);
   }
   filter(pixels) {
-    // run gausBlurr for each color channel, then piece them all back together
+    // run gaussBlur for each color channel, then piece them all back together
     // see Marc Pérez's comment in http://blog.ivank.net/fastest-gaussian-blur.html
     const width = pixels.width;
     const height = pixels.height;
@@ -6034,18 +6135,11 @@ class EdgeDetection extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filt
   constructor() {
     super(null);
   }
-  grayscale() {
-    // TODO or not TODO? do we actually need this
-  }
   filter(pixels) {
     const width = pixels.width;
     const height = pixels.height;
     const data = pixels.data;
     const sourceImageCopy = new Uint8ClampedArray(data);
-
-    // need to grayscale the image here :/
-    //this.grayscale(pixels);
-
     const xKernel = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
     const yKernel = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
     for (let i = 1; i < height - 1; i++) {
@@ -8225,10 +8319,10 @@ class Watercolor extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterT
         const origImgData = (0,_watercolor_utils_js__WEBPACK_IMPORTED_MODULE_1__.convertImgDataToFloat)([...data]);
         console.log('image data converted to float');
         const beta = 0.5;
-        const octaves = 9;
-        const frequency0 = 0.03;
+        const octaves = 8;
+        const frequency0 = 0.02;
         const n = 3;
-        const persistence = 0.5;
+        const persistence = 0.3;
         const paperTextureRes = (0,_watercolor_utils_js__WEBPACK_IMPORTED_MODULE_1__.applyPaperTexture)(origImgData, paperTextureImgData, width, height, beta);
         console.log('done applying paper texture');
         const turbulentFlowRes = (0,_watercolor_utils_js__WEBPACK_IMPORTED_MODULE_1__.applyTurbulentFlow)(paperTextureRes, width, height, octaves, persistence, frequency0, beta);
@@ -10729,13 +10823,13 @@ function applyTurbulentFlow(colorImgData, width, height, octaves, persistence, f
     for (let col = 0; col < width; col++) {
       let total = 0;
       let freq = frequency0;
-      let amplitude = 1.2;
+      let amplitude = 1.0;
       let maxVal = 0; // used to normalize result between 0 and 1
 
       for (let i = 0; i < octaves; i++) {
         fastnoise.SetFrequency(freq);
         let noise = fastnoise.GetNoise(col, row);
-        if (row === 0 && col === 0) {
+        if (row < 10 && col < 10) {
           console.log(noise);
         }
         noise = (noise + 1) / 2; // noise is -1 to 1 so adjust to make it from 0 and 1

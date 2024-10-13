@@ -25,7 +25,7 @@ export function applyTurbulentFlow(colorImgData, width, height, octaves, persist
     for(let col = 0; col < width; col++){
       let total = 0;
       let freq = frequency0;
-      let amplitude = 1.2;
+      let amplitude = 1.0;
       let maxVal = 0; // used to normalize result between 0 and 1
       
       for(let i = 0; i < octaves; i++){
@@ -33,7 +33,7 @@ export function applyTurbulentFlow(colorImgData, width, height, octaves, persist
         
         let noise = fastnoise.GetNoise(col, row);
         
-        if(row === 0 && col === 0){
+        if(row < 10 && col < 10){
           console.log(noise);
         }
         

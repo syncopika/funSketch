@@ -25,6 +25,7 @@ import { Wavy } from './filters/wavy.js';
 import { OutlineTop } from './filters/outlinetop.js';
 import { Watercolor } from './filters/watercolor.js';
 import { BilinearFilter } from './filters/bilinear.js';
+import { KuwaharaPainting } from './filters/kuwahara_painting.js';
 
 class FilterManager {
   constructor(animationProject, brush){
@@ -59,6 +60,7 @@ class FilterManager {
       "outline-top": new OutlineTop(),
       "watercolor": new Watercolor(),
       "bilinear_filter": new BilinearFilter(),
+      "kuwahara_painted": new KuwaharaPainting(),
     };
   }
 

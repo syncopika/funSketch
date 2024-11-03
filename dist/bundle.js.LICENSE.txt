@@ -4,6 +4,38 @@ object-assign
 @license MIT
 */
 
+/**
+ * @description FastNoise Lite is an extremely portable open source noise generation library with a large selection of noise algorithms
+ * @author Jordan Peck, snowfoxsh
+ * @version 1.1.1
+ * @copyright Copyright(c) 2023 Jordan Peck, Contributors
+ * @license MIT
+ * @git https://github.com/Auburn/FastNoiseLite
+ * @npm https://www.npmjs.com/package/fastnoise-lite
+ * @example
+// Import from npm (if you used npm)
+
+import FastNoiseLite from "fastnoise-lite";
+
+// Create and configure FastNoiseLite object
+
+let noise = new FastNoiseLite();
+noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+
+// Gather noise data
+let noiseData = [];
+
+for (let x = 0; x < 128; x++) {
+    noiseData[x] = [];
+
+    for (let y = 0; y < 128; y++) {        
+        noiseData[x][y] = noise.GetNoise(x,y);
+    }
+}
+
+// Do something with this data...
+ */
+
 /** @license React v0.19.1
  * scheduler.production.min.js
  *

@@ -41,7 +41,7 @@
         "dev": "cross-env NODE_ENV=development webpack --mode development",
         "build": "cross-env NODE_ENV=production webpack --mode production",
         "serve": "cross-env NODE_ENV=development webpack serve --mode development",
-        "e2e": "testcafe chrome tests/e2e/fixture.js"
+        "e2e": "testcafe chrome:headless tests/e2e/fixture.js"
     },
     "pre-commit": [
         "lint",

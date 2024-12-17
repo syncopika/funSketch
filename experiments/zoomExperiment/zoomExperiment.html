@@ -1,0 +1,305 @@
+<!doctype html>
+
+<html>
+
+  <head>
+    <title>
+      zoom test
+    </title>
+		
+    <style>
+      canvas {
+        border: 1px solid #000;
+      }
+      
+      #canvas {
+        display: block;
+        margin: 20px auto;
+        text-align: center;
+        border: 1px #000 solid;
+        height: 600px;
+        width: 600px;
+      }
+      
+      #center {
+        text-align: center;
+      }
+		</style>
+  </head>
+	
+  <body>
+	
+    <div id='center'>
+	
+      <h1> zoom test </h1>
+      <button id="importImage">import image</button>
+      <button id="reset" onclick="reset()">reset</button>
+	
+      <canvas id='canvas' width='600' height='600'>
+      </canvas>
+      
+      <label for="zoomSlider">
+        zoom level:
+        <input id="zoomSlider" type="range" min="0" max="600" value="0" />
+      </label>
+      
+    </div>
+	
+    <script>
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      context.imageSmoothingEnabled = true;
+      
+      const originalImgCanvas = document.createElement('canvas');
+      const originalImgCtx = originalImgCanvas.getContext('2d');
+      originalImgCanvas.width = canvas.width;
+      originalImgCanvas.height = canvas.height;
+    
+      document.getElementById("importImage").addEventListener('click', () => {
+        // call fileHandler here
+        fileHandler();
+        
+        // define fileHandler 
+        function fileHandler(){
+          //initiate file choosing after button click
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.addEventListener('change', getFile, false);
+          input.click();
+        }
+        
+        function getFile(e){
+          const img = new Image();
+          const reader = new FileReader();
+          const file = e.target.files[0];
+          if(!file.type.match(/image.*/)){
+            console.log("not a valid image");
+            return;
+          }
+          //when the image loads, put it on the canvas.
+          img.onload = () => {
+            // change current canvas' width and height according to imported picture
+            const height = canvas.height;
+            const width = canvas.width;
+            
+            originalImgCtx.width = canvas.width;
+            originalImgCtx.height = canvas.height;
+            
+            context.drawImage(img, 0, 0, width, height);
+            originalImgCtx.drawImage(img, 0, 0, width, height);
+            
+            funnyZoomSetup();
+          };
+          //after reader has loaded file, put the data in the image object.
+          reader.onloadend = function(){ 
+            img.src = reader.result;
+          };
+          //read the file as a URL
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      function reset(){
+        const width = canvas.width;
+        const height = canvas.height;
+        context.drawImage(
+          originalImgCanvas,
+          0,
+          0,
+          width,
+          height,
+          0,
+          0,
+          width,
+          height,
+        );         
+      }
+
+      function setUpMainCanvas(){
+        const canvasElement = document.getElementById("canvas");
+        canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
+        canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasElement.addEventListener('click', clickZoom);
+      }
+      
+      setUpMainCanvas();
+      
+      function clickZoom(evt){
+        const rect = evt.target.getBoundingClientRect();
+        const sx = evt.clientX - rect.left;
+        const sy = evt.clientY - rect.top;
+        const width = canvas.width;
+        const height = canvas.height;
+        const size = 60;
+        context.drawImage(
+          canvas,
+          sx - size,//Math.max(sx - 10, 0),
+          sy - size,//Math.max(sy - 10, 0),
+          size * 2,//Math.min(sx + 10, width),
+          size * 2,//Math.min(sy + 10, height),
+          0,
+          0,
+          width,
+          height,
+        );        
+      }
+      
+      // https://stackoverflow.com/questions/17002423/algorithm-to-zoom-images-clearly
+      // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
+      function zoom(zoomLevel){
+        const width = canvas.width;
+        const height = canvas.height;
+        const sx = zoomLevel;
+        const sy = zoomLevel;
+        const newWidth = width - (2*sx);
+        const newHeight = height - (2*sy);
+        //console.log(`sx: ${sx}, newWidth: ${newWidth}, newHeight: ${newHeight}`);
+        context.drawImage(
+          originalImgCanvas,
+          sx,
+          sy,
+          newWidth,
+          newHeight,
+          0,
+          0,
+          width,
+          height,
+        );
+      }
+      
+      document.getElementById('zoomSlider').addEventListener('input', (evt) => {
+        zoom(parseInt(evt.target.value));
+        //funnyZoom(parseInt(evt.target.value));
+      });
+      
+      // for funny zoom
+      const topLeft = document.createElement('canvas');
+      const topRight = document.createElement('canvas');
+      const bottomLeft = document.createElement('canvas');
+      const bottomRight = document.createElement('canvas');
+      function funnyZoomSetup(){
+        [topLeft, topRight, bottomLeft, bottomRight].forEach((c, idx) => {
+          c.width = canvas.width;
+          c.height = canvas.height;
+          
+          const ctx = c.getContext('2d');
+          
+          if(idx === 0){
+            ctx.drawImage(
+              originalImgCanvas,
+              0,
+              0,
+              c.width / 2,
+              c.height / 2,
+              0,
+              0,
+              c.width,
+              c.height,
+            );
+          }else if(idx === 1){
+            ctx.drawImage(
+              originalImgCanvas,
+              c.width / 2,
+              0,
+              c.width / 2,
+              c.height / 2,
+              0,
+              0,
+              c.width,
+              c.height,
+            );
+          }else if(idx === 2){
+            ctx.drawImage(
+              originalImgCanvas,
+              0,
+              c.height / 2,
+              c.width / 2,
+              c.height / 2,
+              0,
+              0,
+              c.width,
+              c.height,
+            );
+          }else{
+            ctx.drawImage(
+              originalImgCanvas,
+              c.width / 2,
+              c.height / 2,
+              c.width,
+              c.height,
+              0,
+              0,
+              c.width,
+              c.height,
+            );
+          }
+        });
+      }
+      
+      // TODO: try seam-carving/content-aware scaling! :D
+      // https://trekhleb.dev/blog/2021/content-aware-image-resizing-in-javascript/
+      function funnyZoom(zoomLevel){
+        [topLeft, topRight, bottomLeft, bottomRight].forEach((c, idx) => {
+          //const ctx = c.getContext('2d');
+          const mainCtx = canvas.getContext('2d'); // the main canvas on the page
+          const width = canvas.width;
+          const height = canvas.height;
+          const sx = zoomLevel;
+          const sy = zoomLevel;
+          const newWidth = width - Math.random() * 5 * sx; //width - (2*sx);
+          const newHeight = height - Math.random() * 5 * sy; //height - (2*sy);
+          
+          if(idx === 0){
+            mainCtx.drawImage(
+              c,
+              sx,
+              sy,
+              newWidth,
+              newHeight,
+              0,
+              0,
+              c.width / 2,
+              c.height / 2,
+            );
+          }else if(idx === 1){
+            mainCtx.drawImage(
+              c,
+              sx,
+              sy,
+              newWidth,
+              newHeight,
+              c.width / 2,
+              0,
+              c.width / 2,
+              c.height / 2,
+            );
+          }else if(idx === 2){
+            mainCtx.drawImage(
+              c,
+              sx,
+              sy,
+              newWidth,
+              newHeight,
+              0,
+              c.height / 2,
+              c.width / 2,
+              c.height / 2,
+            );
+          }else{
+            mainCtx.drawImage(
+              c,
+              sx,
+              sy,
+              newWidth,
+              newHeight,
+              c.width / 2,
+              c.height / 2,
+              c.width,
+              c.height,
+            );
+          }
+        });
+      }
+    </script>
+  </body>
+</html>    

@@ -1,0 +1,338 @@
+<!doctype html>
+
+<html>
+
+  <head>
+    <title>
+      seam carving test
+    </title>
+		
+    <style>
+      canvas {
+        border: 1px solid #000;
+      }
+      
+      #canvas {
+        display: block;
+        margin: 20px auto;
+        text-align: center;
+        border: 1px #000 solid;
+        height: 600px;
+        width: 600px;
+      }
+      
+      #center {
+        text-align: center;
+      }
+		</style>
+  </head>
+	
+  <body>
+	
+    <div id='center'>
+	
+      <h1> seam carving test </h1>
+      <button id="importImage">import image</button>
+      <button id="reset" onclick="reset()">reset</button>
+	
+      <canvas id='canvas' width='600' height='600'>
+      </canvas>
+      
+      <label for="zoomSlider">
+        zoom level:
+        <input id="zoomSlider" type="range" min="0" max="600" value="0" />
+      </label>
+      
+    </div>
+	
+    <script>
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      context.imageSmoothingEnabled = true;
+      
+      const originalImgCanvas = document.createElement('canvas');
+      const originalImgCtx = originalImgCanvas.getContext('2d');
+      originalImgCanvas.width = canvas.width;
+      originalImgCanvas.height = canvas.height;
+      
+      function reset(){
+        const width = canvas.width;
+        const height = canvas.height;
+        context.drawImage(
+          originalImgCanvas,
+          0,
+          0,
+          width,
+          height,
+          0,
+          0,
+          width,
+          height,
+        );         
+      }
+
+      function setUpMainCanvas(){
+        const canvasElement = document.getElementById("canvas");
+        canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
+        canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+      }
+      
+      function getPixelColor(imgData, width, row, col){
+        const index = (4 * row * width) + (4 * col);
+        const r = imgData[index];
+        const g = imgData[index + 1];
+        const b = imgData[index + 2];
+        return {r, g, b};
+      }
+      
+      function setPixelColor(imgData, r, g, b, width, row, col){
+        const index = (4 * row * width) + (4 * col);
+        imgData[index] = r;
+        imgData[index + 1] = g;
+        imgData[index + 2] = b;
+      }
+      
+      // seam carving, or context-aware scaling
+      // https://trekhleb.dev/blog/2021/content-aware-image-resizing-in-javascript/
+      // https://perso.crans.org/frenoy/matlab2012/seamcarving.pdf
+      function makeEnergyMap(canvas, width, height){
+        const energyMap = new Array(height);
+        for(let i = 0; i < height; i++){
+          energyMap[i] = new Array(width);
+          for(let j = 0; j < width; j++){
+            energyMap[i][j] = Infinity;
+          }
+        }
+        return energyMap;
+      }
+      
+      function calculateEnergyMap(imgData, energyMap, width, height){
+        for(let r = 0; r < height; r++){
+          for(let c = 0; c < width; c++){
+            energyMap[r][c] = getPixelEnergy(imgData, width, r, c);
+          }
+        }
+      }
+      
+      function getPixelEnergy(imgData, width, row, col){
+        let pixelEnergy = 0;
+        
+        const thisPixelColor = getPixelColor(imgData, width, row, col);
+        
+        // if left neighbor
+        if(col-1 >= 0){
+          const leftPixelColor = getPixelColor(imgData, width, row, col-1);
+          const leftPixelEnergy = (
+            (leftPixelColor.r - thisPixelColor.r) ** 2 +
+            (leftPixelColor.g - thisPixelColor.g) ** 2 +
+            (leftPixelColor.b - thisPixelColor.b) ** 2
+          );
+          //if(typeof leftPixelEnergy!== 'number') throw new Error('leftPixelEnergy is not a number');
+          pixelEnergy += leftPixelEnergy
+        }
+        
+        // if right neighbor
+        if(col+1 < width){
+          const rightPixelColor = getPixelColor(imgData, width, row, col+1);
+          const rightPixelEnergy = (
+            (rightPixelColor.r - thisPixelColor.r) ** 2 +
+            (rightPixelColor.g - thisPixelColor.g) ** 2 +
+            (rightPixelColor.b - thisPixelColor.b) ** 2
+          );
+          pixelEnergy += rightPixelEnergy;
+        }
+        if(typeof pixelEnergy !== 'number'){
+          console.log(pixelEnergy);
+          throw new Error('pixelEnergy is not a number');
+        }
+        return Math.sqrt(pixelEnergy);
+      }
+      
+      function findLowestEnergySeam(energyMap, width, height){
+        // separate 2d array to keep track of seam energy calculations so we don't have to duplicate work
+        const seamEnergies = new Array(height);
+        for(let r = 0; r < height; r++){
+          seamEnergies[r] = new Array(width);
+          if(r === 0){
+            for(let c = 0; c < width; c++){
+              // copy over just first row of calculated pixel energies
+              seamEnergies[r][c] = {
+                energy: energyMap[r][c],
+                r, // row
+                c, // col
+                previous: null,
+              };
+            }
+          }
+        }
+        //console.log(seamEnergies);
+       
+        for(let r = 1; r < height; r++){
+          for(let c = 0; c < width; c++){
+            // populate rest of rows
+            let minPrevEnergy = Infinity;
+            let minPrevCol = c;
+            for(let i = (c - 1); i <= (c + 1); i++){
+              if(i >= 0 && i < width && seamEnergies[r - 1][i].energy < minPrevEnergy){
+                minPrevEnergy = seamEnergies[r - 1][i].energy;
+                minPrevCol = i;
+              }
+            }
+            
+            // update current pixel
+            seamEnergies[r][c] = {
+              energy: minPrevEnergy + energyMap[r][c],
+              r,
+              c,
+              previous: {
+                r: r - 1,
+                c: minPrevCol,
+              },
+            };
+          }
+        }
+        
+        // find where minimum energy seam ends
+        let lastMinCoord = null;
+        let minSeamEnergy = Infinity;
+        const row = height - 1;
+        for(let c = 0; c < width; c++){
+          if(seamEnergies[row][c].energy < minSeamEnergy){
+            minSeamEnergy = seamEnergies[row][c].energy;
+            lastMinCoord = {r: row, c};
+          }
+        }
+        
+        // find lowest energy seam
+        const seam = [];
+        if(!lastMinCoord){
+          // no min seam found
+          console.log('no min seam found');
+          return seam;
+        }
+        
+        const lastMinCol = lastMinCoord.c;
+        const lastMinRow = lastMinCoord.r;
+        let currSeam = seamEnergies[lastMinRow][lastMinCol];
+        while(currSeam){
+          seam.push({r: currSeam.r, c: currSeam.c});
+          const prevMinCoord = currSeam.previous;
+          if(!prevMinCoord){
+            currSeam = null;
+          }else{
+            const prevMinCol = prevMinCoord.c;
+            const prevMinRow = prevMinCoord.r;
+            currSeam = seamEnergies[prevMinRow][prevMinCol];
+          }
+        }
+        
+        //console.log(seam);
+        return seam;
+      }
+      
+      function deleteSeam(imgData, width, seam){
+        seam.forEach(coord => {
+          for(let col = coord.c; col < width - 1; col++){
+            //console.log(`row: ${coord.r}, col: ${col}`);
+            // get the right pixel's color and set this pixel to that color.
+            // we're shifting the image to the right of this seam to the left
+            const nextPixelColor = getPixelColor(imgData, width, coord.r, col + 1);
+            setPixelColor(
+              imgData, 
+              nextPixelColor.r, //0,
+              nextPixelColor.g, //0,
+              nextPixelColor.b, //0,
+              width,
+              coord.r,
+              col,
+            );
+          }
+        });
+      }
+      
+      // https://stackoverflow.com/questions/17002423/algorithm-to-zoom-images-clearly
+      // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
+      function zoom(zoomLevel){
+        let width = canvas.width;
+        const height = canvas.height;
+        const sx = zoomLevel;
+        const sy = zoomLevel;
+        const newWidth = width - (2*sx);
+        const newHeight = height - (2*sy);
+        
+        const pixelsToRemove = width - newWidth;
+        const energyMap = makeEnergyMap(canvas, width, height);
+        const imgData = originalImgCtx.getImageData(0, 0, width, height);
+        
+        console.log(`removing ${pixelsToRemove} pixels`);
+        
+        for(let i = 0; i < pixelsToRemove; i++){
+          calculateEnergyMap(imgData.data, energyMap, width, height);
+          
+          // find seam with lowest energy
+          const lowestEnergySeam = findLowestEnergySeam(energyMap, width, height);
+          
+          // remove the seam
+          deleteSeam(imgData.data, width, lowestEnergySeam);
+          
+          // reduce image width
+          width -= 1;
+          
+          context.putImageData(imgData, 0, 0, 0, 0, width, height);
+        }
+        
+        //context.putImageData(imgData, 0, 0);
+        
+        console.log('done!');
+      }
+    
+      document.getElementById("importImage").addEventListener('click', () => {
+        // call fileHandler here
+        fileHandler();
+        
+        // define fileHandler 
+        function fileHandler(){
+          //initiate file choosing after button click
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.addEventListener('change', getFile, false);
+          input.click();
+        }
+        
+        function getFile(e){
+          const img = new Image();
+          const reader = new FileReader();
+          const file = e.target.files[0];
+          if(!file.type.match(/image.*/)){
+            console.log("not a valid image");
+            return;
+          }
+          //when the image loads, put it on the canvas.
+          img.onload = () => {
+            // change current canvas' width and height according to imported picture
+            const height = canvas.height;
+            const width = canvas.width;
+            
+            originalImgCtx.width = canvas.width;
+            originalImgCtx.height = canvas.height;
+            
+            context.drawImage(img, 0, 0, width, height);
+            originalImgCtx.drawImage(img, 0, 0, width, height);
+          };
+          //after reader has loaded file, put the data in the image object.
+          reader.onloadend = function(){ 
+            img.src = reader.result;
+          };
+          //read the file as a URL
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      setUpMainCanvas();
+      
+      document.getElementById('zoomSlider').addEventListener('change', (evt) => {
+        zoom(parseFloat(evt.target.value));
+      });
+    </script>
+  </body>
+</html>    

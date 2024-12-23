@@ -31,7 +31,9 @@
 	
     <div id='center'>
 	
-      <h1> seam carving test </h1>
+      <h1> seam carving test <s>/ cursed image creator </s></h1>
+      <p> much thanks to Oleksii Trekhleb's wonderful <a href='https://trekhleb.dev/blog/2021/content-aware-image-resizing-in-javascript/'> tutorial and demo </a> of seam carving/context-aware scaling </p>
+      
       <button id="importImage">import image</button>
       <button id="reset" onclick="reset()">reset</button>
 	
@@ -42,6 +44,8 @@
         zoom level:
         <input id="zoomSlider" type="range" min="0" max="600" value="0" />
       </label>
+      
+      <p id='status'></p>
       
     </div>
 	
@@ -56,8 +60,10 @@
       originalImgCanvas.height = canvas.height;
       
       function reset(){
-        const width = canvas.width;
-        const height = canvas.height;
+        const width = originalImgCanvas.width;
+        const height = originalImgCanvas.height;
+        canvas.width = width;
+        canvas.height = height;
         context.drawImage(
           originalImgCanvas,
           0,
@@ -95,7 +101,7 @@
       // seam carving, or context-aware scaling
       // https://trekhleb.dev/blog/2021/content-aware-image-resizing-in-javascript/
       // https://perso.crans.org/frenoy/matlab2012/seamcarving.pdf
-      function makeEnergyMap(canvas, width, height){
+      function makeEnergyMap(width, height){
         const energyMap = new Array(height);
         for(let i = 0; i < height; i++){
           energyMap[i] = new Array(width);
@@ -141,10 +147,12 @@
           );
           pixelEnergy += rightPixelEnergy;
         }
+        
         if(typeof pixelEnergy !== 'number'){
           console.log(pixelEnergy);
           throw new Error('pixelEnergy is not a number');
         }
+        
         return Math.sqrt(pixelEnergy);
       }
       
@@ -253,37 +261,43 @@
       // https://stackoverflow.com/questions/17002423/algorithm-to-zoom-images-clearly
       // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
       function zoom(zoomLevel){
-        let width = canvas.width;
+        console.log('doing seam carving...');
+        
+        let currWidth = originalImgCanvas.width; //canvas.width;
         const height = canvas.height;
         const sx = zoomLevel;
         const sy = zoomLevel;
-        const newWidth = width - (2*sx);
+        const newWidth = currWidth - (2*sx);
         const newHeight = height - (2*sy);
-        
-        const pixelsToRemove = width - newWidth;
-        const energyMap = makeEnergyMap(canvas, width, height);
-        const imgData = originalImgCtx.getImageData(0, 0, width, height);
-        
-        console.log(`removing ${pixelsToRemove} pixels`);
+        const pixelsToRemove = currWidth - newWidth;
         
         for(let i = 0; i < pixelsToRemove; i++){
-          calculateEnergyMap(imgData.data, energyMap, width, height);
+          const imgData = context.getImageData(0, 0, currWidth, height); // if imgData is set outside the loop, you get a wave-y effect
+          const energyMap = makeEnergyMap(currWidth, height);
+          calculateEnergyMap(imgData.data, energyMap, currWidth, height);
           
           // find seam with lowest energy
-          const lowestEnergySeam = findLowestEnergySeam(energyMap, width, height);
+          const lowestEnergySeam = findLowestEnergySeam(energyMap, currWidth, height);
           
           // remove the seam
-          deleteSeam(imgData.data, width, lowestEnergySeam);
+          deleteSeam(imgData.data, currWidth, lowestEnergySeam);
           
           // reduce image width
-          width -= 1;
+          currWidth -= 1;
           
-          context.putImageData(imgData, 0, 0, 0, 0, width, height);
+          canvas.width = currWidth;
+          
+          context.putImageData(imgData, 0, 0, 0, 0, currWidth, canvas.height);
         }
         
-        //context.putImageData(imgData, 0, 0);
+        //canvas.style.width = `${canvas.width}px`;
         
         console.log('done!');
+        postStatus('done processing');
+      }
+      
+      function postStatus(status){
+        document.getElementById('status').textContent = status;
       }
     
       document.getElementById("importImage").addEventListener('click', () => {
@@ -310,6 +324,8 @@
           //when the image loads, put it on the canvas.
           img.onload = () => {
             // change current canvas' width and height according to imported picture
+            reset();
+            
             const height = canvas.height;
             const width = canvas.width;
             
@@ -331,6 +347,7 @@
       setUpMainCanvas();
       
       document.getElementById('zoomSlider').addEventListener('change', (evt) => {
+        postStatus('processing, this might take a bit...'); // TODO: this isn't showing. maybe try moving the processing job to a web worker?
         zoom(parseFloat(evt.target.value));
       });
     </script>

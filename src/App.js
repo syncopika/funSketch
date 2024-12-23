@@ -577,6 +577,7 @@ export const App = () => {
             <p><a href="./experiments/oilpaintingWebWorkers/oilpainting.html">oilpainting with web workers</a></p>
             <p><a href="./experiments/selectToolExperiment/selectTool.html">selection tool</a></p>
             <p><a href="./experiments/lightingExperiment/lighting.html">lighting idea</a></p>
+            <p><a href="./experiments/seamCarvingExperiment/seamCarvingExperiment.html">seam carving experiment</a></p>
           </div>
         </section>
                   

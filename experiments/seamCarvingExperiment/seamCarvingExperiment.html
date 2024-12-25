@@ -74,7 +74,8 @@
           0,
           width,
           height,
-        );         
+        );
+        document.getElementById('zoomSlider').value = 0;
       }
 
       function setUpMainCanvas(){
@@ -271,9 +272,10 @@
         const newHeight = height - (2*sy);
         const pixelsToRemove = currWidth - newWidth;
         
+        const energyMap = makeEnergyMap(currWidth, height);
+        
         for(let i = 0; i < pixelsToRemove; i++){
           const imgData = context.getImageData(0, 0, currWidth, height); // if imgData is set outside the loop, you get a wave-y effect
-          const energyMap = makeEnergyMap(currWidth, height);
           calculateEnergyMap(imgData.data, energyMap, currWidth, height);
           
           // find seam with lowest energy
@@ -285,6 +287,8 @@
           // reduce image width
           currWidth -= 1;
           
+          currWidth = Math.max(currWidth, 1); // avoid setting currWidth to 0
+          
           canvas.width = currWidth;
           
           context.putImageData(imgData, 0, 0, 0, 0, currWidth, canvas.height);
@@ -293,7 +297,8 @@
         //canvas.style.width = `${canvas.width}px`;
         
         console.log('done!');
-        postStatus('done processing');
+        const duration = (Date.now() - startTime) / 1000;
+        postStatus(`done processing. duration: ${duration}s`);
       }
       
       function postStatus(status){
@@ -346,9 +351,13 @@
       
       setUpMainCanvas();
       
+      let startTime;
       document.getElementById('zoomSlider').addEventListener('change', (evt) => {
-        postStatus('processing, this might take a bit...'); // TODO: this isn't showing. maybe try moving the processing job to a web worker?
-        zoom(parseFloat(evt.target.value));
+        postStatus('processing, this might take a bit...'); // TODO: maybe try moving the processing job to a web worker?
+        setTimeout(() => {
+          startTime = Date.now();
+          zoom(parseFloat(evt.target.value));
+        }, 200);
       });
     </script>
   </body>

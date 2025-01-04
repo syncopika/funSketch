@@ -1,6 +1,6 @@
-// fake bilinear filter
+// fake bilateral filter
 // combines Gaussian blur + edge detection, inspired by https://www.reddit.com/r/computervision/comments/p56ur/is_there_any_free_implementation_of_a_bilateral/
-// TODO: try a real bilinear filter without relying on edge detection
+// TODO: try a real bilateral filter without relying on edge detection
 // https://browncsci1290.github.io/webpage/labs/bilateral/
 // https://stackoverflow.com/questions/1357403/how-to-cartoon-ify-an-image-programmatically
 // https://dsp.stackexchange.com/questions/8316/the-difference-between-bilateral-filter-and-gaussian-filter
@@ -9,7 +9,7 @@ import { FilterTemplate } from './FilterTemplate.js';
 import { Blur } from './blur.js';
 import { EdgeDetection } from './edgedetection.js';
 
-class BilinearFilter extends FilterTemplate {
+class BilateralFilter extends FilterTemplate {
     
   constructor(){
     const params = {
@@ -73,5 +73,5 @@ class BilinearFilter extends FilterTemplate {
 }
 
 export {
-  BilinearFilter
+  BilateralFilter
 };

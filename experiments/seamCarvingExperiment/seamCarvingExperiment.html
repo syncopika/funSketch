@@ -40,9 +40,9 @@
       <canvas id='canvas' width='600' height='600'>
       </canvas>
       
-      <label for="zoomSlider">
-        zoom level:
-        <input id="zoomSlider" type="range" min="0" max="600" value="0" />
+      <label for="slider">
+        pixels to remove from width:
+        <input id="slider" type="range" min="0" max="600" value="0" />
       </label>
       
       <p id='status'></p>
@@ -75,7 +75,7 @@
           width,
           height,
         );
-        document.getElementById('zoomSlider').value = 0;
+        document.getElementById('slider').value = 0;
       }
 
       function setUpMainCanvas(){
@@ -269,7 +269,7 @@
         const sx = zoomLevel;
         const sy = zoomLevel;
         const newWidth = currWidth - (2*sx);
-        const newHeight = height - (2*sy);
+        //const newHeight = height - (2*sy);
         const pixelsToRemove = currWidth - newWidth;
         
         const energyMap = makeEnergyMap(currWidth, height);
@@ -352,7 +352,7 @@
       setUpMainCanvas();
       
       let startTime;
-      document.getElementById('zoomSlider').addEventListener('change', (evt) => {
+      document.getElementById('slider').addEventListener('change', (evt) => {
         postStatus('processing, this might take a bit...'); // TODO: maybe try moving the processing job to a web worker?
         setTimeout(() => {
           startTime = Date.now();

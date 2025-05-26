@@ -14,7 +14,7 @@ import { PenBrush } from './brushes/penBrush.js';
 import { FloodfillBrush } from './brushes/floodfillBrush.js';
 import { ColorPickerBrush } from './brushes/colorPickerBrush.js';
 
-class BrushManager {
+export class BrushManager {
   constructor(animationProj){
     // pass in an animation project, from which you can access the current frame and the current canvas
     this.animationProject = animationProj;
@@ -131,9 +131,4 @@ class BrushManager {
     currLayer.addEventListener('pointerleave', leaveFunc);
     this.currentEventListeners['pointerleave'] = leaveFunc;
   }
-
 }
-
-export {
-  BrushManager
-};

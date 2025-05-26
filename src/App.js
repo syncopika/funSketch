@@ -515,15 +515,12 @@ export const App = () => {
             and dragging the box around it (denoted by dotted lines). 
             Apply the image to the canvas by clicking anywhere outside the dotted lines. 
           </p>
-          <button onClick={switchMode}>
-            {currMode === 'animation' ? 'image editor mode' : 'animator mode'}
-          </button>
         </section>
-              
+        
         <section id="frameLayerSection" className="tbar">
           <h4> frame/layer controls </h4>
           <div id="displayLayerStuff">
-            <p> layer: </p>
+            <p>layer</p>
             <ul>
               <li><button id='insertCanvas'>add new layer after</button></li>
               <li><button id='deleteCanvas'>delete current layer</button></li>
@@ -534,7 +531,7 @@ export const App = () => {
           </div>
           <hr />
           <div id="displayFrameStuff">
-            <p> frame: </p>
+            <p>frame</p>
             <ul>
               <li><button id='addNewFrame'>add new frame</button></li>
               <li><button id='deleteCurrFrame'>delete current frame</button></li>
@@ -619,10 +616,15 @@ export const App = () => {
                   toggle frame addition on spacebar press 
                 </button>
               </li>
+              <li>
+                <button onClick={switchMode}>
+                  {currMode === 'animation' ? 'image editor mode' : 'animator mode'}
+                </button>
+              </li>
             </ul>
           </div>
           <div id="experiments">
-            <h4>check out some experiments for new feature ideas:</h4>
+            <h4>check out some experiments for new feature ideas</h4>
             <p><a href="./experiments/floodfillExperiment/floodfillExperiment.html">floodfill with web workers</a></p>
             <p><a href="./experiments/oilpaintingWebWorkers/oilpainting.html">oilpainting with web workers</a></p>
             <p><a href="./experiments/selectToolExperiment/selectTool.html">selection tool</a></p>
@@ -633,7 +635,7 @@ export const App = () => {
                   
         <section id='animControlSection' className='tbar'>
           <div id='animationControl'>
-            <h4> animation control: </h4>
+            <h4> animation control </h4>
             <div id='timeOptions'>
               <label htmlFor='timePerFrame'>time per frame (ms):</label>
               <select name='timePerFrame' id='timePerFrame' onChange={
@@ -675,10 +677,12 @@ export const App = () => {
           currMode !== 'animation' &&
           <>
             <h1> image editor </h1>
+            <button onClick={importImage} style={{display: 'block'}}> import image </button>
+            <p> note that the image will be imported with the original dimensions of the image. currently only supports applying filters. </p>
             <canvas 
               ref={imageEditorCanvas} 
               id='imageEditorCanvas' 
-              style={{border: '#000 solid 1px', height: '500px', width: '500px'}}
+              style={{border: '#000 solid 1px'}}
             ></canvas>
           </>
         }

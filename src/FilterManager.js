@@ -94,4 +94,4 @@ export class FilterManager {
     const selectedFilter = this.filtersMap[option];
     this.filterCanvas((selectedFilter).filter.bind(selectedFilter), option, currMode); // make sure 'this' context is correct for the filtering function
   }
-};
+}

@@ -622,7 +622,6 @@ class AnimationController {
   }
 }
 
-
 const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
 const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
 	$ReactRefreshModuleId$
@@ -1574,14 +1573,12 @@ const App = () => {
   }, " demos "))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("section", {
     id: "instructions",
     className: "toolbarSection2"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "Space"), ": append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "\u2190"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "\u2192"), ": move between layers"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "A"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "D"), ": move between frames"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "Ctrl"), " + ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "V"), ": paste image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "R"), " + mouse wheel: rotate pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "S"), ": resize pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "Esc"), ": abort image paste"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "After pasting the image, you can move it by clicking and dragging the box around it (denoted by dotted lines). Apply the image to the canvas by clicking anywhere outside the dotted lines."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-    onClick: switchMode
-  }, currMode === 'animation' ? 'image editor mode' : 'animator mode')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("section", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", null, " instructions "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "Space"), ": append a new layer (default behavior) or frame (see 'other' to toggle between layer or frame addition with the spacebar)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "\u2190"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "\u2192"), ": move between layers"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "A"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "D"), ": move between frames"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "After frames get added to the timeline (the rectangle below the canvas), you can set different frame speeds at any frame by clicking on the frames."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "Ctrl"), " + ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "V"), ": paste image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "R"), " + mouse wheel: rotate pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "S"), ": resize pasted image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("kbd", null, "Esc"), ": abort image paste"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "After pasting the image, you can move it by clicking and dragging the box around it (denoted by dotted lines). Apply the image to the canvas by clicking anywhere outside the dotted lines.")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("section", {
     id: "frameLayerSection",
     className: "tbar"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", null, " frame/layer controls "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     id: "displayLayerStuff"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, " layer: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "layer"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
     id: "insertCanvas"
   }, "add new layer after")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
     id: "deleteCanvas"
@@ -1593,7 +1590,7 @@ const App = () => {
     id: "downloadLayer"
   }, "download current layer")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("hr", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     id: "displayFrameStuff"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, " frame: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "frame"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
     id: "addNewFrame"
   }, "add new frame")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
     id: "deleteCurrFrame"
@@ -1668,9 +1665,11 @@ const App = () => {
   }, "toggle pen pressure for color")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
     id: "toggleLayerOrFrame",
     onClick: toggleLayerOrFrame
-  }, "toggle frame addition on spacebar press")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+  }, "toggle frame addition on spacebar press")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    onClick: switchMode
+  }, currMode === 'animation' ? 'image editor mode' : 'animator mode')))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     id: "experiments"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", null, "check out some experiments for new feature ideas:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", null, "check out some experiments for new feature ideas"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
     href: "./experiments/floodfillExperiment/floodfillExperiment.html"
   }, "floodfill with web workers")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("a", {
     href: "./experiments/oilpaintingWebWorkers/oilpainting.html"
@@ -1685,7 +1684,7 @@ const App = () => {
     className: "tbar"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     id: "animationControl"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", null, " animation control: "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", null, " animation control "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     id: "timeOptions"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
     htmlFor: "timePerFrame"
@@ -1734,13 +1733,16 @@ const App = () => {
     className: "demo"
   }, "walk_anim_practice")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("main", {
     className: "screen"
-  }, currMode !== 'animation' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, " image editor "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("canvas", {
+  }, currMode !== 'animation' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, " image editor "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    onClick: importImage,
+    style: {
+      display: 'block'
+    }
+  }, " import image "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, " note that the image will be imported with the original dimensions of the image. currently only supports applying filters. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("canvas", {
     ref: imageEditorCanvas,
     id: "imageEditorCanvas",
     style: {
-      border: '#000 solid 1px',
-      height: '500px',
-      width: '500px'
+      border: '#000 solid 1px'
     }
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "screenContainer",
@@ -1954,7 +1956,6 @@ class BrushManager {
   }
 }
 
-
 const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
 const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
 	$ReactRefreshModuleId$
@@ -2106,7 +2107,6 @@ class FilterManager {
     this.filterCanvas(selectedFilter.filter.bind(selectedFilter), option, currMode); // make sure 'this' context is correct for the filtering function
   }
 }
-;
 
 const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
 const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
@@ -3086,9 +3086,7 @@ class Toolbar {
       }
     });
   }
-} // end of Toolbar 
-
-
+}
 
 const $ReactRefreshModuleId$ = __webpack_require__.$Refresh$.moduleId;
 const $ReactRefreshCurrentExports$ = __react_refresh_utils__.getModuleExports(
@@ -4519,7 +4517,6 @@ class AnimationTimeline extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
     })));
   }
 }
-
 var _c;
 __webpack_require__.$Refresh$.register(_c, "TimelineFrameThumbnail");
 
@@ -4657,7 +4654,6 @@ const BrushDashboard = props => {
 };
 _s(BrushDashboard, "7FWB4QwAAn7GoPtoSz0w+iLMqJo=");
 _c = BrushDashboard;
-
 var _c;
 __webpack_require__.$Refresh$.register(_c, "BrushDashboard");
 
@@ -5093,7 +5089,6 @@ const LayerOrder = props => {
 };
 _s(LayerOrder, "9lImlHe4mNtbD+1TdeqCZQD6Kw8=");
 _c = LayerOrder;
-
 var _c;
 __webpack_require__.$Refresh$.register(_c, "LayerOrder");
 

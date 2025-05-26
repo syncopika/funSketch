@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 
-const BrushDashboard = (props) => {
+export const BrushDashboard = (props) => {
   const brushManager = props.brushManager;
   const brushes = brushManager ? brushManager.brushesMap : {}; // can be null initially
   const brushNames = Object.keys(brushes);
@@ -115,9 +115,4 @@ const BrushDashboard = (props) => {
 
     </div>
   );
-};
-
-
-export{
-  BrushDashboard
 };

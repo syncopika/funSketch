@@ -1,4 +1,4 @@
-class Toolbar {
+export class Toolbar {
   constructor(brush, animationProj){
     // used as a flag for the animation playback features
     this.play = null;
@@ -648,10 +648,4 @@ class Toolbar {
       }
     });
   }
-    
-} // end of Toolbar 
-
-
-export {
-  Toolbar
-};
+}

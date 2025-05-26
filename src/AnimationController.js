@@ -1,4 +1,4 @@
-class AnimationController {
+export class AnimationController {
   constructor(animationProject, toolbar){
     this.animProject = animationProject;
     this.toolbar = toolbar;
@@ -130,8 +130,3 @@ class AnimationController {
     this.reqAnimFrameId = requestAnimationFrame(this.#animate.bind(this));
   }
 }
-
-export {
-  AnimationController
-};
-    

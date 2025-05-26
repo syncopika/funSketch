@@ -13,11 +13,11 @@ class BilateralFilter extends FilterTemplate {
     
   constructor(){
     const params = {
-      "blurFactor": {
-        "value": 3,
-        "min": 1,
-        "max": 15,
-        "step": 1,
+      'blurFactor': {
+        'value': 3,
+        'min': 1,
+        'max': 15,
+        'step': 1,
       }
     };
     super(params);

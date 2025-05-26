@@ -6,17 +6,17 @@ import { FilterTemplate } from './FilterTemplate.js';
 class OilPainting extends FilterTemplate {
   constructor(){
     const params = {
-      "radius": {
-        "min": 1,
-        "max": 7,
-        "value": 5,
-        "step": 1,
+      'radius': {
+        'min': 1,
+        'max': 7,
+        'value': 5,
+        'step': 1,
       },
-      "intensity": {
-        "min": 10,
-        "max": 30,
-        "value": 20,
-        "step": 1,
+      'intensity': {
+        'min': 10,
+        'max': 30,
+        'value': 20,
+        'step': 1,
       },
     };
     super(params);
@@ -84,7 +84,7 @@ class OilPainting extends FilterTemplate {
   }
     
   filter(pixels){
-    console.log("starting oilpainting filter: " + (new Date()));
+    console.log('starting oilpainting filter: ' + (new Date()));
     const width = pixels.width;
     const height = pixels.height;
         
@@ -101,7 +101,7 @@ class OilPainting extends FilterTemplate {
       }
     }
         
-    console.log("oilpainting filter done: " + (new Date()));
+    console.log('oilpainting filter done: ' + (new Date()));
         
     return pixels;
   }

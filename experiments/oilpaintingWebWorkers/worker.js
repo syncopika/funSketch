@@ -19,17 +19,17 @@ function getIntensity(pixelData, width, height, row, col){
   const avgB = {};
     
   const params = {
-    "radius": {
-      "min": 1,
-      "max": 7,
-      "value": 5,
-      "step": 1,
+    'radius': {
+      'min': 1,
+      'max': 7,
+      'value': 5,
+      'step': 1,
     },
-    "intensity": {
-      "min": 10,
-      "max": 30,
-      "value": 20,
-      "step": 1,
+    'intensity': {
+      'min': 10,
+      'max': 30,
+      'value': 20,
+      'step': 1,
     },
   };
     

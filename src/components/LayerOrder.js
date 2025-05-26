@@ -17,14 +17,14 @@ export const LayerOrder = (props) => {
   const layers = props.layers;
     
   const style = {
-    "textAlign": "center"
+    'textAlign': 'center'
   };
     
   const elementStyle = {
-    "margin": "2px auto",
-    "textAlign": "center",
-    "border": "1px solid #000",
-    "width": "50%",
+    'margin': '2px auto',
+    'textAlign': 'center',
+    'border': '1px solid #000',
+    'width': '50%',
   };
     
   // use a hook to be able to drag and drop with 
@@ -49,14 +49,14 @@ export const LayerOrder = (props) => {
                   const thisEl = e.target;
                   thisEl.style.opacity = 0.5;
                   setDragSourceEl(thisEl);
-                  e.dataTransfer.effectAllowed = "move";
-                  e.dataTransfer.setData("text/html", thisEl.innerHTML);
+                  e.dataTransfer.effectAllowed = 'move';
+                  e.dataTransfer.setData('text/html', thisEl.innerHTML);
                 }
               }
                             
               onDragEnter={
                 function(e){
-                  e.target.style.border = "1px dotted #000";
+                  e.target.style.border = '1px dotted #000';
                 }
               }
                             
@@ -68,7 +68,7 @@ export const LayerOrder = (props) => {
                             
               onDragLeave={
                 function(e){
-                  e.target.style.border = "1px solid #000";
+                  e.target.style.border = '1px solid #000';
                 }
               }
                             
@@ -89,19 +89,19 @@ export const LayerOrder = (props) => {
                   dragSourceEl.style.opacity = 1;
                                     
                   // also make sure target has its border style restored
-                  thisEl.style.border = "1px solid #000";
+                  thisEl.style.border = '1px solid #000';
                                     
                   e.preventDefault();
                 }
               }
                             
-              draggable={"true"}
+              draggable={'true'}
                             
             >layer {layerIndex+1}</div>;
           })
         }
         <button
-          id={"doneChangingLayerButton"}
+          id={'doneChangingLayerButton'}
           onClick={
             function(){
               saveNewLayerOrder(updateParentState);

@@ -7,14 +7,14 @@ import { Toolbar } from '../src/Toolbar.js';
 import { BrushManager } from '../src/BrushManager.js';
 import { App, FrameCounterDisplay } from '../src/App.js';
 
-describe("testing App component", () => {
+describe('testing App component', () => {
     
   beforeAll(() => {
-    jest.spyOn(AnimationProject.prototype, "updateOnionSkin").mockImplementation(() => undefined);
-    jest.spyOn(Toolbar.prototype, "mergeFrameLayers").mockImplementation(() => {
+    jest.spyOn(AnimationProject.prototype, 'updateOnionSkin').mockImplementation(() => undefined);
+    jest.spyOn(Toolbar.prototype, 'mergeFrameLayers').mockImplementation(() => {
       return {
         toDataURL: function(){
-          return "something";
+          return 'something';
         }
       };
     });
@@ -24,7 +24,7 @@ describe("testing App component", () => {
     jest.restoreAllMocks();
   });
     
-  it("testing FrameCounterDisplay rendering", () => {
+  it('testing FrameCounterDisplay rendering', () => {
     const frameNum = 0;
     const layerNum = 1;
         
@@ -39,17 +39,17 @@ describe("testing App component", () => {
     expect(screen.getByText(new RegExp(layerNum))).toBeInTheDocument();
   });
     
-  it("testing App rendering", () => {
+  it('testing App rendering', () => {
     render(<App />);
         
     // we expect that the layer and frame should be shown as 1 initially somewhere on the page        
     const initialFrameNum = 1;
     const initialLayerNum = 1;
-    expect(screen.getByText(new RegExp("frame: " + initialFrameNum))).toBeInTheDocument();
-    expect(screen.getByText(new RegExp("layer: " + initialLayerNum))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp('frame: ' + initialFrameNum))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp('layer: ' + initialLayerNum))).toBeInTheDocument();
   });
     
-  it("testing adding a layer", () => {
+  it('testing adding a layer', () => {
     const presentation = render(<App />);
         
     // add a new layer
@@ -63,7 +63,7 @@ describe("testing App component", () => {
     expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(2);
   });
     
-  it("testing adding a frame", () => {
+  it('testing adding a frame', () => {
     const presentation = render(<App />);
         
     // add a new frame
@@ -73,8 +73,8 @@ describe("testing App component", () => {
     expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(2);
   });
     
-  it("making sure brush-related event listeners get removed from canvas when switching canvases", () => {
-    const brushReset = jest.spyOn(BrushManager.prototype, "resetBrush");
+  it('making sure brush-related event listeners get removed from canvas when switching canvases', () => {
+    const brushReset = jest.spyOn(BrushManager.prototype, 'resetBrush');
     const presentation = render(<App />);
         
     // add a new layer
@@ -86,7 +86,7 @@ describe("testing App component", () => {
     expect(brushReset).toHaveBeenCalledTimes(1);
   });
     
-  it("testing deleting the initial layer (no key down)", () => {
+  it('testing deleting the initial layer (no key down)', () => {
     const presentation = render(<App />);
         
     const leftClick = {button: 0};
@@ -95,11 +95,11 @@ describe("testing App component", () => {
     const initialLayerNum = 1;
     fireEvent.click(screen.getByRole('button', {name: 'delete current layer'}), leftClick);
         
-    expect(screen.getByText(new RegExp("layer: " + initialLayerNum))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp('layer: ' + initialLayerNum))).toBeInTheDocument();
     expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(1);
   });
     
-  it("testing adding a layer and then deleting (no key down)", () => {
+  it('testing adding a layer and then deleting (no key down)', () => {
     const presentation = render(<App />);
         
     // add a new layer
@@ -109,19 +109,19 @@ describe("testing App component", () => {
     // move to the next layer
     fireEvent.click(screen.getByRole('heading', {name: '>'}), leftClick);
     const nextLayerNum = 2;
-    expect(screen.getByText(new RegExp("layer: " + nextLayerNum))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp('layer: ' + nextLayerNum))).toBeInTheDocument();
         
     // delete the layer
     const initialLayerNum = 1;
     fireEvent.click(screen.getByRole('button', {name: 'delete current layer'}), leftClick);
         
-    expect(screen.getByText(new RegExp("layer: " + initialLayerNum))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp('layer: ' + initialLayerNum))).toBeInTheDocument();
         
     // confirm only 1 layer exists now
     expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(1);
   });
     
-  it("testing adding a frame and then deleting (no key down)", () => {
+  it('testing adding a frame and then deleting (no key down)', () => {
     const presentation = render(<App />);
         
     // add a new frame
@@ -131,12 +131,12 @@ describe("testing App component", () => {
     // move to the next frame
     fireEvent.click(screen.getByRole('heading', {name: '▶'}), leftClick);
     const nextFrameNum = 2;
-    expect(screen.getByText(new RegExp("frame: " + nextFrameNum))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp('frame: ' + nextFrameNum))).toBeInTheDocument();
         
     // delete the frame
     const firstFrameNum = 1;
     fireEvent.click(screen.getByRole('button', {name: 'delete current frame'}), leftClick);
-    expect(screen.getByText(new RegExp("frame: " + firstFrameNum))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp('frame: ' + firstFrameNum))).toBeInTheDocument();
         
     // confirm only 1 frame exists now
     expect(presentation.container.querySelectorAll('canvas[id^="frame"]').length).toEqual(1);

@@ -11,7 +11,7 @@ import { BrushDashboard } from './components/BrushDashboard.js';
 import { ColorPicker } from './components/ColorPicker.js';
 import { PasteImageManager } from './PasteImageManager.js';
 
-import "./app.css";
+import './app.css';
 
 // for displaying current frame and layer number
 // TODO: importing a project won't update the counter display since it's using the Toolbar class functions
@@ -75,16 +75,16 @@ export const App = () => {
     if(currFrameIndex + 1 > timelineFrames.current.length){
       // if the animation timeline doesn't have the current frame, add it
       timelineFrames.current.push({
-        "data": currFrameData,
-        "height": frame.height, 
-        "width": frame.width
+        'data': currFrameData,
+        'height': frame.height, 
+        'width': frame.width
       });
     }else{
       // update image data in the animation timeline
       timelineFrames.current[currFrameIndex].data = currFrameData;
     }
     
-    if(direction === "prev"){
+    if(direction === 'prev'){
       if(toolbarInstance.prevFrame()){
         return true;
       }
@@ -117,7 +117,7 @@ export const App = () => {
 
   // left and right arrows for FRAMES
   const prevFrame = () => {
-    if(moveToFrame("prev")){
+    if(moveToFrame('prev')){
       const curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
       setCurrLayer(curr.getCurrCanvasIndex() + 1);
@@ -126,7 +126,7 @@ export const App = () => {
   };
 
   const nextFrame = () => {
-    if(moveToFrame("next")){
+    if(moveToFrame('next')){
       const curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
       setCurrLayer(curr.getCurrCanvasIndex() + 1);
@@ -154,19 +154,19 @@ export const App = () => {
   
   const togglePenPressureBtn = (evt) => {
     // TODO: maybe a better approach here would be changing the classname and basing the color off classname
-    if(evt.target.style.border === "1px solid rgb(255, 0, 0)"){
-      evt.target.style.border = "1px solid rgb(0, 255, 0)";
+    if(evt.target.style.border === '1px solid rgb(255, 0, 0)'){
+      evt.target.style.border = '1px solid rgb(0, 255, 0)';
     }else{
-      evt.target.style.border = "1px solid rgb(255, 0, 0)";
+      evt.target.style.border = '1px solid rgb(255, 0, 0)';
     }
     brushInstance.togglePressureColorFlag();
   };
   
   const toggleLayerOrFrame = (evt) => {
     if(toolbarInstance.layerMode){
-      evt.target.textContent = "toggle layer addition on spacebar press";
+      evt.target.textContent = 'toggle layer addition on spacebar press';
     }else{
-      evt.target.textContent = "toggle frame addition on spacebar press";
+      evt.target.textContent = 'toggle frame addition on spacebar press';
     }
     toolbarInstance.layerMode = !toolbarInstance.layerMode;
   };
@@ -262,9 +262,9 @@ export const App = () => {
       
       if(currFrameIndex + 1 > newFrames.length){
         newFrames.push({
-          "data": currFrameData, 
-          "height": mergedLayersFrame.height, 
-          "width": mergedLayersFrame.width
+          'data': currFrameData, 
+          'height': mergedLayersFrame.height, 
+          'width': mergedLayersFrame.width
         });
       }else{
         // update image data
@@ -292,7 +292,7 @@ export const App = () => {
   };
     
   const getDemo = (selected) => {
-    if(selected === ""){ 
+    if(selected === ''){ 
       return;
     }
         
@@ -303,7 +303,7 @@ export const App = () => {
       return;
     }
     
-    httpRequest.open("GET", selectedDemo);
+    httpRequest.open('GET', selectedDemo);
         
     httpRequest.onload = () => {
       const data = JSON.parse(httpRequest.responseText);
@@ -318,32 +318,32 @@ export const App = () => {
 
     // map caret id to div id of option that should show up in the 2nd column of the toolbar
     const options = {
-      "instructionsOption": "instructions",
-      "frameLayerCtrlOption": "frameLayerSection",
-      "animationCtrlOption": "animControlSection",
-      "otherOption": "otherSection",
-      "demosOption": "showDemos",
+      'instructionsOption': 'instructions',
+      'frameLayerCtrlOption': 'frameLayerSection',
+      'animationCtrlOption': 'animControlSection',
+      'otherOption': 'otherSection',
+      'demosOption': 'showDemos',
     };
         
     Array.from(Object.keys(options)).forEach((section) => {
       const contentToToggle = document.getElementById(options[section]);
-      contentToToggle.classList.remove("toolbarSection2");
+      contentToToggle.classList.remove('toolbarSection2');
             
       if(section === id){
-        contentToToggle.classList.add("toolbarSection2");
-        contentToToggle.classList.remove("tbar");
+        contentToToggle.classList.add('toolbarSection2');
+        contentToToggle.classList.remove('tbar');
       }else{
-        contentToToggle.classList.add("tbar");
+        contentToToggle.classList.add('tbar');
       }
     });
   };
     
   const showFiltersOrBrushes = (evt) => {
     const disp = document.getElementById(evt.target.textContent.trim()); // 'brushes' or 'filters'
-    if(disp.style.display === "none" || !disp.style.display){
-      disp.style.display = "block";
+    if(disp.style.display === 'none' || !disp.style.display){
+      disp.style.display = 'block';
     }else{
-      disp.style.display = "none";
+      disp.style.display = 'none';
     }
   };
   
@@ -358,7 +358,7 @@ export const App = () => {
   const playForwardAnimation = () => {
     //this._playAnimation("forward");
     animationController.playAnimation(
-      "forward", 
+      'forward', 
       timelineFrames.current,
       timelineMarkers
     );
@@ -367,7 +367,7 @@ export const App = () => {
   const playBackwardAnimation = () => {
     //this._playAnimation("backward");
     animationController.playAnimation(
-      "backward", 
+      'backward', 
       timelineFrames.current,
       timelineMarkers
     );
@@ -400,7 +400,7 @@ export const App = () => {
       brushInstance.updateInitialCanvasDimensions(canvas.width, canvas.height);
       
       // start with the default brush
-      brushInstance.brushesMap["default"].attachBrush();
+      brushInstance.brushesMap['default'].attachBrush();
       
       // allow pasting images via ctrl+v
       document.addEventListener('paste', pasteImageManager.handlePasteEvent.bind(pasteImageManager));
@@ -423,19 +423,19 @@ export const App = () => {
         let frame = null;
         
         switch(evt.code){
-        case "ArrowLeft": //left arrow key
+        case 'ArrowLeft': //left arrow key
           if(toolbarInstance.prevLayer()){
             frame = animationProject.getCurrFrame();
             updateStateFlag = true;
           }
           break;
-        case "ArrowRight": //right arrow key
+        case 'ArrowRight': //right arrow key
           if(toolbarInstance.nextLayer()){
             frame = animationProject.getCurrFrame();
             updateStateFlag = true;
           }
           break;
-        case "Space": //space bar
+        case 'Space': //space bar
           evt.preventDefault();
           if(toolbarInstance.layerMode){
             toolbarInstance.addNewLayer();
@@ -443,12 +443,12 @@ export const App = () => {
             animationProject.addNewFrame(false);
           }
           break;
-        case "KeyA": // a key 
-          updateStateFlag = moveToFrame("prev");
+        case 'KeyA': // a key 
+          updateStateFlag = moveToFrame('prev');
           frame = animationProject.getCurrFrame();                
           break;
-        case "KeyD": // d key
-          updateStateFlag = moveToFrame("next");
+        case 'KeyD': // d key
+          updateStateFlag = moveToFrame('next');
           frame = animationProject.getCurrFrame();
           break;
         default:
@@ -678,12 +678,14 @@ export const App = () => {
           <>
             <h1> image editor </h1>
             <button onClick={importImage} style={{display: 'block'}}> import image </button>
-            <p> note that the image will be imported with the original dimensions of the image. currently only supports applying filters. </p>
-            <canvas 
-              ref={imageEditorCanvas} 
-              id='imageEditorCanvas' 
-              style={{border: '#000 solid 1px'}}
-            ></canvas>
+            <p> note that the image will be imported with the original dimensions. currently only supports applying filters. </p>
+            <div style={{position: 'relative'}}>
+              <canvas 
+                ref={imageEditorCanvas} 
+                id='imageEditorCanvas' 
+                style={{border: '#000 solid 1px'}}
+              ></canvas>
+            </div>
           </>
         }
         

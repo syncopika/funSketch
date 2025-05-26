@@ -13,7 +13,7 @@ class BrushTemplate {
     this.clickColor = [];
     this.clickSize = [];
     this.clickPressure = [];
-    this.cursorType = "crosshair";
+    this.cursorType = 'crosshair';
   }
     
   // assuming a PointerEvent, calculate the brush width based on stylus pressure
@@ -64,7 +64,7 @@ class BrushTemplate {
       currSize = this.calculateBrushWidth(pointerEvt);
       penPressure = pressure;
     }else{
-      currColor = 'rgba(' + currColorArr.join(",") + ')';
+      currColor = 'rgba(' + currColorArr.join(',') + ')';
     }
         
     this.clickX.push(x);
@@ -77,8 +77,8 @@ class BrushTemplate {
     
   redraw(strokeFunction){
     const frame = this.brushManager.animationProject.getCurrFrame();
-    const context = frame.getCurrCanvas().getContext("2d");
-    context.lineJoin = "round"; //TODO: make this a brushmanager variable?
+    const context = frame.getCurrCanvas().getContext('2d');
+    context.lineJoin = 'round'; //TODO: make this a brushmanager variable?
     strokeFunction(context);
   }
     

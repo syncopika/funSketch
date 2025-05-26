@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { LayerOrder } from '../src/components/LayerOrder';
 
-describe("testing LayerOrder component", () => {
+describe('testing LayerOrder component', () => {
     
   beforeAll(() => {
   });
@@ -12,7 +12,7 @@ describe("testing LayerOrder component", () => {
   afterAll(() => {
   });
     
-  it("is testing LayerOrder no show", () => {
+  it('is testing LayerOrder no show', () => {
     const { container } = render(
       <LayerOrder
         changingLayerOrder={false}
@@ -21,10 +21,10 @@ describe("testing LayerOrder component", () => {
       />
     );
     expect(container.innerHTML).toBe('<div></div>');
-    expect(screen.queryByText("layer order")).not.toBeInTheDocument();
+    expect(screen.queryByText('layer order')).not.toBeInTheDocument();
   });
     
-  it("is testing LayerOrder show", () => {
+  it('is testing LayerOrder show', () => {
     const { container } = render(
       <LayerOrder
         changingLayerOrder={true}
@@ -33,7 +33,7 @@ describe("testing LayerOrder component", () => {
       />
     );
     expect(container.innerHTML).not.toBe('<div></div>');
-    expect(screen.getByText(new RegExp("layer order"))).toBeInTheDocument();        
+    expect(screen.getByText(new RegExp('layer order'))).toBeInTheDocument();        
   });
     
 });

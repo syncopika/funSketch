@@ -7,7 +7,7 @@ class FilterTemplate {
     
   filter(imageData){
     // all filters should have a filter method that returns imageData
-    console.log("unimplemented filter");
+    console.log('unimplemented filter');
     return imageData;
   }
 }

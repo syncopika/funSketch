@@ -5,7 +5,7 @@ class FloodfillBrush extends BrushTemplate {
   constructor(brushManager){
     super(brushManager);
         
-    this.cursorType = "url(" + "\"paintbucket.png\"" + "), auto";
+    this.cursorType = 'url(' + '"paintbucket.png"' + '), auto';
   }
     
   floodfill(currentCanvas, newColor, pixelSelected){
@@ -112,7 +112,7 @@ class FloodfillBrush extends BrushTemplate {
       const x = evt.offsetX;
       const y = evt.offsetY;
 
-      const colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
+      const colorData = document.getElementById(currLayer.id).getContext('2d').getImageData(x, y, 1, 1).data;
       const color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')';
 
       // create an object with the pixel data
@@ -122,7 +122,7 @@ class FloodfillBrush extends BrushTemplate {
             
       const w = currLayer.width;
       const h = currLayer.height;
-      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+      frame.addSnapshot(currLayer.getContext('2d').getImageData(0, 0, w, h));
     }
   }
     

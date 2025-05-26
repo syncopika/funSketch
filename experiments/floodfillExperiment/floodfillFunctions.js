@@ -9,7 +9,7 @@ function getRandomCoord(height, width, canvasId){
   data['x'] = Math.floor(randX);
   data['y'] = Math.floor(randY);
 	
-  const colorData = document.getElementById(canvasId).getContext("2d").getImageData(data['x'], data['y'], 1, 1).data;
+  const colorData = document.getElementById(canvasId).getContext('2d').getImageData(data['x'], data['y'], 1, 1).data;
   const color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')';
 	
   data['color'] = color;
@@ -36,7 +36,7 @@ function floodFill(canvasId, selectedPixel, resultTableId){
   // post the result on the page 
   const results = document.getElementById(resultTableId);
   const newResult = document.createElement('li');
-  newResult.textContent = floodfillHelper(currentCanvas, currColorArray, selectedPixel) + " s";
+  newResult.textContent = floodfillHelper(currentCanvas, currColorArray, selectedPixel) + ' s';
   results.appendChild(newResult);
 	
 }
@@ -171,10 +171,10 @@ function floodfillWorkers(canvasId, selectedPixel, resultTableId){
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
 	
-    const workerTopRight = new Worker("worker.js");
-    const workerTopLeft = new Worker("worker.js");
-    const workerBottomRight = new Worker("worker.js");
-    const workerBottomLeft = new Worker("worker.js");
+    const workerTopRight = new Worker('worker.js');
+    const workerTopLeft = new Worker('worker.js');
+    const workerBottomRight = new Worker('worker.js');
+    const workerBottomLeft = new Worker('worker.js');
 		
     // start the timer here!
     const startTime2 = new Date();
@@ -219,7 +219,7 @@ function floodfillWorkers(canvasId, selectedPixel, resultTableId){
     };
 		
   }else{
-    console.log("web workers not available!");
+    console.log('web workers not available!');
   }
 }
 
@@ -236,7 +236,7 @@ function getResult(startTime, context, imageData, resultsId){
   const resultTable = document.getElementById(resultsId);
 	
   const newResult = document.createElement('li');
-  newResult.textContent = res + " s";
+  newResult.textContent = res + ' s';
   resultTable.appendChild(newResult);
 	
   //console.log((endTime.getTime() - startTime.getTime()) / 1000)

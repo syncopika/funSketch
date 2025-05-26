@@ -18,11 +18,11 @@ export class PasteImageManager {
 
   addPasteCanvas(imgData, width, height){
     const displayArea = this.animationProject.getCurrFrame().getCurrCanvas().parentNode;
-    const canvasElement = document.createElement("canvas");
+    const canvasElement = document.createElement('canvas');
     displayArea.appendChild(canvasElement);
-    canvasElement.className = "pasteCanvas";
-    canvasElement.style.position = "absolute";
-    canvasElement.style.border = "1px #000 dotted";
+    canvasElement.className = 'pasteCanvas';
+    canvasElement.style.position = 'absolute';
+    canvasElement.style.border = '1px #000 dotted';
     canvasElement.style.zIndex = 10;
     canvasElement.style.top = 0;
     canvasElement.style.left = 0;
@@ -49,13 +49,13 @@ export class PasteImageManager {
   allowScaleAndRotate(evt){
     const pasteCanvas = document.querySelector('.pasteCanvas');
     if(pasteCanvas){
-      if(evt.code === "KeyS"){
+      if(evt.code === 'KeyS'){
         // s key
         this.resizingPasteCanvas = !this.resizingPasteCanvas;
-      }else if(evt.code === "KeyR"){
+      }else if(evt.code === 'KeyR'){
         // r key
         this.rotatingPasteCanvas = !this.rotatingPasteCanvas;
-      }else if(evt.code === "Escape"){
+      }else if(evt.code === 'Escape'){
         // esc key to cancel
         pasteCanvas.parentNode.removeChild(pasteCanvas);
         this.resizingPasteCanvas = false;
@@ -89,7 +89,7 @@ export class PasteImageManager {
         
     // add click event for outside the canvas to finalize image paste
     function finalizeImagePaste(evt){
-      if(evt.target.classList.contains("pasteCanvas")){
+      if(evt.target.classList.contains('pasteCanvas')){
         // user has to click outside the canvas to finalize the image paste
         return;
       }
@@ -98,7 +98,7 @@ export class PasteImageManager {
       const mainCanvas = this.animationProject.getCurrFrame().getCurrCanvas();   
       const mainCtx = mainCanvas.getContext('2d');
             
-      document.body.removeEventListener("pointerup", finalizeImagePaste);
+      document.body.removeEventListener('pointerup', finalizeImagePaste);
       mainCanvas.parentNode.style.border = 'none';
             
       if(pasteCanvas.parentNode === null){
@@ -208,7 +208,7 @@ export class PasteImageManager {
       newRotation %= 360;
             
       // https://stackoverflow.com/questions/17040360/javascript-function-to-rotate-a-base-64-image-by-x-degrees-and-return-new-base64
-      const ctx = pasteCanvas.getContext("2d");
+      const ctx = pasteCanvas.getContext('2d');
             
       // https://stackoverflow.com/questions/17411991/html5-canvas-rotate-image
       ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -243,16 +243,16 @@ export class PasteImageManager {
         const offsetX = Math.abs(currX - this.initialOffsetX);
                 
         if(currY < this.lastOffsetHeight){
-          pasteCanvas.style.top = (parseInt(pasteCanvas.style.top) - offsetY) + "px";
+          pasteCanvas.style.top = (parseInt(pasteCanvas.style.top) - offsetY) + 'px';
         }else{
-          pasteCanvas.style.top = (parseInt(pasteCanvas.style.top) + offsetY) + "px";
+          pasteCanvas.style.top = (parseInt(pasteCanvas.style.top) + offsetY) + 'px';
         }
         this.lastOffsetHeight = currY;
                 
         if(currX < this.lastOffsetWidth){
-          pasteCanvas.style.left = (parseInt(pasteCanvas.style.left) - offsetX) + "px";
+          pasteCanvas.style.left = (parseInt(pasteCanvas.style.left) - offsetX) + 'px';
         }else{
-          pasteCanvas.style.left = (parseInt(pasteCanvas.style.left) + offsetX) + "px";
+          pasteCanvas.style.left = (parseInt(pasteCanvas.style.left) + offsetX) + 'px';
         }
         this.lastOffsetWidth = currX;
       }else if(this.resizingPasteCanvas){
@@ -303,7 +303,7 @@ export class PasteImageManager {
       this.isMovingPasteCanvas = false;
       if(this.resizingPasteCanvas) this.resizingPasteCanvas = false;
     });
-    document.body.addEventListener("pointerup", finalizeImagePaste.bind(this));
+    document.body.addEventListener('pointerup', finalizeImagePaste.bind(this));
     document.addEventListener('keydown', this.allowScaleAndRotate.bind(this));
   }
     
@@ -311,7 +311,7 @@ export class PasteImageManager {
     const items = (evt.clipboardData || evt.originalEvent.clipboardData).items; // items is an object of type DataTransferItemList
         
     for(let i = 0; i < items.length; i++){
-      if(items[i].type.indexOf("image") > -1){
+      if(items[i].type.indexOf('image') > -1){
         const file = items[i]; // items[i] is a DataTransferItem type object
         const blob = file.getAsFile();
         const url = URL.createObjectURL(blob);

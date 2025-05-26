@@ -13,29 +13,29 @@ class Watercolor extends FilterTemplate {
     
   constructor(){
     const params = {
-      "beta": {
-        "value": 0.5,
-        "min": 0,
-        "max": 2,
-        "step": 0.1,
+      'beta': {
+        'value': 0.5,
+        'min': 0,
+        'max': 2,
+        'step': 0.1,
       },
-      "octaves": {
-        "value": 3,
-        "min": 0,
-        "max": 10,
-        "step": 1,
+      'octaves': {
+        'value': 3,
+        'min': 0,
+        'max': 10,
+        'step': 1,
       },
-      "frequency": {
-        "value": 0.02,
-        "min": 0,
-        "max": 0.1,
-        "step": 0.01,
+      'frequency': {
+        'value': 0.02,
+        'min': 0,
+        'max': 0.1,
+        'step': 0.01,
       },
-      "persistence": {
-        "value": 0.3,
-        "min": 0.1,
-        "max": 1.0,
-        "step": 0.1,
+      'persistence': {
+        'value': 0.3,
+        'min': 0.1,
+        'max': 1.0,
+        'step': 0.1,
       },
     };
     super(params);

@@ -564,8 +564,8 @@ class AnimationController {
       times for each frame and use that.
     */
 
-    if (direction !== "forward" && direction !== "backward") {
-      console.log("not a valid direction for animation");
+    if (direction !== 'forward' && direction !== 'backward') {
+      console.log('not a valid direction for animation');
       return;
     }
     let frames = Array.from(timelineFrames); // make a copy
@@ -576,7 +576,7 @@ class AnimationController {
       // if the animationDisplay canvas is present, we're animating already
       return;
     }
-    if (direction === "backward") {
+    if (direction === 'backward') {
       // reverse alters the original array so we needed a copy
       frames = frames.reverse();
     }
@@ -594,10 +594,10 @@ class AnimationController {
     animationDisplay.style.border = '1px solid #000';
     animationDisplay.style.position = 'absolute';
     animationDisplay.style.opacity = 1.0;
-    animationDisplay.id = "animationDisplay";
-    document.querySelector(".canvasArea").appendChild(animationDisplay);
+    animationDisplay.id = 'animationDisplay';
+    document.querySelector('.canvasArea').appendChild(animationDisplay);
     const displayContext = animationDisplay.getContext('2d');
-    displayContext.fillStyle = "#ffffff";
+    displayContext.fillStyle = '#ffffff';
     displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
     this.animationDisplay = animationDisplay;
 
@@ -724,7 +724,7 @@ class Frame {
     this.container.appendChild(newCanvas);
 
     // https://stackoverflow.com/questions/74101155/chrome-warning-willreadfrequently-attribute-set-to-true
-    newCanvas.getContext("2d", {
+    newCanvas.getContext('2d', {
       willReadFrequently: true
     });
     setCanvas(prefill, newCanvas);
@@ -802,7 +802,7 @@ class Frame {
     // makes all layers not visible
     this.canvasList.forEach(canvas => {
       canvas.style.zIndex = -1;
-      canvas.style.visibility = "hidden";
+      canvas.style.visibility = 'hidden';
     });
   }
   show() {
@@ -816,7 +816,7 @@ class Frame {
         canvas.style.zIndex = 0;
         canvas.style.opacity = 0;
       }
-      canvas.style.visibility = "";
+      canvas.style.visibility = '';
     });
   }
 
@@ -858,9 +858,9 @@ class Frame {
   }
   clearCurrentLayer() {
     const currLayer = this.getCurrCanvas();
-    const context = currLayer.getContext("2d");
+    const context = currLayer.getContext('2d');
     context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
-    context.fillStyle = "#FFFFFF";
+    context.fillStyle = '#FFFFFF';
     context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
   }
   resetFrame() {
@@ -874,7 +874,7 @@ class Frame {
 ***/
 class AnimationProject {
   constructor(container) {
-    this.name = "";
+    this.name = '';
     this.currentFrameIndex = 0; // index of current frame
     this.speed = 100; // 100 ms per frame 
     this.frameList = [];
@@ -915,7 +915,7 @@ class AnimationProject {
     this.frameList[0].clearCurrentLayer();
     this.currentFrameIndex = 0;
     this.speed = 100;
-    this.frameList[0].getCurrCanvas().style.visibility = "";
+    this.frameList[0].getCurrCanvas().style.visibility = '';
     this.clearOnionSkin();
   }
   addNewFrame(showFlag) {
@@ -940,8 +940,8 @@ class AnimationProject {
       currLayer.style.zIndex = layer.zIndex;
 
       // add the image data 
-      const newCtx = currLayer.getContext("2d");
-      const currImageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height);
+      const newCtx = currLayer.getContext('2d');
+      const currImageData = layer.getContext('2d').getImageData(0, 0, layer.width, layer.height);
       newCtx.putImageData(currImageData, 0, 0);
     });
   }
@@ -1000,7 +1000,7 @@ class AnimationProject {
       return;
     }
     this.onionSkinFrame.style.display = ''; // show onion skin
-    const onionSkinCtx = this.onionSkinFrame.getContext("2d");
+    const onionSkinCtx = this.onionSkinFrame.getContext('2d');
     onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
 
     // take the previous frame, merge all layers, put into onion skin frame
@@ -1009,7 +1009,7 @@ class AnimationProject {
     // build the merged image from the first to last
     const prevFrame = this.frameList[this.currentFrameIndex - 1];
     prevFrame.getLayers().forEach(layer => {
-      const imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
+      const imageData = layer.getContext('2d').getImageData(0, 0, layer.width, layer.height).data;
       for (let i = 0; i < imageData.length; i += 4) {
         if (imageData[i] === 255 && imageData[i + 1] === 255 && imageData[i + 2] === 255) {
           continue;
@@ -1028,17 +1028,17 @@ class AnimationProject {
   }
   clearOnionSkin() {
     const onionSkin = this.onionSkinFrame;
-    const context = this.onionSkinFrame.getContext("2d");
+    const context = this.onionSkinFrame.getContext('2d');
     context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
-    context.fillStyle = "#FFFFFF";
+    context.fillStyle = '#FFFFFF';
     context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
   }
 }
 function createOnionSkinFrame(container) {
   const newCanvas = document.createElement('canvas');
-  newCanvas.id = "onionSkinCanvas";
+  newCanvas.id = 'onionSkinCanvas';
   container.appendChild(newCanvas);
-  newCanvas.getContext("2d", {
+  newCanvas.getContext('2d', {
     willReadFrequently: true
   });
   const prefill = true;
@@ -1051,18 +1051,18 @@ function createOnionSkinFrame(container) {
 // assigns default canvas attributes and styling
 // prefill should be false when importing a project
 function setCanvas(prefill, canvasElement, width, height) {
-  canvasElement.style.position = "absolute";
-  canvasElement.style.border = "1px #000 solid";
+  canvasElement.style.position = 'absolute';
+  canvasElement.style.border = '1px #000 solid';
   canvasElement.style.zIndex = 0;
   canvasElement.style.opacity = 0;
-  canvasElement.style.width = "100%";
-  canvasElement.style.height = "100%";
-  canvasElement.style.touchAction = "none"; // for handling pointer events properly
+  canvasElement.style.width = '100%';
+  canvasElement.style.height = '100%';
+  canvasElement.style.touchAction = 'none'; // for handling pointer events properly
   canvasElement.width = width ? width : canvasElement.offsetWidth;
   canvasElement.height = height ? height : canvasElement.offsetHeight;
   if (prefill) {
-    canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
-    canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+    canvasElement.getContext('2d').fillStyle = 'rgba(255, 255, 255, 1)';
+    canvasElement.getContext('2d').fillRect(0, 0, canvasElement.width, canvasElement.height);
   }
 }
 
@@ -1197,15 +1197,15 @@ const App = () => {
     if (currFrameIndex + 1 > timelineFrames.current.length) {
       // if the animation timeline doesn't have the current frame, add it
       timelineFrames.current.push({
-        "data": currFrameData,
-        "height": frame.height,
-        "width": frame.width
+        'data': currFrameData,
+        'height': frame.height,
+        'width': frame.width
       });
     } else {
       // update image data in the animation timeline
       timelineFrames.current[currFrameIndex].data = currFrameData;
     }
-    if (direction === "prev") {
+    if (direction === 'prev') {
       if (toolbarInstance.prevFrame()) {
         return true;
       }
@@ -1236,7 +1236,7 @@ const App = () => {
 
   // left and right arrows for FRAMES
   const prevFrame = () => {
-    if (moveToFrame("prev")) {
+    if (moveToFrame('prev')) {
       const curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
       setCurrLayer(curr.getCurrCanvasIndex() + 1);
@@ -1244,7 +1244,7 @@ const App = () => {
     }
   };
   const nextFrame = () => {
-    if (moveToFrame("next")) {
+    if (moveToFrame('next')) {
       const curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
       setCurrLayer(curr.getCurrCanvasIndex() + 1);
@@ -1269,18 +1269,18 @@ const App = () => {
   };
   const togglePenPressureBtn = evt => {
     // TODO: maybe a better approach here would be changing the classname and basing the color off classname
-    if (evt.target.style.border === "1px solid rgb(255, 0, 0)") {
-      evt.target.style.border = "1px solid rgb(0, 255, 0)";
+    if (evt.target.style.border === '1px solid rgb(255, 0, 0)') {
+      evt.target.style.border = '1px solid rgb(0, 255, 0)';
     } else {
-      evt.target.style.border = "1px solid rgb(255, 0, 0)";
+      evt.target.style.border = '1px solid rgb(255, 0, 0)';
     }
     brushInstance.togglePressureColorFlag();
   };
   const toggleLayerOrFrame = evt => {
     if (toolbarInstance.layerMode) {
-      evt.target.textContent = "toggle layer addition on spacebar press";
+      evt.target.textContent = 'toggle layer addition on spacebar press';
     } else {
-      evt.target.textContent = "toggle frame addition on spacebar press";
+      evt.target.textContent = 'toggle frame addition on spacebar press';
     }
     toolbarInstance.layerMode = !toolbarInstance.layerMode;
   };
@@ -1362,9 +1362,9 @@ const App = () => {
       const currFrameIndex = index;
       if (currFrameIndex + 1 > newFrames.length) {
         newFrames.push({
-          "data": currFrameData,
-          "height": mergedLayersFrame.height,
-          "width": mergedLayersFrame.width
+          'data': currFrameData,
+          'height': mergedLayersFrame.height,
+          'width': mergedLayersFrame.width
         });
       } else {
         // update image data
@@ -1388,7 +1388,7 @@ const App = () => {
     setTimelineFrames(newFrames);
   };
   const getDemo = selected => {
-    if (selected === "") {
+    if (selected === '') {
       return;
     }
     const selectedDemo = `demos/${selected}.json`;
@@ -1396,7 +1396,7 @@ const App = () => {
     if (!httpRequest) {
       return;
     }
-    httpRequest.open("GET", selectedDemo);
+    httpRequest.open('GET', selectedDemo);
     httpRequest.onload = () => {
       const data = JSON.parse(httpRequest.responseText);
       toolbarInstance.importData(data, importProjectUpdateFunc);
@@ -1408,29 +1408,29 @@ const App = () => {
 
     // map caret id to div id of option that should show up in the 2nd column of the toolbar
     const options = {
-      "instructionsOption": "instructions",
-      "frameLayerCtrlOption": "frameLayerSection",
-      "animationCtrlOption": "animControlSection",
-      "otherOption": "otherSection",
-      "demosOption": "showDemos"
+      'instructionsOption': 'instructions',
+      'frameLayerCtrlOption': 'frameLayerSection',
+      'animationCtrlOption': 'animControlSection',
+      'otherOption': 'otherSection',
+      'demosOption': 'showDemos'
     };
     Array.from(Object.keys(options)).forEach(section => {
       const contentToToggle = document.getElementById(options[section]);
-      contentToToggle.classList.remove("toolbarSection2");
+      contentToToggle.classList.remove('toolbarSection2');
       if (section === id) {
-        contentToToggle.classList.add("toolbarSection2");
-        contentToToggle.classList.remove("tbar");
+        contentToToggle.classList.add('toolbarSection2');
+        contentToToggle.classList.remove('tbar');
       } else {
-        contentToToggle.classList.add("tbar");
+        contentToToggle.classList.add('tbar');
       }
     });
   };
   const showFiltersOrBrushes = evt => {
     const disp = document.getElementById(evt.target.textContent.trim()); // 'brushes' or 'filters'
-    if (disp.style.display === "none" || !disp.style.display) {
-      disp.style.display = "block";
+    if (disp.style.display === 'none' || !disp.style.display) {
+      disp.style.display = 'block';
     } else {
-      disp.style.display = "none";
+      disp.style.display = 'none';
     }
   };
   const switchMode = () => {
@@ -1442,11 +1442,11 @@ const App = () => {
   };
   const playForwardAnimation = () => {
     //this._playAnimation("forward");
-    animationController.playAnimation("forward", timelineFrames.current, timelineMarkers);
+    animationController.playAnimation('forward', timelineFrames.current, timelineMarkers);
   };
   const playBackwardAnimation = () => {
     //this._playAnimation("backward");
-    animationController.playAnimation("backward", timelineFrames.current, timelineMarkers);
+    animationController.playAnimation('backward', timelineFrames.current, timelineMarkers);
   };
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     console.log('rendering...');
@@ -1473,7 +1473,7 @@ const App = () => {
       brushInstance.updateInitialCanvasDimensions(canvas.width, canvas.height);
 
       // start with the default brush
-      brushInstance.brushesMap["default"].attachBrush();
+      brushInstance.brushesMap['default'].attachBrush();
 
       // allow pasting images via ctrl+v
       document.addEventListener('paste', pasteImageManager.handlePasteEvent.bind(pasteImageManager));
@@ -1495,21 +1495,21 @@ const App = () => {
         let updateStateFlag = false;
         let frame = null;
         switch (evt.code) {
-          case "ArrowLeft":
+          case 'ArrowLeft':
             //left arrow key
             if (toolbarInstance.prevLayer()) {
               frame = animationProject.getCurrFrame();
               updateStateFlag = true;
             }
             break;
-          case "ArrowRight":
+          case 'ArrowRight':
             //right arrow key
             if (toolbarInstance.nextLayer()) {
               frame = animationProject.getCurrFrame();
               updateStateFlag = true;
             }
             break;
-          case "Space":
+          case 'Space':
             //space bar
             evt.preventDefault();
             if (toolbarInstance.layerMode) {
@@ -1518,14 +1518,14 @@ const App = () => {
               animationProject.addNewFrame(false);
             }
             break;
-          case "KeyA":
+          case 'KeyA':
             // a key 
-            updateStateFlag = moveToFrame("prev");
+            updateStateFlag = moveToFrame('prev');
             frame = animationProject.getCurrFrame();
             break;
-          case "KeyD":
+          case 'KeyD':
             // d key
-            updateStateFlag = moveToFrame("next");
+            updateStateFlag = moveToFrame('next');
             frame = animationProject.getCurrFrame();
             break;
           default:
@@ -1738,13 +1738,17 @@ const App = () => {
     style: {
       display: 'block'
     }
-  }, " import image "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, " note that the image will be imported with the original dimensions of the image. currently only supports applying filters. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("canvas", {
+  }, " import image "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, " note that the image will be imported with the original dimensions. currently only supports applying filters. "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    style: {
+      position: 'relative'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("canvas", {
     ref: imageEditorCanvas,
     id: "imageEditorCanvas",
     style: {
       border: '#000 solid 1px'
     }
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "screenContainer",
     style: {
       'display': currMode === 'animation' ? '' : 'none'
@@ -1873,15 +1877,15 @@ class BrushManager {
 
     // brushes map
     this.brushesMap = {};
-    this.brushesMap["default"] = new _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_0__.DefaultBrush(this);
-    this.brushesMap["radial"] = new _brushes_radialBrush_js__WEBPACK_IMPORTED_MODULE_2__.RadialBrush(this);
-    this.brushesMap["sketchy"] = new _brushes_sketchyBrush_js__WEBPACK_IMPORTED_MODULE_3__.SketchyBrush(this);
-    this.brushesMap["web"] = new _brushes_webBrush_js__WEBPACK_IMPORTED_MODULE_4__.WebBrush(this);
-    this.brushesMap["shape"] = new _brushes_shapeBrush_js__WEBPACK_IMPORTED_MODULE_5__.ShapeBrush(this);
-    this.brushesMap["pen"] = new _brushes_penBrush_js__WEBPACK_IMPORTED_MODULE_6__.PenBrush(this);
-    this.brushesMap["floodfill"] = new _brushes_floodfillBrush_js__WEBPACK_IMPORTED_MODULE_7__.FloodfillBrush(this);
-    this.brushesMap["colorpicker"] = new _brushes_colorPickerBrush_js__WEBPACK_IMPORTED_MODULE_8__.ColorPickerBrush(this);
-    this.brushesMap["eraser"] = new _brushes_eraserBrush_js__WEBPACK_IMPORTED_MODULE_1__.EraserBrush(this);
+    this.brushesMap['default'] = new _brushes_defaultBrush_js__WEBPACK_IMPORTED_MODULE_0__.DefaultBrush(this);
+    this.brushesMap['radial'] = new _brushes_radialBrush_js__WEBPACK_IMPORTED_MODULE_2__.RadialBrush(this);
+    this.brushesMap['sketchy'] = new _brushes_sketchyBrush_js__WEBPACK_IMPORTED_MODULE_3__.SketchyBrush(this);
+    this.brushesMap['web'] = new _brushes_webBrush_js__WEBPACK_IMPORTED_MODULE_4__.WebBrush(this);
+    this.brushesMap['shape'] = new _brushes_shapeBrush_js__WEBPACK_IMPORTED_MODULE_5__.ShapeBrush(this);
+    this.brushesMap['pen'] = new _brushes_penBrush_js__WEBPACK_IMPORTED_MODULE_6__.PenBrush(this);
+    this.brushesMap['floodfill'] = new _brushes_floodfillBrush_js__WEBPACK_IMPORTED_MODULE_7__.FloodfillBrush(this);
+    this.brushesMap['colorpicker'] = new _brushes_colorPickerBrush_js__WEBPACK_IMPORTED_MODULE_8__.ColorPickerBrush(this);
+    this.brushesMap['eraser'] = new _brushes_eraserBrush_js__WEBPACK_IMPORTED_MODULE_1__.EraserBrush(this);
   }
   resetBrush() {
     // detach any events from mouse actions (reset the events connected with mouse events) from previous layer worked on
@@ -1896,7 +1900,7 @@ class BrushManager {
     this.currSize = size;
   }
   changeBrushColor(colorArray) {
-    this.currColor = 'rgba(' + colorArray.join(",") + ')';
+    this.currColor = 'rgba(' + colorArray.join(',') + ')';
     this.currColorArray = colorArray;
   }
   getBrushType() {
@@ -1938,7 +1942,7 @@ class BrushManager {
     const currLayer = frame.getCurrCanvas();
     const w = currLayer.width;
     const h = currLayer.height;
-    frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+    frame.addSnapshot(currLayer.getContext('2d').getImageData(0, 0, w, h));
   }
   updateEventListeners(startFunc, moveFunc, stopFunc, leaveFunc) {
     let cursorType = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
@@ -2047,34 +2051,34 @@ class FilterManager {
     this.imageEditorCanvasRef = imageEditorCanvasRef;
     this.brush = brush;
     this.filtersMap = {
-      "saturation": new _filters_saturation_js__WEBPACK_IMPORTED_MODULE_0__.Saturation(),
-      "grayscale": new _filters_grayscale_js__WEBPACK_IMPORTED_MODULE_1__.Grayscale(),
-      "area_color": new _filters_areacolor_js__WEBPACK_IMPORTED_MODULE_2__.AreaColor(),
-      "edge_detection": new _filters_edgedetection_js__WEBPACK_IMPORTED_MODULE_3__.EdgeDetection(),
-      "invert": new _filters_invert_js__WEBPACK_IMPORTED_MODULE_4__.Invert(),
-      "mosaic": new _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_5__.Mosaic(),
-      "blur": new _filters_blur_js__WEBPACK_IMPORTED_MODULE_6__.Blur(),
+      'saturation': new _filters_saturation_js__WEBPACK_IMPORTED_MODULE_0__.Saturation(),
+      'grayscale': new _filters_grayscale_js__WEBPACK_IMPORTED_MODULE_1__.Grayscale(),
+      'area_color': new _filters_areacolor_js__WEBPACK_IMPORTED_MODULE_2__.AreaColor(),
+      'edge_detection': new _filters_edgedetection_js__WEBPACK_IMPORTED_MODULE_3__.EdgeDetection(),
+      'invert': new _filters_invert_js__WEBPACK_IMPORTED_MODULE_4__.Invert(),
+      'mosaic': new _filters_mosaic_js__WEBPACK_IMPORTED_MODULE_5__.Mosaic(),
+      'blur': new _filters_blur_js__WEBPACK_IMPORTED_MODULE_6__.Blur(),
       //"simple_blur": new SimpleBlur(),
-      "targeted_blur": new _filters_targetedBlur_js__WEBPACK_IMPORTED_MODULE_7__.TargetedBlur(animationProject),
-      "outline": new _filters_outline_js__WEBPACK_IMPORTED_MODULE_8__.Outline(),
-      "voronoi": new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_9__.Voronoi(),
-      "fisheye": new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_10__.Fisheye(),
-      "horizontal_shift": new _filters_shift_js__WEBPACK_IMPORTED_MODULE_11__.HorizontalShift(),
-      "cathode-ray tube-like (CRT)": new _filters_crt_js__WEBPACK_IMPORTED_MODULE_12__.CRT(),
-      "channel_shift": new _filters_channel_shift_js__WEBPACK_IMPORTED_MODULE_13__.ChannelShift(),
-      "dots": new _filters_dots_js__WEBPACK_IMPORTED_MODULE_14__.Dots(),
-      "dots2": new _filters_dots2_js__WEBPACK_IMPORTED_MODULE_15__.Dots2(),
-      "dots3": new _filters_dots3_js__WEBPACK_IMPORTED_MODULE_16__.Dots3(),
-      "lines": new _filters_lines_js__WEBPACK_IMPORTED_MODULE_17__.Lines(),
-      "thinning": new _filters_thinning_js__WEBPACK_IMPORTED_MODULE_18__.Thinning(),
+      'targeted_blur': new _filters_targetedBlur_js__WEBPACK_IMPORTED_MODULE_7__.TargetedBlur(),
+      'outline': new _filters_outline_js__WEBPACK_IMPORTED_MODULE_8__.Outline(),
+      'voronoi': new _filters_voronoi_js__WEBPACK_IMPORTED_MODULE_9__.Voronoi(),
+      'fisheye': new _filters_fisheye_js__WEBPACK_IMPORTED_MODULE_10__.Fisheye(),
+      'horizontal_shift': new _filters_shift_js__WEBPACK_IMPORTED_MODULE_11__.HorizontalShift(),
+      'cathode-ray tube-like (CRT)': new _filters_crt_js__WEBPACK_IMPORTED_MODULE_12__.CRT(),
+      'channel_shift': new _filters_channel_shift_js__WEBPACK_IMPORTED_MODULE_13__.ChannelShift(),
+      'dots': new _filters_dots_js__WEBPACK_IMPORTED_MODULE_14__.Dots(),
+      'dots2': new _filters_dots2_js__WEBPACK_IMPORTED_MODULE_15__.Dots2(),
+      'dots3': new _filters_dots3_js__WEBPACK_IMPORTED_MODULE_16__.Dots3(),
+      'lines': new _filters_lines_js__WEBPACK_IMPORTED_MODULE_17__.Lines(),
+      'thinning': new _filters_thinning_js__WEBPACK_IMPORTED_MODULE_18__.Thinning(),
       //"solidify": new Solidify(),
-      "painted": new _filters_painted_js__WEBPACK_IMPORTED_MODULE_20__.Painted(),
-      "oilpainting": new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_19__.OilPainting(),
-      "wavy": new _filters_wavy_js__WEBPACK_IMPORTED_MODULE_21__.Wavy(),
-      "outline-top": new _filters_outlinetop_js__WEBPACK_IMPORTED_MODULE_22__.OutlineTop(),
-      "watercolor": new _filters_watercolor_js__WEBPACK_IMPORTED_MODULE_23__.Watercolor(),
-      "bilateral_filter": new _filters_bilateral_js__WEBPACK_IMPORTED_MODULE_24__.BilateralFilter(),
-      "kuwahara_painted": new _filters_kuwahara_painting_js__WEBPACK_IMPORTED_MODULE_25__.KuwaharaPainting()
+      'painted': new _filters_painted_js__WEBPACK_IMPORTED_MODULE_20__.Painted(),
+      'oilpainting': new _filters_oilpainting_js__WEBPACK_IMPORTED_MODULE_19__.OilPainting(),
+      'wavy': new _filters_wavy_js__WEBPACK_IMPORTED_MODULE_21__.Wavy(),
+      'outline-top': new _filters_outlinetop_js__WEBPACK_IMPORTED_MODULE_22__.OutlineTop(),
+      'watercolor': new _filters_watercolor_js__WEBPACK_IMPORTED_MODULE_23__.Watercolor(),
+      'bilateral_filter': new _filters_bilateral_js__WEBPACK_IMPORTED_MODULE_24__.BilateralFilter(),
+      'kuwahara_painted': new _filters_kuwahara_painting_js__WEBPACK_IMPORTED_MODULE_25__.KuwaharaPainting()
     };
   }
 
@@ -2082,7 +2086,7 @@ class FilterManager {
   async filterCanvas(filter, option, currMode) {
     const currFrame = this.animationProject.getCurrFrame();
     const currLayer = currMode === 'animation' ? currFrame.getCurrCanvas() : this.imageEditorCanvasRef.current;
-    const context = currLayer.getContext("2d");
+    const context = currLayer.getContext('2d');
     const width = currLayer.getAttribute('width');
     const height = currLayer.getAttribute('height');
     const imgData = context.getImageData(0, 0, width, height);
@@ -2095,6 +2099,8 @@ class FilterManager {
     if (option === 'watercolor') {
       // async filter
       filteredImageData = await filter(context.getImageData(0, 0, width, height));
+    } else if (option === 'targeted_blur') {
+      filteredImageData = filter(currLayer);
     } else {
       filteredImageData = filter(context.getImageData(0, 0, width, height));
     }
@@ -2158,11 +2164,11 @@ class PasteImageManager {
   }
   addPasteCanvas(imgData, width, height) {
     const displayArea = this.animationProject.getCurrFrame().getCurrCanvas().parentNode;
-    const canvasElement = document.createElement("canvas");
+    const canvasElement = document.createElement('canvas');
     displayArea.appendChild(canvasElement);
-    canvasElement.className = "pasteCanvas";
-    canvasElement.style.position = "absolute";
-    canvasElement.style.border = "1px #000 dotted";
+    canvasElement.className = 'pasteCanvas';
+    canvasElement.style.position = 'absolute';
+    canvasElement.style.border = '1px #000 dotted';
     canvasElement.style.zIndex = 10;
     canvasElement.style.top = 0;
     canvasElement.style.left = 0;
@@ -2185,13 +2191,13 @@ class PasteImageManager {
   allowScaleAndRotate(evt) {
     const pasteCanvas = document.querySelector('.pasteCanvas');
     if (pasteCanvas) {
-      if (evt.code === "KeyS") {
+      if (evt.code === 'KeyS') {
         // s key
         this.resizingPasteCanvas = !this.resizingPasteCanvas;
-      } else if (evt.code === "KeyR") {
+      } else if (evt.code === 'KeyR') {
         // r key
         this.rotatingPasteCanvas = !this.rotatingPasteCanvas;
-      } else if (evt.code === "Escape") {
+      } else if (evt.code === 'Escape') {
         // esc key to cancel
         pasteCanvas.parentNode.removeChild(pasteCanvas);
         this.resizingPasteCanvas = false;
@@ -2221,14 +2227,14 @@ class PasteImageManager {
 
     // add click event for outside the canvas to finalize image paste
     function finalizeImagePaste(evt) {
-      if (evt.target.classList.contains("pasteCanvas")) {
+      if (evt.target.classList.contains('pasteCanvas')) {
         // user has to click outside the canvas to finalize the image paste
         return;
       }
       this.isMovingPasteCanvas = false;
       const mainCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
       const mainCtx = mainCanvas.getContext('2d');
-      document.body.removeEventListener("pointerup", finalizeImagePaste);
+      document.body.removeEventListener('pointerup', finalizeImagePaste);
       mainCanvas.parentNode.style.border = 'none';
       if (pasteCanvas.parentNode === null) {
         // if pasteCanvas no longer in the DOM
@@ -2321,7 +2327,7 @@ class PasteImageManager {
       newRotation %= 360;
 
       // https://stackoverflow.com/questions/17040360/javascript-function-to-rotate-a-base-64-image-by-x-degrees-and-return-new-base64
-      const ctx = pasteCanvas.getContext("2d");
+      const ctx = pasteCanvas.getContext('2d');
 
       // https://stackoverflow.com/questions/17411991/html5-canvas-rotate-image
       ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -2348,15 +2354,15 @@ class PasteImageManager {
         const offsetY = Math.abs(currY - this.initialOffsetY);
         const offsetX = Math.abs(currX - this.initialOffsetX);
         if (currY < this.lastOffsetHeight) {
-          pasteCanvas.style.top = parseInt(pasteCanvas.style.top) - offsetY + "px";
+          pasteCanvas.style.top = parseInt(pasteCanvas.style.top) - offsetY + 'px';
         } else {
-          pasteCanvas.style.top = parseInt(pasteCanvas.style.top) + offsetY + "px";
+          pasteCanvas.style.top = parseInt(pasteCanvas.style.top) + offsetY + 'px';
         }
         this.lastOffsetHeight = currY;
         if (currX < this.lastOffsetWidth) {
-          pasteCanvas.style.left = parseInt(pasteCanvas.style.left) - offsetX + "px";
+          pasteCanvas.style.left = parseInt(pasteCanvas.style.left) - offsetX + 'px';
         } else {
-          pasteCanvas.style.left = parseInt(pasteCanvas.style.left) + offsetX + "px";
+          pasteCanvas.style.left = parseInt(pasteCanvas.style.left) + offsetX + 'px';
         }
         this.lastOffsetWidth = currX;
       } else if (this.resizingPasteCanvas) {
@@ -2400,14 +2406,14 @@ class PasteImageManager {
       this.isMovingPasteCanvas = false;
       if (this.resizingPasteCanvas) this.resizingPasteCanvas = false;
     });
-    document.body.addEventListener("pointerup", finalizeImagePaste.bind(this));
+    document.body.addEventListener('pointerup', finalizeImagePaste.bind(this));
     document.addEventListener('keydown', this.allowScaleAndRotate.bind(this));
   }
   handlePasteEvent(evt) {
     const items = (evt.clipboardData || evt.originalEvent.clipboardData).items; // items is an object of type DataTransferItemList
 
     for (let i = 0; i < items.length; i++) {
-      if (items[i].type.indexOf("image") > -1) {
+      if (items[i].type.indexOf('image') > -1) {
         const file = items[i]; // items[i] is a DataTransferItem type object
         const blob = file.getAsFile();
         const url = URL.createObjectURL(blob);
@@ -2467,7 +2473,7 @@ class Toolbar {
     // should the keyboard keys be affecting the layer or the frame? 2 options only
     // this is useful for the arrow keys and space bar
     this.layerMode = true;
-    this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
+    this.htmlCounter = ''; // html element used as a counter specifying the current frame and layer
 
     this.brush = brush;
     this.animationProj = animationProj;
@@ -2585,9 +2591,9 @@ class Toolbar {
         this.brush.applyBrush();
       } else {
         // otherwise, just blank the canvas 
-        const context = oldLayer.getContext("2d");
+        const context = oldLayer.getContext('2d');
         context.clearRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
-        context.fillStyle = "#fff";
+        context.fillStyle = '#fff';
         context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
       }
       setStateFunction(frame.getCurrCanvasIndex());
@@ -2665,12 +2671,12 @@ class Toolbar {
       const canvas = this.animationProj.getCurrFrame();
       const width = canvas.currentCanvas.width;
       const height = canvas.currentCanvas.height;
-      const context = canvas.currentCanvas.getContext("2d");
+      const context = canvas.currentCanvas.getContext('2d');
       createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then(bitmap => {
-        const tmpCanvas = document.createElement("canvas");
+        const tmpCanvas = document.createElement('canvas');
         tmpCanvas.width = width;
         tmpCanvas.height = height;
-        const tmpCtx = tmpCanvas.getContext("2d");
+        const tmpCtx = tmpCanvas.getContext('2d');
 
         // use a temp canvas because translating on the real canvas will mess with mousedown coords
         tmpCtx.clearRect(0, 0, width, height);
@@ -2692,11 +2698,11 @@ class Toolbar {
   setClearCanvas(elementId) {
     document.getElementById(elementId).addEventListener('click', () => {
       const frame = this.animationProj.getCurrFrame();
-      const context = frame.currentCanvas.getContext("2d");
-      const width = frame.currentCanvas.getAttribute("width");
-      const height = frame.currentCanvas.getAttribute("height");
+      const context = frame.currentCanvas.getContext('2d');
+      const width = frame.currentCanvas.getAttribute('width');
+      const height = frame.currentCanvas.getAttribute('height');
       context.clearRect(0, 0, width, height);
-      context.fillStyle = "#FFFFFF";
+      context.fillStyle = '#FFFFFF';
       context.fillRect(0, 0, width, height);
     });
   }
@@ -2711,9 +2717,9 @@ class Toolbar {
     document.getElementById(elementId).addEventListener('click', () => {
       const frame = this.animationProj.getCurrFrame();
       const currLayer = frame.getCurrCanvas();
-      const context = currLayer.getContext("2d");
-      const width = currLayer.getAttribute("width");
-      const height = currLayer.getAttribute("height");
+      const context = currLayer.getContext('2d');
+      const width = currLayer.getAttribute('width');
+      const height = currLayer.getAttribute('height');
       const currLayerSnapshots = frame.getSnapshots();
 
       // then put back last image (ignore the one that had just been drawn)
@@ -2769,13 +2775,13 @@ class Toolbar {
         const reader = new FileReader();
         const file = e.target.files[0];
         if (!file.type.match(/image.*/)) {
-          console.log("not a valid image");
+          console.log('not a valid image');
           return;
         }
         //when the image loads, put it on the canvas.
         img.onload = () => {
           // change current canvas' width and height according to imported picture
-          const context = canvas.getContext("2d");
+          const context = canvas.getContext('2d');
           const height = canvas.height;
           const width = canvas.width;
 
@@ -2818,9 +2824,9 @@ class Toolbar {
   resetImage() {
     if (this.recentImage) {
       const canvas = this.animationProj.getCurrFrame();
-      const context = canvas.currentCanvas.getContext("2d");
-      const height = canvas.currentCanvas.getAttribute("height");
-      const width = canvas.currentCanvas.getAttribute("width");
+      const context = canvas.currentCanvas.getContext('2d');
+      const height = canvas.currentCanvas.getAttribute('height');
+      const width = canvas.currentCanvas.getAttribute('width');
       context.drawImage(this.recentImage, 0, 0, width, height);
     }
   }
@@ -2836,7 +2842,7 @@ class Toolbar {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        const name = prompt("please enter a name for the file");
+        const name = prompt('please enter a name for the file');
         if (name === null) {
           return;
         } else {
@@ -2859,7 +2865,7 @@ class Toolbar {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        const name = prompt("please enter a name for the file");
+        const name = prompt('please enter a name for the file');
         if (name === null) {
           return;
         } else {
@@ -2874,24 +2880,24 @@ class Toolbar {
   toggleToolbarPosition(elementId, toolbarId) {
     document.getElementById(elementId).addEventListener('click', () => {
       const toolbar = document.getElementById(toolbarId);
-      if (toolbar.style.position === "sticky" || toolbar.style.position === "") {
-        toolbar.style.position = "static";
+      if (toolbar.style.position === 'sticky' || toolbar.style.position === '') {
+        toolbar.style.position = 'static';
       } else {
-        toolbar.style.position = "sticky";
+        toolbar.style.position = 'sticky';
       }
     });
   }
   mergeFrameLayers(frame) {
     const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext("2d");
+    const tempCtx = tempCanvas.getContext('2d');
     tempCanvas.width = frame.width;
     tempCanvas.height = frame.height;
-    tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
+    tempCtx.fillStyle = 'rgba(255, 255, 255, 1)';
     tempCtx.fillRect(0, 0, frame.width, frame.height);
     const tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
     for (let j = 0; j < frame.canvasList.length; j++) {
       const layer = frame.canvasList[j];
-      const layerCtx = layer.getContext("2d");
+      const layerCtx = layer.getContext('2d');
 
       // this assumes that all layers within a frame share the same dimensions
       const currImageLayer = layerCtx.getImageData(0, 0, frame.width, frame.height);
@@ -2928,7 +2934,7 @@ class Toolbar {
   ***/
   getGif(elementId, timelineMarkers) {
     if (elementId) {
-      document.getElementById(elementId).textContent = "now loading...";
+      document.getElementById(elementId).textContent = 'now loading...';
     }
     const gif = new GIF({
       workers: 2,
@@ -2943,7 +2949,7 @@ class Toolbar {
       });
     }
     gif.on('finished', function (blob) {
-      document.getElementById(elementId).textContent = "";
+      document.getElementById(elementId).textContent = '';
       const newGif = URL.createObjectURL(blob);
       window.open(newGif);
     });
@@ -2961,10 +2967,10 @@ class Toolbar {
   save(elementId) {
     document.getElementById(elementId).addEventListener('click', () => {
       // prompt the user to name the file 
-      let name = prompt("name of file: ");
-      if (name === "") {
+      let name = prompt('name of file: ');
+      if (name === '') {
         const date = new Date();
-        name = date.toISOString() + "_funSketch_saveFile";
+        name = date.toISOString() + '_funSketch_saveFile';
       } else if (name === null) {
         return;
       }
@@ -2977,8 +2983,8 @@ class Toolbar {
           // get layer metadata
           const newLayer = {
             'id': layer.id,
-            'width': layer.getAttribute("width"),
-            'height': layer.getAttribute("height"),
+            'width': layer.getAttribute('width'),
+            'height': layer.getAttribute('height'),
             'zIndex': layer.style.zIndex,
             'opacity': layer.style.opacity
           };
@@ -2988,17 +2994,17 @@ class Toolbar {
         });
         savedData.push(JSON.stringify(newFrame));
       });
-      let json = "[\n";
-      json += savedData.join(",\n"); // put a line break between each new object, which represents a frame
-      json += "\n]";
+      let json = '[\n';
+      json += savedData.join(',\n'); // put a line break between each new object, which represents a frame
+      json += '\n]';
       // make a blob so it can be downloaded 
       const blob = new Blob([json], {
-        type: "application/json"
+        type: 'application/json'
       });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = name + ".json";
+      link.download = name + '.json';
       link.click();
     });
   }
@@ -3007,7 +3013,7 @@ class Toolbar {
   // updateStateFunction: function that updates state. used in the react component that has the toolbar as a prop
   importData(data, updateStateFunction) {
     if (!data[0] || !data[0].name && !data[0].height && !data[0].width && !data[0].data) {
-      console.log("import failed: it appears to not be a valid project! :<");
+      console.log('import failed: it appears to not be a valid project! :<');
       return;
     }
     // clear existing project
@@ -3035,7 +3041,7 @@ class Toolbar {
         const currLayer = currFrame.getLayers()[layerIndex];
 
         // add the image data 
-        const newCtx = currLayer.getContext("2d");
+        const newCtx = currLayer.getContext('2d');
         const img = new Image();
         (function (context, image) {
           image.onload = function () {
@@ -3076,7 +3082,7 @@ class Toolbar {
               data = JSON.parse(e.target.result);
             } catch (e) {
               // not valid json file 
-              console.log("import failed: not a valid JSON file");
+              console.log('import failed: not a valid JSON file');
               return;
             }
             self.importData(data, updateStateFunction);
@@ -3133,7 +3139,7 @@ class BrushTemplate {
     this.clickColor = [];
     this.clickSize = [];
     this.clickPressure = [];
-    this.cursorType = "crosshair";
+    this.cursorType = 'crosshair';
   }
 
   // assuming a PointerEvent, calculate the brush width based on stylus pressure
@@ -3182,7 +3188,7 @@ class BrushTemplate {
       currSize = this.calculateBrushWidth(pointerEvt);
       penPressure = pressure;
     } else {
-      currColor = 'rgba(' + currColorArr.join(",") + ')';
+      currColor = 'rgba(' + currColorArr.join(',') + ')';
     }
     this.clickX.push(x);
     this.clickY.push(y);
@@ -3193,8 +3199,8 @@ class BrushTemplate {
   }
   redraw(strokeFunction) {
     const frame = this.brushManager.animationProject.getCurrFrame();
-    const context = frame.getCurrCanvas().getContext("2d");
-    context.lineJoin = "round"; //TODO: make this a brushmanager variable?
+    const context = frame.getCurrCanvas().getContext('2d');
+    context.lineJoin = 'round'; //TODO: make this a brushmanager variable?
     strokeFunction(context);
   }
   clearClick() {
@@ -3277,7 +3283,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class ColorPickerBrush extends _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_0__.BrushTemplate {
   constructor(brushManager) {
     super(brushManager);
-    this.cursorType = "pointer"; // TODO: make an icon
+    this.cursorType = 'pointer'; // TODO: make an icon
   }
 
   // event listener functions
@@ -3298,16 +3304,16 @@ class ColorPickerBrush extends _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Br
       // so this data might not be accurate... :/
       const frame = this.brushManager.animationProject.getCurrFrame();
       const currLayer = frame.getCurrCanvas();
-      const colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
+      const colorData = document.getElementById(currLayer.id).getContext('2d').getImageData(x, y, 1, 1).data;
       const color = 'rgba(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ',' + colorData[3] + ')';
 
       // set the brush color to this color
       // yeah, this is pretty hacky - dunno of a better way though at the moment :)
       const colorPickedText = document.getElementById('colorPicked');
       if (colorData[0] > 10 && colorData[1] > 200) {
-        colorPickedText.style.color = "#000";
+        colorPickedText.style.color = '#000';
       } else {
-        colorPickedText.style.color = "#fff";
+        colorPickedText.style.color = '#fff';
       }
       colorPickedText.textContent = color;
       colorPickedText.style.backgroundColor = colorPickedText.textContent;
@@ -3389,17 +3395,17 @@ class DefaultBrush extends _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_0__.BrushT
     // go through the temp canvas image data and look for the black pixels.
     // wherever we see a black pixel we look in the same index in the current layer image data
     // and manually set its alpha to whatever it should be based on current color
-    const currCtx = currCanvas.getContext("2d");
+    const currCtx = currCanvas.getContext('2d');
     const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext("2d");
+    const tempCtx = tempCanvas.getContext('2d');
     tempCanvas.width = currCanvas.width;
     tempCanvas.height = currCanvas.height;
-    tempCtx.lineJoin = "round";
-    tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
+    tempCtx.lineJoin = 'round';
+    tempCtx.fillStyle = 'rgba(255, 255, 255, 1)';
     tempCtx.fillRect(0, 0, currCanvas.width, currCanvas.height);
 
     // redraw the stroke last drawn onto the temp canvas (which is all #fff) with #000
-    this.brushStroke(tempCtx, "rgba(0, 0, 0, 1)");
+    this.brushStroke(tempCtx, 'rgba(0, 0, 0, 1)');
     const tmpImgData = tempCtx.getImageData(0, 0, currCanvas.width, currCanvas.height).data;
     const currImgData = currCtx.getImageData(0, 0, currCanvas.width, currCanvas.height);
     const imgData = currImgData.data;
@@ -3506,7 +3512,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class EraserBrush extends _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_0__.BrushTemplate {
   constructor(brushManager) {
     super(brushManager);
-    this.cursorType = "url(" + "\"eraser_cursor1.png\"" + ") 5 5, auto";
+    this.cursorType = 'url(' + '"eraser_cursor1.png"' + ') 5 5, auto';
   }
 
   // event listener functions
@@ -3535,7 +3541,7 @@ class EraserBrush extends _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_0__.BrushTe
   // this is for determining what the brush stroke looks like
   brushStroke(context) {
     for (let i = 0; i < this.clickX.length; i++) {
-      context.strokeStyle = "#ffffffff"; // #ffffffff because eraser
+      context.strokeStyle = '#ffffffff'; // #ffffffff because eraser
       context.lineWidth = this.clickSize[i];
       context.beginPath();
       if (this.clickDrag[i] && i) {
@@ -3601,7 +3607,7 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class FloodfillBrush extends _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_0__.BrushTemplate {
   constructor(brushManager) {
     super(brushManager);
-    this.cursorType = "url(" + "\"paintbucket.png\"" + "), auto";
+    this.cursorType = 'url(' + '"paintbucket.png"' + '), auto';
   }
   floodfill(currentCanvas, newColor, pixelSelected) {
     // create a stack 
@@ -3723,7 +3729,7 @@ class FloodfillBrush extends _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Brus
       });
       const x = evt.offsetX;
       const y = evt.offsetY;
-      const colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
+      const colorData = document.getElementById(currLayer.id).getContext('2d').getImageData(x, y, 1, 1).data;
       const color = 'rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')';
 
       // create an object with the pixel data
@@ -3735,7 +3741,7 @@ class FloodfillBrush extends _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Brus
       this.floodfill(currLayer, currColorArray, pixel);
       const w = currLayer.width;
       const h = currLayer.height;
-      frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+      frame.addSnapshot(currLayer.getContext('2d').getImageData(0, 0, w, h));
     }
   }
 
@@ -3964,7 +3970,7 @@ class RadialBrush extends _BrushTemplate_js__WEBPACK_IMPORTED_MODULE_0__.BrushTe
   radialGrad(x, y, brushSize) {
     const frame = this.brushManager.animationProject.getCurrFrame();
     const currLayer = frame.getCurrCanvas();
-    const context = currLayer.getContext("2d");
+    const context = currLayer.getContext('2d');
     const colorPicked = this.brushManager.getCurrColorArray();
     const currColor = this.brushManager.getCurrColor();
     const radGrad = context.createRadialGradient(x, y, brushSize, x, y, brushSize * 1.5);
@@ -4561,21 +4567,21 @@ const BrushDashboard = props => {
   const brushes = brushManager ? brushManager.brushesMap : {}; // can be null initially
   const brushNames = Object.keys(brushes);
   const style = {
-    "textAlign": "center"
+    'textAlign': 'center'
   };
   const elementStyle = {
-    "width": "100%",
-    "height": "100%",
-    "margin": "1% auto",
-    "textAlign": "center",
-    "display": "grid",
-    "gridTemplateRows": "auto auto",
-    "gridTemplateColumns": "auto"
+    'width': '100%',
+    'height': '100%',
+    'margin': '1% auto',
+    'textAlign': 'center',
+    'display': 'grid',
+    'gridTemplateRows': 'auto auto',
+    'gridTemplateColumns': 'auto'
   };
 
   // use a hook to be able to keep track of selected brush
-  const [selectedBrush, setSelectedBrush] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("default");
-  const brushSize = brushManager ? `${brushManager.currSize}` : "2";
+  const [selectedBrush, setSelectedBrush] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('default');
+  const brushSize = brushManager ? `${brushManager.currSize}` : '2';
   const [currBrushSize, setBrushSize] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(brushSize);
   function equipBrush(brushManager, brushName) {
     return function (evt) {
@@ -4592,28 +4598,28 @@ const BrushDashboard = props => {
     style: elementStyle
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     style: {
-      "gridRow": "1",
-      "gridColumn": "1",
-      "height": "100%"
+      'gridRow': '1',
+      'gridColumn': '1',
+      'height': '100%'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     style: {
-      "overflowY": "auto",
-      "height": "100%",
-      "width": "100%"
+      'overflowY': 'auto',
+      'height': '100%',
+      'width': '100%'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     id: "brushDisplay"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", {
     id: "brushChoices",
     style: {
-      "margin": "0 auto",
-      "padding": "0"
+      'margin': '0 auto',
+      'padding': '0'
     }
   }, brushNames.map((brushName, index) => {
     const selectedStyle = JSON.parse(JSON.stringify(style));
     if (selectedBrush === brushName) {
-      selectedStyle["backgroundColor"] = "#c8c8c8";
+      selectedStyle['backgroundColor'] = '#c8c8c8';
     }
     const s = selectedStyle !== null ? selectedStyle : style;
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", {
@@ -4622,16 +4628,16 @@ const BrushDashboard = props => {
       id: `${brushName}_${index}`,
       onClick: equipBrush(brushManager, brushName),
       onMouseOver: evt => {
-        evt.target.style.color = "#99b5d1";
+        evt.target.style.color = '#99b5d1';
       },
       onMouseOut: evt => {
-        evt.target.style.color = "#000";
+        evt.target.style.color = '#000';
       }
     }, brushName);
   }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     style: {
-      "gridRow": "2",
-      "gridColumn": "1"
+      'gridRow': '2',
+      'gridColumn': '1'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     id: "adjustBrushSize"
@@ -4652,7 +4658,7 @@ const BrushDashboard = props => {
     id: "brushSizeValue"
   }, currBrushSize))));
 };
-_s(BrushDashboard, "7FWB4QwAAn7GoPtoSz0w+iLMqJo=");
+_s(BrushDashboard, "VDEWBA1HqjwPLJT8aUYuJHhiFz4=");
 _c = BrushDashboard;
 var _c;
 __webpack_require__.$Refresh$.register(_c, "BrushDashboard");
@@ -4698,18 +4704,18 @@ const ColorPicker = props => {
   _s();
   const [colorPalette, setColorPalette] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const colorPickedDisplayStyle = {
-    textAlign: "center"
+    textAlign: 'center'
   };
   const colorPaletteContainerStyle = {
-    marginTop: "3%",
-    display: "flex",
-    flexWrap: "wrap"
+    marginTop: '3%',
+    display: 'flex',
+    flexWrap: 'wrap'
   };
   const paletteColorStyle = {
-    width: "15px",
-    height: "15px",
-    border: "1px solid #000",
-    padding: "2px"
+    width: '15px',
+    height: '15px',
+    border: '1px solid #000',
+    padding: '2px'
   };
 
   // pass in the elementId of the div where the color wheel should be (its container)
@@ -4726,9 +4732,9 @@ const ColorPicker = props => {
       //correct the font color if the color is really dark
       const colorPickedText = document.getElementById('colorPicked');
       if (colorPicked[0] > 10 && colorPicked[1] > 200) {
-        colorPickedText.style.color = "#000";
+        colorPickedText.style.color = '#000';
       } else {
-        colorPickedText.style.color = "#fff";
+        colorPickedText.style.color = '#fff';
       }
       colorPickedText.textContent = 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',' + colorPicked[3] + ')';
       colorPickedText.style.backgroundColor = colorPickedText.textContent;
@@ -4754,7 +4760,7 @@ const ColorPicker = props => {
   function saveColorToPalette() {
     const colorPickedText = document.getElementById('colorPicked');
     const currColor = colorPickedText.textContent;
-    if (currColor && currColor.includes("rgb") && colorPalette.indexOf(currColor) < 0) {
+    if (currColor && currColor.includes('rgb') && colorPalette.indexOf(currColor) < 0) {
       colorPalette.push(currColor);
       setColorPalette(colorPalette.slice());
     }
@@ -4767,12 +4773,12 @@ const ColorPicker = props => {
 
     // color needs to be an array for the brush. set color[3] to 255
     // need to split 'rgb(x,y,z)' to [x, y, z] first
-    const colorArr = color.split("rgb(")[1].split(", ").map(x => parseInt(x));
+    const colorArr = color.split('rgb(')[1].split(', ').map(x => parseInt(x));
     colorArr.push(255);
     if (colorArr[0] > 10 && color[1] > 200) {
-      colorPickedText.style.color = "#000";
+      colorPickedText.style.color = '#000';
     } else {
-      colorPickedText.style.color = "#fff";
+      colorPickedText.style.color = '#fff';
     }
     props.brush.changeBrushColor(colorArr);
   }
@@ -4842,7 +4848,7 @@ var _s = __webpack_require__.$Refresh$.signature();
 
 
 function constructSlider(name, params) {
-  const id = "slider_" + name;
+  const id = 'slider_' + name;
   const sliderCounterId = name + 'CurrValue';
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", {
     htmlFor: id
@@ -4869,36 +4875,36 @@ function constructSlider(name, params) {
 const FilterDashboard = props => {
   _s();
   // keep track of filter used so we can display a message
-  const [filterUsed, setFilterUsed] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("");
+  const [filterUsed, setFilterUsed] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
   const filterManager = props.filterManager;
   const filters = filterManager ? filterManager.filtersMap : {}; // props.filterManager can be null initially
   const filterNames = Object.keys(filters);
   const style = {
-    "textAlign": "center"
+    'textAlign': 'center'
   };
   const elementStyle = {
-    "width": "100%",
-    "height": "100%",
-    "margin": "1% auto",
-    "textAlign": "center",
-    "display": "grid",
-    "gridTemplateRows": "300px auto",
-    "gridTemplateColumns": "auto"
+    'width': '100%',
+    'height': '100%',
+    'margin': '1% auto',
+    'textAlign': 'center',
+    'display': 'grid',
+    'gridTemplateRows': '300px auto',
+    'gridTemplateColumns': 'auto'
   };
 
   // use a hook to be able to keep track of selected filter
-  const [selectedFilter, setSelectedFilter] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("");
+  const [selectedFilter, setSelectedFilter] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
   const parameterSliders = [];
   if (filters[selectedFilter] && filters[selectedFilter].params) {
     // need to set up sliders for each editable parameter for the selected filter
     for (const paramName in filters[selectedFilter].params) {
-      if (paramName !== "instructions") {
+      if (paramName !== 'instructions') {
         const newSlider = constructSlider(paramName, filters[selectedFilter].params[paramName]);
         parameterSliders.push(newSlider);
       }
     }
   }
-  let filterInstructions = "";
+  let filterInstructions = '';
   if (filters[selectedFilter] && filters[selectedFilter].params && filters[selectedFilter].params.instructions) {
     filterInstructions = filters[selectedFilter].params.instructions;
   }
@@ -4907,22 +4913,22 @@ const FilterDashboard = props => {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     id: "filtersDisplay",
     style: {
-      "gridRow": "1",
-      "gridColumn": "1",
-      "height": "100%",
-      "overflow": "auto"
+      'gridRow': '1',
+      'gridColumn': '1',
+      'height': '100%',
+      'overflow': 'auto'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", {
     id: "filterChoices",
     style: {
-      "margin": "0 auto",
-      "padding": "0"
+      'margin': '0 auto',
+      'padding': '0'
     }
   }, filterNames.map((filterName, index) => {
     let selectedStyle = null;
     if (selectedFilter === filterName) {
       selectedStyle = JSON.parse(JSON.stringify(style));
-      selectedStyle["backgroundColor"] = "#c8c8c8";
+      selectedStyle['backgroundColor'] = '#c8c8c8';
     }
     const s = selectedStyle !== null ? selectedStyle : style;
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", {
@@ -4937,25 +4943,25 @@ const FilterDashboard = props => {
     }, filterName);
   }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     style: {
-      "gridRow": "2",
-      "gridColumn": "1"
+      'gridRow': '2',
+      'gridColumn': '1'
     }
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("hr", null), filterInstructions && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, filterInstructions), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     id: "filterParameters"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("ul", {
     style: {
-      "margin": "0 auto",
-      "padding": "0"
+      'margin': '0 auto',
+      'padding': '0'
     }
   }, parameterSliders.map((slider, index) => {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("li", {
       key: `filter_param_${index}`
     }, slider);
   })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-    id: "applyFilter",
+    id: 'applyFilter',
     onClick: function () {
-      if (selectedFilter === "oilpainting") {
-        const res = confirm("this filter will take some time. are you sure?");
+      if (selectedFilter === 'oilpainting') {
+        const res = confirm('this filter will take some time. are you sure?');
         if (!res) return;
       }
       filterManager.filterCanvasOption(selectedFilter, props.currMode); // currMode is whether in animation or image editor mode
@@ -4965,7 +4971,7 @@ const FilterDashboard = props => {
     className: "filterUsedMsg"
   }, " ", filterUsed, " ")));
 };
-_s(FilterDashboard, "SySK5L6XnlOlcKv5MC9sBqV0kog=");
+_s(FilterDashboard, "pf5+nV5eF1zP43igSlyCYZ7+8rA=");
 _c = FilterDashboard;
 var _c;
 __webpack_require__.$Refresh$.register(_c, "FilterDashboard");
@@ -5020,13 +5026,13 @@ const LayerOrder = props => {
   const updateParentState = props.updateParentStateFunction; // need to pass arg to this function
   const layers = props.layers;
   const style = {
-    "textAlign": "center"
+    'textAlign': 'center'
   };
   const elementStyle = {
-    "margin": "2px auto",
-    "textAlign": "center",
-    "border": "1px solid #000",
-    "width": "50%"
+    'margin': '2px auto',
+    'textAlign': 'center',
+    'border': '1px solid #000',
+    'width': '50%'
   };
 
   // use a hook to be able to drag and drop with 
@@ -5044,17 +5050,17 @@ const LayerOrder = props => {
           const thisEl = e.target;
           thisEl.style.opacity = 0.5;
           setDragSourceEl(thisEl);
-          e.dataTransfer.effectAllowed = "move";
-          e.dataTransfer.setData("text/html", thisEl.innerHTML);
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/html', thisEl.innerHTML);
         },
         onDragEnter: function (e) {
-          e.target.style.border = "1px dotted #000";
+          e.target.style.border = '1px dotted #000';
         },
         onDragOver: function (e) {
           e.preventDefault();
         },
         onDragLeave: function (e) {
-          e.target.style.border = "1px solid #000";
+          e.target.style.border = '1px solid #000';
         },
         onDrop: function (e) {
           const thisEl = e.target;
@@ -5072,13 +5078,13 @@ const LayerOrder = props => {
           dragSourceEl.style.opacity = 1;
 
           // also make sure target has its border style restored
-          thisEl.style.border = "1px solid #000";
+          thisEl.style.border = '1px solid #000';
           e.preventDefault();
         },
-        draggable: "true"
+        draggable: 'true'
       }, "layer ", layerIndex + 1);
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-      id: "doneChangingLayerButton",
+      id: 'doneChangingLayerButton',
       onClick: function () {
         saveNewLayerOrder(updateParentState);
       }
@@ -5131,7 +5137,7 @@ class FilterTemplate {
   }
   filter(imageData) {
     // all filters should have a filter method that returns imageData
-    console.log("unimplemented filter");
+    console.log('unimplemented filter');
     return imageData;
   }
 }
@@ -5374,11 +5380,11 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class BilateralFilter extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "blurFactor": {
-        "value": 3,
-        "min": 1,
-        "max": 15,
-        "step": 1
+      'blurFactor': {
+        'value': 3,
+        'min': 1,
+        'max': 15,
+        'step': 1
       }
     };
     super(params);
@@ -5474,11 +5480,11 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class Blur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "blurFactor": {
-        "value": 3,
-        "min": 1,
-        "max": 15,
-        "step": 1
+      'blurFactor': {
+        'value': 3,
+        'min': 1,
+        'max': 15,
+        'step': 1
       }
     };
     super(params);
@@ -5798,11 +5804,11 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class Dots extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "dotWidth": {
-        "value": 5,
-        "min": 1,
-        "max": 10,
-        "step": 1
+      'dotWidth': {
+        'value': 5,
+        'min': 1,
+        'max': 10,
+        'step': 1
       }
     };
     super(params);
@@ -5814,7 +5820,7 @@ class Dots extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplat
     //const copy = new Uint8ClampedArray(data);
 
     const drawDot = (x, y, color, context) => {
-      context.lineJoin = "round";
+      context.lineJoin = 'round';
       context.strokeStyle = color;
       context.lineWidth = this.params.dotWidth.value;
       context.beginPath();
@@ -5891,17 +5897,17 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class Dots2 extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "minDotWidth": {
-        "value": 5,
-        "min": 1,
-        "max": 30,
-        "step": 1
+      'minDotWidth': {
+        'value': 5,
+        'min': 1,
+        'max': 30,
+        'step': 1
       },
-      "maxDotWidth": {
-        "value": 20,
-        "min": 1,
-        "max": 30,
-        "step": 1
+      'maxDotWidth': {
+        'value': 20,
+        'min': 1,
+        'max': 30,
+        'step': 1
       }
     };
     super(params);
@@ -5921,7 +5927,7 @@ class Dots2 extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTempla
     const height = pixels.height;
     const data = pixels.data;
     const drawDot = (x, y, intensity, color, context) => {
-      context.lineJoin = "round";
+      context.lineJoin = 'round';
       context.strokeStyle = color;
       const dotWidth = minDotWidth + (maxDotWidth - minDotWidth) * ((intensity - 255) / (0 - 255));
       context.lineWidth = dotWidth;
@@ -6001,23 +6007,23 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class Dots3 extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "distThreshold": {
-        "value": 5.0,
-        "min": 0.0,
-        "max": 12.0,
-        "step": 0.1
+      'distThreshold': {
+        'value': 5.0,
+        'min': 0.0,
+        'max': 12.0,
+        'step': 0.1
       },
-      "dotSize": {
-        "value": 3.0,
-        "min": 1.0,
-        "max": 25.0,
-        "step": 1.0
+      'dotSize': {
+        'value': 3.0,
+        'min': 1.0,
+        'max': 25.0,
+        'step': 1.0
       },
-      "neighborDistance": {
-        "value": 4.0,
-        "min": 1.0,
-        "max": 20.0,
-        "step": 1.0
+      'neighborDistance': {
+        'value': 4.0,
+        'min': 1.0,
+        'max': 20.0,
+        'step': 1.0
       }
     };
     super(params);
@@ -6102,7 +6108,7 @@ class Dots3 extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTempla
     const height = pixels.height;
     const data = pixels.data;
     const drawDot = (x, y, color, context) => {
-      context.lineJoin = "round";
+      context.lineJoin = 'round';
       context.strokeStyle = color;
       const dotWidth = this.params.dotSize.value; //3;
       context.lineWidth = dotWidth;
@@ -6680,11 +6686,11 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class KuwaharaPainting extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "windowSize": {
-        "min": 1,
-        "max": 10,
-        "value": 2,
-        "step": 1
+      'windowSize': {
+        'min': 1,
+        'max': 10,
+        'value': 2,
+        'step': 1
       }
     };
     super(params);
@@ -6931,23 +6937,23 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class Lines extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "distThreshold": {
-        "value": 5.0,
-        "min": 0.0,
-        "max": 12.0,
-        "step": 0.1
+      'distThreshold': {
+        'value': 5.0,
+        'min': 0.0,
+        'max': 12.0,
+        'step': 0.1
       },
-      "dotSize": {
-        "value": 3.0,
-        "min": 1.0,
-        "max": 25.0,
-        "step": 1.0
+      'dotSize': {
+        'value': 3.0,
+        'min': 1.0,
+        'max': 25.0,
+        'step': 1.0
       },
-      "neighborDistance": {
-        "value": 4.0,
-        "min": 1.0,
-        "max": 20.0,
-        "step": 1.0
+      'neighborDistance': {
+        'value': 4.0,
+        'min': 1.0,
+        'max': 20.0,
+        'step': 1.0
       }
     };
     super(params);
@@ -7032,7 +7038,7 @@ class Lines extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTempla
     const height = pixels.height;
     const data = pixels.data;
     const drawDot = (x, y, color, context) => {
-      context.lineJoin = "round";
+      context.lineJoin = 'round';
       context.strokeStyle = color;
       const dotWidth = this.params.dotSize.value; //3;
       context.lineWidth = dotWidth;
@@ -7138,17 +7144,17 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class Mosaic extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "chunkWidth": {
-        "value": 40,
-        "min": 1,
-        "max": 50,
-        "step": 1
+      'chunkWidth': {
+        'value': 40,
+        'min': 1,
+        'max': 50,
+        'step': 1
       },
-      "chunkHeight": {
-        "value": 40,
-        "min": 1,
-        "max": 50,
-        "step": 1
+      'chunkHeight': {
+        'value': 40,
+        'min': 1,
+        'max': 50,
+        'step': 1
       }
     };
     super(params);
@@ -7231,17 +7237,17 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class OilPainting extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "radius": {
-        "min": 1,
-        "max": 7,
-        "value": 5,
-        "step": 1
+      'radius': {
+        'min': 1,
+        'max': 7,
+        'value': 5,
+        'step': 1
       },
-      "intensity": {
-        "min": 10,
-        "max": 30,
-        "value": 20,
-        "step": 1
+      'intensity': {
+        'min': 10,
+        'max': 30,
+        'value': 20,
+        'step': 1
       }
     };
     super(params);
@@ -7299,7 +7305,7 @@ class OilPainting extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filter
     };
   }
   filter(pixels) {
-    console.log("starting oilpainting filter: " + new Date());
+    console.log('starting oilpainting filter: ' + new Date());
     const width = pixels.width;
     const height = pixels.height;
     const data = pixels.data;
@@ -7313,7 +7319,7 @@ class OilPainting extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filter
         data[pixelIdx + 2] = color.b;
       }
     }
-    console.log("oilpainting filter done: " + new Date());
+    console.log('oilpainting filter done: ' + new Date());
     return pixels;
   }
 }
@@ -7390,12 +7396,12 @@ class Outline extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemp
 
     // make a temp canvas to draw the result on
     // then we'll return this temp canvas' image data
-    const tempCanvas = document.createElement("canvas");
+    const tempCanvas = document.createElement('canvas');
     tempCanvas.height = pixels.height;
     tempCanvas.width = pixels.width;
-    const context = tempCanvas.getContext("2d");
+    const context = tempCanvas.getContext('2d');
     context.clearRect(0, 0, width, height);
-    context.fillStyle = "#FFF";
+    context.fillStyle = '#FFF';
     context.fillRect(0, 0, width, height);
     const d = pixels.data;
     let colCounter = 0;
@@ -7564,13 +7570,13 @@ class Painted extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemp
     const data = pixels.data;
     //const copy = new Uint8ClampedArray(data);
 
-    const offscreenCanvas = document.createElement("canvas");
+    const offscreenCanvas = document.createElement('canvas');
     offscreenCanvas.width = width;
     offscreenCanvas.height = height;
-    const offscreenContext = offscreenCanvas.getContext("2d");
+    const offscreenContext = offscreenCanvas.getContext('2d');
     offscreenContext.fillStyle = '#fff';
     offscreenContext.fillRect(0, 0, width, height);
-    offscreenContext.lineJoin = "round"; // try other line join options for interesting effects!
+    offscreenContext.lineJoin = 'round'; // try other line join options for interesting effects!
     offscreenContext.globalCompositeOperation = 'source-over';
 
     /* this is cool - we can create an interesting texture with shadow blur. but unfortunately not what I'm looking for with this filter
@@ -7657,32 +7663,32 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class Saturation extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "saturationValue": {
-        "value": 2.5,
-        "min": 0,
-        "max": 5,
-        "step": 0.5
+      'saturationValue': {
+        'value': 2.5,
+        'min': 0,
+        'max': 5,
+        'step': 0.5
       },
-      "redLuminance": {
+      'redLuminance': {
         //constant for determining luminance of red
-        "value": .3086,
-        "min": 0,
-        "max": 2,
-        "step": .0002
+        'value': .3086,
+        'min': 0,
+        'max': 2,
+        'step': .0002
       },
-      "greenLuminance": {
+      'greenLuminance': {
         //constant for determining luminance of green
-        "value": .6094,
-        "min": 0,
-        "max": 2,
-        "step": .0002
+        'value': .6094,
+        'min': 0,
+        'max': 2,
+        'step': .0002
       },
-      "blueLuminance": {
+      'blueLuminance': {
         //constant for determining luminance of blue
-        "value": .0820,
-        "min": 0,
-        "max": 2,
-        "step": .0002
+        'value': .0820,
+        'min': 0,
+        'max': 2,
+        'step': .0002
       }
     };
     super(params);
@@ -7833,31 +7839,30 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 
 
 class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
-  constructor(animationProject) {
+  constructor() {
     const params = {
-      "blurFactor": {
-        "value": 3,
-        "min": 1,
-        "max": 15,
-        "step": 1
+      'blurFactor': {
+        'value': 3,
+        'min': 1,
+        'max': 15,
+        'step': 1
       },
-      "instructions": "Click on 'apply filter', which will add an overlay for you to draw on to specify the area to blur."
+      'instructions': 'Click on \'apply filter\', which will add an overlay for you to draw on to specify the area to blur.'
     };
     super(params);
-    this.animationProject = animationProject; // we need to be able to access the current layer
     this.drawnLineCoords = [];
     this.isDrawing = false;
     this.alphaFlag = 0.1; // the value of alpha to use for the pixels of the offscreen canvas so we can differentiate between copied-over pixels
     this.isActive = false; // so we can't run the filter multiple times on button click
   }
-  setupTempCanvas() {
-    const currLayer = this.animationProject.getCurrFrame().getCurrCanvas();
+  setupTempCanvas(targetCanvas) {
+    const currLayer = targetCanvas;
     const displayArea = currLayer.parentNode;
-    const canvasElement = document.createElement("canvas");
+    const canvasElement = document.createElement('canvas');
     displayArea.appendChild(canvasElement);
-    canvasElement.className = "tempCanvasForBlur";
-    canvasElement.style.position = "absolute";
-    canvasElement.style.border = "1px #000 dotted";
+    canvasElement.className = 'tempCanvasForBlur';
+    canvasElement.style.position = 'absolute';
+    canvasElement.style.border = '1px #000 dotted';
     canvasElement.style.zIndex = 10;
     canvasElement.style.top = 0;
     canvasElement.style.left = 0;
@@ -7866,7 +7871,7 @@ class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filte
     canvasElement.width = currLayer.width;
     canvasElement.height = currLayer.height;
     const ctx = canvasElement.getContext('2d');
-    ctx.fillStyle = `rgba(204, 204, 204, 0.5)`;
+    ctx.fillStyle = 'rgba(204, 204, 204, 0.5)';
     ctx.fillRect(0, 0, currLayer.width, currLayer.height);
 
     // TODO: add event listeners to temp canvas
@@ -7874,8 +7879,8 @@ class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filte
     canvasElement.addEventListener('pointerdown', evt => {
       evt.preventDefault();
       this.isDrawing = true;
-      ctx.fillStyle = "#fff";
-      ctx.lineJoin = "round";
+      ctx.fillStyle = '#fff';
+      ctx.lineJoin = 'round';
       this.drawnLineCoords = [{
         'x': Math.round(evt.offsetX),
         'y': Math.round(evt.offsetY)
@@ -7887,7 +7892,7 @@ class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filte
 
       // do some processing on the coordinate data of the line drawn
       this.fillInSelectionAreaGaps();
-      this.processOnOffscreenCanvas();
+      this.processOnOffscreenCanvas(targetCanvas);
 
       // done
       canvasElement.parentNode.removeChild(canvasElement);
@@ -7913,7 +7918,6 @@ class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filte
 
         // keep monitoring largest/smallest x and y values
         // so we can get max width/height of drawn area
-
         ctx.lineTo(this.drawnLineCoords[i].x, this.drawnLineCoords[i].y);
         ctx.closePath();
         ctx.stroke();
@@ -7923,7 +7927,7 @@ class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filte
       this.isDrawing = false;
     });
     function abortTargetBlur(evt) {
-      if (evt.code === "Escape") {
+      if (evt.code === 'Escape') {
         canvasElement.parentNode.removeChild(canvasElement);
         document.removeEventListener('keydown', abortTargetBlur);
         this.isActive = false;
@@ -8030,10 +8034,10 @@ class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filte
 
     return offscreenCanvas;
   }
-  moveOffscreenPixelsBack(offscreenCanvas) {
+  moveOffscreenPixelsBack(offscreenCanvas, targetCanvas) {
     // based on start coord and max width and height, put the processed pixels
     // back on the current layer canvas
-    const currCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
+    const currCanvas = targetCanvas; //this.animationProject.getCurrFrame().getCurrCanvas();
     const currLayerCtx = currCanvas.getContext('2d');
     const selectedAreaInfo = this.getSelectionAreaInfo();
     const offscreenData = offscreenCanvas.getContext('2d').getImageData(0, 0, selectedAreaInfo.width, selectedAreaInfo.height);
@@ -8063,16 +8067,10 @@ class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filte
     currLayerCtx.putImageData(currCanvasData, 0, 0);
     this.isActive = false;
   }
-  copyPixelsToOffscreenCanvas(offscreenCanvas) {
-    const currCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
+  copyPixelsToOffscreenCanvas(offscreenCanvas, targetCanvas) {
+    const currCanvas = targetCanvas;
     const currLayerCtx = currCanvas.getContext('2d');
     const selectedAreaInfo = this.getSelectionAreaInfo();
-
-    //const imgData = currLayerCtx.getImageData(selectedAreaInfo.topLeftX, selectedAreaInfo.topLeftY, selectedAreaInfo.width, selectedAreaInfo.height);
-    //offscreenCanvas.getContext('2d').putImageData(imgData, 0, 0);
-
-    //console.log(selectedAreaInfo);
-
     const offscreenData = offscreenCanvas.getContext('2d').getImageData(0, 0, selectedAreaInfo.width, selectedAreaInfo.height);
     const currCanvasData = currLayerCtx.getImageData(0, 0, currCanvas.width, currCanvas.height).data;
     let offscreenRow = 0;
@@ -8110,12 +8108,12 @@ class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filte
     //offscreenCanvas.style.margin = '10px';
     //document.body.appendChild(offscreenCanvas);
   }
-  processOnOffscreenCanvas() {
+  processOnOffscreenCanvas(targetCanvas) {
     // create a new canvas with the max width and height
     const offscreenCanvas = this.getOffscreenCanvas();
 
     // take the pixels (from the current layer) within that area and copy it to the new canvas
-    this.copyPixelsToOffscreenCanvas(offscreenCanvas);
+    this.copyPixelsToOffscreenCanvas(offscreenCanvas, targetCanvas);
 
     // blur that canvas
     const blurFilter = new _blur_js__WEBPACK_IMPORTED_MODULE_1__.Blur();
@@ -8125,19 +8123,24 @@ class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filte
     offscreenCanvas.getContext('2d').putImageData(blurredData, 0, 0);
 
     // copy the pixels back (excluding the pixels outside the drawn area - use alpha channel to differentiate?)
-    this.moveOffscreenPixelsBack(offscreenCanvas);
+    this.moveOffscreenPixelsBack(offscreenCanvas, targetCanvas);
   }
-  doTargetedBlur() {
+  doTargetedBlur(targetCanvas) {
     // create a temp canvas to draw the area to blur. impose the temp canvas on the current canvas
-    this.setupTempCanvas();
+    this.setupTempCanvas(targetCanvas);
   }
-  filter(pixels) {
+  filter(targetCanvas) {
+    const context = targetCanvas.getContext('2d');
+    const height = targetCanvas.getAttribute('height');
+    const width = targetCanvas.getAttribute('width');
+    const pixels = context.getImageData(0, 0, width, height);
+
     // do targeted blur
     if (this.isActive) {
       return pixels;
     }
     this.isActive = true;
-    this.doTargetedBlur();
+    this.doTargetedBlur(targetCanvas);
     return pixels;
   }
 }
@@ -8184,11 +8187,11 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class Thinning extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "iterations": {
-        "value": 1,
-        "min": 1,
-        "max": 60,
-        "step": 1
+      'iterations': {
+        'value': 1,
+        'min': 1,
+        'max': 60,
+        'step': 1
       }
     };
     super(params);
@@ -8285,7 +8288,7 @@ class Thinning extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTem
     const bottomLeft = 4 * (i + 1) * width + (j - 1) * 4;
     const bottomRight = 4 * (i + 1) * width + (j + 1) * 4;
     let numConnectedNeighbors = 0;
-    let sequence = "";
+    let sequence = '';
     const currPixel = 4 * i * width + j * 4;
 
     // don't operate on non-black pixels
@@ -8297,72 +8300,72 @@ class Thinning extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTem
     // e.g. top -> top-right -> right -> bottom-right -> ... -> top in clockwise-fashion
     if (top >= 0) {
       if (data[top] == 255) {
-        sequence += "0";
+        sequence += '0';
       } else {
-        sequence += "1";
+        sequence += '1';
       }
     }
     if (topRight >= 0) {
       if (data[topRight] == 255) {
-        sequence += "0";
+        sequence += '0';
       } else {
-        sequence += "1";
+        sequence += '1';
       }
     }
     if (right < data.length) {
       if (data[right] == 255) {
-        sequence += "0";
+        sequence += '0';
       } else {
-        sequence += "1";
+        sequence += '1';
       }
     }
     if (bottomRight < data.length) {
       if (data[bottomRight] == 255) {
-        sequence += "0";
+        sequence += '0';
       } else {
-        sequence += "1";
+        sequence += '1';
       }
     }
     if (bottom < data.length) {
       if (data[bottom] == 255) {
-        sequence += "0";
+        sequence += '0';
       } else {
-        sequence += "1";
+        sequence += '1';
       }
     }
     if (bottomLeft < data.length) {
       if (data[bottomLeft] == 255) {
-        sequence += "0";
+        sequence += '0';
       } else {
-        sequence += "1";
+        sequence += '1';
       }
     }
     if (left >= 0) {
       if (data[left] == 255) {
-        sequence += "0";
+        sequence += '0';
       } else {
-        sequence += "1";
+        sequence += '1';
       }
     }
     if (topLeft >= 0) {
       if (data[topLeft] == 255) {
-        sequence += "0";
+        sequence += '0';
       } else {
-        sequence += "1";
+        sequence += '1';
       }
     }
     if (top >= 0) {
       if (data[top] == 255) {
-        sequence += "0";
+        sequence += '0';
       } else {
-        sequence += "1";
+        sequence += '1';
       }
     }
 
     // evaluate sequence generated
     // we're looking for susbtrings with "01"
     for (let i = 0; i < sequence.length - 1; i++) {
-      if (sequence[i] === "0" && sequence[i + 1] === "1") {
+      if (sequence[i] === '0' && sequence[i + 1] === '1') {
         numConnectedNeighbors++;
       }
     }
@@ -8515,11 +8518,11 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class Voronoi extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_1__.FilterTemplate {
   constructor() {
     const params = {
-      "neighborCount": {
-        "value": 30,
-        "min": 5,
-        "max": 80,
-        "step": 1
+      'neighborCount': {
+        'value': 30,
+        'min': 5,
+        'max': 80,
+        'step': 1
       }
     };
     super(params);
@@ -8599,29 +8602,29 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class Watercolor extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "beta": {
-        "value": 0.5,
-        "min": 0,
-        "max": 2,
-        "step": 0.1
+      'beta': {
+        'value': 0.5,
+        'min': 0,
+        'max': 2,
+        'step': 0.1
       },
-      "octaves": {
-        "value": 3,
-        "min": 0,
-        "max": 10,
-        "step": 1
+      'octaves': {
+        'value': 3,
+        'min': 0,
+        'max': 10,
+        'step': 1
       },
-      "frequency": {
-        "value": 0.02,
-        "min": 0,
-        "max": 0.1,
-        "step": 0.01
+      'frequency': {
+        'value': 0.02,
+        'min': 0,
+        'max': 0.1,
+        'step': 0.01
       },
-      "persistence": {
-        "value": 0.3,
-        "min": 0.1,
-        "max": 1.0,
-        "step": 0.1
+      'persistence': {
+        'value': 0.3,
+        'min': 0.1,
+        'max': 1.0,
+        'step': 0.1
       }
     };
     super(params);
@@ -11503,11 +11506,11 @@ __webpack_require__.$Refresh$.runtime = __webpack_require__(/*! ./node_modules/r
 class Wavy extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.FilterTemplate {
   constructor() {
     const params = {
-      "waveSpeed": {
-        "value": 0.08,
-        "min": 0.01,
-        "max": 1.0,
-        "step": 0.01
+      'waveSpeed': {
+        'value': 0.08,
+        'min': 0.01,
+        'max': 1.0,
+        'step': 0.01
       }
     };
     super(params);
@@ -11613,7 +11616,7 @@ function makeColorWheel(elementId, size) {
     return null;
   }
   const colorWheel = document.createElement('canvas');
-  colorWheel.id = "colorWheel";
+  colorWheel.id = 'colorWheel';
   colorWheel.setAttribute('width', size);
   colorWheel.setAttribute('height', size);
   const colorWheelContext = colorWheel.getContext('2d', {
@@ -11642,7 +11645,7 @@ function makeColorWheel(elementId, size) {
   }
 
   // make black a pickable color 
-  colorWheelContext.fillStyle = "rgba(0,0,0,1)";
+  colorWheelContext.fillStyle = 'rgba(0,0,0,1)';
   colorWheelContext.beginPath();
   colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
   colorWheelContext.fill();
@@ -11653,7 +11656,7 @@ function makeColorWheel(elementId, size) {
   colorWheelContext.stroke();
 
   // make sure circle is filled with #fff
-  colorWheelContext.fillStyle = "rgba(255,255,255,1)";
+  colorWheelContext.fillStyle = 'rgba(255,255,255,1)';
   colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
   colorWheelContext.fill();
 
@@ -11663,7 +11666,7 @@ function makeColorWheel(elementId, size) {
   colorWheelContext.stroke();
 
   // make sure circle is filled with transparent white
-  colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
+  colorWheelContext.fillStyle = 'rgba(255,255,255,0.5)';
   colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI);
   colorWheelContext.fill();
   location.appendChild(colorWheel);
@@ -11675,7 +11678,7 @@ function updateColorWheel(params, colorWheel) {
   const x = colorWheel.width / 2;
   const y = colorWheel.height / 2;
   const radius = 60;
-  colorWheelContext.fillStyle = "#fff";
+  colorWheelContext.fillStyle = '#fff';
   colorWheelContext.fillRect(0, 0, colorWheel.width, colorWheel.height);
   for (let angle = 0; angle <= 5600; angle++) {
     const startAngle = (angle - 1) * Math.PI / 180; //convert angles to radians
@@ -11695,7 +11698,7 @@ function updateColorWheel(params, colorWheel) {
   }
 
   // make black a pickable color 
-  colorWheelContext.fillStyle = "rgba(0,0,0,1)";
+  colorWheelContext.fillStyle = 'rgba(0,0,0,1)';
   colorWheelContext.beginPath();
   colorWheelContext.arc(10, 10, 8, 0, 2 * Math.PI);
   colorWheelContext.fill();
@@ -11706,7 +11709,7 @@ function updateColorWheel(params, colorWheel) {
   colorWheelContext.stroke();
 
   // make sure circle is filled with #fff
-  colorWheelContext.fillStyle = "rgba(255,255,255,1)";
+  colorWheelContext.fillStyle = 'rgba(255,255,255,1)';
   colorWheelContext.arc(30, 10, 8, 0, 2 * Math.PI);
   colorWheelContext.fill();
 
@@ -11716,7 +11719,7 @@ function updateColorWheel(params, colorWheel) {
   colorWheelContext.stroke();
 
   // make sure circle is filled with transparent white
-  colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
+  colorWheelContext.fillStyle = 'rgba(255,255,255,0.5)';
   colorWheelContext.arc(50, 10, 8, 0, 2 * Math.PI);
   colorWheelContext.fill();
 }
@@ -11727,7 +11730,7 @@ function makeBrightnessSlider(elementId, size) {
     return null;
   }
   const brightnessSlider = document.createElement('canvas');
-  brightnessSlider.id = "colorWheel";
+  brightnessSlider.id = 'colorWheel';
   const width = size / 12;
   const height = size;
   brightnessSlider.setAttribute('width', width);
@@ -11737,8 +11740,8 @@ function makeBrightnessSlider(elementId, size) {
     willReadFrequently: true
   });
   const gradient = brightnessSliderContext.createLinearGradient(width / 2, 0, width / 2, height);
-  gradient.addColorStop(0, "#fff");
-  gradient.addColorStop(1, "#000");
+  gradient.addColorStop(0, '#fff');
+  gradient.addColorStop(1, '#000');
   brightnessSliderContext.fillStyle = gradient;
   brightnessSliderContext.fillRect(0, 0, width, height);
   location.appendChild(brightnessSlider);

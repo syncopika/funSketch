@@ -41,12 +41,12 @@ class Outline extends FilterTemplate {
         
     // make a temp canvas to draw the result on
     // then we'll return this temp canvas' image data
-    const tempCanvas = document.createElement("canvas");
+    const tempCanvas = document.createElement('canvas');
     tempCanvas.height = pixels.height;
     tempCanvas.width = pixels.width;
-    const context = tempCanvas.getContext("2d");
+    const context = tempCanvas.getContext('2d');
     context.clearRect(0, 0, width, height);
-    context.fillStyle = "#FFF";
+    context.fillStyle = '#FFF';
     context.fillRect(0, 0, width, height);
         
     const d = pixels.data;

@@ -29,18 +29,18 @@ class DefaultBrush extends BrushTemplate {
     // go through the temp canvas image data and look for the black pixels.
     // wherever we see a black pixel we look in the same index in the current layer image data
     // and manually set its alpha to whatever it should be based on current color
-    const currCtx = currCanvas.getContext("2d");
+    const currCtx = currCanvas.getContext('2d');
         
     const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext("2d");
+    const tempCtx = tempCanvas.getContext('2d');
     tempCanvas.width = currCanvas.width;
     tempCanvas.height = currCanvas.height;
-    tempCtx.lineJoin = "round";
-    tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
+    tempCtx.lineJoin = 'round';
+    tempCtx.fillStyle = 'rgba(255, 255, 255, 1)';
     tempCtx.fillRect(0, 0, currCanvas.width, currCanvas.height);
         
     // redraw the stroke last drawn onto the temp canvas (which is all #fff) with #000
-    this.brushStroke(tempCtx, "rgba(0, 0, 0, 1)");
+    this.brushStroke(tempCtx, 'rgba(0, 0, 0, 1)');
         
     const tmpImgData = tempCtx.getImageData(0, 0, currCanvas.width, currCanvas.height).data;
         

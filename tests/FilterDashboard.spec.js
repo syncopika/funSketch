@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { FilterDashboard } from '../src/components/FilterDashboard';
 
-describe("testing FilterDashboard component", () => {
+describe('testing FilterDashboard component', () => {
     
   beforeAll(() => {
   });
@@ -12,13 +12,13 @@ describe("testing FilterDashboard component", () => {
   afterAll(() => {
   });
     
-  it("is testing FilterDashboard", () => {
+  it('is testing FilterDashboard', () => {
     render(
       <FilterDashboard
         filterManager={null}
       />
     );
-    expect(screen.queryByText("apply filter")).toBeInTheDocument();
+    expect(screen.queryByText('apply filter')).toBeInTheDocument();
   });
     
 });

@@ -3,6 +3,15 @@
     "version": "1.0.0",
     "description": "an experimental application that has simple drawing features, as well as some interesting filter and brush options. more importantly, you can also make some quick, simple animations!",
     "main": "server.js",
+    "scripts": {
+        "test": "jest --config ./jest.config.json --env=jsdom",
+        "lint": "eslint",
+        "lint:fix": "eslint --fix",
+        "dev": "cross-env NODE_ENV=development webpack --mode development",
+        "build": "cross-env NODE_ENV=production webpack --mode production",
+        "serve": "cross-env NODE_ENV=development webpack serve --mode development",
+        "e2e": "testcafe chrome:headless tests/e2e/fixture.js"
+    },
     "dependencies": {
         "react": "^16.14.0",
         "react-dom": "^16.14.0"
@@ -33,15 +42,6 @@
         "webpack": "^5.77.0",
         "webpack-cli": "^4.9.0",
         "webpack-dev-server": "^4.13.2"
-    },
-    "scripts": {
-        "test": "jest --config ./jest.config.json --env=jsdom",
-        "lint": "eslint",
-        "lint:fix": "eslint --fix",
-        "dev": "cross-env NODE_ENV=development webpack --mode development",
-        "build": "cross-env NODE_ENV=production webpack --mode production",
-        "serve": "cross-env NODE_ENV=development webpack serve --mode development",
-        "e2e": "testcafe chrome:headless tests/e2e/fixture.js"
     },
     "pre-commit": [
         "lint",

@@ -40,10 +40,10 @@ export const App = () => {
   const [currLayer, setCurrLayer] = useState(1);
   const [changeLayerOrder, setChangeLayerOrder] = useState(false);
   const [timelineMarkers, setTimelineMarkers] = useState({}); // keep track of where frame speed should change - not 0-indexed!
-  
+  const [currMode, setCurrMode] = useState('animation'); // animation or editor(single image editing) mode
   const [animationTimelineFrames, setAnimationTimelineFrames] = useState([]);
   const timelineFrames = useRef([]); // use a ref for timelineFrames - this is because we need to access it in a closed context (i.e. document event listener) so we need something persistent
-  
+  const imageEditorCanvas = useRef(null);
   const updateCurrFrameAndTimelineMarkers = (markers, frameNum) => {
     setTimelineMarkers(markers);
     setCurrFrame(frameNum);
@@ -171,6 +171,8 @@ export const App = () => {
     toolbarInstance.layerMode = !toolbarInstance.layerMode;
   };
 
+  // TODO: I think we need to move some stuff to the app component level and not have toolbar be in control of too many things
+  // it should just provide some utility functions
   const setupToolbar = (toolbarInstance) => {
     const newToolbar = toolbarInstance;
     const project = animationProject;
@@ -216,11 +218,30 @@ export const App = () => {
     newToolbar.downloadFrame('downloadFrame');
         
     newToolbar.rotateImage('rotateCanvasImage'); 
-    newToolbar.undo('undo');
-    newToolbar.importImage('importImage');
+    newToolbar.undo('undo'); // TODO: make sure this works for image editor mode as well?
     newToolbar.save('saveWork');
         
     newToolbar.importProject('importProject', importProjectUpdateFunc);
+  };
+  
+  const importImage = () => {
+    // TODO: these should be part of state
+    const scaleToFitCanvasCheckbox = document.getElementById('fitToCanvasCheck');
+    const centerImageCheckbox = document.getElementById('centerImageCheck');
+    const scaleToFitCanvas = scaleToFitCanvasCheckbox ? scaleToFitCanvasCheckbox.checked : false;
+    const centerImage = centerImageCheckbox ? centerImageCheckbox.checked : false;
+    
+    if(currMode === 'animation'){
+      const currFrame = animationProject.getCurrFrame();
+      const currCanvas = currFrame.currentCanvas;
+      toolbarInstance.importImage(currCanvas, scaleToFitCanvas, centerImage).then(result => {
+        currFrame.addSnapshot(result);
+      });
+    }else{
+      // image editor mode
+      const canvas = imageEditorCanvas.current;
+      toolbarInstance.importImage(canvas, scaleToFitCanvas, centerImage, currMode);
+    }
   };
 
   const loadDemo = (evt) => {
@@ -325,6 +346,32 @@ export const App = () => {
       disp.style.display = "none";
     }
   };
+  
+  const switchMode = () => {
+    if(currMode === 'animation'){
+      setCurrMode('imageEditor');
+    }else{
+      setCurrMode('animation');
+    }
+  };
+  
+  const playForwardAnimation = () => {
+    //this._playAnimation("forward");
+    animationController.playAnimation(
+      "forward", 
+      timelineFrames.current,
+      timelineMarkers
+    );
+  };
+  
+  const playBackwardAnimation = () => {
+    //this._playAnimation("backward");
+    animationController.playAnimation(
+      "backward", 
+      timelineFrames.current,
+      timelineMarkers
+    );
+  };
 
   useEffect(() => {
     console.log('rendering...');
@@ -332,7 +379,7 @@ export const App = () => {
     if(!animationProject){
       const animationProj = new AnimationProject(document.querySelector('.canvasArea'));
       const newBrush = new BrushManager(animationProj);
-      const newFilters = new FilterManager(animationProj, newBrush);
+      const newFilters = new FilterManager(animationProj, imageEditorCanvas, newBrush);
       const newToolbar = new Toolbar(newBrush, animationProj);
       const animController = new AnimationController(animationProj, newToolbar);
       const pasteImgManager = new PasteImageManager(animationProj);
@@ -468,6 +515,9 @@ export const App = () => {
             and dragging the box around it (denoted by dotted lines). 
             Apply the image to the canvas by clicking anywhere outside the dotted lines. 
           </p>
+          <button onClick={switchMode}>
+            {currMode === 'animation' ? 'image editor mode' : 'animator mode'}
+          </button>
         </section>
               
         <section id="frameLayerSection" className="tbar">
@@ -536,7 +586,7 @@ export const App = () => {
           <h4> other </h4>
           <div id="displayOtherStuff">
             <ul>
-              <li><button id='importImage'> import image </button></li>
+              <li><button id='importImage' onClick={importImage}> import image </button></li>
               <li>
                 <div>
                   <label id='fitToCanvasCheckLabel' htmlFor='fitToCanvasCheck'>
@@ -599,29 +649,9 @@ export const App = () => {
               </select>
             </div>
             <ul>
-              <li><button onClick={
-                () => {
-                  //this._playAnimation("forward");
-                  animationController.playAnimation(
-                    "forward", 
-                    timelineFrames.current,
-                    timelineMarkers
-                  );
-                }
-              }> play animation forward </button></li>
-              <li><button onClick={
-                () => {
-                  //this._playAnimation("backward");
-                  animationController.playAnimation(
-                    "backward", 
-                    timelineFrames.current,
-                    timelineMarkers
-                  );
-                }
-              }> play animation backward </button></li>
-              <li>
-                <button id='generateGif' onClick={generateGif}> generate gif! </button>
-              </li>
+              <li><button onClick={playForwardAnimation}> play animation forward </button></li>
+              <li><button onClick={playBackwardAnimation}> play animation backward </button></li>
+              <li><button id='generateGif' onClick={generateGif}> generate gif! </button></li>
             </ul>
           </div>
           <p id='loadingScreen'></p>
@@ -639,9 +669,21 @@ export const App = () => {
           </select>
         </section>
       </div>
-
+      
       <main className='screen'>
-        <div className='screenContainer'>
+        {
+          currMode !== 'animation' &&
+          <>
+            <h1> image editor </h1>
+            <canvas 
+              ref={imageEditorCanvas} 
+              id='imageEditorCanvas' 
+              style={{border: '#000 solid 1px', height: '500px', width: '500px'}}
+            ></canvas>
+          </>
+        }
+        
+        <div className='screenContainer' style={{'display': currMode === 'animation' ? '' : 'none'}}>
           <FrameCounterDisplay
             prevFrame={prevFrame}
             prevLayer={prevLayer}
@@ -673,8 +715,7 @@ export const App = () => {
         <h4 id="brushesOption"
           className="option"
           onClick={showFiltersOrBrushes}
-        > brushes
-        </h4>
+        > brushes </h4>
                   
         <div id="brushes" className="tbar">
           <BrushDashboard brushManager={brushInstance} />
@@ -688,7 +729,7 @@ export const App = () => {
         > filters </h4>
                   
         <div id="filters" className="tbar">
-          <FilterDashboard filterManager={filtersInstance} />
+          <FilterDashboard filterManager={filtersInstance} currMode={currMode} />
         </div>
       </section>
               

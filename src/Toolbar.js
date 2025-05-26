@@ -303,12 +303,8 @@ class Toolbar {
   /***
     import an image
   ***/
-  importImage(elementId){
-    const self = this;
-        
-    document.getElementById(elementId).addEventListener('click', () => {
-      const canvas = this.animationProj.getCurrFrame();
-            
+  importImage(canvas, scaleToFitCanvas=true, centerImage=true, mode='animation'){
+    return new Promise((resolve, reject) => {
       // call fileHandler here
       fileHandler();
             
@@ -332,31 +328,34 @@ class Toolbar {
         //when the image loads, put it on the canvas.
         img.onload = () => {
           // change current canvas' width and height according to imported picture
-          const currentCanvas = canvas.currentCanvas;
-          const context = currentCanvas.getContext("2d");
+          const context = canvas.getContext("2d");
           const height = canvas.height;
           const width = canvas.width;
-          currentCanvas.setAttribute('height', height);
-          currentCanvas.setAttribute('width', width);
-                    
-          // TODO: should these params be part of state somewhere? :/
-          const scaleToFitCanvasCheckbox = document.getElementById('fitToCanvasCheck');
-          const centerImageCheckbox = document.getElementById('centerImageCheck');
-                    
-          const scaleToFitCanvas = scaleToFitCanvasCheckbox ? scaleToFitCanvasCheckbox.checked : false;
-          const centerImage = centerImageCheckbox ? centerImageCheckbox.checked : false;
-                    
-          if(scaleToFitCanvas){
-            context.drawImage(img, 0, 0, width, height);
+          
+          // if we're in animation mode, the canvas dimensions should be constant. 
+          // if an image editor mode, we should adjust the canvas to match the dimensions of the image
+          if(mode === 'imageEditor'){
+            canvas.style.height = `${img.height}px`;
+            canvas.style.width = `${img.width}px`;
+            canvas.setAttribute('height', img.height);
+            canvas.setAttribute('width', img.width);
+            context.drawImage(img, 0, 0, img.width, img.height);
           }else{
-            if(centerImage){
-              context.drawImage(img, width/2 - img.width/2, height/2 - img.height/2, img.width, img.height);
+            canvas.setAttribute('height', height);
+            canvas.setAttribute('width', width);
+            
+            if(scaleToFitCanvas){
+              context.drawImage(img, 0, 0, width, height);
             }else{
-              context.drawImage(img, 0, 0, img.width, img.height);
+              if(centerImage){
+                context.drawImage(img, width/2 - img.width/2, height/2 - img.height/2, img.width, img.height);
+              }else{
+                context.drawImage(img, 0, 0, img.width, img.height);
+              }
             }
           }
-                    
-          canvas.addSnapshot(context.getImageData(0, 0, width, height));
+              
+          resolve(context.getImageData(0, 0, width, height));
         };
         //after reader has loaded file, put the data in the image object.
         reader.onloadend = function(){ 

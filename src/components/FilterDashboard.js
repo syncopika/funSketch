@@ -32,12 +32,12 @@ function constructSlider(name, params){
   );
 }
 
-const FilterDashboard = (props) => {
+export const FilterDashboard = (props) => {
   // keep track of filter used so we can display a message
   const [filterUsed, setFilterUsed] = useState("");
     
   const filterManager = props.filterManager;
-  const filters = (filterManager) ? filterManager.filtersMap : {}; // props.filterManager can be null initially
+  const filters = filterManager ? filterManager.filtersMap : {}; // props.filterManager can be null initially
   const filterNames = Object.keys(filters);
     
   const style = {
@@ -145,7 +145,7 @@ const FilterDashboard = (props) => {
               const res = confirm("this filter will take some time. are you sure?");
               if(!res) return;
             }
-            filterManager.filterCanvasOption(selectedFilter);
+            filterManager.filterCanvasOption(selectedFilter, props.currMode); // currMode is whether in animation or image editor mode
             setFilterUsed(`applied ${selectedFilter} filter @ ${new Date().toISOString()}`);
           }
         }
@@ -157,9 +157,4 @@ const FilterDashboard = (props) => {
             
     </div>
   );
-};
-
-
-export{
-  FilterDashboard
 };

@@ -41,6 +41,8 @@ export const App = () => {
   const [timelineMarkers, setTimelineMarkers] = useState({}); // keep track of where frame speed should change - not 0-indexed!
   const [currMode, setCurrMode] = useState('animation'); // animation or editor(single image editing) mode
   const [animationTimelineFrames, setAnimationTimelineFrames] = useState([]);
+  const [scaleToFitCanvas, setScaleToFitCanvas] = useState(true);
+  const [centerImage, setCenterImage] = useState(false);
   const timelineFrames = useRef([]); // use a ref for timelineFrames - this is because we need to access it in a closed context (i.e. document event listener) so we need something persistent
   const imageEditorCanvas = useRef(null);
   const updateCurrFrameAndTimelineMarkers = (markers, frameNum) => {
@@ -224,12 +226,6 @@ export const App = () => {
   };
   
   const importImage = () => {
-    // TODO: these should be part of state probably?
-    const scaleToFitCanvasCheckbox = document.getElementById('fitToCanvasCheck');
-    const centerImageCheckbox = document.getElementById('centerImageCheck');
-    const scaleToFitCanvas = scaleToFitCanvasCheckbox ? scaleToFitCanvasCheckbox.checked : false;
-    const centerImage = centerImageCheckbox ? centerImageCheckbox.checked : false;
-    
     if(currMode === 'animation'){
       const currFrame = animationProject.getCurrFrame();
       const currCanvas = currFrame.currentCanvas;
@@ -588,13 +584,13 @@ export const App = () => {
                   <label id='fitToCanvasCheckLabel' htmlFor='fitToCanvasCheck'>
                     fit image to canvas: 
                   </label>
-                  <input name='fitToCanvasCheck' id='fitToCanvasCheck' type='checkbox' defaultChecked />
+                  <input name='fitToCanvasCheck' id='fitToCanvasCheck' type='checkbox' checked={scaleToFitCanvas} onChange={(evt) => setScaleToFitCanvas(evt.target.checked)} />
                 </div>
                 <div>
                   <label id='centerImageCheckLabel' htmlFor='centerImageCheck'>
                     center image: 
                   </label>
-                  <input name='centerImageCheck' id='centerImageCheck' type='checkbox' />
+                  <input name='centerImageCheck' id='centerImageCheck' type='checkbox' checked={centerImage} onChange={(evt) => setCenterImage(evt.target.checked)} />
                 </div>
               </li>
               <li><button id='rotateCanvasImage'>rotate image</button></li>

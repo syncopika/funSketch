@@ -1,4 +1,4 @@
-class Toolbar {
+export class Toolbar {
   constructor(brush, animationProj){
     // used as a flag for the animation playback features
     this.play = null;
@@ -8,7 +8,7 @@ class Toolbar {
     // should the keyboard keys be affecting the layer or the frame? 2 options only
     // this is useful for the arrow keys and space bar
     this.layerMode = true;
-    this.htmlCounter = ""; // html element used as a counter specifying the current frame and layer
+    this.htmlCounter = ''; // html element used as a counter specifying the current frame and layer
         
     this.brush = brush;
     this.animationProj = animationProj;
@@ -136,9 +136,9 @@ class Toolbar {
         this.brush.applyBrush();
       }else{
         // otherwise, just blank the canvas 
-        const context = oldLayer.getContext("2d");
+        const context = oldLayer.getContext('2d');
         context.clearRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
-        context.fillStyle = "#fff";
+        context.fillStyle = '#fff';
         context.fillRect(0, 0, oldLayer.getAttribute('width'), oldLayer.getAttribute('height'));
       }
             
@@ -217,13 +217,13 @@ class Toolbar {
       const canvas = this.animationProj.getCurrFrame();
       const width = canvas.currentCanvas.width;
       const height = canvas.currentCanvas.height;
-      const context = canvas.currentCanvas.getContext("2d");
+      const context = canvas.currentCanvas.getContext('2d');
       createImageBitmap(canvas.currentCanvas, 0, 0, width, height).then((bitmap) => {
-        const tmpCanvas = document.createElement("canvas");
+        const tmpCanvas = document.createElement('canvas');
         tmpCanvas.width = width;
         tmpCanvas.height = height;
                 
-        const tmpCtx = tmpCanvas.getContext("2d");
+        const tmpCtx = tmpCanvas.getContext('2d');
                 
         // use a temp canvas because translating on the real canvas will mess with mousedown coords
         tmpCtx.clearRect(0, 0, width, height);
@@ -245,11 +245,11 @@ class Toolbar {
   setClearCanvas(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       const frame = this.animationProj.getCurrFrame();
-      const context = frame.currentCanvas.getContext("2d");
-      const width = frame.currentCanvas.getAttribute("width");
-      const height = frame.currentCanvas.getAttribute("height");
+      const context = frame.currentCanvas.getContext('2d');
+      const width = frame.currentCanvas.getAttribute('width');
+      const height = frame.currentCanvas.getAttribute('height');
       context.clearRect(0, 0, width, height);
-      context.fillStyle = "#FFFFFF";
+      context.fillStyle = '#FFFFFF';
       context.fillRect(0, 0, width, height);
     });
   }
@@ -264,9 +264,9 @@ class Toolbar {
     document.getElementById(elementId).addEventListener('click', () => {
       const frame = this.animationProj.getCurrFrame();
       const currLayer = frame.getCurrCanvas();
-      const context = currLayer.getContext("2d");
-      const width = currLayer.getAttribute("width");
-      const height = currLayer.getAttribute("height");
+      const context = currLayer.getContext('2d');
+      const width = currLayer.getAttribute('width');
+      const height = currLayer.getAttribute('height');
       const currLayerSnapshots = frame.getSnapshots();
             
       // then put back last image (ignore the one that had just been drawn)
@@ -303,12 +303,8 @@ class Toolbar {
   /***
     import an image
   ***/
-  importImage(elementId){
-    const self = this;
-        
-    document.getElementById(elementId).addEventListener('click', () => {
-      const canvas = this.animationProj.getCurrFrame();
-            
+  importImage(canvas, scaleToFitCanvas=true, centerImage=true, mode='animation'){
+    return new Promise((resolve, reject) => {
       // call fileHandler here
       fileHandler();
             
@@ -326,37 +322,40 @@ class Toolbar {
         const reader = new FileReader();
         const file = e.target.files[0];
         if(!file.type.match(/image.*/)){
-          console.log("not a valid image");
+          console.log('not a valid image');
           return;
         }
         //when the image loads, put it on the canvas.
         img.onload = () => {
           // change current canvas' width and height according to imported picture
-          const currentCanvas = canvas.currentCanvas;
-          const context = currentCanvas.getContext("2d");
+          const context = canvas.getContext('2d');
           const height = canvas.height;
           const width = canvas.width;
-          currentCanvas.setAttribute('height', height);
-          currentCanvas.setAttribute('width', width);
-                    
-          // TODO: should these params be part of state somewhere? :/
-          const scaleToFitCanvasCheckbox = document.getElementById('fitToCanvasCheck');
-          const centerImageCheckbox = document.getElementById('centerImageCheck');
-                    
-          const scaleToFitCanvas = scaleToFitCanvasCheckbox ? scaleToFitCanvasCheckbox.checked : false;
-          const centerImage = centerImageCheckbox ? centerImageCheckbox.checked : false;
-                    
-          if(scaleToFitCanvas){
-            context.drawImage(img, 0, 0, width, height);
+          
+          // if we're in animation mode, the canvas dimensions should be constant. 
+          // if an image editor mode, we should adjust the canvas to match the dimensions of the image
+          if(mode === 'imageEditor'){
+            canvas.style.height = `${img.height}px`;
+            canvas.style.width = `${img.width}px`;
+            canvas.setAttribute('height', img.height);
+            canvas.setAttribute('width', img.width);
+            context.drawImage(img, 0, 0, img.width, img.height);
           }else{
-            if(centerImage){
-              context.drawImage(img, width/2 - img.width/2, height/2 - img.height/2, img.width, img.height);
+            canvas.setAttribute('height', height);
+            canvas.setAttribute('width', width);
+            
+            if(scaleToFitCanvas){
+              context.drawImage(img, 0, 0, width, height);
             }else{
-              context.drawImage(img, 0, 0, img.width, img.height);
+              if(centerImage){
+                context.drawImage(img, width/2 - img.width/2, height/2 - img.height/2, img.width, img.height);
+              }else{
+                context.drawImage(img, 0, 0, img.width, img.height);
+              }
             }
           }
-                    
-          canvas.addSnapshot(context.getImageData(0, 0, width, height));
+              
+          resolve(context.getImageData(0, 0, width, height));
         };
         //after reader has loaded file, put the data in the image object.
         reader.onloadend = function(){ 
@@ -374,9 +373,9 @@ class Toolbar {
   resetImage(){
     if(this.recentImage){
       const canvas = this.animationProj.getCurrFrame();
-      const context = canvas.currentCanvas.getContext("2d");
-      const height = canvas.currentCanvas.getAttribute("height");
-      const width = canvas.currentCanvas.getAttribute("width");
+      const context = canvas.currentCanvas.getContext('2d');
+      const height = canvas.currentCanvas.getAttribute('height');
+      const width = canvas.currentCanvas.getAttribute('width');
       context.drawImage(this.recentImage, 0, 0, width, height);
     }
   }
@@ -392,7 +391,7 @@ class Toolbar {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        const name = prompt("please enter a name for the file");
+        const name = prompt('please enter a name for the file');
         if(name === null) {
           return;
         }else{
@@ -415,7 +414,7 @@ class Toolbar {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        const name = prompt("please enter a name for the file");
+        const name = prompt('please enter a name for the file');
         if(name === null) {
           return;
         }else{
@@ -430,26 +429,26 @@ class Toolbar {
   toggleToolbarPosition(elementId, toolbarId){
     document.getElementById(elementId).addEventListener('click', () => {
       const toolbar = document.getElementById(toolbarId);
-      if(toolbar.style.position === "sticky" || toolbar.style.position === ""){
-        toolbar.style.position = "static";
+      if(toolbar.style.position === 'sticky' || toolbar.style.position === ''){
+        toolbar.style.position = 'static';
       }else{
-        toolbar.style.position = "sticky";
+        toolbar.style.position = 'sticky';
       }
     });
   }
     
   mergeFrameLayers(frame){
     const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext("2d");
+    const tempCtx = tempCanvas.getContext('2d');
     tempCanvas.width = frame.width;
     tempCanvas.height = frame.height;
-    tempCtx.fillStyle = "rgba(255, 255, 255, 1)";
+    tempCtx.fillStyle = 'rgba(255, 255, 255, 1)';
     tempCtx.fillRect(0, 0, frame.width, frame.height);
     const tempImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
 
     for(let j = 0; j < frame.canvasList.length; j++){
       const layer = frame.canvasList[j];
-      const layerCtx = layer.getContext("2d");
+      const layerCtx = layer.getContext('2d');
             
       // this assumes that all layers within a frame share the same dimensions
       const currImageLayer = layerCtx.getImageData(0, 0, frame.width, frame.height);
@@ -491,7 +490,7 @@ class Toolbar {
   ***/
   getGif(elementId, timelineMarkers){
     if(elementId){
-      document.getElementById(elementId).textContent = "now loading...";
+      document.getElementById(elementId).textContent = 'now loading...';
     }
     const gif = new GIF({
       workers: 2,
@@ -504,7 +503,7 @@ class Toolbar {
       gif.addFrame(tempCanvas, { delay: frameTime });
     }
     gif.on('finished', function(blob){
-      document.getElementById(elementId).textContent = "";
+      document.getElementById(elementId).textContent = '';
       const newGif = URL.createObjectURL(blob);
       window.open(newGif);
     });
@@ -522,10 +521,10 @@ class Toolbar {
   save(elementId){
     document.getElementById(elementId).addEventListener('click', () => {
       // prompt the user to name the file 
-      let name = prompt("name of file: ");
-      if(name === ""){
+      let name = prompt('name of file: ');
+      if(name === ''){
         const date = new Date(); 
-        name = date.toISOString() + "_funSketch_saveFile";
+        name = date.toISOString() + '_funSketch_saveFile';
       }else if(name === null){
         return;
       }
@@ -538,8 +537,8 @@ class Toolbar {
           // get layer metadata
           const newLayer = {
             'id': layer.id,
-            'width': layer.getAttribute("width"),
-            'height': layer.getAttribute("height"),
+            'width': layer.getAttribute('width'),
+            'height': layer.getAttribute('height'),
             'zIndex': layer.style.zIndex,
             'opacity': layer.style.opacity,
           };
@@ -549,15 +548,15 @@ class Toolbar {
         });
         savedData.push(JSON.stringify(newFrame));
       });
-      let json = "[\n";
-      json += savedData.join(",\n"); // put a line break between each new object, which represents a frame
-      json += "\n]";
+      let json = '[\n';
+      json += savedData.join(',\n'); // put a line break between each new object, which represents a frame
+      json += '\n]';
       // make a blob so it can be downloaded 
-      const blob = new Blob([json], { type: "application/json" });
+      const blob = new Blob([json], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = name + ".json";
+      link.download = name + '.json';
       link.click();
     });
   }
@@ -566,7 +565,7 @@ class Toolbar {
   // updateStateFunction: function that updates state. used in the react component that has the toolbar as a prop
   importData(data, updateStateFunction){
     if(!data[0] || (!data[0].name && !data[0].height && !data[0].width && !data[0].data)){
-      console.log("import failed: it appears to not be a valid project! :<");
+      console.log('import failed: it appears to not be a valid project! :<');
       return;
     }
     // clear existing project
@@ -596,7 +595,7 @@ class Toolbar {
         const currLayer = currFrame.getLayers()[layerIndex];
 
         // add the image data 
-        const newCtx = currLayer.getContext("2d");
+        const newCtx = currLayer.getContext('2d');
         const img = new Image();
         (function(context, image){
           image.onload = function(){
@@ -639,7 +638,7 @@ class Toolbar {
               data = JSON.parse(e.target.result);
             }catch(e){
               // not valid json file 
-              console.log("import failed: not a valid JSON file");
+              console.log('import failed: not a valid JSON file');
               return;
             }
             self.importData(data, updateStateFunction);
@@ -649,10 +648,4 @@ class Toolbar {
       }
     });
   }
-    
-} // end of Toolbar 
-
-
-export {
-  Toolbar
-};
+}

@@ -4,11 +4,11 @@ class Dots extends FilterTemplate {
     
   constructor(){
     const params = {
-      "dotWidth": {
-        "value": 5,
-        "min": 1,
-        "max": 10,
-        "step": 1,
+      'dotWidth': {
+        'value': 5,
+        'min': 1,
+        'max': 10,
+        'step': 1,
       }
     };
     super(params);
@@ -22,7 +22,7 @@ class Dots extends FilterTemplate {
     //const copy = new Uint8ClampedArray(data);
         
     const drawDot = (x, y, color, context) => {
-      context.lineJoin = "round";
+      context.lineJoin = 'round';
       context.strokeStyle = color;
       context.lineWidth = this.params.dotWidth.value;
             

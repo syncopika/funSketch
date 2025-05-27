@@ -1,19 +1,19 @@
 import 'jest-canvas-mock';
 import { Frame } from '../src/AnimationProject.js';
 
-describe("test Frame class", () => {
+describe('test Frame class', () => {
     
-  const containerId = "containerId";
+  const containerId = 'containerId';
     
   beforeAll(() => {
-    const container = document.createElement("div");
+    const container = document.createElement('div');
     container.className = containerId;
-    container.style.height = "200px";
-    container.style.width = "200px";
+    container.style.height = '200px';
+    container.style.width = '200px';
     document.body.appendChild(container);
   });
     
-  it("test frame creation and layer setup", () => {
+  it('test frame creation and layer setup', () => {
     const container = document.querySelector('.' + containerId);
     const frame1 = new Frame(container, 2);
         
@@ -29,10 +29,10 @@ describe("test Frame class", () => {
     expect(frame1.canvasList.length).toEqual(1);
         
     let currCanvas = frame1.getCurrCanvas();
-    expect(currCanvas.style.opacity).toEqual("0.97");
-    expect(currCanvas.style.zIndex).toEqual("1");
-    expect(currCanvas.style.cursor).toEqual("");
-    expect(currCanvas.style.touchAction).toEqual("none");
+    expect(currCanvas.style.opacity).toEqual('0.97');
+    expect(currCanvas.style.zIndex).toEqual('1');
+    expect(currCanvas.style.cursor).toEqual('');
+    expect(currCanvas.style.touchAction).toEqual('none');
         
     expect(currCanvas.parentNode).toEqual(container);
         
@@ -43,12 +43,12 @@ describe("test Frame class", () => {
     expect(frame1.canvasList.length).toEqual(2);
     expect(currCanvas).toEqual(frame1.canvasList[0]);
     expect(currCanvas).not.toEqual(frame1.canvasList[1]);
-    expect(frame1.canvasList[0].style.opacity).toEqual("0.97");
-    expect(frame1.canvasList[1].style.opacity).toEqual("0");
+    expect(frame1.canvasList[0].style.opacity).toEqual('0.97');
+    expect(frame1.canvasList[1].style.opacity).toEqual('0');
   });
     
     
-  it("test frame hide and show", () => {
+  it('test frame hide and show', () => {
     const container = document.querySelector('.' + containerId);
     const frame = new Frame(container, 0);
     frame.setupNewLayer();
@@ -60,9 +60,9 @@ describe("test Frame class", () => {
     frame.hide();
         
     frame.canvasList.forEach((layer) => {
-      expect(layer.style.zIndex).toEqual("-1");
-      expect(layer.style.visibility).toEqual("hidden");
-      expect(layer.style.cursor).toEqual("");
+      expect(layer.style.zIndex).toEqual('-1');
+      expect(layer.style.visibility).toEqual('hidden');
+      expect(layer.style.cursor).toEqual('');
     });
         
     // show frame
@@ -73,17 +73,17 @@ describe("test Frame class", () => {
             
       // expect first layer to be topmost
       if(i === 0){
-        expect(layer.style.zIndex).toEqual("1");
+        expect(layer.style.zIndex).toEqual('1');
       }else{
-        expect(layer.style.zIndex).toEqual("0");
+        expect(layer.style.zIndex).toEqual('0');
       }
             
-      expect(layer.style.visibility).toEqual("");
-      expect(layer.style.cursor).toEqual("");                
+      expect(layer.style.visibility).toEqual('');
+      expect(layer.style.cursor).toEqual('');                
     }
   });
     
-  it("test frame setToLayer", () => {
+  it('test frame setToLayer', () => {
     const container = document.querySelector('.' + containerId);
     const frame = new Frame(container, 0);
     frame.setupNewLayer();
@@ -95,23 +95,23 @@ describe("test Frame class", () => {
     frame.setToLayer(1, false);
     let currCanvas = frame.getCurrCanvas();
     expect(currCanvas).toEqual(frame.getLayers()[1]);
-    expect(currCanvas.style.opacity).toEqual("0.97");
-    expect(currCanvas.style.zIndex).toEqual("1");
+    expect(currCanvas.style.opacity).toEqual('0.97');
+    expect(currCanvas.style.zIndex).toEqual('1');
         
     // go to next layer with onion skin
     frame.setToLayer(2, true);
     currCanvas = frame.getCurrCanvas();
     expect(currCanvas).toEqual(frame.getLayers()[2]);
-    expect(currCanvas.style.opacity).toEqual("0.97");
-    expect(currCanvas.style.zIndex).toEqual("1");
+    expect(currCanvas.style.opacity).toEqual('0.97');
+    expect(currCanvas.style.zIndex).toEqual('1');
         
     // make sure onion skin worked
     const prevCanvas = frame.getLayers()[1];
-    expect(prevCanvas.style.opacity).toEqual("0.92");
-    expect(prevCanvas.style.zIndex).toEqual("0");
+    expect(prevCanvas.style.opacity).toEqual('0.92');
+    expect(prevCanvas.style.zIndex).toEqual('0');
   });
     
-  it("test getLayers", () => {
+  it('test getLayers', () => {
     const container = document.querySelector('.' + containerId);
     const frame = new Frame(container, 0);
     expect(frame.getLayers().length).toEqual(0);
@@ -119,7 +119,7 @@ describe("test Frame class", () => {
     expect(frame.getLayers().length).toEqual(1);
   });
     
-  it("test setLayers", () => {
+  it('test setLayers', () => {
     const container = document.querySelector('.' + containerId);
     const frame = new Frame(container, 0);
     frame.setupNewLayer();
@@ -132,7 +132,7 @@ describe("test Frame class", () => {
     expect(frame.getLayers()[0]).toEqual(layer2);
   });
     
-  it("test setCurrIndex", () => {
+  it('test setCurrIndex', () => {
     const container = document.querySelector('.' + containerId);
     const frame = new Frame(container, 0);
     frame.setupNewLayer();
@@ -144,7 +144,7 @@ describe("test Frame class", () => {
     expect(frame.getCurrCanvas()).toEqual(frame.getLayers()[1]);
   });
     
-  it("test nextLayer", () => {
+  it('test nextLayer', () => {
     const container = document.querySelector('.' + containerId);
     const frame = new Frame(container, 0);
     frame.setupNewLayer();
@@ -154,11 +154,11 @@ describe("test Frame class", () => {
     expect(frame.nextLayer()).toEqual(true);
         
     // check onion skin functionality
-    expect(frame.getLayers()[0].style.opacity).toEqual("0.92");
-    expect(frame.getLayers()[1].style.opacity).toEqual("0.97");
+    expect(frame.getLayers()[0].style.opacity).toEqual('0.92');
+    expect(frame.getLayers()[1].style.opacity).toEqual('0.97');
   });
     
-  it("test prevLayer", () => {
+  it('test prevLayer', () => {
     const container = document.querySelector('.' + containerId);
     const frame = new Frame(container, 0);
     frame.setupNewLayer();
@@ -169,8 +169,8 @@ describe("test Frame class", () => {
     expect(frame.prevLayer()).toEqual(true);
         
     // check onion skin functionality
-    expect(frame.getLayers()[0].style.opacity).toEqual("0.97");
-    expect(frame.getLayers()[1].style.opacity).toEqual("0");
+    expect(frame.getLayers()[0].style.opacity).toEqual('0.97');
+    expect(frame.getLayers()[1].style.opacity).toEqual('0');
   });
     
   /*

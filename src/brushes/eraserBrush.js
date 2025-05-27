@@ -5,7 +5,7 @@ class EraserBrush extends BrushTemplate {
     
   constructor(brushManager){
     super(brushManager);
-    this.cursorType = "url(" + "\"eraser_cursor1.png\"" + ") 5 5, auto";
+    this.cursorType = 'url(' + '"eraser_cursor1.png"' + ') 5 5, auto';
   }
     
   // event listener functions
@@ -36,7 +36,7 @@ class EraserBrush extends BrushTemplate {
   // this is for determining what the brush stroke looks like
   brushStroke(context){
     for(let i = 0; i < this.clickX.length; i++){
-      context.strokeStyle = "#ffffffff"; // #ffffffff because eraser
+      context.strokeStyle = '#ffffffff'; // #ffffffff because eraser
       context.lineWidth = this.clickSize[i];
             
       context.beginPath();

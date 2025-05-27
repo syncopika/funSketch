@@ -10,7 +10,7 @@ function getResult(startTime, context, imageData, resultsId){
   const resultTable = document.getElementById(resultsId);
     
   const newResult = document.createElement('li');
-  newResult.textContent = res + " s";
+  newResult.textContent = res + ' s';
   resultTable.appendChild(newResult);
     
   //console.log((endTime.getTime() - startTime.getTime()) / 1000)
@@ -24,17 +24,17 @@ function getIntensity(pixelData, width, height, row, col){
   const avgB = {};
     
   const params = {
-    "radius": {
-      "min": 1,
-      "max": 7,
-      "value": 5,
-      "step": 1,
+    'radius': {
+      'min': 1,
+      'max': 7,
+      'value': 5,
+      'step': 1,
     },
-    "intensity": {
-      "min": 10,
-      "max": 30,
-      "value": 20,
-      "step": 1,
+    'intensity': {
+      'min': 10,
+      'max': 30,
+      'value': 20,
+      'step': 1,
     },
   };
     
@@ -101,7 +101,7 @@ function oilpaintWithoutWorkers(canvasId, resultTableId){
   const resultTable = document.getElementById(resultTableId);
   const newResult = document.createElement('li');
       
-  newResult.textContent = oilpaintHelper(imgData) + " s";
+  newResult.textContent = oilpaintHelper(imgData) + ' s';
 
   resultTable.appendChild(newResult);
 }
@@ -145,10 +145,10 @@ function oilpaintWithWorkers(canvasId, resultTableId){
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
 
-    const workerTopRight = new Worker("worker.js");
-    const workerTopLeft = new Worker("worker.js");
-    const workerBottomRight = new Worker("worker.js");
-    const workerBottomLeft = new Worker("worker.js");
+    const workerTopRight = new Worker('worker.js');
+    const workerTopLeft = new Worker('worker.js');
+    const workerBottomRight = new Worker('worker.js');
+    const workerBottomLeft = new Worker('worker.js');
         
     // start the timer here!
     const startTime2 = new Date();
@@ -192,7 +192,7 @@ function oilpaintWithWorkers(canvasId, resultTableId){
       }
     };
   }else{
-    console.log("web workers not available!");
+    console.log('web workers not available!');
   }
 }
 

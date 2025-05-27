@@ -1,29 +1,29 @@
 import React from 'react';
 import { useState } from 'react';
 
-const BrushDashboard = (props) => {
+export const BrushDashboard = (props) => {
   const brushManager = props.brushManager;
   const brushes = brushManager ? brushManager.brushesMap : {}; // can be null initially
   const brushNames = Object.keys(brushes);
     
   const style = {
-    "textAlign": "center"
+    'textAlign': 'center'
   };
     
   const elementStyle = {
-    "width": "100%",
-    "height": "100%",
-    "margin": "1% auto",
-    "textAlign": "center",
-    "display": "grid",
-    "gridTemplateRows": "auto auto",
-    "gridTemplateColumns": "auto",
+    'width': '100%',
+    'height': '100%',
+    'margin': '1% auto',
+    'textAlign': 'center',
+    'display': 'grid',
+    'gridTemplateRows': 'auto auto',
+    'gridTemplateColumns': 'auto',
   };
     
   // use a hook to be able to keep track of selected brush
-  const [selectedBrush, setSelectedBrush] = useState("default");
+  const [selectedBrush, setSelectedBrush] = useState('default');
     
-  const brushSize = brushManager ? `${brushManager.currSize}` : "2";
+  const brushSize = brushManager ? `${brushManager.currSize}` : '2';
   const [currBrushSize, setBrushSize] = useState(brushSize);
     
   function equipBrush(brushManager, brushName){
@@ -42,16 +42,16 @@ const BrushDashboard = (props) => {
     <div style={elementStyle}>
       <div style={
         {
-          "gridRow": "1",
-          "gridColumn": "1",
-          "height": "100%"
+          'gridRow': '1',
+          'gridColumn': '1',
+          'height': '100%'
         }
       }>
         <div style={
           {
-            "overflowY": "auto",
-            "height": "100%",
-            "width": "100%"
+            'overflowY': 'auto',
+            'height': '100%',
+            'width': '100%'
           }
         }>
           <div id='brushDisplay'>
@@ -59,8 +59,8 @@ const BrushDashboard = (props) => {
               id='brushChoices'
               style={
                 {
-                  "margin": "0 auto", 
-                  "padding": "0"
+                  'margin': '0 auto', 
+                  'padding': '0'
                 }
               }
             >
@@ -68,7 +68,7 @@ const BrushDashboard = (props) => {
                 brushNames.map((brushName, index) => {
                   const selectedStyle = JSON.parse(JSON.stringify(style));
                   if(selectedBrush === brushName){
-                    selectedStyle["backgroundColor"] = "#c8c8c8";
+                    selectedStyle['backgroundColor'] = '#c8c8c8';
                   }
                   const s = (selectedStyle !== null) ? selectedStyle : style;
                   return <li 
@@ -76,8 +76,8 @@ const BrushDashboard = (props) => {
                     key={(`brush_${index}`)}
                     id={(`${brushName}_${index}`)}
                     onClick={equipBrush(brushManager, brushName)}
-                    onMouseOver={(evt) => {evt.target.style.color = "#99b5d1";}}
-                    onMouseOut={(evt) => {evt.target.style.color = "#000";}}
+                    onMouseOver={(evt) => {evt.target.style.color = '#99b5d1';}}
+                    onMouseOut={(evt) => {evt.target.style.color = '#000';}}
                   >{brushName}</li>;
                 })
               }
@@ -88,8 +88,8 @@ const BrushDashboard = (props) => {
                 
       <div style={
         {
-          "gridRow": "2",
-          "gridColumn": "1"
+          'gridRow': '2',
+          'gridColumn': '1'
         }
       }>
         <div id='adjustBrushSize'>
@@ -115,9 +115,4 @@ const BrushDashboard = (props) => {
 
     </div>
   );
-};
-
-
-export{
-  BrushDashboard
 };

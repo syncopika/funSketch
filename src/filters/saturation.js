@@ -8,29 +8,29 @@ class Saturation extends FilterTemplate {
     
   constructor(){
     const params = {
-      "saturationValue": {
-        "value": 2.5,
-        "min": 0,
-        "max": 5,
-        "step": 0.5,
+      'saturationValue': {
+        'value': 2.5,
+        'min': 0,
+        'max': 5,
+        'step': 0.5,
       },
-      "redLuminance": {            //constant for determining luminance of red
-        "value": .3086,
-        "min": 0,
-        "max": 2,
-        "step": .0002,
+      'redLuminance': {            //constant for determining luminance of red
+        'value': .3086,
+        'min': 0,
+        'max': 2,
+        'step': .0002,
       },
-      "greenLuminance": {             //constant for determining luminance of green
-        "value": .6094,
-        "min": 0,
-        "max": 2,
-        "step": .0002,
+      'greenLuminance': {             //constant for determining luminance of green
+        'value': .6094,
+        'min': 0,
+        'max': 2,
+        'step': .0002,
       },
-      "blueLuminance": {            //constant for determining luminance of blue
-        "value": .0820,
-        "min": 0,
-        "max": 2,
-        "step": .0002,
+      'blueLuminance': {            //constant for determining luminance of blue
+        'value': .0820,
+        'min': 0,
+        'max': 2,
+        'step': .0002,
       }
     };
     super(params);

@@ -7,17 +7,17 @@ class Dots2 extends FilterTemplate {
     
   constructor(){
     const params = {
-      "minDotWidth": {
-        "value": 5,
-        "min": 1,
-        "max": 30,
-        "step": 1,
+      'minDotWidth': {
+        'value': 5,
+        'min': 1,
+        'max': 30,
+        'step': 1,
       },
-      "maxDotWidth": {
-        "value": 20,
-        "min": 1,
-        "max": 30,
-        "step": 1,
+      'maxDotWidth': {
+        'value': 20,
+        'min': 1,
+        'max': 30,
+        'step': 1,
       }
     };
     super(params);
@@ -40,7 +40,7 @@ class Dots2 extends FilterTemplate {
     const data = pixels.data;
         
     const drawDot = (x, y, intensity, color, context) => {
-      context.lineJoin = "round";
+      context.lineJoin = 'round';
       context.strokeStyle = color;
             
       const dotWidth = minDotWidth + (maxDotWidth - minDotWidth) * ((intensity - 255) / (0 - 255));

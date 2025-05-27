@@ -5,7 +5,7 @@ class ColorPickerBrush extends BrushTemplate {
   constructor(brushManager){
     super(brushManager);
         
-    this.cursorType = "pointer"; // TODO: make an icon
+    this.cursorType = 'pointer'; // TODO: make an icon
   }
     
   // event listener functions
@@ -25,16 +25,16 @@ class ColorPickerBrush extends BrushTemplate {
       // so this data might not be accurate... :/
       const frame = this.brushManager.animationProject.getCurrFrame();    
       const currLayer = frame.getCurrCanvas();
-      const colorData = document.getElementById(currLayer.id).getContext("2d").getImageData(x, y, 1, 1).data;
+      const colorData = document.getElementById(currLayer.id).getContext('2d').getImageData(x, y, 1, 1).data;
       const color = 'rgba(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ',' + colorData[3] + ')';
 
       // set the brush color to this color
       // yeah, this is pretty hacky - dunno of a better way though at the moment :)
       const colorPickedText = document.getElementById('colorPicked');
       if(colorData[0] > 10 && colorData[1] > 200){
-        colorPickedText.style.color = "#000";
+        colorPickedText.style.color = '#000';
       }else{
-        colorPickedText.style.color = "#fff";
+        colorPickedText.style.color = '#fff';
       }
             
       colorPickedText.textContent = color;

@@ -17,7 +17,7 @@ const TimelineFrameThumbnail = (props) => {
 // need to pass in a method from PresentationWrapper to allow updates that may occur 
 // in AnimationTimeline (i.e. changing the fps at a marker or deleting a marker)
 // to persist (these changes should be stored in PresentationWrapper's state)
-class AnimationTimeline extends React.Component {
+export class AnimationTimeline extends React.Component {
   constructor(props){
     console.log('rendering animation timeline');
     super(props);
@@ -157,8 +157,3 @@ class AnimationTimeline extends React.Component {
     );
   }
 }
-
-
-export{
-  AnimationTimeline
-};

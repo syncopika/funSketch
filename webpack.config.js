@@ -13,7 +13,7 @@ module.exports = {
   devServer: {
     hot: true,
     static: {
-      directory: path.join(__dirname , "")
+      directory: path.join(__dirname , '')
     },
     port: 3000,
   },
@@ -27,7 +27,7 @@ module.exports = {
             loader: 'babel-loader',
             options: {
               presets: [
-                ['@babel/preset-env', { targets: "defaults" }]
+                ['@babel/preset-env', { targets: 'defaults' }]
               ],              
               plugins: [isDevelopment && 'react-refresh/babel'].filter(Boolean),
             },
@@ -44,7 +44,7 @@ module.exports = {
     isDevelopment && new ReactRefreshWebpackPlugin(),
   ].filter(Boolean),
   resolve: {
-    extensions: [".webpack.js", ".web.js", ".js"]
+    extensions: ['.webpack.js', '.web.js', '.js']
   },
   output: {
     path: __dirname + '/dist',
@@ -52,6 +52,6 @@ module.exports = {
     filename: 'bundle.js'
   },
   // Enable sourcemaps for debugging webpack's output.
-  devtool: "source-map",
+  devtool: 'source-map',
 	
 };

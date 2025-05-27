@@ -73,7 +73,7 @@ class Frame {
     this.container.appendChild(newCanvas);
         
     // https://stackoverflow.com/questions/74101155/chrome-warning-willreadfrequently-attribute-set-to-true
-    newCanvas.getContext("2d", {willReadFrequently: true});
+    newCanvas.getContext('2d', {willReadFrequently: true});
         
     setCanvas(prefill, newCanvas);
         
@@ -160,7 +160,7 @@ class Frame {
     // makes all layers not visible
     this.canvasList.forEach((canvas) => {
       canvas.style.zIndex = -1;
-      canvas.style.visibility = "hidden";
+      canvas.style.visibility = 'hidden';
     });
   }
     
@@ -175,7 +175,7 @@ class Frame {
         canvas.style.zIndex = 0;
         canvas.style.opacity = 0;
       }
-      canvas.style.visibility = "";
+      canvas.style.visibility = '';
     });
   }
     
@@ -221,9 +221,9 @@ class Frame {
     
   clearCurrentLayer(){
     const currLayer = this.getCurrCanvas();
-    const context = currLayer.getContext("2d");
+    const context = currLayer.getContext('2d');
     context.clearRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
-    context.fillStyle = "#FFFFFF";
+    context.fillStyle = '#FFFFFF';
     context.fillRect(0, 0, currLayer.getAttribute('width'), currLayer.getAttribute('height'));
   }
     
@@ -238,7 +238,7 @@ class Frame {
 ***/
 class AnimationProject {
   constructor(container){
-    this.name = "";
+    this.name = '';
     this.currentFrameIndex = 0; // index of current frame
     this.speed = 100; // 100 ms per frame 
     this.frameList = [];
@@ -286,7 +286,7 @@ class AnimationProject {
     this.currentFrameIndex = 0;
     this.speed = 100;
         
-    this.frameList[0].getCurrCanvas().style.visibility = "";
+    this.frameList[0].getCurrCanvas().style.visibility = '';
     this.clearOnionSkin();
   }
     
@@ -315,8 +315,8 @@ class AnimationProject {
       currLayer.style.zIndex = layer.zIndex;
 
       // add the image data 
-      const newCtx = currLayer.getContext("2d");
-      const currImageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height);
+      const newCtx = currLayer.getContext('2d');
+      const currImageData = layer.getContext('2d').getImageData(0, 0, layer.width, layer.height);
       newCtx.putImageData(currImageData, 0, 0);
     });
   }
@@ -382,7 +382,7 @@ class AnimationProject {
     }
         
     this.onionSkinFrame.style.display = ''; // show onion skin
-    const onionSkinCtx = this.onionSkinFrame.getContext("2d");
+    const onionSkinCtx = this.onionSkinFrame.getContext('2d');
     onionSkinCtx.clearRect(0, 0, this.onionSkinFrame.width, this.onionSkinFrame.height);
         
     // take the previous frame, merge all layers, put into onion skin frame
@@ -391,7 +391,7 @@ class AnimationProject {
     // build the merged image from the first to last
     const prevFrame = this.frameList[this.currentFrameIndex-1];
     prevFrame.getLayers().forEach(layer => {
-      const imageData = layer.getContext("2d").getImageData(0, 0, layer.width, layer.height).data;
+      const imageData = layer.getContext('2d').getImageData(0, 0, layer.width, layer.height).data;
       for(let i = 0; i < imageData.length; i += 4) {
         if (imageData[i] === 255 && imageData[i+1] === 255 && imageData[i+2] === 255) {
           continue;
@@ -413,9 +413,9 @@ class AnimationProject {
     
   clearOnionSkin(){
     const onionSkin = this.onionSkinFrame;
-    const context = this.onionSkinFrame.getContext("2d");
+    const context = this.onionSkinFrame.getContext('2d');
     context.clearRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
-    context.fillStyle = "#FFFFFF";
+    context.fillStyle = '#FFFFFF';
     context.fillRect(0, 0, onionSkin.getAttribute('width'), onionSkin.getAttribute('height'));
   }
     
@@ -423,10 +423,10 @@ class AnimationProject {
 
 function createOnionSkinFrame(container){
   const newCanvas = document.createElement('canvas');
-  newCanvas.id = "onionSkinCanvas";
+  newCanvas.id = 'onionSkinCanvas';
   container.appendChild(newCanvas);
     
-  newCanvas.getContext("2d", {willReadFrequently: true});
+  newCanvas.getContext('2d', {willReadFrequently: true});
     
   const prefill = true;
   setCanvas(prefill, newCanvas);
@@ -439,19 +439,19 @@ function createOnionSkinFrame(container){
 // assigns default canvas attributes and styling
 // prefill should be false when importing a project
 function setCanvas(prefill, canvasElement, width, height){
-  canvasElement.style.position = "absolute";
-  canvasElement.style.border = "1px #000 solid";
+  canvasElement.style.position = 'absolute';
+  canvasElement.style.border = '1px #000 solid';
   canvasElement.style.zIndex = 0;
   canvasElement.style.opacity = 0;
-  canvasElement.style.width = "100%";
-  canvasElement.style.height = "100%";
-  canvasElement.style.touchAction = "none"; // for handling pointer events properly
+  canvasElement.style.width = '100%';
+  canvasElement.style.height = '100%';
+  canvasElement.style.touchAction = 'none'; // for handling pointer events properly
   canvasElement.width = width ? width : canvasElement.offsetWidth;
   canvasElement.height = height ? height : canvasElement.offsetHeight;
     
   if(prefill){
-    canvasElement.getContext("2d").fillStyle = "rgba(255, 255, 255, 1)";
-    canvasElement.getContext("2d").fillRect(0, 0, canvasElement.width, canvasElement.height);
+    canvasElement.getContext('2d').fillStyle = 'rgba(255, 255, 255, 1)';
+    canvasElement.getContext('2d').fillRect(0, 0, canvasElement.width, canvasElement.height);
   }
 }
 

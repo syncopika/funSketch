@@ -6,23 +6,23 @@ class Lines extends FilterTemplate {
     
   constructor(){
     const params = {
-      "distThreshold": {
-        "value": 5.0,
-        "min": 0.0,
-        "max": 12.0,
-        "step": 0.1,
+      'distThreshold': {
+        'value': 5.0,
+        'min': 0.0,
+        'max': 12.0,
+        'step': 0.1,
       },
-      "dotSize": {
-        "value": 3.0,
-        "min": 1.0,
-        "max": 25.0,
-        "step": 1.0,
+      'dotSize': {
+        'value': 3.0,
+        'min': 1.0,
+        'max': 25.0,
+        'step': 1.0,
       },
-      "neighborDistance": {
-        "value": 4.0,
-        "min": 1.0,
-        "max": 20.0,
-        "step": 1.0,
+      'neighborDistance': {
+        'value': 4.0,
+        'min': 1.0,
+        'max': 20.0,
+        'step': 1.0,
       },
     };
     super(params);
@@ -124,7 +124,7 @@ class Lines extends FilterTemplate {
     const data = pixels.data;
         
     const drawDot = (x, y, color, context) => {
-      context.lineJoin = "round";
+      context.lineJoin = 'round';
       context.strokeStyle = color;
             
       const dotWidth = this.params.dotSize.value; //3;

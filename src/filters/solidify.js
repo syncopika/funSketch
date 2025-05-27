@@ -13,11 +13,11 @@ class Solidify extends FilterTemplate {
     
   constructor(){
     const params = {
-      "numColors": {
-        "value": 70,
-        "min": 10,
-        "max": 90,
-        "step": 1,
+      'numColors': {
+        'value': 70,
+        'min': 10,
+        'max': 90,
+        'step': 1,
       }
     };
     super(params);
@@ -28,7 +28,7 @@ class Solidify extends FilterTemplate {
   }
     
   findMatch(r, g, b){
-    let bestMatch = "rgb(0,0,0)";
+    let bestMatch = 'rgb(0,0,0)';
     let smallestDistance = 1000000;
         
     const currColor = `rgb(${r},${g},${b})`;

@@ -1,4 +1,4 @@
-class AnimationController {
+export class AnimationController {
   constructor(animationProject, toolbar){
     this.animProject = animationProject;
     this.toolbar = toolbar;
@@ -67,8 +67,8 @@ class AnimationController {
       times for each frame and use that.
     */
     
-    if(direction !== "forward" && direction !== "backward"){
-      console.log("not a valid direction for animation");
+    if(direction !== 'forward' && direction !== 'backward'){
+      console.log('not a valid direction for animation');
       return;
     }
         
@@ -82,7 +82,7 @@ class AnimationController {
       return;
     }
         
-    if(direction === "backward"){
+    if(direction === 'backward'){
       // reverse alters the original array so we needed a copy
       frames = frames.reverse();
     }
@@ -101,11 +101,11 @@ class AnimationController {
     animationDisplay.style.border = '1px solid #000';
     animationDisplay.style.position = 'absolute';
     animationDisplay.style.opacity = 1.0;
-    animationDisplay.id = "animationDisplay";
-    document.querySelector(".canvasArea").appendChild(animationDisplay);
+    animationDisplay.id = 'animationDisplay';
+    document.querySelector('.canvasArea').appendChild(animationDisplay);
 
     const displayContext = animationDisplay.getContext('2d');
-    displayContext.fillStyle = "#ffffff";
+    displayContext.fillStyle = '#ffffff';
     displayContext.fillRect(0, 0, displayContext.width, displayContext.height);
         
     this.animationDisplay = animationDisplay;
@@ -130,8 +130,3 @@ class AnimationController {
     this.reqAnimFrameId = requestAnimationFrame(this.#animate.bind(this));
   }
 }
-
-export {
-  AnimationController
-};
-    

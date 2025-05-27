@@ -6,11 +6,11 @@ import { FilterTemplate } from './FilterTemplate.js';
 class KuwaharaPainting extends FilterTemplate {
   constructor(){
     const params = {
-      "windowSize": {
-        "min": 1,
-        "max": 10,
-        "value": 2,
-        "step": 1,
+      'windowSize': {
+        'min': 1,
+        'max': 10,
+        'value': 2,
+        'step': 1,
       },
     };
     super(params);

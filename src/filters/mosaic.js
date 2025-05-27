@@ -5,17 +5,17 @@ class Mosaic extends FilterTemplate {
     
   constructor(){
     const params = {
-      "chunkWidth": {
-        "value": 40,
-        "min": 1,
-        "max": 50,
-        "step": 1,
+      'chunkWidth': {
+        'value': 40,
+        'min': 1,
+        'max': 50,
+        'step': 1,
       },
-      "chunkHeight": {
-        "value": 40,
-        "min": 1,
-        "max": 50,
-        "step": 1,
+      'chunkHeight': {
+        'value': 40,
+        'min': 1,
+        'max': 50,
+        'step': 1,
       }
     };
     super(params);

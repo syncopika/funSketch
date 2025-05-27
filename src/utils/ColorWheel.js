@@ -6,7 +6,7 @@ export function makeColorWheel(elementId, size){
   }
     
   const colorWheel = document.createElement('canvas');
-  colorWheel.id = "colorWheel";
+  colorWheel.id = 'colorWheel';
   colorWheel.setAttribute('width', size);
   colorWheel.setAttribute('height', size);
     
@@ -34,7 +34,7 @@ export function makeColorWheel(elementId, size){
   }
     
   // make black a pickable color 
-  colorWheelContext.fillStyle = "rgba(0,0,0,1)";
+  colorWheelContext.fillStyle = 'rgba(0,0,0,1)';
   colorWheelContext.beginPath();
   colorWheelContext.arc(10, 10, 8, 0, 2*Math.PI);
   colorWheelContext.fill();
@@ -45,7 +45,7 @@ export function makeColorWheel(elementId, size){
   colorWheelContext.stroke();
     
   // make sure circle is filled with #fff
-  colorWheelContext.fillStyle = "rgba(255,255,255,1)";
+  colorWheelContext.fillStyle = 'rgba(255,255,255,1)';
   colorWheelContext.arc(30, 10, 8, 0, 2*Math.PI);
   colorWheelContext.fill();
     
@@ -55,7 +55,7 @@ export function makeColorWheel(elementId, size){
   colorWheelContext.stroke();
     
   // make sure circle is filled with transparent white
-  colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
+  colorWheelContext.fillStyle = 'rgba(255,255,255,0.5)';
   colorWheelContext.arc(50, 10, 8, 0, 2*Math.PI);
   colorWheelContext.fill();
     
@@ -71,7 +71,7 @@ export function updateColorWheel(params, colorWheel){
   const y = colorWheel.height / 2;
   const radius = 60;
     
-  colorWheelContext.fillStyle = "#fff";
+  colorWheelContext.fillStyle = '#fff';
   colorWheelContext.fillRect(0, 0, colorWheel.width, colorWheel.height);
     
   for(let angle = 0; angle <= 5600; angle++) {
@@ -92,7 +92,7 @@ export function updateColorWheel(params, colorWheel){
   }
     
   // make black a pickable color 
-  colorWheelContext.fillStyle = "rgba(0,0,0,1)";
+  colorWheelContext.fillStyle = 'rgba(0,0,0,1)';
   colorWheelContext.beginPath();
   colorWheelContext.arc(10, 10, 8, 0, 2*Math.PI);
   colorWheelContext.fill();
@@ -103,7 +103,7 @@ export function updateColorWheel(params, colorWheel){
   colorWheelContext.stroke();
     
   // make sure circle is filled with #fff
-  colorWheelContext.fillStyle = "rgba(255,255,255,1)";
+  colorWheelContext.fillStyle = 'rgba(255,255,255,1)';
   colorWheelContext.arc(30, 10, 8, 0, 2*Math.PI);
   colorWheelContext.fill();
     
@@ -113,7 +113,7 @@ export function updateColorWheel(params, colorWheel){
   colorWheelContext.stroke();
     
   // make sure circle is filled with transparent white
-  colorWheelContext.fillStyle = "rgba(255,255,255,0.5)";
+  colorWheelContext.fillStyle = 'rgba(255,255,255,0.5)';
   colorWheelContext.arc(50, 10, 8, 0, 2*Math.PI);
   colorWheelContext.fill();    
 }
@@ -126,7 +126,7 @@ export function makeBrightnessSlider(elementId, size){
   }
     
   const brightnessSlider = document.createElement('canvas');
-  brightnessSlider.id = "colorWheel";
+  brightnessSlider.id = 'colorWheel';
     
   const width = size / 12;
   const height = size;
@@ -136,8 +136,8 @@ export function makeBrightnessSlider(elementId, size){
     
   const brightnessSliderContext = brightnessSlider.getContext('2d', {willReadFrequently: true});
   const gradient = brightnessSliderContext.createLinearGradient(width / 2, 0, width / 2, height); 
-  gradient.addColorStop(0, "#fff");
-  gradient.addColorStop(1, "#000");
+  gradient.addColorStop(0, '#fff');
+  gradient.addColorStop(1, '#000');
   brightnessSliderContext.fillStyle = gradient;
   brightnessSliderContext.fillRect(0, 0, width, height);
     

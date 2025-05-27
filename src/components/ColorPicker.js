@@ -4,26 +4,26 @@ import {
   makeColorWheel, 
   makeBrightnessSlider, 
   updateColorWheel 
-} from "../utils/ColorWheel.js";
+} from '../utils/ColorWheel.js';
 
 export const ColorPicker = (props) => {
   const [colorPalette, setColorPalette] = useState([]);
     
   const colorPickedDisplayStyle = {
-    textAlign: "center"
+    textAlign: 'center'
   };
     
   const colorPaletteContainerStyle = {
-    marginTop: "3%",
-    display: "flex",
-    flexWrap: "wrap"
+    marginTop: '3%',
+    display: 'flex',
+    flexWrap: 'wrap'
   };
     
   const paletteColorStyle = {
-    width: "15px",
-    height: "15px",
-    border: "1px solid #000",
-    padding: "2px"
+    width: '15px',
+    height: '15px',
+    border: '1px solid #000',
+    padding: '2px'
   };
     
   // pass in the elementId of the div where the color wheel should be (its container)
@@ -42,9 +42,9 @@ export const ColorPicker = (props) => {
       //correct the font color if the color is really dark
       const colorPickedText = document.getElementById('colorPicked');
       if(colorPicked[0] > 10 && colorPicked[1] > 200){
-        colorPickedText.style.color = "#000";
+        colorPickedText.style.color = '#000';
       }else{
-        colorPickedText.style.color = "#fff";
+        colorPickedText.style.color = '#fff';
       }
             
       colorPickedText.textContent = 'rgba(' + colorPicked[0] + ',' + colorPicked[1] + ',' + colorPicked[2] + ',' + colorPicked[3] + ')';
@@ -72,7 +72,7 @@ export const ColorPicker = (props) => {
   function saveColorToPalette(){
     const colorPickedText = document.getElementById('colorPicked');
     const currColor = colorPickedText.textContent;
-    if(currColor && currColor.includes("rgb") && colorPalette.indexOf(currColor) < 0){
+    if(currColor && currColor.includes('rgb') && colorPalette.indexOf(currColor) < 0){
       colorPalette.push(currColor);
       setColorPalette(colorPalette.slice());
     }
@@ -86,13 +86,13 @@ export const ColorPicker = (props) => {
         
     // color needs to be an array for the brush. set color[3] to 255
     // need to split 'rgb(x,y,z)' to [x, y, z] first
-    const colorArr = color.split("rgb(")[1].split(", ").map(x => parseInt(x));
+    const colorArr = color.split('rgb(')[1].split(', ').map(x => parseInt(x));
     colorArr.push(255);
         
     if(colorArr[0] > 10 && color[1] > 200){
-      colorPickedText.style.color = "#000";
+      colorPickedText.style.color = '#000';
     }else{
-      colorPickedText.style.color = "#fff";
+      colorPickedText.style.color = '#fff';
     }
             
     props.brush.changeBrushColor(colorArr);

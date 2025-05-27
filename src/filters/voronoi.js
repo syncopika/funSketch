@@ -9,18 +9,18 @@
     - evenly spaced neighbors will yield a mosaic! awesome!
 ***/
 
-import { Point, getPixelCoords, build2dTree, findNearestNeighbor } from "./kdtreeutils.js";
+import { Point, getPixelCoords, build2dTree, findNearestNeighbor } from './kdtreeutils.js';
 import { FilterTemplate } from './FilterTemplate.js';
 
 class Voronoi extends FilterTemplate {
     
   constructor(){
     const params = {
-      "neighborCount": {
-        "value": 30,
-        "min": 5,
-        "max": 80,
-        "step": 1,
+      'neighborCount': {
+        'value': 30,
+        'min': 5,
+        'max': 80,
+        'step': 1,
       }
     };
     super(params);

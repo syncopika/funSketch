@@ -14,7 +14,7 @@ import { PenBrush } from './brushes/penBrush.js';
 import { FloodfillBrush } from './brushes/floodfillBrush.js';
 import { ColorPickerBrush } from './brushes/colorPickerBrush.js';
 
-class BrushManager {
+export class BrushManager {
   constructor(animationProj){
     // pass in an animation project, from which you can access the current frame and the current canvas
     this.animationProject = animationProj;
@@ -32,15 +32,15 @@ class BrushManager {
         
     // brushes map
     this.brushesMap = {};
-    this.brushesMap["default"] = new DefaultBrush(this);
-    this.brushesMap["radial"] = new RadialBrush(this);
-    this.brushesMap["sketchy"] = new SketchyBrush(this);
-    this.brushesMap["web"] = new WebBrush(this);
-    this.brushesMap["shape"] = new ShapeBrush(this);
-    this.brushesMap["pen"] = new PenBrush(this);
-    this.brushesMap["floodfill"] = new FloodfillBrush(this);
-    this.brushesMap["colorpicker"] = new ColorPickerBrush(this);
-    this.brushesMap["eraser"] = new EraserBrush(this);
+    this.brushesMap['default'] = new DefaultBrush(this);
+    this.brushesMap['radial'] = new RadialBrush(this);
+    this.brushesMap['sketchy'] = new SketchyBrush(this);
+    this.brushesMap['web'] = new WebBrush(this);
+    this.brushesMap['shape'] = new ShapeBrush(this);
+    this.brushesMap['pen'] = new PenBrush(this);
+    this.brushesMap['floodfill'] = new FloodfillBrush(this);
+    this.brushesMap['colorpicker'] = new ColorPickerBrush(this);
+    this.brushesMap['eraser'] = new EraserBrush(this);
   }
     
   resetBrush(){
@@ -59,7 +59,7 @@ class BrushManager {
   }
     
   changeBrushColor(colorArray){
-    this.currColor = 'rgba(' + colorArray.join(",") + ')';
+    this.currColor = 'rgba(' + colorArray.join(',') + ')';
     this.currColorArray = colorArray;
   }
     
@@ -111,7 +111,7 @@ class BrushManager {
     const currLayer = frame.getCurrCanvas();
     const w = currLayer.width;
     const h = currLayer.height;
-    frame.addSnapshot(currLayer.getContext("2d").getImageData(0, 0, w, h));
+    frame.addSnapshot(currLayer.getContext('2d').getImageData(0, 0, w, h));
   }
     
   updateEventListeners(startFunc, moveFunc, stopFunc, leaveFunc, cursorType=null){
@@ -131,9 +131,4 @@ class BrushManager {
     currLayer.addEventListener('pointerleave', leaveFunc);
     this.currentEventListeners['pointerleave'] = leaveFunc;
   }
-
 }
-
-export {
-  BrushManager
-};

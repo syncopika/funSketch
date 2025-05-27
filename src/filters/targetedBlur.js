@@ -12,33 +12,32 @@ import { FilterTemplate } from './FilterTemplate.js';
 import { Blur } from './blur.js';
 
 class TargetedBlur extends FilterTemplate {
-  constructor(animationProject){
+  constructor(){
     const params = {
-      "blurFactor": {
-        "value": 3,
-        "min": 1,
-        "max": 15,
-        "step": 1,
+      'blurFactor': {
+        'value': 3,
+        'min': 1,
+        'max': 15,
+        'step': 1,
       },
-      "instructions": "Click on 'apply filter', which will add an overlay for you to draw on to specify the area to blur."
+      'instructions': 'Click on \'apply filter\', which will add an overlay for you to draw on to specify the area to blur.'
     };
     super(params);
-        
-    this.animationProject = animationProject; // we need to be able to access the current layer
+    
     this.drawnLineCoords = [];
     this.isDrawing = false;
     this.alphaFlag = 0.1; // the value of alpha to use for the pixels of the offscreen canvas so we can differentiate between copied-over pixels
     this.isActive = false; // so we can't run the filter multiple times on button click
   }
     
-  setupTempCanvas(){
-    const currLayer = this.animationProject.getCurrFrame().getCurrCanvas();
+  setupTempCanvas(targetCanvas){
+    const currLayer = targetCanvas;
     const displayArea = currLayer.parentNode;
-    const canvasElement = document.createElement("canvas");
+    const canvasElement = document.createElement('canvas');
     displayArea.appendChild(canvasElement);
-    canvasElement.className = "tempCanvasForBlur";
-    canvasElement.style.position = "absolute";
-    canvasElement.style.border = "1px #000 dotted";
+    canvasElement.className = 'tempCanvasForBlur';
+    canvasElement.style.position = 'absolute';
+    canvasElement.style.border = '1px #000 dotted';
     canvasElement.style.zIndex = 10;
     canvasElement.style.top = 0;
     canvasElement.style.left = 0;
@@ -48,7 +47,7 @@ class TargetedBlur extends FilterTemplate {
     canvasElement.height = currLayer.height;
         
     const ctx = canvasElement.getContext('2d');
-    ctx.fillStyle = `rgba(204, 204, 204, 0.5)`;
+    ctx.fillStyle = 'rgba(204, 204, 204, 0.5)';
     ctx.fillRect(0, 0, currLayer.width, currLayer.height);
         
     // TODO: add event listeners to temp canvas
@@ -56,8 +55,8 @@ class TargetedBlur extends FilterTemplate {
     canvasElement.addEventListener('pointerdown', (evt) => {
       evt.preventDefault();
       this.isDrawing = true;
-      ctx.fillStyle = "#fff";
-      ctx.lineJoin = "round";
+      ctx.fillStyle = '#fff';
+      ctx.lineJoin = 'round';
       this.drawnLineCoords = [
         {
           'x': Math.round(evt.offsetX), 
@@ -73,7 +72,7 @@ class TargetedBlur extends FilterTemplate {
       // do some processing on the coordinate data of the line drawn
       this.fillInSelectionAreaGaps();
             
-      this.processOnOffscreenCanvas();
+      this.processOnOffscreenCanvas(targetCanvas);
             
       // done
       canvasElement.parentNode.removeChild(canvasElement);
@@ -103,7 +102,6 @@ class TargetedBlur extends FilterTemplate {
                 
         // keep monitoring largest/smallest x and y values
         // so we can get max width/height of drawn area
-                
         ctx.lineTo(this.drawnLineCoords[i].x, this.drawnLineCoords[i].y);
         ctx.closePath();
         ctx.stroke();
@@ -115,7 +113,7 @@ class TargetedBlur extends FilterTemplate {
     });
         
     function abortTargetBlur(evt){
-      if(evt.code === "Escape"){
+      if(evt.code === 'Escape'){
         canvasElement.parentNode.removeChild(canvasElement);
         document.removeEventListener('keydown', abortTargetBlur);
         this.isActive = false;
@@ -230,10 +228,10 @@ class TargetedBlur extends FilterTemplate {
     return offscreenCanvas;
   }
     
-  moveOffscreenPixelsBack(offscreenCanvas){
+  moveOffscreenPixelsBack(offscreenCanvas, targetCanvas){
     // based on start coord and max width and height, put the processed pixels
     // back on the current layer canvas
-    const currCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
+    const currCanvas = targetCanvas;
     const currLayerCtx = currCanvas.getContext('2d');
     const selectedAreaInfo = this.getSelectionAreaInfo();
         
@@ -266,16 +264,10 @@ class TargetedBlur extends FilterTemplate {
     this.isActive = false;
   }
     
-  copyPixelsToOffscreenCanvas(offscreenCanvas){
-    const currCanvas = this.animationProject.getCurrFrame().getCurrCanvas();
+  copyPixelsToOffscreenCanvas(offscreenCanvas, targetCanvas){
+    const currCanvas = targetCanvas;
     const currLayerCtx = currCanvas.getContext('2d');
     const selectedAreaInfo = this.getSelectionAreaInfo();
-        
-    //const imgData = currLayerCtx.getImageData(selectedAreaInfo.topLeftX, selectedAreaInfo.topLeftY, selectedAreaInfo.width, selectedAreaInfo.height);
-    //offscreenCanvas.getContext('2d').putImageData(imgData, 0, 0);
-        
-    //console.log(selectedAreaInfo);
-        
     const offscreenData = offscreenCanvas.getContext('2d').getImageData(0, 0, selectedAreaInfo.width, selectedAreaInfo.height);
     const currCanvasData = currLayerCtx.getImageData(0, 0, currCanvas.width, currCanvas.height).data;
     let offscreenRow = 0;
@@ -320,12 +312,12 @@ class TargetedBlur extends FilterTemplate {
     //document.body.appendChild(offscreenCanvas);
   }
     
-  processOnOffscreenCanvas(){
+  processOnOffscreenCanvas(targetCanvas){
     // create a new canvas with the max width and height
     const offscreenCanvas = this.getOffscreenCanvas();
         
     // take the pixels (from the current layer) within that area and copy it to the new canvas
-    this.copyPixelsToOffscreenCanvas(offscreenCanvas);
+    this.copyPixelsToOffscreenCanvas(offscreenCanvas, targetCanvas);
         
     // blur that canvas
     const blurFilter = new Blur();
@@ -336,15 +328,20 @@ class TargetedBlur extends FilterTemplate {
     offscreenCanvas.getContext('2d').putImageData(blurredData, 0, 0);
         
     // copy the pixels back (excluding the pixels outside the drawn area - use alpha channel to differentiate?)
-    this.moveOffscreenPixelsBack(offscreenCanvas);
+    this.moveOffscreenPixelsBack(offscreenCanvas, targetCanvas);
   }
     
-  doTargetedBlur(){
+  doTargetedBlur(targetCanvas){
     // create a temp canvas to draw the area to blur. impose the temp canvas on the current canvas
-    this.setupTempCanvas();
+    this.setupTempCanvas(targetCanvas);
   }
     
-  filter(pixels){
+  filter(targetCanvas){
+    const context = targetCanvas.getContext('2d');
+    const height = targetCanvas.getAttribute('height');
+    const width = targetCanvas.getAttribute('width');
+    const pixels = context.getImageData(0, 0, width, height);
+    
     // do targeted blur
     if(this.isActive){
       return pixels;
@@ -352,7 +349,7 @@ class TargetedBlur extends FilterTemplate {
         
     this.isActive = true;
         
-    this.doTargetedBlur();
+    this.doTargetedBlur(targetCanvas);
         
     return pixels;
   }

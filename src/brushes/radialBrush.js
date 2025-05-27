@@ -57,7 +57,7 @@ class RadialBrush extends BrushTemplate {
   radialGrad(x, y, brushSize){
     const frame = this.brushManager.animationProject.getCurrFrame();    
     const currLayer = frame.getCurrCanvas();
-    const context = currLayer.getContext("2d");
+    const context = currLayer.getContext('2d');
     const colorPicked = this.brushManager.getCurrColorArray();
     const currColor = this.brushManager.getCurrColor();
     const radGrad = context.createRadialGradient(x, y, brushSize, x, y, brushSize * 1.5);

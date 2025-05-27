@@ -11,7 +11,7 @@ import { BrushDashboard } from './components/BrushDashboard.js';
 import { ColorPicker } from './components/ColorPicker.js';
 import { PasteImageManager } from './PasteImageManager.js';
 
-import "./app.css";
+import './app.css';
 
 // for displaying current frame and layer number
 // TODO: importing a project won't update the counter display since it's using the Toolbar class functions
@@ -29,7 +29,6 @@ export const FrameCounterDisplay = (props) => {
 };
 
 export const App = () => {
-  //console.log("component render!");
   const [animationProject, setAnimationProject] = useState(null);
   const [brushInstance, setBrushInstance] = useState(null);
   const [toolbarInstance, setToolbarInstance] = useState(null);
@@ -40,10 +39,12 @@ export const App = () => {
   const [currLayer, setCurrLayer] = useState(1);
   const [changeLayerOrder, setChangeLayerOrder] = useState(false);
   const [timelineMarkers, setTimelineMarkers] = useState({}); // keep track of where frame speed should change - not 0-indexed!
-  
+  const [currMode, setCurrMode] = useState('animation'); // animation or editor(single image editing) mode
   const [animationTimelineFrames, setAnimationTimelineFrames] = useState([]);
+  const [scaleToFitCanvas, setScaleToFitCanvas] = useState(true);
+  const [centerImage, setCenterImage] = useState(false);
   const timelineFrames = useRef([]); // use a ref for timelineFrames - this is because we need to access it in a closed context (i.e. document event listener) so we need something persistent
-  
+  const imageEditorCanvas = useRef(null);
   const updateCurrFrameAndTimelineMarkers = (markers, frameNum) => {
     setTimelineMarkers(markers);
     setCurrFrame(frameNum);
@@ -75,16 +76,16 @@ export const App = () => {
     if(currFrameIndex + 1 > timelineFrames.current.length){
       // if the animation timeline doesn't have the current frame, add it
       timelineFrames.current.push({
-        "data": currFrameData,
-        "height": frame.height, 
-        "width": frame.width
+        'data': currFrameData,
+        'height': frame.height, 
+        'width': frame.width
       });
     }else{
       // update image data in the animation timeline
       timelineFrames.current[currFrameIndex].data = currFrameData;
     }
     
-    if(direction === "prev"){
+    if(direction === 'prev'){
       if(toolbarInstance.prevFrame()){
         return true;
       }
@@ -117,7 +118,7 @@ export const App = () => {
 
   // left and right arrows for FRAMES
   const prevFrame = () => {
-    if(moveToFrame("prev")){
+    if(moveToFrame('prev')){
       const curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
       setCurrLayer(curr.getCurrCanvasIndex() + 1);
@@ -126,7 +127,7 @@ export const App = () => {
   };
 
   const nextFrame = () => {
-    if(moveToFrame("next")){
+    if(moveToFrame('next')){
       const curr = animationProject.getCurrFrame();
       setCurrFrame(animationProject.getCurrFrameIndex() + 1);
       setCurrLayer(curr.getCurrCanvasIndex() + 1);
@@ -154,23 +155,25 @@ export const App = () => {
   
   const togglePenPressureBtn = (evt) => {
     // TODO: maybe a better approach here would be changing the classname and basing the color off classname
-    if(evt.target.style.border === "1px solid rgb(255, 0, 0)"){
-      evt.target.style.border = "1px solid rgb(0, 255, 0)";
+    if(evt.target.style.border === '1px solid rgb(255, 0, 0)'){
+      evt.target.style.border = '1px solid rgb(0, 255, 0)';
     }else{
-      evt.target.style.border = "1px solid rgb(255, 0, 0)";
+      evt.target.style.border = '1px solid rgb(255, 0, 0)';
     }
     brushInstance.togglePressureColorFlag();
   };
   
   const toggleLayerOrFrame = (evt) => {
     if(toolbarInstance.layerMode){
-      evt.target.textContent = "toggle layer addition on spacebar press";
+      evt.target.textContent = 'toggle layer addition on spacebar press';
     }else{
-      evt.target.textContent = "toggle frame addition on spacebar press";
+      evt.target.textContent = 'toggle frame addition on spacebar press';
     }
     toolbarInstance.layerMode = !toolbarInstance.layerMode;
   };
 
+  // TODO: I think we need to move some stuff to the app component level and not have toolbar be in control of too many things
+  // it should just provide some utility functions
   const setupToolbar = (toolbarInstance) => {
     const newToolbar = toolbarInstance;
     const project = animationProject;
@@ -216,11 +219,24 @@ export const App = () => {
     newToolbar.downloadFrame('downloadFrame');
         
     newToolbar.rotateImage('rotateCanvasImage'); 
-    newToolbar.undo('undo');
-    newToolbar.importImage('importImage');
+    newToolbar.undo('undo'); // TODO: make sure this works for image editor mode as well?
     newToolbar.save('saveWork');
         
     newToolbar.importProject('importProject', importProjectUpdateFunc);
+  };
+  
+  const importImage = () => {
+    if(currMode === 'animation'){
+      const currFrame = animationProject.getCurrFrame();
+      const currCanvas = currFrame.currentCanvas;
+      toolbarInstance.importImage(currCanvas, scaleToFitCanvas, centerImage).then(result => {
+        currFrame.addSnapshot(result);
+      });
+    }else{
+      // image editor mode
+      const canvas = imageEditorCanvas.current;
+      toolbarInstance.importImage(canvas, scaleToFitCanvas, centerImage, currMode);
+    }
   };
 
   const loadDemo = (evt) => {
@@ -241,9 +257,9 @@ export const App = () => {
       
       if(currFrameIndex + 1 > newFrames.length){
         newFrames.push({
-          "data": currFrameData, 
-          "height": mergedLayersFrame.height, 
-          "width": mergedLayersFrame.width
+          'data': currFrameData, 
+          'height': mergedLayersFrame.height, 
+          'width': mergedLayersFrame.width
         });
       }else{
         // update image data
@@ -271,7 +287,7 @@ export const App = () => {
   };
     
   const getDemo = (selected) => {
-    if(selected === ""){ 
+    if(selected === ''){ 
       return;
     }
         
@@ -282,7 +298,7 @@ export const App = () => {
       return;
     }
     
-    httpRequest.open("GET", selectedDemo);
+    httpRequest.open('GET', selectedDemo);
         
     httpRequest.onload = () => {
       const data = JSON.parse(httpRequest.responseText);
@@ -297,33 +313,59 @@ export const App = () => {
 
     // map caret id to div id of option that should show up in the 2nd column of the toolbar
     const options = {
-      "instructionsOption": "instructions",
-      "frameLayerCtrlOption": "frameLayerSection",
-      "animationCtrlOption": "animControlSection",
-      "otherOption": "otherSection",
-      "demosOption": "showDemos",
+      'instructionsOption': 'instructions',
+      'frameLayerCtrlOption': 'frameLayerSection',
+      'animationCtrlOption': 'animControlSection',
+      'otherOption': 'otherSection',
+      'demosOption': 'showDemos',
     };
         
     Array.from(Object.keys(options)).forEach((section) => {
       const contentToToggle = document.getElementById(options[section]);
-      contentToToggle.classList.remove("toolbarSection2");
+      contentToToggle.classList.remove('toolbarSection2');
             
       if(section === id){
-        contentToToggle.classList.add("toolbarSection2");
-        contentToToggle.classList.remove("tbar");
+        contentToToggle.classList.add('toolbarSection2');
+        contentToToggle.classList.remove('tbar');
       }else{
-        contentToToggle.classList.add("tbar");
+        contentToToggle.classList.add('tbar');
       }
     });
   };
     
   const showFiltersOrBrushes = (evt) => {
     const disp = document.getElementById(evt.target.textContent.trim()); // 'brushes' or 'filters'
-    if(disp.style.display === "none" || !disp.style.display){
-      disp.style.display = "block";
+    if(disp.style.display === 'none' || !disp.style.display){
+      disp.style.display = 'block';
     }else{
-      disp.style.display = "none";
+      disp.style.display = 'none';
     }
+  };
+  
+  const switchMode = () => {
+    if(currMode === 'animation'){
+      setCurrMode('imageEditor');
+    }else{
+      setCurrMode('animation');
+    }
+  };
+  
+  const playForwardAnimation = () => {
+    //this._playAnimation("forward");
+    animationController.playAnimation(
+      'forward', 
+      timelineFrames.current,
+      timelineMarkers
+    );
+  };
+  
+  const playBackwardAnimation = () => {
+    //this._playAnimation("backward");
+    animationController.playAnimation(
+      'backward', 
+      timelineFrames.current,
+      timelineMarkers
+    );
   };
 
   useEffect(() => {
@@ -332,7 +374,7 @@ export const App = () => {
     if(!animationProject){
       const animationProj = new AnimationProject(document.querySelector('.canvasArea'));
       const newBrush = new BrushManager(animationProj);
-      const newFilters = new FilterManager(animationProj, newBrush);
+      const newFilters = new FilterManager(animationProj, imageEditorCanvas, newBrush);
       const newToolbar = new Toolbar(newBrush, animationProj);
       const animController = new AnimationController(animationProj, newToolbar);
       const pasteImgManager = new PasteImageManager(animationProj);
@@ -353,7 +395,7 @@ export const App = () => {
       brushInstance.updateInitialCanvasDimensions(canvas.width, canvas.height);
       
       // start with the default brush
-      brushInstance.brushesMap["default"].attachBrush();
+      brushInstance.brushesMap['default'].attachBrush();
       
       // allow pasting images via ctrl+v
       document.addEventListener('paste', pasteImageManager.handlePasteEvent.bind(pasteImageManager));
@@ -376,19 +418,19 @@ export const App = () => {
         let frame = null;
         
         switch(evt.code){
-        case "ArrowLeft": //left arrow key
+        case 'ArrowLeft': //left arrow key
           if(toolbarInstance.prevLayer()){
             frame = animationProject.getCurrFrame();
             updateStateFlag = true;
           }
           break;
-        case "ArrowRight": //right arrow key
+        case 'ArrowRight': //right arrow key
           if(toolbarInstance.nextLayer()){
             frame = animationProject.getCurrFrame();
             updateStateFlag = true;
           }
           break;
-        case "Space": //space bar
+        case 'Space': //space bar
           evt.preventDefault();
           if(toolbarInstance.layerMode){
             toolbarInstance.addNewLayer();
@@ -396,12 +438,12 @@ export const App = () => {
             animationProject.addNewFrame(false);
           }
           break;
-        case "KeyA": // a key 
-          updateStateFlag = moveToFrame("prev");
+        case 'KeyA': // a key 
+          updateStateFlag = moveToFrame('prev');
           frame = animationProject.getCurrFrame();                
           break;
-        case "KeyD": // d key
-          updateStateFlag = moveToFrame("next");
+        case 'KeyD': // d key
+          updateStateFlag = moveToFrame('next');
           frame = animationProject.getCurrFrame();
           break;
         default:
@@ -469,11 +511,11 @@ export const App = () => {
             Apply the image to the canvas by clicking anywhere outside the dotted lines. 
           </p>
         </section>
-              
+        
         <section id="frameLayerSection" className="tbar">
           <h4> frame/layer controls </h4>
           <div id="displayLayerStuff">
-            <p> layer: </p>
+            <p>layer</p>
             <ul>
               <li><button id='insertCanvas'>add new layer after</button></li>
               <li><button id='deleteCanvas'>delete current layer</button></li>
@@ -484,7 +526,7 @@ export const App = () => {
           </div>
           <hr />
           <div id="displayFrameStuff">
-            <p> frame: </p>
+            <p>frame</p>
             <ul>
               <li><button id='addNewFrame'>add new frame</button></li>
               <li><button id='deleteCurrFrame'>delete current frame</button></li>
@@ -536,19 +578,19 @@ export const App = () => {
           <h4> other </h4>
           <div id="displayOtherStuff">
             <ul>
-              <li><button id='importImage'> import image </button></li>
+              <li><button id='importImage' onClick={importImage}> import image </button></li>
               <li>
                 <div>
                   <label id='fitToCanvasCheckLabel' htmlFor='fitToCanvasCheck'>
                     fit image to canvas: 
                   </label>
-                  <input name='fitToCanvasCheck' id='fitToCanvasCheck' type='checkbox' defaultChecked />
+                  <input name='fitToCanvasCheck' id='fitToCanvasCheck' type='checkbox' checked={scaleToFitCanvas} onChange={(evt) => setScaleToFitCanvas(evt.target.checked)} />
                 </div>
                 <div>
                   <label id='centerImageCheckLabel' htmlFor='centerImageCheck'>
                     center image: 
                   </label>
-                  <input name='centerImageCheck' id='centerImageCheck' type='checkbox' />
+                  <input name='centerImageCheck' id='centerImageCheck' type='checkbox' checked={centerImage} onChange={(evt) => setCenterImage(evt.target.checked)} />
                 </div>
               </li>
               <li><button id='rotateCanvasImage'>rotate image</button></li>
@@ -569,10 +611,15 @@ export const App = () => {
                   toggle frame addition on spacebar press 
                 </button>
               </li>
+              <li>
+                <button onClick={switchMode}>
+                  {currMode === 'animation' ? 'image editor mode' : 'animator mode'}
+                </button>
+              </li>
             </ul>
           </div>
           <div id="experiments">
-            <h4>check out some experiments for new feature ideas:</h4>
+            <h4>check out some experiments for new feature ideas</h4>
             <p><a href="./experiments/floodfillExperiment/floodfillExperiment.html">floodfill with web workers</a></p>
             <p><a href="./experiments/oilpaintingWebWorkers/oilpainting.html">oilpainting with web workers</a></p>
             <p><a href="./experiments/selectToolExperiment/selectTool.html">selection tool</a></p>
@@ -583,7 +630,7 @@ export const App = () => {
                   
         <section id='animControlSection' className='tbar'>
           <div id='animationControl'>
-            <h4> animation control: </h4>
+            <h4> animation control </h4>
             <div id='timeOptions'>
               <label htmlFor='timePerFrame'>time per frame (ms):</label>
               <select name='timePerFrame' id='timePerFrame' onChange={
@@ -599,29 +646,9 @@ export const App = () => {
               </select>
             </div>
             <ul>
-              <li><button onClick={
-                () => {
-                  //this._playAnimation("forward");
-                  animationController.playAnimation(
-                    "forward", 
-                    timelineFrames.current,
-                    timelineMarkers
-                  );
-                }
-              }> play animation forward </button></li>
-              <li><button onClick={
-                () => {
-                  //this._playAnimation("backward");
-                  animationController.playAnimation(
-                    "backward", 
-                    timelineFrames.current,
-                    timelineMarkers
-                  );
-                }
-              }> play animation backward </button></li>
-              <li>
-                <button id='generateGif' onClick={generateGif}> generate gif! </button>
-              </li>
+              <li><button onClick={playForwardAnimation}> play animation forward </button></li>
+              <li><button onClick={playBackwardAnimation}> play animation backward </button></li>
+              <li><button id='generateGif' onClick={generateGif}> generate gif! </button></li>
             </ul>
           </div>
           <p id='loadingScreen'></p>
@@ -639,9 +666,25 @@ export const App = () => {
           </select>
         </section>
       </div>
-
+      
       <main className='screen'>
-        <div className='screenContainer'>
+        {
+          currMode !== 'animation' &&
+          <>
+            <h1> image editor </h1>
+            <button onClick={importImage} style={{display: 'block'}}> import image </button>
+            <p> note that the image will be imported with the original dimensions. currently only supports applying filters. </p>
+            <div style={{position: 'relative'}}>
+              <canvas 
+                ref={imageEditorCanvas} 
+                id='imageEditorCanvas' 
+                style={{border: '#000 solid 1px'}}
+              ></canvas>
+            </div>
+          </>
+        }
+        
+        <div className='screenContainer' style={{'display': currMode === 'animation' ? '' : 'none'}}>
           <FrameCounterDisplay
             prevFrame={prevFrame}
             prevLayer={prevLayer}
@@ -673,8 +716,7 @@ export const App = () => {
         <h4 id="brushesOption"
           className="option"
           onClick={showFiltersOrBrushes}
-        > brushes
-        </h4>
+        > brushes </h4>
                   
         <div id="brushes" className="tbar">
           <BrushDashboard brushManager={brushInstance} />
@@ -688,7 +730,7 @@ export const App = () => {
         > filters </h4>
                   
         <div id="filters" className="tbar">
-          <FilterDashboard filterManager={filtersInstance} />
+          <FilterDashboard filterManager={filtersInstance} currMode={currMode} />
         </div>
       </section>
               

@@ -9,11 +9,11 @@ class Thinning extends FilterTemplate {
     
   constructor(){
     const params = {
-      "iterations": {
-        "value": 1,
-        "min": 1,
-        "max": 60,
-        "step": 1,
+      'iterations': {
+        'value': 1,
+        'min': 1,
+        'max': 60,
+        'step': 1,
       }
     };
     super(params);
@@ -113,7 +113,7 @@ class Thinning extends FilterTemplate {
     const bottomRight = (4 * (i + 1) * width) + ((j + 1) * 4);
         
     let numConnectedNeighbors = 0;
-    let sequence = "";
+    let sequence = '';
         
     const currPixel = (4 * i * width) + (j * 4);
         
@@ -126,72 +126,72 @@ class Thinning extends FilterTemplate {
     // e.g. top -> top-right -> right -> bottom-right -> ... -> top in clockwise-fashion
     if(top >= 0){
       if(data[top] == 255){
-        sequence += "0";
+        sequence += '0';
       }else{
-        sequence += "1";
+        sequence += '1';
       }
     }
     if(topRight >= 0){
       if(data[topRight] == 255){
-        sequence += "0";
+        sequence += '0';
       }else{
-        sequence += "1";
+        sequence += '1';
       }
     }
     if(right < data.length){
       if(data[right] == 255){
-        sequence += "0";
+        sequence += '0';
       }else{
-        sequence += "1";
+        sequence += '1';
       }
     }
     if(bottomRight < data.length){
       if(data[bottomRight] == 255){
-        sequence += "0";
+        sequence += '0';
       }else{
-        sequence += "1";
+        sequence += '1';
       }
     }
     if(bottom < data.length){
       if(data[bottom] == 255){
-        sequence += "0";
+        sequence += '0';
       }else{
-        sequence += "1";
+        sequence += '1';
       }
     }
     if(bottomLeft < data.length){
       if(data[bottomLeft] == 255){
-        sequence += "0";
+        sequence += '0';
       }else{
-        sequence += "1";
+        sequence += '1';
       }
     }
     if(left >= 0){
       if(data[left] == 255){
-        sequence += "0";
+        sequence += '0';
       }else{
-        sequence += "1";
+        sequence += '1';
       }
     }
     if(topLeft >= 0){
       if(data[topLeft] == 255){
-        sequence += "0";
+        sequence += '0';
       }else{
-        sequence += "1";
+        sequence += '1';
       }
     }
     if(top >= 0){
       if(data[top] == 255){
-        sequence += "0";
+        sequence += '0';
       }else{
-        sequence += "1";
+        sequence += '1';
       }
     }
         
     // evaluate sequence generated
     // we're looking for susbtrings with "01"
     for(let i = 0; i < sequence.length - 1; i++){
-      if(sequence[i] === "0" && sequence[i+1] === "1"){
+      if(sequence[i] === '0' && sequence[i+1] === '1'){
         numConnectedNeighbors++;
       }
     }

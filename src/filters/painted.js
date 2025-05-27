@@ -18,14 +18,14 @@ class Painted extends FilterTemplate {
     const data = pixels.data;
     //const copy = new Uint8ClampedArray(data);
         
-    const offscreenCanvas = document.createElement("canvas");
+    const offscreenCanvas = document.createElement('canvas');
     offscreenCanvas.width = width;
     offscreenCanvas.height = height;
         
-    const offscreenContext = offscreenCanvas.getContext("2d");
+    const offscreenContext = offscreenCanvas.getContext('2d');
     offscreenContext.fillStyle = '#fff';
     offscreenContext.fillRect(0, 0, width, height);
-    offscreenContext.lineJoin = "round"; // try other line join options for interesting effects!
+    offscreenContext.lineJoin = 'round'; // try other line join options for interesting effects!
     offscreenContext.globalCompositeOperation = 'source-over';
         
     /* this is cool - we can create an interesting texture with shadow blur. but unfortunately not what I'm looking for with this filter

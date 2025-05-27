@@ -7,11 +7,11 @@ class Wavy extends FilterTemplate {
     
   constructor(){
     const params = {
-      "waveSpeed": {
-        "value": 0.08,
-        "min": 0.01,
-        "max": 1.0,
-        "step": 0.01,
+      'waveSpeed': {
+        'value': 0.08,
+        'min': 0.01,
+        'max': 1.0,
+        'step': 0.01,
       },
     };
     super(params);

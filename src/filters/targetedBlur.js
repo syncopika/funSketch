@@ -231,7 +231,7 @@ class TargetedBlur extends FilterTemplate {
   moveOffscreenPixelsBack(offscreenCanvas, targetCanvas){
     // based on start coord and max width and height, put the processed pixels
     // back on the current layer canvas
-    const currCanvas = targetCanvas; //this.animationProject.getCurrFrame().getCurrCanvas();
+    const currCanvas = targetCanvas;
     const currLayerCtx = currCanvas.getContext('2d');
     const selectedAreaInfo = this.getSelectionAreaInfo();
         

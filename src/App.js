@@ -29,7 +29,6 @@ export const FrameCounterDisplay = (props) => {
 };
 
 export const App = () => {
-  //console.log("component render!");
   const [animationProject, setAnimationProject] = useState(null);
   const [brushInstance, setBrushInstance] = useState(null);
   const [toolbarInstance, setToolbarInstance] = useState(null);
@@ -225,7 +224,7 @@ export const App = () => {
   };
   
   const importImage = () => {
-    // TODO: these should be part of state
+    // TODO: these should be part of state probably?
     const scaleToFitCanvasCheckbox = document.getElementById('fitToCanvasCheck');
     const centerImageCheckbox = document.getElementById('centerImageCheck');
     const scaleToFitCanvas = scaleToFitCanvasCheckbox ? scaleToFitCanvasCheckbox.checked : false;

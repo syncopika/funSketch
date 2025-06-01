@@ -674,7 +674,7 @@ export const App = () => {
             <h1> image editor </h1>
             <button onClick={importImage} style={{display: 'block'}}> import image </button>
             <p> note that the image will be imported with the original dimensions. currently only supports applying filters. </p>
-            <div style={{position: 'relative'}}>
+            <div style={{overflow: 'auto'}}>
               <canvas 
                 ref={imageEditorCanvas} 
                 id='imageEditorCanvas' 

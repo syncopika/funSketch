@@ -115,3 +115,8 @@
 #togglePenPressureColor{
     border: 1px solid rgb(0, 255, 0);
 }
+
+#imageEditorCanvasContainer{
+  overflow: auto;
+  position: relative;
+}

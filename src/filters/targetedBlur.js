@@ -49,10 +49,11 @@ class TargetedBlur extends FilterTemplate {
     const ctx = canvasElement.getContext('2d');
     ctx.fillStyle = 'rgba(204, 204, 204, 0.5)';
     ctx.fillRect(0, 0, currLayer.width, currLayer.height);
-        
-    // TODO: add event listeners to temp canvas
-    // record drawn line points' coordinates
+    
     canvasElement.addEventListener('pointerdown', (evt) => {
+      // ignore mouse right-button clicks
+      if(evt.button === 2) return;
+      
       evt.preventDefault();
       this.isDrawing = true;
       ctx.fillStyle = '#fff';
@@ -66,6 +67,9 @@ class TargetedBlur extends FilterTemplate {
     });
         
     canvasElement.addEventListener('pointerup', (evt) => {
+      // ignore mouse right-button clicks
+      if(evt.button === 2) return;
+      
       evt.preventDefault();
       this.isDrawing = false;
             
@@ -76,10 +80,13 @@ class TargetedBlur extends FilterTemplate {
             
       // done
       canvasElement.parentNode.removeChild(canvasElement);
-      document.removeEventListener('keydown', abortTargetBlur);         
+      document.removeEventListener('keydown', abortTargetBlur);
     });
         
     canvasElement.addEventListener('pointermove', (evt) => {
+      // ignore mouse right-button clicks
+      if(evt.button === 2) return;
+      
       if(!this.isDrawing){
         return;
       }
@@ -243,7 +250,16 @@ class TargetedBlur extends FilterTemplate {
     // and overwrite the matching pixels in the source image canvas
     let currLayerRow = selectedAreaInfo.topLeftY;
     for(let row = 0; row < offscreenCanvas.height; row++){
+      // if no matching row point (this can happen if the point where the stroke ends ends up being higher than where the stroke started)
+      // just move on. 
+      // note: this is still buggy and will cause white pixels to occupy the drawn area. TODO: fix this
+      if(selectedAreaInfo.selectedArea[currLayerRow] == undefined){
+        currLayerRow++;
+        continue;
+      }
+      
       let currLayerCol = selectedAreaInfo.selectedArea[currLayerRow].minX;
+      
       for(let col = 0; col < offscreenCanvas.width; col++){
         // if alpha channel is not 10 (maybe make a const for this), update pixel in currCanvas
         const alpha = offscreenData.data[4*row*offscreenData.width + 4*col + 3];
@@ -255,6 +271,7 @@ class TargetedBlur extends FilterTemplate {
           currLayerCol++;
         }
       }
+      
       currLayerRow++;
     }
         

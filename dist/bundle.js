@@ -8002,7 +8002,11 @@ class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filte
   getSelectionAreaInfo() {
     const selectedArea = this.reorgSelectionLoopData();
     const selectedAreaKeys = Object.keys(selectedArea);
-    selectedAreaKeys.sort();
+
+    // note: this is an easy gotcha! since we want the integer strings in order,
+    // do not depend on the default sort behavior for strings but instead make sure we sort
+    // on the integer numbers w/ parseInt
+    selectedAreaKeys.sort((a, b) => parseInt(a) - parseInt(b));
     const topLeftY = parseInt(selectedAreaKeys[0]);
     const topLeftX = Object.values(selectedArea).reduce((acc, curr) => Math.min(acc, curr.minX), selectedArea[topLeftY].minX);
     const height = selectedAreaKeys[selectedAreaKeys.length - 1] - topLeftY;
@@ -8047,11 +8051,13 @@ class TargetedBlur extends _FilterTemplate_js__WEBPACK_IMPORTED_MODULE_0__.Filte
     // we find all the pixels in the offscreen canvas that don't have a certain alpha (so we know which pixels were copied over)
     // and overwrite the matching pixels in the source image canvas
     let currLayerRow = selectedAreaInfo.topLeftY;
+    //console.log(`curr layer row: ${currLayerRow}, offscreen canvas height: ${offscreenCanvas.height}`);
     for (let row = 0; row < offscreenCanvas.height; row++) {
       // if no matching row point (this can happen if the point where the stroke ends ends up being higher than where the stroke started)
       // just move on. 
       // note: this is still buggy and will cause white pixels to occupy the drawn area. TODO: fix this
       if (selectedAreaInfo.selectedArea[currLayerRow] == undefined) {
+        console.log('curr layer row selectedArea value undefined!');
         currLayerRow++;
         continue;
       }

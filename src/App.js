@@ -612,7 +612,7 @@ export const App = () => {
                 </button>
               </li>
               <li>
-                <button onClick={switchMode}>
+                <button id='switchMode' onClick={switchMode}>
                   {currMode === 'animation' ? 'image editor mode' : 'animator mode'}
                 </button>
               </li>

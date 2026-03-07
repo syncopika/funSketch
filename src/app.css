@@ -120,3 +120,11 @@
   overflow: auto;
   position: relative;
 }
+
+#switchMode{
+  font-weight: bold;
+}
+
+#switchMode::before{
+  content: "switch to ";
+}

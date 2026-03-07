@@ -13,8 +13,8 @@
         "e2e": "testcafe chrome:headless tests/e2e/fixture.js"
     },
     "dependencies": {
-        "react": "^16.14.0",
-        "react-dom": "^16.14.0"
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2"
     },
     "devDependencies": {
         "@babel/core": "^7.12.10",

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 import 'jest-canvas-mock';
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';

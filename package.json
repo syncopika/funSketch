@@ -13,8 +13,8 @@
         "e2e": "testcafe chrome:headless tests/e2e/fixture.js"
     },
     "dependencies": {
-        "react": "^16.14.0",
-        "react-dom": "^16.14.0"
+        "react": "^19.2.1",
+        "react-dom": "^19.2.1"
     },
     "devDependencies": {
         "@babel/core": "^7.12.10",
@@ -24,8 +24,8 @@
         "@html-eslint/eslint-plugin": "^0.24.1",
         "@html-eslint/parser": "^0.24.1",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
-        "@testing-library/jest-dom": "^5.16.5",
-        "@testing-library/react": "^11.2.2",
+        "@testing-library/jest-dom": "^6.9.1",
+        "@testing-library/react": "^16.3.2",
         "@webpack-cli/serve": "^1.6.0",
         "babel-loader": "^8.2.2",
         "cross-env": "^7.0.3",

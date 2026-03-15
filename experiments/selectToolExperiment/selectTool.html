@@ -35,6 +35,8 @@
     <div>
       <button id="select">select</button>
       <button id="importImage">import image</button>
+      <label for="blendCheckbox">blend selection after move</label>
+      <input type="checkbox" id="blendCheckbox" />
     </div>
 	
     <br />
@@ -51,6 +53,10 @@
       // TODO:
       // new idea to add: Poisson Image Editing
       // https://www.ctralie.com/Teaching/PoissonImageEditing/
+      let blendSelectionAfterMove = false;
+      document.getElementById('blendCheckbox').addEventListener('change', (evt) => {
+        blendSelectionAfterMove = evt.target.checked;
+      });
 
       document.getElementById("importImage").addEventListener('click', () => {
         const canvas = document.getElementById("main");
@@ -463,34 +469,36 @@
           
           mainCtx.putImageData(imgData, 0, 0);
           
-          // TODO: Poisson image editing - blend the pasted image selection with the image it was pasted on
-          // use Jacobi method?
-          
-          // don't do this here? move it up before we overwrite the source image pixels. capture the gradient
-          // on the original source image with no edits
-          const gradient = getGradientOfSelection(selectLoopCoords, imgData.data);
-          
-          console.log(gradient);
-          //const mainCanvas = document.getElementById('main');
-          //const mainCtx = mainCanvas.getContext('2d');
-          //const imageData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
-          for(let coord in gradient){
-            const x = parseInt(coord.split(',')[0]);
-            const y = parseInt(coord.split(',')[1]);
+          if(blendSelectionAfterMove){
+            // TODO: Poisson image editing - blend the pasted image selection with the image it was pasted on
+            // use Jacobi method?
             
-            // interesting idea: use the original image source and
-            // subtract the gradient color from the corresponding pixel color of the source image (after overlaying the selected area)
-            // creates a camouflage-like effect!
-            const originalR = srcImgCopy[mainCanvas.width*4*y + 4*x];
-            const originalG = srcImgCopy[mainCanvas.width*4*y + 4*x + 1];
-            const originalB = srcImgCopy[mainCanvas.width*4*y + 4*x + 2];
+            // don't do this here? move it up before we overwrite the source image pixels. capture the gradient
+            // on the original source image with no edits
+            const gradient = getGradientOfSelection(selectLoopCoords, imgData.data);
             
-            imgData.data[mainCanvas.width*4*y + 4*x] = originalR - gradient[coord].r;
-            imgData.data[mainCanvas.width*4*y + 4*x + 1] = originalG - gradient[coord].g;
-            imgData.data[mainCanvas.width*4*y + 4*x + 2] = originalB - gradient[coord].b;
+            //console.log(gradient);
+            //const mainCanvas = document.getElementById('main');
+            //const mainCtx = mainCanvas.getContext('2d');
+            //const imageData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+            for(let coord in gradient){
+              const x = parseInt(coord.split(',')[0]);
+              const y = parseInt(coord.split(',')[1]);
+              
+              // interesting idea: use the original image source and
+              // subtract the gradient color from the corresponding pixel color of the source image (after overlaying the selected area)
+              // creates a camouflage-like effect!
+              const originalR = srcImgCopy[mainCanvas.width*4*y + 4*x];
+              const originalG = srcImgCopy[mainCanvas.width*4*y + 4*x + 1];
+              const originalB = srcImgCopy[mainCanvas.width*4*y + 4*x + 2];
+              
+              imgData.data[mainCanvas.width*4*y + 4*x] = originalR - gradient[coord].r;
+              imgData.data[mainCanvas.width*4*y + 4*x + 1] = originalG - gradient[coord].g;
+              imgData.data[mainCanvas.width*4*y + 4*x + 2] = originalB - gradient[coord].b;
+            }
+            mainCtx.putImageData(imgData, 0, 0);
           }
-          mainCtx.putImageData(imgData, 0, 0);
-        
+          
           editCanvas.parentNode.removeChild(editCanvas);
           document.removeEventListener('keydown', deleteSelectedPixels);
           document.removeEventListener('mousedown', endSelection);

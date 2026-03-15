@@ -35,6 +35,8 @@
     <div>
       <button id="select">select</button>
       <button id="importImage">import image</button>
+      <label for="blendCheckbox">blend selection after move</label>
+      <input type="checkbox" id="blendCheckbox" />
     </div>
 	
     <br />
@@ -47,6 +49,14 @@
         the select tool could possibly be another kind of brush for funSketch?
         since we have a bunch of event listeners we'd need to attach to the canvas
       ***/
+      
+      // TODO:
+      // new idea to add: Poisson Image Editing
+      // https://www.ctralie.com/Teaching/PoissonImageEditing/
+      let blendSelectionAfterMove = false;
+      document.getElementById('blendCheckbox').addEventListener('change', (evt) => {
+        blendSelectionAfterMove = evt.target.checked;
+      });
 
       document.getElementById("importImage").addEventListener('click', () => {
         const canvas = document.getElementById("main");
@@ -246,6 +256,22 @@
           idx++;
         }
         
+        /* TODO: part of Poisson image editing to get the
+        // image gradient
+        const gradient = getGradientOfSelection(coords, imgData);
+        //console.log(gradient);
+        const mainCanvas = document.getElementById('main');
+        const mainCtx = mainCanvas.getContext('2d');
+        const imageData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+        for(let coord in gradient){
+          const x = parseInt(coord.split(',')[0]);
+          const y = parseInt(coord.split(',')[1]);
+          imageData.data[canvasWidth*4*y + 4*x] = gradient[coord].r;
+          imageData.data[canvasWidth*4*y + 4*x + 1] = gradient[coord].g;
+          imageData.data[canvasWidth*4*y + 4*x + 2] = gradient[coord].b;
+          mainCtx.putImageData(imageData, 0, 0);
+        }*/
+        
         return pixelData;
       }
 
@@ -295,36 +321,184 @@
         selectData.clickX = [evt.offsetX];
         selectData.clickY = [evt.offsetY];
       }
+      
+      function hasNeighbor(row, col, width, imgDataLen){
+        return (4*row*width + 4*col) + 3 < imgDataLen;
+      }
+      
+      function getNeighborColor(row, col, width, imgData){
+        return {
+          r: imgData[4*row*width + 4*col],
+          g: imgData[4*row*width + 4*col + 1],
+          b: imgData[4*row*width + 4*col + 2],
+        };
+      }
+      
+      // part of Poisson Image Editing
+      function getGradientOfSelection(selectLoopCoords, imgData){
+        // for each pixel in the selectLoop,
+        // record each pixel's sum of differences for each color channel between
+        // the pixel and its neighbors
+        // ΔB(x,y) = 4B(x,y) - B(x-1, y) - B(x+1, y) - B(x, y-1) - B(x, y+1) -> do this separately for each color channel (r,g,b)
+        const mainCanvas = document.getElementById('main');
+        //const mainCtx = mainCanvas.getContext('2d');
+        //const imgData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+        
+        const selectLoopCoordsYVals = Array.from(Object.keys(selectLoopCoords));
+        const minY = selectLoopCoordsYVals.reduce((acc, curr) => Math.min(parseInt(curr), selectLoopCoordsYVals[0]));
+        const maxY = selectLoopCoordsYVals.reduce((acc, curr) => Math.max(parseInt(curr), selectLoopCoordsYVals[0]));
+        const selectLoopGradient = {};
+        
+        for(let row in selectLoopCoords){
+          const minX = selectLoopCoords[row].minX;
+          const maxX = selectLoopCoords[row].maxX;
+          const currY = parseInt(row);
+          // we only want the gradient of the interior of the selected area pixels, not the boundary/edge
+          if(currY > minY && currY < maxY){
+            const i = currY;
+            for(let j = minX + 1; j < maxX; j++){
+              // if valid pixel
+              const pixelIdx = mainCanvas.width*4*(i-1) + 4*j;
+              const pixelR = imgData[pixelIdx];
+              const pixelG = imgData[pixelIdx + 1];
+              const pixelB = imgData[pixelIdx + 2];
+              
+              let deltaR = 4 * pixelR;
+              let deltaG = 4 * pixelG;
+              let deltaB = 4 * pixelB;
+              
+              // top neighbor
+              if(hasNeighbor(i - 1, j, mainCanvas.width, imgData.length)){
+                const neighborColor = getNeighborColor(i - 1, j, mainCanvas.width, imgData);
+                deltaR -= neighborColor.r; //(pixelR - neighborColor.r);
+                deltaG -= neighborColor.g; //(pixelG - neighborColor.g);
+                deltaB -= neighborColor.b; //(pixelB - neighborColor.b);
+              }
+              
+              // left neighbor
+              if(hasNeighbor(i, j - 1, mainCanvas.width, imgData.length)){
+                const neighborColor = getNeighborColor(i, j - 1, mainCanvas.width, imgData);
+                deltaR -= neighborColor.r; //(pixelR - neighborColor.r);
+                deltaG -= neighborColor.g; //(pixelG - neighborColor.g);
+                deltaB -= neighborColor.b; //(pixelB - neighborColor.b);
+              }
+              
+              // right neighbor
+              if(hasNeighbor(i, j + 1, mainCanvas.width, imgData.length)){
+                const neighborColor = getNeighborColor(i, j + 1, mainCanvas.width, imgData);
+                deltaR -= neighborColor.r; //(pixelR - neighborColor.r);
+                deltaG -= neighborColor.g; //(pixelG - neighborColor.g);
+                deltaB -= neighborColor.b; //(pixelB - neighborColor.b);
+              }
+              
+              // bottom neighbor
+              if(hasNeighbor(i + 1, j, mainCanvas.width, imgData.length)){
+                const neighborColor = getNeighborColor(i + 1, j, mainCanvas.width, imgData);
+                deltaR -= neighborColor.r; //(pixelR - neighborColor.r);
+                deltaG -= neighborColor.g; //(pixelG - neighborColor.g);
+                deltaB -= neighborColor.b; //(pixelB - neighborColor.b);
+              }                  
+              
+              // the sum of diffs between curr pixel and neighbors' colors by channel 
+              selectLoopGradient[`${j},${currY}`] = {
+                r: deltaR,
+                g: deltaG,
+                b: deltaB,
+              };
+            }
+          }
+        }
+        
+        return selectLoopGradient;
+      }
 
       function endSelection(evt){
         // assume user is done with selection
         if(evt.target !== document.getElementById('editCanvas')){
-        
           // place the selected pixels onto the main canvas
           const mainCanvas = document.getElementById('main');
           const mainCtx = mainCanvas.getContext('2d');
           const imgData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
           
+          /* TODO:
+          for Poisson Image Editing -
+          for each pixel in selectLoopCoords,
+          if pixel is on boundary (e.g. top, bottom, left or right neighbor exists and is not in selectLoopCoords,
+          take that neighbor's color (that neighbor is assumed to be on the destination image space, not from the selection)
+          */
+          
+          const selectLoopCoordsYVals = Array.from(Object.keys(selectLoopCoords));
+          const minY = selectLoopCoordsYVals.reduce((acc, curr) => Math.min(parseInt(curr), selectLoopCoordsYVals[0]));
+          const maxY = selectLoopCoordsYVals.reduce((acc, curr) => Math.max(parseInt(curr), selectLoopCoordsYVals[0]));
+          
+          // keep a copy of the original image
+          // so we can use it when recoloring our selection to blend with the part being pasted on
+          const srcImgCopy = new Uint8ClampedArray(imgData.data);
+          
+          // get gradient of selected area
+          //const gradient = getGradientOfSelection(selectLoopCoords, imgData.data);
+          
           let idx = 0;
           for(let row in selectLoopCoords){
             const rowImageData = srcCpy[idx++];
-            const min = selectLoopCoords[row].minX;
-            const max = selectLoopCoords[row].maxX;
+            const minX = selectLoopCoords[row].minX;
+            const maxX = selectLoopCoords[row].maxX;
             
-            const start = editCanvas.width*4*row + 4*min;
-            const end = editCanvas.width*4*row + 4*max;
+            const start = editCanvas.width*4*(row-1) + 4*minX;
+            const end = editCanvas.width*4*(row-1) + 4*maxX;
             
             let imgDataRowIndex = 0;
-            for(let i = start; i < end; i += 4){
-              imgData.data[i] = rowImageData[imgDataRowIndex++];
-              imgData.data[i+1] = rowImageData[imgDataRowIndex++];
-              imgData.data[i+2] = rowImageData[imgDataRowIndex++];
-              imgData.data[i+3] = rowImageData[imgDataRowIndex++];
+            for(let i = start; i <= end; i += 4){
+              // poisson image editing: if a boundary/edge pixel of loop selection, adopt the color of the corresponding source image pixel
+              if(i === start || i === end || parseInt(row) === minY || parseInt(row) === maxY){
+                // for boundary pixels, we don't need to overwrite the color of the pixels of the area we are pasting over.
+                // we want to record the source image color of the corresponding pixel so when we do the algorithm to
+                // make the loop selection blend in with the area we added to, the boundary pixels have the correct color
+                rowImageData[imgDataRowIndex++] = imgData.data[i];
+                rowImageData[imgDataRowIndex++] = imgData.data[i+1];
+                rowImageData[imgDataRowIndex++] = imgData.data[i+2];
+                rowImageData[imgDataRowIndex++] = imgData.data[i+3];
+              }else{
+                imgData.data[i] = rowImageData[imgDataRowIndex++];
+                imgData.data[i+1] = rowImageData[imgDataRowIndex++];
+                imgData.data[i+2] = rowImageData[imgDataRowIndex++];
+                imgData.data[i+3] = rowImageData[imgDataRowIndex++];
+              }
             }
           }
           
-          mainCtx.putImageData(imgData, 0, 0);		
-        
+          mainCtx.putImageData(imgData, 0, 0);
+          
+          if(blendSelectionAfterMove){
+            // TODO: Poisson image editing - blend the pasted image selection with the image it was pasted on
+            // use Jacobi method?
+            
+            // don't do this here? move it up before we overwrite the source image pixels. capture the gradient
+            // on the original source image with no edits
+            const gradient = getGradientOfSelection(selectLoopCoords, imgData.data);
+            
+            //console.log(gradient);
+            //const mainCanvas = document.getElementById('main');
+            //const mainCtx = mainCanvas.getContext('2d');
+            //const imageData = mainCtx.getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+            for(let coord in gradient){
+              const x = parseInt(coord.split(',')[0]);
+              const y = parseInt(coord.split(',')[1]);
+              
+              // interesting idea: use the original image source and
+              // subtract the gradient color from the corresponding pixel color of the source image (after overlaying the selected area)
+              // creates a camouflage-like effect!
+              const originalR = srcImgCopy[mainCanvas.width*4*y + 4*x];
+              const originalG = srcImgCopy[mainCanvas.width*4*y + 4*x + 1];
+              const originalB = srcImgCopy[mainCanvas.width*4*y + 4*x + 2];
+              
+              imgData.data[mainCanvas.width*4*y + 4*x] = originalR - gradient[coord].r;
+              imgData.data[mainCanvas.width*4*y + 4*x + 1] = originalG - gradient[coord].g;
+              imgData.data[mainCanvas.width*4*y + 4*x + 2] = originalB - gradient[coord].b;
+            }
+            mainCtx.putImageData(imgData, 0, 0);
+          }
+          
           editCanvas.parentNode.removeChild(editCanvas);
           document.removeEventListener('keydown', deleteSelectedPixels);
           document.removeEventListener('mousedown', endSelection);
@@ -365,11 +539,13 @@
           const editCanvas = document.getElementById('editCanvas');
           const editCtx = editCanvas.getContext('2d');
           
+          const mainCanvas = document.getElementById('main');
+          const srcImgData = mainCanvas.getContext('2d').getImageData(0, 0, mainCanvas.width, mainCanvas.height);
+          
           if(!srcCpy){
-            // just trying something out. we want a copy or the src image on the main canvas just once
+            // we need to get a copy of the selected pixels of the src image on the main canvas
             // because we're going to delete the selected pixels on the src
-            const mainCanvas = document.getElementById('main');
-            const imgData = mainCanvas.getContext('2d').getImageData(0, 0, mainCanvas.width, mainCanvas.height).data.slice();
+            const imgData = srcImgData.data.slice();
             
             fillInSelectionAreaGaps();
             
@@ -388,11 +564,10 @@
           const currX = evt.offsetX;
           const currY = evt.offsetY;
           
-          // clear edit canvas		
-          editCtx.fillStyle = "rgba(255,255,255,0.1)"; // need to add some transparency by making alpha channel < 1. doesn't seem to be working quite right atm
-          editCtx.fillRect(0, 0, editCanvas.width, editCanvas.height);
+          // put the original source image down on the edit canvas
+          editCtx.putImageData(srcImgData, 0, 0);
           
-          // translate selected pixels
+          // translate selected pixels on the edit canvas
           const imgData = editCtx.getImageData(0, 0, editCanvas.width, editCanvas.height);
           
           let idx = 0;

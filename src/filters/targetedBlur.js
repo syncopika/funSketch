@@ -119,14 +119,14 @@ class TargetedBlur extends FilterTemplate {
       this.isDrawing = false;
     });
         
-    function abortTargetBlur(evt){
+    const abortTargetBlur = (evt) => {
       if(evt.code === 'Escape'){
         canvasElement.parentNode.removeChild(canvasElement);
         document.removeEventListener('keydown', abortTargetBlur);
         this.isActive = false;
       }
-    }
-        
+    };
+    
     document.addEventListener('keydown', abortTargetBlur);
   }
     

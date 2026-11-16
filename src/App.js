@@ -625,6 +625,7 @@ export const App = () => {
             <p><a href="./experiments/selectToolExperiment/selectTool.html">selection tool</a></p>
             <p><a href="./experiments/lightingExperiment/lighting.html">lighting idea</a></p>
             <p><a href="./experiments/seamCarvingExperiment/seamCarvingExperiment.html">seam carving</a></p>
+            <p><a href="./experiments/vectorFieldFilterExperiment/vectorFieldFilterExperiment.html">vector field filter</a></p>
           </div>
         </section>
                   

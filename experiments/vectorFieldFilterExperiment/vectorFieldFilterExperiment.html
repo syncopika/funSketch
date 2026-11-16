@@ -62,12 +62,6 @@
         <input type='checkbox' id='showVectorField' checked />
       </div>
       
-      <!--
-        <label for='slider'>
-        <input id='slider' type='range' min='0' max='600' value='0' />
-        </label>
-      -->
-      
       <button id='process'>process</button>
       
       <p id='status'></p>
@@ -127,7 +121,7 @@
           }
         }else{
           // try to add some order to the vectors to create some contiguous flow field
-          let rowStartAngle = 0; // in degrees
+          let rowStartAngle = Math.random() * 360; // in degrees
           for(let h = 0; h < height; h++){
             let startAngle = rowStartAngle; 
             const row = [];
@@ -163,7 +157,11 @@
               
               vectorFieldCanvasCtx.beginPath();
               vectorFieldCanvasCtx.moveTo(startX, startY);
-              vectorFieldCanvasCtx.lineTo(startX + x, startY - y); // subtract y because if y is negative, that means the vector should be going downwards, which means increasing the y-coordinate in canvas space
+              
+              // subtract y because if y is negative, that means the vector should be going downwards, 
+              // which means increasing the y-coordinate in canvas space
+              vectorFieldCanvasCtx.lineTo(startX + x, startY - y);
+              
               vectorFieldCanvasCtx.closePath();
               vectorFieldCanvasCtx.stroke();
               
@@ -192,8 +190,7 @@
         
         for(let i = 0; i < height; i++){
           for(let j = 0; j < width; j++){
-            // get this pixel's vector's angle as a percentage of 360 and modify color based on that
-            const pixelVector = vectorField[i][j]; // assuming vector is normalized
+            const pixelVector = vectorField[i][j];
             const weight = pixelVector.weight;
             
             // find color of pixel based on the vector of this current pixel - this current pixel's vector
@@ -224,7 +221,6 @@
           const width = canvas.width;
           const height = canvas.height;
           context.drawImage(originalImg, 0, 0, width, height);
-          //document.getElementById('slider').value = 0;
         }
         
         vectorFieldCanvasCtx.clearRect(0, 0, vectorFieldCanvas.width, vectorFieldCanvas.height);
@@ -276,16 +272,6 @@
       });
       
       setUpMainCanvas();
-      
-      /*
-      let startTime;
-      document.getElementById('slider').addEventListener('change', (evt) => {
-        postStatus('processing, this might take a bit...'); // TODO: maybe try moving the processing job to a web worker?
-        setTimeout(() => {
-          startTime = Date.now();
-          zoom(parseFloat(evt.target.value));
-        }, 200);
-      });*/
     </script>
   </body>
 </html>

@@ -1,0 +1,291 @@
+<!doctype html>
+
+<!-- 
+  https://rmarcus.info/blog/2018/03/04/perlin-noise.html 
+  https://www.dgp.toronto.edu/~hertzman/sbr02/hertzmann-sbr02.pdf
+  https://www.tylerxhobbs.com/words/flow-fields
+  https://www.gorillasun.de/blog/perlin-noise-flow-fields-in-processing-part-i/
+  https://www.google.com/search?q=Perlin+flow+fields+remapping+pixels&sca_esv=e6e4faa1f9fe3597&rlz=1C1CHBF_enUS836US836&sxsrf=AKL5yDjlfQL_hDGVbMUv9vOMADrlmO4okQ%3A1794739025705&ei=UYv5apy6Kpnl5NoP74HVwQs&biw=2133&bih=1058&uact=5&oq=Perlin+flow+fields+remapping+pixels&gs_lp=Egxnd3Mtd2l6LXNlcnAiI1BlcmxpbiBmbG93IGZpZWxkcyByZW1hcHBpbmcgcGl4ZWxzMgUQIRigAUjsHFDCB1i8G3ABeAGQAQCYAWWgAe8IqgEEMTYuMbgBA8gBAPgBAZgCEqACtAnCAgoQABhHGNYEGLADwgIGEAAYFhgewgILEAAYgAQYigUYhgPCAggQABiJBRiiBMICBRAAGO8FwgIFECEYqwKYAwCIBgGQBgiSBwQxNy4xoAf1LrIHBDE2LjG4B6oJwgcGMi4xMy4zyAcmgAgB&sclient=gws-wiz-serp
+-->
+
+
+<html>
+
+  <head>
+    <title>
+      vector field filter experiment
+    </title>
+		
+    <style>
+      canvas {
+        border: 1px solid #000;
+      }
+      
+      #canvas {
+        display: block;
+        margin: 20px auto;
+        text-align: center;
+        border: 1px #000 solid;
+        height: 600px;
+        width: 600px;
+      }
+      
+      #center {
+        text-align: center;
+      }
+      
+      #process {
+        margin: 8px;
+      }
+		</style>
+  </head>
+	
+  <body>
+	
+    <div id='center'>
+	
+      <h1> vector field filter experiment </h1>
+      
+      <button id='importImage'>import image</button>
+      <button id='reset' onclick='reset()'>reset</button>
+	
+      <canvas id='canvas' width='600' height='600'>
+      </canvas>
+      
+      <div>
+        <label for='randomVectorField'>field of random vectors: </label>
+        <input type='checkbox' id='randomVectorField' />
+      </div>
+      
+      <div>
+        <label for='showVectorField'>show vector field: </label>
+        <input type='checkbox' id='showVectorField' checked />
+      </div>
+      
+      <!--
+        <label for='slider'>
+        <input id='slider' type='range' min='0' max='600' value='0' />
+        </label>
+      -->
+      
+      <button id='process'>process</button>
+      
+      <p id='status'></p>
+      
+      <canvas id='vectorCanvas' width='800' height='800'>
+      </canvas>
+      
+    </div>
+	
+    <script>
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      context.imageSmoothingEnabled = true;
+      
+      const vectorFieldCanvas = document.getElementById('vectorCanvas');
+      const vectorFieldCanvasCtx = vectorFieldCanvas.getContext('2d');
+      vectorFieldCanvasCtx.lineWidth = 1;
+      
+      let originalImg = null;
+      
+      function getRandomVector(){
+        // a vector can either be pointing:
+        // - left
+        // - right
+        // - up
+        // - down
+        // - right-up (northeast)
+        // - right-down (southeast)
+        // - left-up (northwest)
+        // - left-down (southwest)
+        const vectors = [
+          {x: -1, y: 0, weight: 1},
+          {x: 1, y: 0, weight: 1},
+          {x: 0, y: 1, weight: 1},
+          {x: 0, y: -1, weight: 1},
+          {x: 1, y: 1, weight: 1},
+          {x: 1, y: -1, weight: 1},
+          {x: -1, y: 1, weight: 1},
+          {x: -1, y: -1, weight: 1},
+        ];
+        
+        const idx = Math.floor(Math.random() * vectors.length);
+        
+        return vectors[idx];
+      }
+      
+      function generateVectorField(width, height, random=true){
+        const vectorField = [];
+        if(random){
+          for(let h = 0; h < height; h++){
+            const row = [];
+            for(let w = 0; w < width; w++){
+              // record a random 2d vector for this pixel
+              row.push(getRandomVector());
+            }
+            vectorField.push(row);
+          }
+        }else{
+          // try to add some order to the vectors to create some contiguous flow field
+          let rowStartAngle = 0; // in degrees
+          for(let h = 0; h < height; h++){
+            let startAngle = rowStartAngle; 
+            const row = [];
+            for(let w = 0; w < width; w++){
+              const weight = 10 * Math.random();
+              const x = Math.cos(startAngle * Math.PI / 180);
+              const y = Math.sin(startAngle * Math.PI / 180);
+              row.push({x, y, weight: Math.random() * weight});
+              startAngle += (6 + (Math.random() * 3));
+            }
+            vectorField.push(row);
+            rowStartAngle += (3 + Math.random());
+          }
+          // TODO: investigate Perlin noise and other ways to create interesting vector field curves?
+        }
+        
+        // draw the vectors in the vector canvas
+        // TODO: move this to another function
+        const showVectorField = document.getElementById('showVectorField');
+        if(showVectorField.checked){
+          const factor = 3;
+          let offsetY = 0;
+          for(let i = 0; i < vectorField.length; i++){
+            const row = vectorField[i];
+            let offsetX = 0;
+            for(let j = 0; j < row.length; j++){
+              // show vector in canvas
+              const x = vectorField[i][j].x * factor;
+              const y = vectorField[i][j].y * factor;
+              
+              const startX = offsetX + j;
+              const startY = offsetY + i;
+              
+              vectorFieldCanvasCtx.beginPath();
+              vectorFieldCanvasCtx.moveTo(startX, startY);
+              vectorFieldCanvasCtx.lineTo(startX + x, startY - y); // subtract y because if y is negative, that means the vector should be going downwards, which means increasing the y-coordinate in canvas space
+              vectorFieldCanvasCtx.closePath();
+              vectorFieldCanvasCtx.stroke();
+              
+              offsetX += 3;
+            }
+            offsetY += 3;
+          }
+        }
+        
+        return vectorField;
+      }
+      
+      function doSomethingWithVectorField(){
+        const width = canvas.width;
+        const height = canvas.height;
+        
+        const randomVectorField = document.getElementById('randomVectorField').checked;
+        const vectorField = generateVectorField(width, height, randomVectorField);
+        
+        const ctx = canvas.getContext('2d');
+        const imgData = ctx.getImageData(0, 0, width, height);
+        const data = imgData.data;
+        
+        // make a copy of the original image data
+        const copy = new Uint8ClampedArray(imgData.data);
+        
+        for(let i = 0; i < height; i++){
+          for(let j = 0; j < width; j++){
+            // get this pixel's vector's angle as a percentage of 360 and modify color based on that
+            const pixelVector = vectorField[i][j]; // assuming vector is normalized
+            const weight = pixelVector.weight;
+            
+            // find color of pixel based on the vector of this current pixel - this current pixel's vector
+            // indicates displacement to help us find which pixel we should be pulling the color from
+            const displacedPixelY = Math.floor(i + (pixelVector.y * weight));
+            const displacedPixelX = Math.floor(j + (pixelVector.x * weight));
+            if(displacedPixelY >= 0 && displacedPixelY < height && displacedPixelX >= 0 && displacedPixelX  < width){
+              const pixelFromIdx = (4 * width * displacedPixelY) + (4 * displacedPixelX);
+              const r = copy[pixelFromIdx];
+              const g = copy[pixelFromIdx + 1];
+              const b = copy[pixelFromIdx + 2];
+              
+              const pixelToIdx = (4 * width * i) + (4 * j);
+              data[pixelToIdx] = r;
+              data[pixelToIdx + 1] = g;
+              data[pixelToIdx + 2] = b;
+            }
+          }
+        }
+        
+        ctx.putImageData(imgData, 0, 0);
+        
+        console.log('done!');
+      }
+      
+      function reset(){
+        if(originalImg){
+          const width = canvas.width;
+          const height = canvas.height;
+          context.drawImage(originalImg, 0, 0, width, height);
+          //document.getElementById('slider').value = 0;
+        }
+        
+        vectorFieldCanvasCtx.clearRect(0, 0, vectorFieldCanvas.width, vectorFieldCanvas.height);
+      }
+
+      function setUpMainCanvas(){
+        const canvasElement = document.getElementById('canvas');
+        canvasElement.getContext('2d').fillStyle = 'rgba(255, 255, 255, 1)';
+        canvasElement.getContext('2d').fillRect(0, 0, canvasElement.width, canvasElement.height);
+      }
+      
+      function postStatus(status){
+        document.getElementById('status').textContent = status;
+      }
+      
+      function processImage(){
+        doSomethingWithVectorField();
+      }
+      
+      document.getElementById('process').addEventListener('click', processImage);
+    
+      document.getElementById('importImage').addEventListener('click', () => {
+        fileHandler();
+        
+        function fileHandler(){
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.addEventListener('change', getFile, false);
+          input.click();
+        }
+        
+        function getFile(e){
+          const img = new Image();
+          const reader = new FileReader();
+          const file = e.target.files[0];
+          if(!file.type.match(/image.*/)){
+            console.log('not a valid image');
+            return;
+          }
+          img.onload = () => {
+            context.drawImage(img, 0, 0, canvas.width, canvas.height);
+            originalImg = img;
+          };
+          reader.onloadend = function(){ 
+            img.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      setUpMainCanvas();
+      
+      /*
+      let startTime;
+      document.getElementById('slider').addEventListener('change', (evt) => {
+        postStatus('processing, this might take a bit...'); // TODO: maybe try moving the processing job to a web worker?
+        setTimeout(() => {
+          startTime = Date.now();
+          zoom(parseFloat(evt.target.value));
+        }, 200);
+      });*/
+    </script>
+  </body>
+</html>

@@ -33,6 +33,10 @@
       #center {
         text-align: center;
       }
+      
+      #process {
+        margin: 8px;
+      }
 		</style>
   </head>
 	
@@ -48,8 +52,15 @@
       <canvas id='canvas' width='600' height='600'>
       </canvas>
       
-      <label for='randomVectorField'>field of random vectors: </label>
-      <input type='checkbox' id='randomVectorField' />
+      <div>
+        <label for='randomVectorField'>field of random vectors: </label>
+        <input type='checkbox' id='randomVectorField' />
+      </div>
+      
+      <div>
+        <label for='showVectorField'>show vector field: </label>
+        <input type='checkbox' id='showVectorField' checked />
+      </div>
       
       <!--
         <label for='slider'>
@@ -61,6 +72,9 @@
       
       <p id='status'></p>
       
+      <canvas id='vectorCanvas' width='800' height='800'>
+      </canvas>
+      
     </div>
 	
     <script>
@@ -68,14 +82,11 @@
       const context = canvas.getContext('2d');
       context.imageSmoothingEnabled = true;
       
-      let originalImg = null;
+      const vectorFieldCanvas = document.getElementById('vectorCanvas');
+      const vectorFieldCanvasCtx = vectorFieldCanvas.getContext('2d');
+      vectorFieldCanvasCtx.lineWidth = 1;
       
-      /*
-      const originalImgCanvas = document.createElement('canvas');
-      const originalImgCtx = originalImgCanvas.getContext('2d');
-      originalImgCanvas.width = canvas.width;
-      originalImgCanvas.height = canvas.height;
-      */
+      let originalImg = null;
       
       function getRandomVector(){
         // a vector can either be pointing:
@@ -125,13 +136,43 @@
               const x = Math.cos(startAngle * Math.PI / 180);
               const y = Math.sin(startAngle * Math.PI / 180);
               row.push({x, y, weight: Math.random() * weight});
-              startAngle += (6 + Math.random() * 3);
+              startAngle += (6 + (Math.random() * 3));
             }
             vectorField.push(row);
             rowStartAngle += (3 + Math.random());
           }
           // TODO: investigate Perlin noise and other ways to create interesting vector field curves?
         }
+        
+        // draw the vectors in the vector canvas
+        // TODO: move this to another function
+        const showVectorField = document.getElementById('showVectorField');
+        if(showVectorField.checked){
+          const factor = 3;
+          let offsetY = 0;
+          for(let i = 0; i < vectorField.length; i++){
+            const row = vectorField[i];
+            let offsetX = 0;
+            for(let j = 0; j < row.length; j++){
+              // show vector in canvas
+              const x = vectorField[i][j].x * factor;
+              const y = vectorField[i][j].y * factor;
+              
+              const startX = offsetX + j;
+              const startY = offsetY + i;
+              
+              vectorFieldCanvasCtx.beginPath();
+              vectorFieldCanvasCtx.moveTo(startX, startY);
+              vectorFieldCanvasCtx.lineTo(startX + x, startY - y); // subtract y because if y is negative, that means the vector should be going downwards, which means increasing the y-coordinate in canvas space
+              vectorFieldCanvasCtx.closePath();
+              vectorFieldCanvasCtx.stroke();
+              
+              offsetX += 3;
+            }
+            offsetY += 3;
+          }
+        }
+        
         return vectorField;
       }
       
@@ -155,23 +196,12 @@
             const pixelVector = vectorField[i][j]; // assuming vector is normalized
             const weight = pixelVector.weight;
             
-            //const angleFraction = Math.abs(Math.atan2(pixelVector.y, pixelVector.x) * (180 / Math.PI) / 360);
-            
-            /*
-            const dotProduct = (pixelVector.x + pixelVector.y);
-            const magnitude = Math.sqrt((pixelVector.x * pixelVector.x) + (pixelVector.y * pixelVector.y));
-            const angleFraction = (Math.acos(dotProduct / magnitude) * (180 / Math.PI)) / 360;
-            console.log(`dotProduct: ${dotProduct}, magnitude: ${magnitude}, angle fraction: ${angleFraction}`);
-            */
-            //console.log(angleFraction);
-            
             // find color of pixel based on the vector of this current pixel - this current pixel's vector
             // indicates displacement to help us find which pixel we should be pulling the color from
             const displacedPixelY = Math.floor(i + (pixelVector.y * weight));
             const displacedPixelX = Math.floor(j + (pixelVector.x * weight));
             if(displacedPixelY >= 0 && displacedPixelY < height && displacedPixelX >= 0 && displacedPixelX  < width){
               const pixelFromIdx = (4 * width * displacedPixelY) + (4 * displacedPixelX);
-              //console.log(`pixel from index: ${pixelFromIdx}, displacedPixelY: ${displacedPixelY}, displacedPixelX: ${displacedPixelX}`);
               const r = copy[pixelFromIdx];
               const g = copy[pixelFromIdx + 1];
               const b = copy[pixelFromIdx + 2];
@@ -196,6 +226,8 @@
           context.drawImage(originalImg, 0, 0, width, height);
           //document.getElementById('slider').value = 0;
         }
+        
+        vectorFieldCanvasCtx.clearRect(0, 0, vectorFieldCanvas.width, vectorFieldCanvas.height);
       }
 
       function setUpMainCanvas(){
